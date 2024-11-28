@@ -1,0 +1,6 @@
+#Template .gitignore
+
+*.o
+*.~
+build
+*.log
