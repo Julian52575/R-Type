@@ -16,12 +16,13 @@
 #include <any>
 
 #include "Sparse_Array.hpp"
+#include "Component/Liste.hpp"
+#include "ECSExecption.hpp"
 
 class registry {
     public:
         template <class Component>
-        sparse_array<Component>& register_component()
-        {
+        sparse_array<Component>& register_component(){
             auto i = std::type_index(typeid(Component));
 
             this->_components_arrays[i] = sparse_array<Component>();
@@ -29,13 +30,12 @@ class registry {
         }
 
         template <class Component>
-        sparse_array<Component>& get_components()
-        {
+        sparse_array<Component>& get_components(){
             auto i = std::type_index(typeid(Component));
             auto it = this->_components_arrays.find(i);
 
             if (it == this->_components_arrays.end()) {
-                throw std::runtime_error("Component not registered in registry.");
+                throw ECSException("Component not registered in registry.");
             }
             return std::any_cast<sparse_array<Component>&>(it->second);
         }
@@ -47,7 +47,7 @@ class registry {
             auto it = this->_components_arrays.find(i);
 
             if (it == this->_components_arrays.end()) {
-                throw std::runtime_error("Component not registered in registry.");
+                throw ECSException("Component not registered in registry.");
             }
             return std::any_cast<sparse_array<Component>&>(it->second);
         }

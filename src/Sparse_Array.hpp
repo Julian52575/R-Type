@@ -33,50 +33,64 @@ class sparse_array {
 
         sparse_array(sparse_array const &og)// copy constructor
         {
-            if (og.size() > this->size()) {
-                this->_data.resize(og.size());
-            }
+            _data = og._data;
+            // if (og.size() > this->size()) {
+            //     this->_data.resize(og.size());
+            // }
 
-            for (size_type i = 0; i < og.size(); i++) {
-                auto &tmp = og[i];
+            // for (size_type i = 0; i < og.size(); i++) {
+            //     auto &tmp = og[i];
 
-                if (tmp.has_value()) {
-                    this->_data[i].emplace( og[i].value() );
-                }
-            }
+            //     if (tmp.has_value()) {
+            //         this->_data[i].emplace( og[i].value() );
+            //     }
+            // }
         }
         sparse_array(sparse_array &&og) noexcept // move constructor
         {
-            if (og.size() > this->size()) {
-                this->_data.resize(og.size());
-            }
+            _data = std::move(og._data);
+            // if (og.size() > this->size()) {
+            //     this->_data.resize(og.size());
+            // }
 
-            for (size_type i = 0; i < og.size(); i++) {
-                auto &tmp = og[i];
+            // for (size_type i = 0; i < og.size(); i++) {
+            //     auto &tmp = og[i];
 
-                if (tmp.has_value()) {
-                    this->_data[i].emplace( std::move(og[i].value()) );
-                }
-            }
+            //     if (tmp.has_value()) {
+            //         this->_data[i].emplace( std::move(og[i].value()) );
+            //     }
+            // }
         }
 
         ~sparse_array() = default;
 
-        sparse_array &operator=(sparse_array const &) // copy assignment operator
+        sparse_array &operator=(sparse_array const &og) // copy assignment operator
         {
+            if (this != &og) {
+                this->_data = og._data;
+            }
             return *this;
         }
-        sparse_array &operator=(sparse_array &&) noexcept // move assignment operator
+        sparse_array &operator=(sparse_array &&og) noexcept // move assignment operator
         {
+            if (this != &og) {
+                this->_data = std::move(og._data);
+            }
             return *this;
         }
 
         reference_type operator[](size_t idx)
         {
+            if (idx >= this->_data.size()) {
+                throw std::out_of_range("Index out of range");
+            }
             return this->_data[idx];
         }
         const_reference_type operator[](size_t idx) const
         {
+            if (idx >= this->_data.size()) {
+                throw std::out_of_range("Index out of range");
+            }
             return this->_data[idx];
         }
 
@@ -113,10 +127,11 @@ class sparse_array {
 
         reference_type insert_at(size_type pos, Component const &con)
         {
-            if (pos > this->_data.size()) {
-                this->_data.resize(pos);
+            if (pos >= this->_data.size()) {
+                this->_data.resize(pos + 1);
             }
-            this->_data.insert(pos, con);
+            // this->_data.insert(pos, con);
+            this->_data[pos] = con;
             return this->_data[pos];
         }
         reference_type insert_at(size_type pos, Component &&con)
@@ -124,10 +139,11 @@ class sparse_array {
             if (pos >= this->_data.size()) {
                 this->_data.resize(pos + 1);
             }
-            auto it = std::next(this->_data.begin(), pos);
+            // auto it = std::next(this->_data.begin(), pos);
 
-            this->_data.erase(it);
-            this->_data.insert(it, con);
+            // this->_data.erase(it);
+            // this->_data.insert(it, con);
+            this->_data[pos] = std::move(con);
             return this->_data[pos];
         }
 
@@ -135,7 +151,7 @@ class sparse_array {
         reference_type emplace_at( size_type pos, Params &&... args)
         {
             if (pos >= this->_data.size()) {
-                this->_data.reserve(pos + 1);
+                // this->_data.reserve(pos + 1);
                 this->_data.resize(pos + 1);
             }
 
@@ -157,17 +173,18 @@ class sparse_array {
             std::allocator_traits<decltype(allocator)>::construct(allocator, &(this->_data[pos]), std::forward<Params>(args)...);
             */
             this->_data[pos].emplace(std::forward<Params>(args)...);
-#warning std::optional<T> a la même taille en mémoire si value ou nothing ?
+        // #warning std::optional<T> a la même taille en mémoire si value ou nothing ?
             return this->_data[pos];
         }
 
         void erase( size_type pos)
         {
-            if (pos > this->_data.size()) {
-                throw std::out_of_range("");
+            if (pos >= this->_data.size()) {
+                throw std::out_of_range("Index out of range");
             }
-            auto it = std::next(this->_data.begin(), pos);
-            this->_data.erase(it);
+            // auto it = std::next(this->_data.begin(), pos);
+            // this->_data.erase(it);
+            this->_data[pos].reset();
         }
 
         size_type get_index ( value_type const &con ) const
@@ -181,6 +198,16 @@ class sparse_array {
                 i++;
             }
             return (size_type) -1;
+        }
+
+        size_type get_index ( Component const &con ) const
+        {
+            for (size_type i = 0; i < this->_data.size(); ++i) {
+                if (this->_data[i].has_value() && this->_data[i].value() == con) {
+                    return i;
+                }
+            }
+            return static_cast<size_type>(-1);
         }
 
 #ifdef DEBUG
