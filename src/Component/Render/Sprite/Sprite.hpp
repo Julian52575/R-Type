@@ -8,6 +8,7 @@ class Sprite : public sf::Sprite {
         ~Sprite();
 
         sf::Texture &getTexture();
+        bool isdefaultTexture;
 
     private:
         // sf::Texture texture;

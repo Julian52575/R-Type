@@ -74,7 +74,7 @@ void GraphicalCore::run(){
         this->movement.update(this->pos, this->velo, deltaTime);
         this->parallaxSystem.update(this->pos, this->sprite, this->parallax, deltaTime);
         this->animations.update(this->animation, this->sprite, deltaTime);
-        //collision.update(this->pos, this->velo, this->hitbox);
+        this->collision.update(this->pos, this->hitbox);
         //mouseInput.update(this->pos, this->velo, this->sprite);
         // this->audio.update(this->musics, this->sounds);
         //lifetime.update(this->pos, this->velo, this->acc);

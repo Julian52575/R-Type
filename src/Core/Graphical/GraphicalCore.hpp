@@ -50,6 +50,8 @@ class GraphicalCore {
         
         System::movement movement;
         System::KeyBoardInput keyBoardInput;
+
+        System::Collision collision;
         System::Parallax parallaxSystem;
         System::Audio audio;
         System::Animation animations;

@@ -1,5 +1,5 @@
 SRC = $(shell find src -type f -name "*.cpp")
-NAME = bs
+NAME = R-Type
 
 CXXFLAGS += --std=c++20 -g -Wall -Wextra
 

@@ -2,6 +2,7 @@
 
 Sprite::Sprite(const std::string& filename,std::pair<float,float> scale,std::pair<float,float> origin) {
     this->texture = std::make_shared<sf::Texture>();
+    this->isdefaultTexture = false;
     if(!(*texture).loadFromFile(filename))
         this->MakeTexture();
     else
@@ -35,4 +36,5 @@ void Sprite::MakeTexture(){
     }
     (*texture).update(image);
     setTexture(*texture);
+    isdefaultTexture = true;
 }

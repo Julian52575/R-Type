@@ -6,3 +6,4 @@
 #include "Movement/movement.hpp"
 #include "Render/Render.hpp"
 #include "Parallax/Parallax.hpp"
+#include "Collision/Collision.hpp"
