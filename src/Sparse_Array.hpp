@@ -217,7 +217,7 @@ class sparse_array {
 
             for (auto &e : this->_data) {
                 if (e.has_value()) {
-                    std::cout << i << ':' << '\t' << e.value();
+                    std::cout << i << ':' << '\t' << e.value() << std::endl;
                 } else {
                     std::cout << i << ":" << '\t' << "NA" << std::endl;
                 }
