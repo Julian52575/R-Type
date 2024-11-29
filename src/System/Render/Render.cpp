@@ -23,14 +23,25 @@ void System::Render::processEvents() {
     }
 }
 
-void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites) {
+void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites,sparse_array<Component::Parallax>& parallaxes) {
     window.clear();
+    for (size_t i = 0; i < positions.size() && i < parallaxes.size() && i < sprites.size(); i++) {
+        if (positions[i].has_value() && parallaxes[i].has_value() && sprites[i].has_value()) {
+            float width = sprites[i].value().getGlobalBounds().width;
+            float x = positions[i].value().x;
+            while (x < window.getSize().x) {
+                sprites[i].value().setPosition(x, positions[i].value().y);
+                window.draw(sprites[i].value());
+                x += width;
+            }
+        }
+    }
+    
     for (size_t i = 0; i < positions.size() && i < sprites.size(); i++) {
         if (positions[i].has_value() && sprites[i].has_value()) {
             sprites[i].value().setPosition(positions[i].value().x, positions[i].value().y);
             window.draw(sprites[i].value());
         }
     }
-
     window.display();
 }

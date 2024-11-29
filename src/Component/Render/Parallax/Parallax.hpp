@@ -1,9 +1,11 @@
 #pragma once
 
-class Parallax {
-    public:
-        Parallax(float speed);
-        ~Parallax();
+namespace Component {
+    class Parallax {
+        public:
+            Parallax(float speed);
+            ~Parallax();
 
-        float speed;
+            float speed;
+    };
 };

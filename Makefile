@@ -15,6 +15,9 @@ all:
 debug:
 	g++ $(CXXFLAGS) -DDEBUG $(SRC) -o $(NAME) $(FLAGS)
 
+re: clean all
+
+
 clean:
 	rm $(NAME) || true
 

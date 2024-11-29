@@ -1,5 +1,5 @@
 #include "Parallax.hpp"
 
-Parallax::Parallax(float speed) : speed(speed) {}
+Component::Parallax::Parallax(float speed) : speed(speed) {}
 
-Parallax::~Parallax() {}
+Component::Parallax::~Parallax() {}
