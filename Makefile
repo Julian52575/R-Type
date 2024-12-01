@@ -1,5 +1,5 @@
 SRC = $(shell find src -type f -name "*.cpp")
-NAME = bs
+NAME = R-Type
 
 CXXFLAGS += --std=c++20 -g -Wall -Wextra
 
@@ -14,6 +14,9 @@ all:
 
 debug:
 	g++ $(CXXFLAGS) -DDEBUG $(SRC) -o $(NAME) $(FLAGS)
+
+re: clean all
+
 
 clean:
 	rm $(NAME) || true

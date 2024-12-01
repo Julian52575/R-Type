@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Audio.hpp>
+#include <memory>
 
 class Music {
         public:
@@ -12,6 +13,6 @@ class Music {
             void setLoop(bool loop);
             void updateStatus();
         private:
-            sf::Music music;
+            std::shared_ptr<sf::Music> music;
             bool is_playing;
     };
