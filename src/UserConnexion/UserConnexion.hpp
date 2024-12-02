@@ -1,4 +1,10 @@
+/**
+ * @file ClientConnection.hpp
+ * @brief Header file defining the ClientConnection class for managing UDP communication with a server.
+ */
+
 #pragma once
+
 #include <asio.hpp>
 #include "./tsqueue.hpp"
 #include "Messages/Message.hpp"
@@ -7,29 +13,101 @@
 #include <string>
 #define MAX_UDP_BUFF_SIZE 4096
 
+/**
+ * @brief Represents a client-side connection that manages UDP-based communication with a server.
+ * 
+ * @tparam T The type of messages handled by the client.
+ */
 template <typename T>
 class ClientConnection {
-    private:
-        unsigned int m_id;
-        asio::io_context m_context;
-        asio::ip::udp::socket m_socket;
-        std::thread m_threadContext;
-        std::shared_ptr<asio::ip::udp::endpoint> m_remote_endpoint;
-        tsqueue<Message<T>> m_qMessagesIn;
+private:
+    /**
+     * @brief The unique ID assigned to the client by the server.
+     */
+    unsigned int m_id;
 
-        void accept();
+    /**
+     * @brief ASIO context for managing asynchronous operations.
+     */
+    asio::io_context m_context;
 
-    public:
-        ClientConnection(std::string ip, int32_t port);
-        bool Send(Message<T> &msg);
-        std::optional<Message<T>> Receive();
-        void SetId(unsigned int id);
-        unsigned int GetId() { return m_id; }
-        ~ClientConnection();
+    /**
+     * @brief UDP socket used for sending and receiving data.
+     */
+    asio::ip::udp::socket m_socket;
+
+    /**
+     * @brief Thread running the ASIO context.
+     */
+    std::thread m_threadContext;
+
+    /**
+     * @brief Remote server's endpoint (IP and port).
+     */
+    std::shared_ptr<asio::ip::udp::endpoint> m_remote_endpoint;
+
+    /**
+     * @brief Thread-safe queue to store incoming messages.
+     */
+    tsqueue<Message<T>> m_qMessagesIn;
+
+    /**
+     * @brief Starts accepting incoming packets from the server and processes them.
+     */
+    void accept();
+
+public:
+    /**
+     * @brief Constructs a client connection to a specified server IP and port.
+     * 
+     * @param ip The IP address of the server.
+     * @param port The port on which the server is listening.
+     */
+    ClientConnection(std::string ip, int32_t port);
+
+    /**
+     * @brief Sends a message to the server.
+     * 
+     * @param msg The message to send.
+     * @return true if the message was successfully sent.
+     * @return false otherwise.
+     */
+    bool Send(Message<T> &msg);
+
+    /**
+     * @brief Retrieves the next incoming message from the queue.
+     * 
+     * @return An optional containing the next message, or std::nullopt if no messages are available.
+     */
+    std::optional<Message<T>> Receive();
+
+    /**
+     * @brief Sets the unique ID of the client.
+     * 
+     * @param id The ID assigned to the client by the server.
+     */
+    void SetId(unsigned int id);
+
+    /**
+     * @brief Gets the unique ID of the client.
+     * 
+     * @return The client's ID.
+     */
+    unsigned int GetId() { return m_id; }
+
+    /**
+     * @brief Destructor for the client connection.
+     * 
+     * Stops the ASIO context, joins the thread, and cleans up the socket.
+     */
+    ~ClientConnection();
 };
 
+// Implementation
+
 template <typename T>
-ClientConnection<T>::ClientConnection(std::string ip, int32_t port) : m_socket(m_context) {
+ClientConnection<T>::ClientConnection(std::string ip, int32_t port) 
+    : m_socket(m_context) {
     m_remote_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::make_address(ip), port);
     m_threadContext = std::thread([this]() { m_context.run(); });
     m_socket.open(asio::ip::udp::v4());
@@ -106,5 +184,5 @@ ClientConnection<T>::~ClientConnection() {
     if (m_socket.is_open()) {
         m_socket.close();
     }
-    std::cout << "[SERVER] Server stopped" << std::endl;
+    std::cout << "[CLIENT] Server stopped" << std::endl;
 }
