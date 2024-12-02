@@ -10,9 +10,9 @@ class tsqueue {
     public:
         tsqueue() = default;
         tsqueue(const tsqueue&) = delete;
-        tsqueue& operator=(const tsqueue&) = delete; 
+        tsqueue& operator=(const tsqueue&) = delete;
 
-        unsigned long size() {
+        uint32_t size() {
             std::lock_guard<std::mutex> lock(m_mutex);
             return m_queue.size();
         }

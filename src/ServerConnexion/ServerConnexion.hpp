@@ -1,8 +1,9 @@
 #pragma once
 #include <asio.hpp>
-#include "tsqueue.hpp"
+#include "./tsqueue.hpp"
 #include "Messages/OwnedMessage.hpp"
 #include <vector>
+#include <memory>
 #define MAX_UDP_BUFF_SIZE 4096
 
 template <typename T>
@@ -11,16 +12,13 @@ class ServerConnection {
         asio::io_context m_context;
         asio::ip::udp::socket m_socket;
         std::thread m_threadContext;
-        std::thread m_threadServer;
         tsqueue<OwnedMessage<T>> m_qMessagesIn;
-        tsqueue<OwnedMessage<T>> m_qMessagesOut;
         std::vector<User> m_vUsers;
 
         void accept();
-        bool SendAsio(const Message<T> &msg, User recipient);
 
     public:
-        ServerConnection(int32_t port);
+        explicit ServerConnection(int32_t port);
         bool Send(const Message<T> &msg, User recipient);
         bool SendAll(const Message<T> &msg);
         std::vector<User> &GetUsers();
@@ -32,17 +30,8 @@ class ServerConnection {
 template <typename T>
 ServerConnection<T>::ServerConnection(int32_t port) : m_socket(m_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)) {
     m_threadContext = std::thread([this]() { m_context.run(); });
-    m_threadServer = std::thread([this]() {
-        while (m_socket.is_open()) {
-            while (!m_qMessagesOut.empty()) {
-                std::optional<OwnedMessage<T>> msg = m_qMessagesOut.pop();
-                if (!msg)
-                    continue;
-                SendAsio(msg->GetMessage(), msg->GetOwner());
-            }
-        }
-    });
     accept();
+    std::cout << "[SERVER] Server started on: " << m_socket.local_endpoint() << std::endl;
 }
 
 template <typename T>
@@ -79,7 +68,7 @@ void ServerConnection<T>::accept() {
                         }
                         catch(const std::runtime_error& e) {
                             std::cerr << e.what() << '\n';
-                        }   
+                        }
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "[SERVER] Error deserializing message: " << e.what() << std::endl;
@@ -94,24 +83,18 @@ void ServerConnection<T>::accept() {
 }
 
 template <typename T>
-bool ServerConnection<T>::SendAsio(const Message<T>& msg, User recipient) {
+bool ServerConnection<T>::Send(const Message<T> &msg, User recipient) {
     std::vector<uint8_t> serialized_msg = msg.serialize();
 
-    m_socket.async_send_to(asio::buffer(serialized_msg), recipient.endpoint, 
+    m_socket.async_send_to(asio::buffer(serialized_msg), recipient.endpoint,
         [serialized_msg](std::error_code ec, std::size_t bytes_transferred) {
             if (ec) {
                 std::cerr << "[SERVER] Failed to send message: " << ec.message() << std::endl;
             } else {
                 std::cout << "Message sent successfully (" << bytes_transferred << " bytes)" << std::endl;
             }
-        });
-
-    return true;
-}
-
-template <typename T>
-bool ServerConnection<T>::Send(const Message<T> &msg, User recipient) {
-    m_qMessagesOut.push(OwnedMessage<T>(recipient, msg));
+        }
+    );
     return true;
 }
 
@@ -150,9 +133,6 @@ ServerConnection<T>::~ServerConnection() {
     m_context.stop();
     if (m_threadContext.joinable()) {
         m_threadContext.join();
-    }
-    if (m_threadServer.joinable()) {
-        m_threadServer.join();
     }
     if (m_socket.is_open()) {
         m_socket.close();

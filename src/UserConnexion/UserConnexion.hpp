@@ -1,8 +1,10 @@
 #pragma once
 #include <asio.hpp>
-#include "tsqueue.hpp"
+#include "./tsqueue.hpp"
 #include "Messages/Message.hpp"
 #include <vector>
+#include <memory>
+#include <string>
 #define MAX_UDP_BUFF_SIZE 4096
 
 template <typename T>
@@ -12,13 +14,10 @@ class ClientConnection {
         asio::io_context m_context;
         asio::ip::udp::socket m_socket;
         std::thread m_threadContext;
-        std::thread m_threadServer;
         std::shared_ptr<asio::ip::udp::endpoint> m_remote_endpoint;
         tsqueue<Message<T>> m_qMessagesIn;
-        tsqueue<Message<T>> m_qMessagesOut;
 
         void accept();
-        bool SendAsio(const Message<T> &msg);
 
     public:
         ClientConnection(std::string ip, int32_t port);
@@ -35,21 +34,11 @@ ClientConnection<T>::ClientConnection(std::string ip, int32_t port) : m_socket(m
     m_threadContext = std::thread([this]() { m_context.run(); });
     m_socket.open(asio::ip::udp::v4());
     m_id = 0;
+    accept();
     Message<T> msg;
     msg.header.type = T::ServerConnexionRequest;
     msg.header.size = 0;
     Send(msg);
-    m_threadServer = std::thread([this]() {
-        while (m_socket.is_open()) {
-            while (!m_qMessagesOut.empty()) {
-                std::optional<Message<T>> msg = m_qMessagesOut.pop();
-                if (!msg)
-                    continue;
-                SendAsio(*msg);
-            }
-        }
-    });
-    accept();
 }
 
 template <typename T>
@@ -82,25 +71,19 @@ void ClientConnection<T>::accept() {
 }
 
 template <typename T>
-bool ClientConnection<T>::SendAsio(const Message<T>& msg) {
+bool ClientConnection<T>::Send(Message<T> &msg) {
+    msg << m_id;
     std::vector<uint8_t> serialized_msg = msg.serialize();
 
-    m_socket.async_send_to(asio::buffer(serialized_msg), *m_remote_endpoint, 
+    m_socket.async_send_to(asio::buffer(serialized_msg), *m_remote_endpoint,
         [serialized_msg](std::error_code ec, std::size_t bytes_transferred) {
             if (ec) {
                 std::cerr << "[CLIENT] Failed to send message: " << ec.message() << std::endl;
             } else {
                 std::cout << "Message sent successfully (" << bytes_transferred << " bytes)" << std::endl;
             }
-        });
-
-    return true;
-}
-
-template <typename T>
-bool ClientConnection<T>::Send(Message<T> &msg) {
-    msg << m_id;
-    m_qMessagesOut.push(msg);
+        }
+    );
     return true;
 }
 

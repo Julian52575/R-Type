@@ -1,7 +1,7 @@
 #include <array>
 #include <iostream>
 #include <asio.hpp>
-#include "src/UserConnexion/UserConnexion.hpp"
+#include "UserConnexion/UserConnexion.hpp"
 
 using asio::ip::udp;
 
@@ -27,7 +27,8 @@ void handleMessage(Message<CustomMsgTypes> msg, ClientConnection<CustomMsgTypes>
 
 int main(int argc, char* argv[])
 {
-  if (argc != 4) {
+  try {
+  if (argc != 3) {
     std::cerr << "Usage: client <host>" << std::endl;
     return 1;
   }
@@ -45,6 +46,9 @@ int main(int argc, char* argv[])
       msg << data;
       client.Send(msg);
     }
+  }
+  } catch(const std::exception& e) {
+    std::cerr << e.what() << '\n';
   }
   return 0;
 }

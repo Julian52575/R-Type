@@ -19,7 +19,6 @@ void handleMessage(OwnedMessage<CustomMsgTypes> &msg, ServerConnection<CustomMsg
 int main() {
     try {
         ServerConnection<CustomMsgTypes> server(60000);
-        std::cout << "[SERVER] Server started" << std::endl;
 
         Message<CustomMsgTypes> msg;
         msg.header.type = CustomMsgTypes::Message;
