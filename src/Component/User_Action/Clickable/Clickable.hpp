@@ -9,3 +9,4 @@ class Clickable{
         void onRightClick();
         sf::FloatRect getBounds() const;
 };
+

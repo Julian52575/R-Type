@@ -1,4 +1,8 @@
-#include "Scripting.hpp"
+#include "src/Component/Game/Scripting/Scripting.hpp"
+#include <utility>
+#include <iostream>
+#include <vector>
+#include <string>
 
 Scripting::Scripting() {
     L = luaL_newstate();
@@ -50,7 +54,7 @@ void Scripting::push() {}
 
 template <typename... Args>
 std::vector<std::any> Scripting::callFunction(std::string name, Args... args) {
-    if(!lua_getglobal(L,name.c_str())){
+    if(!lua_getglobal(L, name.c_str())){
         std::cerr << "Lua error: cannot find function " << name << std::endl;
         return {};
     }
@@ -64,7 +68,7 @@ std::vector<std::any> Scripting::callFunction(std::string name, Args... args) {
     push(args...);
     int nbr_arg = sizeof...(args);
 
-    if(lua_pcall(L,nbr_arg,LUA_MULTRET,0)){
+    if (lua_pcall(L, nbr_arg, LUA_MULTRET, 0)) {
         std::cerr << "Lua error: " << lua_tostring(L, -1) << std::endl;
         lua_pop(L, 1);
         return {};
@@ -73,7 +77,7 @@ std::vector<std::any> Scripting::callFunction(std::string name, Args... args) {
     std::vector<std::any> results;
     int nbr_results = lua_gettop(L);
     if (nbr_results == 0) {
-        lua_pop(L,1);
+        lua_pop(L, 1);
         return results;
     }
 
@@ -81,17 +85,16 @@ std::vector<std::any> Scripting::callFunction(std::string name, Args... args) {
         if (lua_isnumber(L, i)) {
             double result = lua_tonumber(L, i);
             results.push_back(result);
-        }
-        else if (lua_isstring(L, i)) {
+        } else if (lua_isstring(L, i)) {
             std::string result = lua_tostring(L, i);
             results.push_back(result);
-        }
-        else if (lua_isboolean(L, i)) {
+        } else if (lua_isboolean(L, i)) {
             bool result = lua_toboolean(L, i);
             results.push_back(result);
         }
     }
-    
-    lua_pop(L,nbr_results);
+
+    lua_pop(L, nbr_results);
     return results;
 }
+

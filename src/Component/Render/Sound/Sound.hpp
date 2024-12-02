@@ -1,9 +1,10 @@
 #pragma once
 #include <SFML/Audio.hpp>
+#include <string>
 
 class Sound {
         public:
-            Sound(const std::string& filename);
+            explicit Sound(const std::string& filename);
             ~Sound();
             void play();
             void pause();
@@ -16,4 +17,5 @@ class Sound {
             sf::Sound sound;
             bool is_playing;
             bool can_play;
-    };
+};
+

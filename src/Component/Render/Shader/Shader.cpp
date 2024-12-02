@@ -1,6 +1,9 @@
-#include "Shader.hpp"
+#include "src/Component/Render/Shader/Shader.hpp"
+#include <memory>
+#include <string>
+#include <unordered_map>
 
-Shader:: Shader(const std::string& filename,std::unordered_map<std::string, float> uniforms = {}) : uniforms(uniforms) {
+Shader:: Shader(const std::string& filename, std::unordered_map<std::string, float> uniforms = {}) : uniforms(uniforms) {
     shader = std::make_shared<sf::Shader>();
     if (!((*shader).loadFromFile(filename, sf::Shader::Fragment))) {
         throw std::runtime_error("Could not load shader");
@@ -21,3 +24,4 @@ void Shader::setUniform(const std::string& name, float value) {
 std::unordered_map<std::string, float> &Shader::getUniforms() {
     return uniforms;
 }
+

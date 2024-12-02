@@ -1,5 +1,4 @@
 #pragma once
-
 #include <utility>
 
 class Velocity {
@@ -14,3 +13,4 @@ class Velocity {
         float originalX;
         float originalY;
 };
+

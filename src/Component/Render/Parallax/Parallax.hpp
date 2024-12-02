@@ -3,9 +3,10 @@
 namespace Component {
     class Parallax {
         public:
-            Parallax(float speed);
+            explicit Parallax(float speed);
             ~Parallax();
 
             float speed;
     };
 };
+

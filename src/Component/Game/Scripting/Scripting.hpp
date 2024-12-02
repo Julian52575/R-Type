@@ -3,14 +3,14 @@
 #include <iostream>
 #include <any>
 #include <vector>
+#include <string>
 
 class Scripting {
     private:
         lua_State* L;
-
     public:
         Scripting();
-        Scripting(const std::string&);
+        explicit Scripting(const std::string&);
         ~Scripting();
         void executeScript(const std::string& filename);
         template <typename T>

@@ -1,4 +1,5 @@
-#include "Sound.hpp"
+#include "src/Component/Render/Sound/Sound.hpp"
+#include <string>
 
 Sound::Sound(const std::string& filename) {
     buffer.loadFromFile(filename);

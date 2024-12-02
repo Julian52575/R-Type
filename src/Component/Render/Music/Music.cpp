@@ -1,4 +1,6 @@
-#include "Music.hpp"
+#include "src/Component/Render/Music/Music.hpp"
+#include <string>
+#include <memory>
 
 Music::Music(const std::string& filename) {
     this->music = std::make_shared<sf::Music>();
@@ -39,3 +41,4 @@ void Music::updateStatus() {
         this->is_playing = false;
     }
 }
+

@@ -1,4 +1,5 @@
-#include "Velocity.hpp"
+#include "src/Component/Transformations/Velocity/Velocity.hpp"
+#include <utility>
 
 Velocity::Velocity(float x, float y){
     this->x = x;
@@ -17,3 +18,4 @@ void Velocity::reset() {
 std::pair<float, float> Velocity::getBase() {
     return std::make_pair(this->originalX, this->originalY);
 }
+

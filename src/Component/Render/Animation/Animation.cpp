@@ -1,4 +1,4 @@
-#include "Animation.hpp"
+#include "src/Component/Render/Animation/Animation.hpp"
 
 Component::Animation::Animation(sf::IntRect rectSize, int nbrFrames, float speed){
     this->rectSize = rectSize;
@@ -25,3 +25,4 @@ void Component::Animation::setFrame(int frame){
 sf::IntRect Component::Animation::getFrame(){
     return sf::IntRect(rectSize.left + rectSize.width * currentFrame, rectSize.top, rectSize.width, rectSize.height);
 }
+

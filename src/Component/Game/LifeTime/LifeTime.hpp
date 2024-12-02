@@ -2,13 +2,12 @@
 
 class LifeTime{
     public:
-        LifeTime(float time);
+        explicit LifeTime(float time);
         ~LifeTime();
         void update(float deltaTime);
         bool isDead();
-
-
     private:
         float time;
         float current_time;
 };
+

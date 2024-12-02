@@ -14,3 +14,4 @@ class Attack {
         float attackSpeed;
         float currentCooldown;
 };
+

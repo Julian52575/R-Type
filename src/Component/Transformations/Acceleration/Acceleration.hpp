@@ -7,3 +7,4 @@ class Acceleration {
         float x;
         float y;
 };
+

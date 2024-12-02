@@ -1,14 +1,18 @@
-#include "Sprite.hpp"
+#include "src/Component/Render/Sprite/Sprite.hpp"
+#include <string>
+#include <memory>
+#include <utility>
 
-Sprite::Sprite(const std::string& filename,std::pair<float,float> scale,std::pair<float,float> origin) {
+Sprite::Sprite(const std::string& filename, std::pair<float, float> scale, std::pair<float, float> origin) {
     this->texture = std::make_shared<sf::Texture>();
     this->isdefaultTexture = false;
-    if(!(*texture).loadFromFile(filename))
+    if(!(*texture).loadFromFile(filename)) {
         this->MakeTexture();
-    else
-        setTexture(*texture);    
-    setOrigin(origin.first,origin.second);
-    setScale(scale.first,scale.second);
+    } else {
+        setTexture(*texture);
+    }
+    setOrigin(origin.first, origin.second);
+    setScale(scale.first, scale.second);
 }
 
 Sprite::~Sprite() {}
@@ -16,7 +20,6 @@ Sprite::~Sprite() {}
 sf::Texture &Sprite::getTexture() {
     return *texture;
 }
-
 
 void Sprite::MakeTexture(){
     if (!(*texture).create(50, 50)) {
@@ -38,3 +41,4 @@ void Sprite::MakeTexture(){
     setTexture(*texture);
     isdefaultTexture = true;
 }
+

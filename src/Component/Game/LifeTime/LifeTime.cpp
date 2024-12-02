@@ -1,4 +1,4 @@
-#include "LifeTime.hpp"
+#include "src/Component/Game/LifeTime/LifeTime.hpp"
 
 LifeTime::LifeTime(float time) : time(time) {
     this->current_time = 0.0f;

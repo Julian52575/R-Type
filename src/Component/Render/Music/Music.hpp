@@ -1,10 +1,11 @@
 #pragma once
+#include <string>
 #include <SFML/Audio.hpp>
 #include <memory>
 
 class Music {
         public:
-            Music(const std::string& filename);
+            explicit Music(const std::string& filename);
             ~Music();
             void play();
             void pause();
@@ -15,4 +16,5 @@ class Music {
         private:
             std::shared_ptr<sf::Music> music;
             bool is_playing;
-    };
+};
+

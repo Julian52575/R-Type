@@ -1,4 +1,4 @@
-#include "Health.hpp"
+#include "src/Component/Game/Health/Health.hpp"
 
 Health::Health(int _health, int _maxHealth) {
     if (_health > _maxHealth)
@@ -17,3 +17,4 @@ Health::~Health() {}
 void Health::takeDamage(int damage) {
     this->health -= damage;
 }
+

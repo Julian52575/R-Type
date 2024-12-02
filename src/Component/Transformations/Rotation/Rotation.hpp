@@ -2,7 +2,8 @@
 
 class Rotation  {
     public:
-        Rotation(float angle);
+        explicit Rotation(float angle);
         ~Rotation();
         float angle;
 };
+

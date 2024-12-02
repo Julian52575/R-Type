@@ -1,4 +1,4 @@
-#include "Attack.hpp"
+#include "src/Component/Game/Attack/Attack.hpp"
 
 Attack::Attack(int damage, float attackSpeed) {
     this->damage = damage;
@@ -23,3 +23,4 @@ void Attack::reset() {
 int Attack::dealDamage() {
     return this->damage;
 }
+

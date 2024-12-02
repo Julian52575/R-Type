@@ -1,4 +1,4 @@
-#include "Scale.hpp"
+#include "src/Component/Transformations/Scale/Scale.hpp"
 
 Scale::Scale(float x, float y){
     this->x = x;
@@ -6,3 +6,4 @@ Scale::Scale(float x, float y){
 }
 
 Scale::~Scale() {}
+

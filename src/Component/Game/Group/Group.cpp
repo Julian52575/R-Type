@@ -1,4 +1,5 @@
-#include "Group.hpp"
+#include "src/Component/Game/Group/Group.hpp"
+#include <string>
 
 Group::Group() {}
 
@@ -28,3 +29,4 @@ void Group::remove(std::string group) {
 void Group::clear() {
     this->groups.clear();
 }
+
