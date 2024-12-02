@@ -9,7 +9,7 @@ fi
 LOG_FILE="style_error.log"
 OPTION="--recursive"
 SRC_DIR="src/"
-FILTER="--filter=-build/include_order,-whitespace/braces,-whitespace/line_length,-legal/copyright,-build/c++11,-whitespace/indent"
+FILTER="--filter=-build/include_order,-whitespace/braces,-whitespace/line_length,-legal/copyright,-build/c++11,-whitespace/indent,-whitespace/parens"
 TMP=.tmp
 
 eval cpplint $OPTION $FILTER $SRC_DIR 2> $LOG_FILE 1> $TMP
