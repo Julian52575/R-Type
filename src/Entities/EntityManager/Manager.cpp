@@ -1,4 +1,5 @@
-#include "Manager.hpp"
+#include "src/Entities/EntityManager/Manager.hpp"
+#include <vector>
 
 EntityManager::EntityManager(std::size_t maxEntities){
     this->activeEntities.resize(maxEntities, false);
@@ -7,7 +8,7 @@ EntityManager::EntityManager(std::size_t maxEntities){
     }
 }
 
-EntityManager::~EntityManager(){};
+EntityManager::~EntityManager() {}
 
 Entity EntityManager::createEntity(){
     if (this->availableEntities.empty()) {
@@ -43,3 +44,4 @@ std::vector<Entity> EntityManager::getActiveEntities() const {
     }
     return entities;
 }
+

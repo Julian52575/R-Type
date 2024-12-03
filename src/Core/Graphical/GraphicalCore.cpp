@@ -1,5 +1,7 @@
-#include "GraphicalCore.hpp"
-
+#include "src/Core/Graphical/GraphicalCore.hpp"
+#include <memory>
+#include <utility>
+#include <string>
 
 GraphicalCore::GraphicalCore() {
     this->maker = std::make_unique<EntityMaker>();
@@ -70,14 +72,15 @@ void GraphicalCore::run(){
         this->render.processEvents();
 
         this->keyBoardInput.update(this->controllable, this->velo);
-        //script.update(this->scripting);
+        // script.update(this->scripting);
         this->movement.update(this->pos, this->velo, deltaTime);
         this->parallaxSystem.update(this->pos, this->sprite, this->parallax, deltaTime);
         this->animations.update(this->animation, this->sprite, deltaTime);
         this->collision.update(this->pos, this->hitbox);
-        //mouseInput.update(this->pos, this->velo, this->sprite);
+        // mouseInput.update(this->pos, this->velo, this->sprite);
         // this->audio.update(this->musics, this->sounds);
-        //lifetime.update(this->pos, this->velo, this->acc);
+        // lifetime.update(this->pos, this->velo, this->acc);
         this->render.update(this->pos, this->sprite, this->parallax);
     }
 }
+

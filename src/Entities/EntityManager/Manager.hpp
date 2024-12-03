@@ -9,7 +9,7 @@
 
 class EntityManager {
     public:
-        EntityManager(std::size_t maxEntities = 1000);
+        explicit EntityManager(std::size_t maxEntities = 1000);
         ~EntityManager();
         Entity createEntity();
         void destroyEntity(Entity entity);
