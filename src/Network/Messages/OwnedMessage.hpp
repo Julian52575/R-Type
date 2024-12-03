@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "User/User.hpp"
-#include "Messages/Message.hpp"
+#include "src/Network/User/User.hpp"
+#include "src/Network/Messages/Message.hpp"
 
 /**
  * @class OwnedMessage
@@ -94,3 +94,4 @@ User &OwnedMessage<T>::GetOwner() {
 template <typename T>
 OwnedMessage<T>::~OwnedMessage() {
 }
+

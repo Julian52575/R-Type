@@ -1,8 +1,9 @@
 #pragma once
 
+#include "src/Network/tsqueue.hpp"
+#include "src/Network/Messages/OwnedMessage.hpp"
+
 #include <asio.hpp>
-#include "./tsqueue.hpp"
-#include "Messages/OwnedMessage.hpp"
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -14,7 +15,7 @@
 
 /**
  * @brief Represents a server-side connection that manages UDP-based communication with multiple users.
- * 
+ *
  * @tparam T The type of messages handled by the server.
  */
 template <typename T>
@@ -53,14 +54,14 @@ private:
 public:
     /**
      * @brief Constructs a server connection listening on the specified port.
-     * 
+     *
      * @param port The port to bind the server to.
      */
     explicit ServerConnection(int32_t port);
 
     /**
      * @brief Sends a message to a specific recipient.
-     * 
+     *
      * @param msg The message to send.
      * @param recipient The recipient of the message.
      * @return true if the message was successfully sent.
@@ -70,7 +71,7 @@ public:
 
     /**
      * @brief Sends a message to all connected users.
-     * 
+     *
      * @param msg The message to send.
      * @return true if the message was successfully sent to all users.
      * @return false otherwise.
@@ -79,14 +80,14 @@ public:
 
     /**
      * @brief Retrieves the list of currently connected users.
-     * 
+     *
      * @return A reference to the vector of connected users.
      */
     std::vector<User> &GetUsers();
 
     /**
      * @brief Retrieves a specific user by their ID.
-     * 
+     *
      * @param id The ID of the user to retrieve.
      * @return A reference to the user.
      * @throws std::runtime_error if the user with the given ID is not found.
@@ -95,14 +96,14 @@ public:
 
     /**
      * @brief Retrieves the next incoming message from the queue.
-     * 
+     *
      * @return An optional containing the next message, or std::nullopt if no messages are available.
      */
     std::optional<OwnedMessage<T>> Receive();
 
     /**
      * @brief Destructor for the server connection.
-     * 
+     *
      * Stops the ASIO context, joins the thread, and cleans up the socket.
      */
     ~ServerConnection();
@@ -219,3 +220,4 @@ ServerConnection<T>::~ServerConnection() {
     }
     std::cout << "[SERVER] Server stopped" << std::endl;
 }
+

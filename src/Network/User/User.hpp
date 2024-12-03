@@ -23,3 +23,4 @@ struct User {
      */
     asio::ip::udp::endpoint endpoint;
 };
+

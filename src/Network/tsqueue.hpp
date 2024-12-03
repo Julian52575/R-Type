@@ -41,7 +41,7 @@ public:
 
     /**
      * @brief Returns the current size of the queue.
-     * 
+     *
      * @return Number of elements in the queue.
      */
     uint32_t size() {
@@ -51,7 +51,7 @@ public:
 
     /**
      * @brief Checks if the queue is empty.
-     * 
+     *
      * @return `true` if the queue is empty, `false` otherwise.
      */
     bool empty() {
@@ -83,7 +83,7 @@ public:
 
     /**
      * @brief Adds a new element to the end of the queue.
-     * 
+     *
      * @param item The element to add.
      */
     void push(const T& item) {
@@ -102,3 +102,4 @@ private:
     std::deque<T> m_queue;  ///< Underlying container for storing the elements.
     mutable std::mutex m_mutex;  ///< Mutex to secure access to the queue.
 };
+
