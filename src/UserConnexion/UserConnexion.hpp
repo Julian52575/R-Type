@@ -106,7 +106,7 @@ public:
 // Implementation
 
 template <typename T>
-ClientConnection<T>::ClientConnection(std::string ip, int32_t port) 
+ClientConnection<T>::ClientConnection(std::string ip, int32_t port)
     : m_socket(m_context) {
     m_remote_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::make_address(ip), port);
     m_threadContext = std::thread([this]() { m_context.run(); });

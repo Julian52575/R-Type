@@ -21,8 +21,8 @@
  */
 template <typename T>
 struct MessageHeader {
-    T type; ///< The type of the message.
-    uint32_t size; ///< Total size of the message (header + body).
+    T type;  ///< The type of the message.
+    uint32_t size;  ///< Total size of the message (header + body).
 };
 
 /**
@@ -33,8 +33,8 @@ struct MessageHeader {
  */
 template <typename T>
 struct Message {
-    MessageHeader<T> header; ///< The message header.
-    std::vector<uint8_t> body; ///< The message body, containing raw data.
+    MessageHeader<T> header;  ///< The message header.
+    std::vector<uint8_t> body;  ///< The message body, containing raw data.
 
     /**
      * @brief Calculates the total size of the message (header + body).

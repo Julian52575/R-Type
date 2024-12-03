@@ -20,8 +20,8 @@
 template <typename T>
 class OwnedMessage {
 private:
-    User m_owner; ///< The owner of the message (sender).
-    Message<T> m_message; ///< Message associated with the owner.
+    User m_owner;  ///< The owner of the message (sender).
+    Message<T> m_message;  ///< Message associated with the owner.
 
 public:
     /**
@@ -60,7 +60,7 @@ public:
  * @param msg The message associated with the owner.
  */
 template <typename T>
-OwnedMessage<T>::OwnedMessage(User m_owner, const Message<T> &msg) 
+OwnedMessage<T>::OwnedMessage(User m_owner, const Message<T> &msg)
     : m_owner(m_owner), m_message(msg) {
 }
 

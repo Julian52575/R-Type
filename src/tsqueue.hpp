@@ -99,6 +99,6 @@ public:
     }
 
 private:
-    std::deque<T> m_queue; ///< Underlying container for storing the elements.
-    mutable std::mutex m_mutex; ///< Mutex to secure access to the queue.
+    std::deque<T> m_queue;  ///< Underlying container for storing the elements.
+    mutable std::mutex m_mutex;  ///< Mutex to secure access to the queue.
 };
