@@ -7,6 +7,7 @@ namespace System {
         public:
             movement();
             ~movement();
-            void update(sparse_array<Position>& positions, sparse_array<Velocity>& velocitiess,float deltaTime);
+            void update(sparse_array<Position>& positions, sparse_array<Velocity>& velocitiess, float deltaTime);
     };
 }
+

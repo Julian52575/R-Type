@@ -5,8 +5,8 @@
 //
 */
 
-#ifndef SPARSE_ARRAY_HPP
-#define SPARSE_ARRAY_HPP
+#ifndef SRC_SPARSE_ARRAY_HPP_
+#define SRC_SPARSE_ARRAY_HPP_
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
@@ -19,19 +19,19 @@
 
 template <typename Component>
 class sparse_array {
-    public :
+    public:
         using value_type = std::optional<Component>;
         using reference_type = value_type &;
         using const_reference_type = value_type const &;
-        using container_t = std::vector <value_type>; // optionally add your allocator template here .
-        using size_type = typename container_t :: size_type ;
-        using iterator = typename container_t :: iterator ;
-        using const_iterator = typename container_t :: const_iterator ;
+        using container_t = std::vector <value_type>;  // optionally add your allocator template here .
+        using size_type = typename container_t :: size_type;
+        using iterator = typename container_t :: iterator;
+        using const_iterator = typename container_t :: const_iterator;
 
-    public :
-        sparse_array() = default; // You can add more constructors .
+    public:
+        sparse_array() = default;  // You can add more constructors .
 
-        sparse_array(sparse_array const &og)// copy constructor
+        sparse_array(sparse_array const &og)  // copy constructor
         {
             _data = og._data;
             // if (og.size() > this->size()) {
@@ -46,7 +46,7 @@ class sparse_array {
             //     }
             // }
         }
-        sparse_array(sparse_array &&og) noexcept // move constructor
+        sparse_array(sparse_array &&og) noexcept  // move constructor
         {
             _data = std::move(og._data);
             // if (og.size() > this->size()) {
@@ -64,14 +64,14 @@ class sparse_array {
 
         ~sparse_array() = default;
 
-        sparse_array &operator=(sparse_array const &og) // copy assignment operator
+        sparse_array &operator=(sparse_array const &og)  // copy assignment operator
         {
             if (this != &og) {
                 this->_data = og._data;
             }
             return *this;
         }
-        sparse_array &operator=(sparse_array &&og) noexcept // move assignment operator
+        sparse_array &operator=(sparse_array &&og) noexcept  // move assignment operator
         {
             if (this != &og) {
                 this->_data = std::move(og._data);
@@ -156,15 +156,15 @@ class sparse_array {
             }
 
             // leaving work to emplace
-            //this->_data.emplace(it, std::forward<Params>(args)...);
+            // this->_data.emplace(it, std::forward<Params>(args)...);
 
             // allocator_traits with [] operator
-            //this->_data[pos] = std::allocator_traits<Params>( std::forward<Params>(args...) );
+            // this->_data[pos] = std::allocator_traits<Params>( std::forward<Params>(args...) );
 
             // gpt answer
             /* Removed for std::optional
             auto
-            //std::allocator<Component>&
+            // std::allocator<Component>&
                 allocator = this->_data.get_allocator();
 
             // detruit la classe présente a l'index POS du vecteur
@@ -230,4 +230,4 @@ class sparse_array {
         container_t _data;
 };
 
-#endif
+#endif  // SRC_SPARSE_ARRAY_HPP_

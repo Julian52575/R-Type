@@ -5,17 +5,19 @@
 
 #pragma once
 
-#include <asio.hpp>
-#include "./tsqueue.hpp"
+#include "src/tsqueue.hpp"
 #include "Messages/Message.hpp"
+
+#include <asio.hpp>
 #include <vector>
 #include <memory>
 #include <string>
+#include <iostream>
 #define MAX_UDP_BUFF_SIZE 4096
 
 /**
  * @brief Represents a client-side connection that manages UDP-based communication with a server.
- * 
+ *
  * @tparam T The type of messages handled by the client.
  */
 template <typename T>
@@ -59,7 +61,7 @@ private:
 public:
     /**
      * @brief Constructs a client connection to a specified server IP and port.
-     * 
+     *
      * @param ip The IP address of the server.
      * @param port The port on which the server is listening.
      */
@@ -67,7 +69,7 @@ public:
 
     /**
      * @brief Sends a message to the server.
-     * 
+     *
      * @param msg The message to send.
      * @return true if the message was successfully sent.
      * @return false otherwise.
@@ -76,28 +78,28 @@ public:
 
     /**
      * @brief Retrieves the next incoming message from the queue.
-     * 
+     *
      * @return An optional containing the next message, or std::nullopt if no messages are available.
      */
     std::optional<Message<T>> Receive();
 
     /**
      * @brief Sets the unique ID of the client.
-     * 
+     *
      * @param id The ID assigned to the client by the server.
      */
     void SetId(unsigned int id);
 
     /**
      * @brief Gets the unique ID of the client.
-     * 
+     *
      * @return The client's ID.
      */
     unsigned int GetId() { return m_id; }
 
     /**
      * @brief Destructor for the client connection.
-     * 
+     *
      * Stops the ASIO context, joins the thread, and cleans up the socket.
      */
     ~ClientConnection();
@@ -186,3 +188,4 @@ ClientConnection<T>::~ClientConnection() {
     }
     std::cout << "[CLIENT] Server stopped" << std::endl;
 }
+

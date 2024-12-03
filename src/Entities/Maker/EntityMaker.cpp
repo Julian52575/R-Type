@@ -1,14 +1,17 @@
-#include "EntityMaker.hpp"
+#include "src/Entities/Maker/EntityMaker.hpp"
+#include <utility>
+#include <memory>
+#include <string>
 
 EntityMaker::EntityMaker() {}
 
 EntityMaker::~EntityMaker(){}
 
-void EntityMaker::setEntity(Entity e){
+void EntityMaker::setEntity(Entity e) {
     this->e = std::make_shared<Entity>(e);
 }
 
-void EntityMaker::setSprite(const std::string& texturePath, std::pair<float,float> scale, std::pair<float,float> origin, sparse_array<Sprite>& spriteList){
+void EntityMaker::setSprite(const std::string& texturePath, std::pair<float, float> scale, std::pair<float, float> origin, sparse_array<Sprite>& spriteList) {
     spriteList.emplace_at(*e, texturePath, scale, origin);
 }
 
@@ -31,3 +34,4 @@ void EntityMaker::setAnimations(const sf::IntRect& rect, int frames, float durat
 void EntityMaker::setParallax(float speed, sparse_array<Component::Parallax>& parallaxList){
     parallaxList.emplace_at(*e, speed);
 }
+

@@ -1,4 +1,4 @@
-#include "Animation.hpp"
+#include "src/System/Animation/Animation.hpp"
 
 System::Animation::Animation(){}
 
@@ -12,3 +12,4 @@ void System::Animation::update(sparse_array<Component::Animation>& animations, s
         }
     }
 }
+

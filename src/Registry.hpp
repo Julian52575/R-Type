@@ -5,8 +5,8 @@
 //
 //
 
-#ifndef REGISTRY_HPP
-#define REGISTRY_HPP
+#ifndef SRC_REGISTRY_HPP_
+#define SRC_REGISTRY_HPP_
 #include <exception>
 #include <stdexcept>
 #include <type_traits>
@@ -15,9 +15,9 @@
 #include <typeindex>
 #include <any>
 
-#include "Sparse_Array.hpp"
-#include "Component/Liste.hpp"
-#include "ECSExecption.hpp"
+#include "src/Sparse_Array.hpp"
+#include "src/Component/Liste.hpp"
+#include "src/ECSExecption.hpp"
 
 class registry {
     public:
@@ -57,4 +57,4 @@ class registry {
         std::unordered_map<std::type_index, std::any> _components_arrays;
 };
 
-#endif
+#endif  // SRC_REGISTRY_HPP_

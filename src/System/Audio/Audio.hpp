@@ -10,4 +10,5 @@ namespace System {
             ~Audio();
             void update(sparse_array<Music>& musics, sparse_array<Sound>& sounds);
     };
-};
+};  // namespace System
+

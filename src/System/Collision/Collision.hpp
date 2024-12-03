@@ -12,3 +12,4 @@ namespace System {
             void update(sparse_array<Position>& positions, sparse_array<Hitbox>& hitboxes);
     };
 }
+

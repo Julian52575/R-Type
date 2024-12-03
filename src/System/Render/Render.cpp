@@ -1,4 +1,4 @@
-#include "Render.hpp"
+#include "src/System/Render/Render.hpp"
 
 System::Render::Render() {
     window.create(sf::VideoMode(800, 600), "ECS");
@@ -31,7 +31,7 @@ void System::Render::processEvents() {
     }
 }
 
-void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites,sparse_array<Component::Parallax>& parallaxes) {
+void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes) {
     window.clear();
 
     for (size_t i = 0; i < positions.size() && i < parallaxes.size() && i < sprites.size(); i++) {
@@ -46,7 +46,6 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
             }
         }
     }
-    
     for (size_t i = 0; i < positions.size() && i < sprites.size(); i++) {
         if (positions[i].has_value() && sprites[i].has_value()) {
             sprites[i].value().setPosition(positions[i].value().x, positions[i].value().y);
@@ -56,3 +55,4 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
     }
     window.display();
 }
+
