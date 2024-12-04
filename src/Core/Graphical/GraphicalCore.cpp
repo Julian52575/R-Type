@@ -66,7 +66,7 @@ void GraphicalCore::destroy_entity(Entity e){
 void GraphicalCore::MakePlayer(){
     Entity e = em.createEntity();
     maker->setEntity(e);
-    maker->setSprite("assets/images/player.png", std::make_pair(1.f, 1.f), std::make_pair(0, 0), sprite);
+    maker->setSprite("assets/images/player.png", std::make_pair(1.f, 1.f), std::make_pair(80, 143), sprite);
     maker->setPosition(0, 0, pos);
     maker->setVelocity(100, 100, velo);
     maker->setControllable(controllable);
@@ -78,10 +78,10 @@ void GraphicalCore::MakePlayer(){
 void GraphicalCore::MakePlayerAttack(float x, float y){
     Entity e = em.createEntity();
     maker->setEntity(e);
-    maker->setSprite("assets/images/player.png", std::make_pair(1.f, 1.f), std::make_pair(0, 0), sprite);
-    maker->setPosition(x, y, pos);
+    maker->setSprite("assets/images/laser.png", std::make_pair(0.05f, 0.05f), std::make_pair(0, 0), sprite);
+    maker->setPosition(x + 25, y, pos);
     maker->setVelocity(100, 0, velo);
-    maker->setAnimations(sf::IntRect(0, 0, 160, 287), 9, 0.1f, animation);
+    maker->setLifetime(5.0f, lifetime);
 }
 
 
