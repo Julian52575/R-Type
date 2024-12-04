@@ -13,6 +13,7 @@ GraphicalCore::GraphicalCore() {
     this->velo = reg.register_component<Velocity>();
 
     this->animation = reg.register_component<Component::Animation>();
+    this->camera = reg.register_component<Camera>();
     this->music = reg.register_component<Music>();
     this->parallax = reg.register_component<Component::Parallax>();
     this->shader = reg.register_component<Shader>();
@@ -34,7 +35,32 @@ GraphicalCore::GraphicalCore() {
 GraphicalCore::~GraphicalCore(){}
 
 void GraphicalCore::destroy_entity(Entity e){
-    em.destroyEntity(e);
+    this->em.destroyEntity(e);
+
+    this->acc.erase(e);
+    this->pos.erase(e);
+    this->rot.erase(e);
+    this->scale.erase(e);
+    this->velo.erase(e);
+
+    this->animation.erase(e);
+    this->camera.erase(e);
+    this->music.erase(e);
+    this->parallax.erase(e);
+    this->shader.erase(e);
+    this->sound.erase(e);
+    this->sprite.erase(e);
+    this->text.erase(e);
+
+    this->attack.erase(e);
+    this->group.erase(e);
+    this->health.erase(e);
+    this->hitbox.erase(e);
+    this->lifetime.erase(e);
+    this->scripting.erase(e);
+
+    this->clickable.erase(e);
+    this->controllable.erase(e);
 }
 
 void GraphicalCore::MakePlayer(){
@@ -45,6 +71,8 @@ void GraphicalCore::MakePlayer(){
     maker->setVelocity(100, 100, velo);
     maker->setControllable(controllable);
     maker->setAnimations(sf::IntRect(0, 0, 160, 287), 9, 0.1f, animation);
+    // maker->setCamera(camera);
+
 }
 
 
@@ -68,6 +96,7 @@ void GraphicalCore::MakeMessage(){
     maker->setEntity(e);
     maker->setPosition(100, 100, pos);
     maker->setText("Hello World", "assets/fonts/arial.ttf", 24, sf::Color::White, text);
+    maker->setLifetime(5.0f, lifetime);
 }
 
 
@@ -86,7 +115,12 @@ void GraphicalCore::run(){
         this->collision.update(this->pos, this->hitbox);
         // mouseInput.update(this->pos, this->velo, this->sprite);
         // this->audio.update(this->musics, this->sounds);
-        this->lifetimeSystem.update(this->lifetime, deltaTime);
+        std::vector<Entity> vec =  this->lifetimeSystem.update(this->lifetime, deltaTime);
+        for (auto &e : vec) {
+           std::cout << "Entity " << e << " is dead" << std::endl;
+           this->destroy_entity(e);
+        }
+        this->cameraFollow.update(this->pos, this->camera,render.getWindow());
         this->render.update(this->pos, this->sprite, this->parallax, this->text);
     }
 }

@@ -30,6 +30,7 @@ class GraphicalCore {
         sparse_array<Scale> scale;
         sparse_array<Velocity> velo;
         sparse_array<Component::Animation> animation;
+        sparse_array<Camera> camera;
         sparse_array<Music> music;
         sparse_array<Component::Parallax> parallax;
         sparse_array<Shader> shader;
@@ -51,6 +52,7 @@ class GraphicalCore {
         System::Audio audio;
         System::Animation animations;
         System::Render render;
+        System::CameraFollow cameraFollow;
         System::Lifetime lifetimeSystem;
 };
 

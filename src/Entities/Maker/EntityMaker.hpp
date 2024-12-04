@@ -21,6 +21,8 @@ class EntityMaker {
         void setAnimations(const sf::IntRect& rect, int frames, float duration, sparse_array<Component::Animation>& animationList);
         void setParallax(float speed, sparse_array<Component::Parallax>& parallaxList);
         void setText(const std::string& text, const std::string& fontPath, int size, const sf::Color& color, sparse_array<Text>& textList);
+        void setLifetime(float time, sparse_array<Component::LifeTime>& lifetimeList);
+        void setCamera(sparse_array<Camera>& cameraList);
 
     private:
         std::shared_ptr<Entity> e;

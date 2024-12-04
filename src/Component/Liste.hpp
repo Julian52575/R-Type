@@ -15,8 +15,10 @@
 #include "Game/LifeTime/LifeTime.hpp"
 #include "Game/Scripting/Scripting.hpp"
 
+
 // Render
 #include "Render/Animation/Animation.hpp"
+#include "Render/Camera/Camera.hpp"
 #include "Render/Music/Music.hpp"
 #include "Render/Parallax/Parallax.hpp"
 #include "Render/Shader/Shader.hpp"

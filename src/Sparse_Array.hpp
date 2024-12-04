@@ -180,7 +180,9 @@ class sparse_array {
         void erase( size_type pos)
         {
             if (pos >= this->_data.size()) {
-                throw std::out_of_range("Index out of range");
+                //throw std::out_of_range("Index out of range");
+                this->_data.resize(pos + 1);
+                return;
             }
             // auto it = std::next(this->_data.begin(), pos);
             // this->_data.erase(it);

@@ -39,3 +39,10 @@ void EntityMaker::setText(const std::string& text, const std::string& fontPath, 
     textList.emplace_at(*e, fontPath,text, size, color);
 }
 
+void EntityMaker::setLifetime(float time, sparse_array<Component::LifeTime>& lifetimeList){
+    lifetimeList.emplace_at(*e, time);
+}
+
+void EntityMaker::setCamera(sparse_array<Camera>& cameraList){
+    cameraList.emplace_at(*e,sf::FloatRect(0,0,800,600));
+}
