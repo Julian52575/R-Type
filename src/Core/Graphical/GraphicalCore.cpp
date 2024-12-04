@@ -24,7 +24,7 @@ GraphicalCore::GraphicalCore() {
     this->group = reg.register_component<Group>();
     this->health = reg.register_component<Health>();
     this->hitbox = reg.register_component<Hitbox>();
-    this->lifetime = reg.register_component<LifeTime>();
+    this->lifetime = reg.register_component<Component::LifeTime>();
     this->scripting = reg.register_component<Scripting>();
 
     this->clickable = reg.register_component<Clickable>();
@@ -63,6 +63,13 @@ void GraphicalCore::MakeParallaxBackground(const std::string& texturePath, float
     maker->setParallax(speed, parallax);
 }
 
+void GraphicalCore::MakeMessage(){
+    Entity e = em.createEntity();
+    maker->setEntity(e);
+    maker->setPosition(100, 100, pos);
+    maker->setText("Hello World", "assets/fonts/arial.ttf", 24, sf::Color::White, text);
+}
+
 
 void GraphicalCore::run(){
     sf::Clock clock;
@@ -79,8 +86,8 @@ void GraphicalCore::run(){
         this->collision.update(this->pos, this->hitbox);
         // mouseInput.update(this->pos, this->velo, this->sprite);
         // this->audio.update(this->musics, this->sounds);
-        // lifetime.update(this->pos, this->velo, this->acc);
-        this->render.update(this->pos, this->sprite, this->parallax);
+        this->lifetimeSystem.update(this->lifetime, deltaTime);
+        this->render.update(this->pos, this->sprite, this->parallax, this->text);
     }
 }
 

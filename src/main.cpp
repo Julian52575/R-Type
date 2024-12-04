@@ -11,6 +11,7 @@ int main(void) {
     core.MakeParallaxBackground("assets/images/parallax background/plx-4.png", -45.f);
     core.MakeParallaxBackground("assets/images/parallax background/plx-5.png", -60.f);
     core.MakePlayer();
+    core.MakeMessage();
     core.run();
     return 0;
 }

@@ -5,6 +5,7 @@ class Controllable {
   public:
     Controllable();
     ~Controllable();
+    
     sf::Keyboard::Key up = sf::Keyboard::Up;
     sf::Keyboard::Key down = sf::Keyboard::Down;
     sf::Keyboard::Key left = sf::Keyboard::Left;

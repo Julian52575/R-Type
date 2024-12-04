@@ -20,6 +20,7 @@ class EntityMaker {
         void setControllable(sparse_array<Controllable>& controllableList);
         void setAnimations(const sf::IntRect& rect, int frames, float duration, sparse_array<Component::Animation>& animationList);
         void setParallax(float speed, sparse_array<Component::Parallax>& parallaxList);
+        void setText(const std::string& text, const std::string& fontPath, int size, const sf::Color& color, sparse_array<Text>& textList);
 
     private:
         std::shared_ptr<Entity> e;

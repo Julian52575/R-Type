@@ -18,6 +18,7 @@ class GraphicalCore {
         void MakePlayer();
         void MakeBackground();
         void MakeParallaxBackground(const std::string& texturePath, float speed);
+        void MakeMessage();
 
     private:
         registry reg;
@@ -39,7 +40,7 @@ class GraphicalCore {
         sparse_array<Group> group;
         sparse_array<Health> health;
         sparse_array<Hitbox> hitbox;
-        sparse_array<LifeTime> lifetime;
+        sparse_array<Component::LifeTime> lifetime;
         sparse_array<Scripting> scripting;
         sparse_array<Clickable> clickable;
         sparse_array<Controllable> controllable;
@@ -50,5 +51,6 @@ class GraphicalCore {
         System::Audio audio;
         System::Animation animations;
         System::Render render;
+        System::Lifetime lifetimeSystem;
 };
 

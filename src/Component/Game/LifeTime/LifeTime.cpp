@@ -1,15 +1,17 @@
 #include "src/Component/Game/LifeTime/LifeTime.hpp"
 
-LifeTime::LifeTime(float time) : time(time) {
+
+
+Component::LifeTime::LifeTime(float time) : time(time) {
     this->current_time = 0.0f;
 }
 
-LifeTime::~LifeTime() {}
+Component::LifeTime::~LifeTime() {}
 
-void LifeTime::update(float deltaTime) {
+void Component::LifeTime::update(float deltaTime) {
     this->current_time += deltaTime;
 }
 
-bool LifeTime::isDead() {
+bool Component::LifeTime::isDead() {
     return this->current_time >= this->time;
 }

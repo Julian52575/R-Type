@@ -35,3 +35,7 @@ void EntityMaker::setParallax(float speed, sparse_array<Component::Parallax>& pa
     parallaxList.emplace_at(*e, speed);
 }
 
+void EntityMaker::setText(const std::string& text, const std::string& fontPath, int size, const sf::Color& color, sparse_array<Text>& textList){
+    textList.emplace_at(*e, fontPath,text, size, color);
+}
+
