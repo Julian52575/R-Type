@@ -75,6 +75,15 @@ void GraphicalCore::MakePlayer(){
 
 }
 
+void GraphicalCore::MakePlayerAttack(float x, float y){
+    Entity e = em.createEntity();
+    maker->setEntity(e);
+    maker->setSprite("assets/images/player.png", std::make_pair(1.f, 1.f), std::make_pair(0, 0), sprite);
+    maker->setPosition(x, y, pos);
+    maker->setVelocity(100, 0, velo);
+    maker->setAnimations(sf::IntRect(0, 0, 160, 287), 9, 0.1f, animation);
+}
+
 
 void GraphicalCore::MakeBackground(){
     Entity e = em.createEntity();
@@ -108,6 +117,9 @@ void GraphicalCore::run(){
         this->render.processEvents();
 
         this->keyBoardInput.update(this->controllable, this->velo);
+        this->keyBoardInput.shoot(this->controllable, this->pos, std::function<void(float, float)>([this](float x, float y) {
+            this->MakePlayerAttack(x, y);
+        }));
         // script.update(this->scripting);
         this->movement.update(this->pos, this->velo, deltaTime);
         this->parallaxSystem.update(this->pos, this->sprite, this->parallax, deltaTime);

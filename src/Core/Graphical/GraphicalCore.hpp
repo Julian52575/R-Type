@@ -19,6 +19,8 @@ class GraphicalCore {
         void MakeBackground();
         void MakeParallaxBackground(const std::string& texturePath, float speed);
         void MakeMessage();
+        void MakePlayerAttack(float x, float y);
+
 
     private:
         registry reg;
