@@ -1,0 +1,19 @@
+R-Type
+.vscode
+*.o
+#Template .gitignore
+
+*.o
+*.~
+build
+*.log
+doxygen/*
+bs
+.vscode
+CMakeUserPresets.json
+*.a
+*.so
+*.cmake
+Makefile
+CMakeCache.txt
+CMakeFiles/
