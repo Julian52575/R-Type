@@ -1,0 +1,296 @@
+RFC 1: R-Type communication
+Author(s): Julian Bottiglione
+Date: 3/12/2024
+Status: Proposed
+Category: Informational/Standards
+
+=======================================================================
+Abstract
+=======================================================================
+This protocol defines the communication between the R-Type game server and client.
+
+=======================================================================
+Important Notes
+=======================================================================
+Every integer is written in hexadecimal unless stated otherwise.
+The client must only be in control of a single entity at any time. It may create other entities that have their independant behavior.
+
+
+=======================================================================
+1. Terminology
+=======================================================================
+- Client: A game instance initiating a connection to the server.
+- Server: A centralized host managing game state and interactions.
+- Packet: A unit of data exchanged between the client and server. Is composed of both a header and a payload.
+- Header: See 3.2.
+- Payload: Data present in some packet after the header.
+- Id: Abreviation of Identifier.
+- Playable: An entity is said playable if its action is controlled by a player's input.
+- Level: A collection of entity.
+- Entity: A game object. Has 2 identifier: In-Game and Configuration.
+- Plugin: A collection of level and/or entity added to the game dynamically (without recompilation).
+- In-Game Identifier: A in-game identifier given to an entity at creation, that identifier may be given to another entity when the 1st holder is removed. 2 Bytes integer.
+- Configuration Identifier: A unique identifier given to an entity, allows the entity to be associated with its Entity Configuration. 2 bytes integer.
+- Entity Configuration: A json file specifying an entity stats and sprites. Is located at entities/ID.json
+
+=======================================================================
+2. Protocol Overview
+=======================================================================
+- Architecture: client-server.
+- Main functionality: Simple game without lobby
+
+=======================================================================
+3. Technical Specifications
+=======================================================================
+
+3.0 Define
+------------
+[ Category,
+    [ Value, Name, Meaning, Size (Bytes) ] ]
+
+- Direction:
+    0, Up               , Negative vertical value (-y),         1;
+    1, Down             , Positive vertical value (+y),         1;
+    2, Right            , Positive vertical value (+x),         1;
+    3, Left             , Negative vertical value (-x),         1;
+
+3.1.0 Payload Identifier
+-------------------------
+[ Value , Name                          , Meaning                               , Payload Precision , Payload content ]
+
+- 0     , NOOP                          , No operation.                         , None             , None;
+- 1     , ConnexionDetail               , Connexion information.                , Connexion info   , None;
+- 2     , JsonDetail                    , Server / Client is sending a json.    , Game parts       , Json file; #warning Json name?
+- 3     , EntityAction                  , An entity is performing an action.    , Action           , see Payload Precision;
+- 4     , EntityInfo                    , Information on an entity.             , Info             , see Payload Precision;
+
+3.1.1 Payload Precision
+---------------------------
+[ Category,
+    [ Value, Name, Meaning, Payload Content, Payload Size (Bytes) ] ]
+
+- Connexion info:
+    0, ClientConnexion          , A client is asking to be connected                                      , None;
+    1, ClientDisconnect         , A client is going to disconnect                                         , None;
+    2, ServerAccept             , Server accepted the connection                                          , None;
+    3, ServerDisconnect         , Server is going to disconnect the client                                , Reason of denial (string), strlen(sting);
+    4, ClientReady              , Client is ready to play                                                 , None;
+    5, ClientEntityRequest      , The Configuration Id of the entity controlled by the client's player    , Configuration Entity Id     , 2
+    6, PlayableEntityInGameId   , The server tells the client what entity the client's player controls    , In-Game Entity Id           , 2;
+    7, ServerStop       , The server is stopping                                                  , None;
+
+- Game parts:
+    0, GamePartLevel    , A level (see Terminology)             , file content, varies;
+    1, GamePartEntity   , An entity (see Terminology)           , file content, varies;
+    2, GamePartPlugin   , A plugin (see Terminology)            , file content, varies;
+
+- Action:
+    0, MoveUp           , Move to the top of the screen (-y coordinate)         , Entity In-Game id     , 2;
+    1, MoveDown         , Move to the bottom of the screen (+y coordinate)      , Entity In-Game id     , 2;
+    2, MoveRight        , Move to the right of the screen (+x coordinate)       , Entity In-Game id     , 2;
+    3, MoveLeft         , Move to the left of the screen (-x coordinate)        , Entity In-Game id     , 2;
+    4, Shoot 1          , Primary shoot action                                  , Entity In-Game id     , 2;
+    5, Shoot 2          , Secondary shoot action                                , Entity In-Game id     , 2;
+    6, Shoot 3          , Tertiary shoot action                                 , Entity In-Game id     , 2;
+    7, Dodge            , Evasive maneuver                                      , Entity In-Game id     , 2;
+    8, Barrier          , Protective action                                     , Entity In-Game id     , 2;
+    9, Death            , No HP left                                            , Entity In-Game id     , 2;
+    A, Ultimate         , Ultimate action                                       , Entity In-Game id     , 2;
+
+- Info:
+    0, InGameAndConfigurationId , In-Game and Configuration Id of a entity needed   , Configuration Id + In-Game Id                    , 2 + 2;
+    1, InfoPosition         , Screen position of the entity                         , Entity In-Game id + (X coordinate, Y coordinate) , 2 + (2 + 2);
+    2, InfoHP               , Current Health Points of the entity                   , Entity In-Game id + Health point                 , 2 + 2      ;
+    3, InfoMaxHp            , Max Health Points of the entity                       , Entity In-Game id + Max health point             , 2 + 2      ;
+    4, InfoSpeed            , Moving Speed of the entity                            , Entity In-Game id + Speed                        , 2 + 2      ;
+    5, InfoMaxSpeed         , Max Moving Speed of the entity                        , Entity In-Game id + Max Speed                    , 2 + 2      ;
+    6, InfoDirection        , Facing direction of the entity                        , Entity In-Game id + Direction (see define)       , 2 + 1      ;
+
+3.2 Message Format
+-------------------
+All information are encoded in binary.
+
+- Headers (12 Bytes):
+  [ Offset      , Size (Byte)           , Meaning ]
+  - 0           , 2                     , Payload Identifier (see 3.1.0);
+  - 2           , 2                     , Payload Precision (see 3.1.1);
+  - 2           , 8                     , Payload size;
+
+- Payload:
+The data present in the payload depends on the Payload Precision field (see 3.1.1).
+
+- Example:
+[ Payload Identifier    , Payload Precision     , Payload size  , Payload data ]
+
+[ ConnexionDetail       , ClientConnexion       , 0             , None ]
+[ ConnexionInfo         , ClientEntityRequest   , 2             , Entity Configuration Id ]
+[ JsonDetail            , GamePartLevel         , 64            , Json file content ]
+[ EntityAction          , MoveUp                , 2             , Entity In-Game Id ]
+[ EntityAction          , Shoot 1               , 2             , Entity In-Game Id ]
+[ EntityAction          , Death                 , 2             , Entity In-Game Id ]
+[ EntityInfo            , InfoPosition          , 6             , Entity In-Game id + Entity x + Entity y ]
+[ EntityInfo            , InfoDirection         , 3             , Entity In-Game id + Entity Direction ]
+
+3.2 Connection Management
+--------------------------
+- Transport Protocols:
+UDP for in-game communication, TCP for lobby;
+
+- Initialization:
+[Describe the handshake or connection setup process.]
+
+This example is based on a already playing game that has 2 entity.
+Client                   |                      Server
+------------------------------------------------------
+ [
+ ConnexionDetail,
+ ClientConnexion,
+ 0,
+ None
+ ]                      ->
+
+                            [
+                            ConnexionDetail,
+                            ServerAccept,
+                            0,
+                            None
+                            ]
+                        <-
+[
+ConnexionDetail,
+ClientEntityRequest,
+2,
+0x21
+]
+                        ->
+                            [
+                            EntityInfo,
+                            InGameAndConfigurationId,
+                            4,
+                            [0x0042, 0x0000]
+                            ]
+                        <-
+                            [
+                            EntityInfo,
+                            InGameAndConfigurationId,
+                            4,
+                            [0x0084, 0x0001]
+                            ]
+                        <- 
+                            [
+                            EntityInfo,
+                            InGameAndConfigurationId,
+                            4,
+                            [0x0021, 0x0002]
+                            ]
+                        <-
+                            [
+                            ConnexionDetail,
+                            PlayableEntityInGameId,
+                            2,
+                            0x02
+                            ]
+                        <-
+
+                # Example In-Game communication
+
+[
+EntityAction,
+Shoot 1,
+2,
+0x0002
+]
+                        ->
+                            [
+                            EntityAction,
+                            Shoot 2,
+                            2,
+                            0x0000
+                            ]
+                        <-
+                            [
+                            EntityAction,
+                            Death,
+                            2,
+                            0x0001
+                            ]
+                        <-
+                        ....
+
+
+- Termination:
+Clients are disconnect when the level is over, or every playable entities are dead.
+
+3.3 Server / Client differences
+--------------------------------
+The client only sends the action from its playing entity.
+The server sends the action from every entity except the client's playing entity.
+
+3.4 Session Management
+-----------------------
+[Describe session lifecycle: authentication, state tracking, rejoining mechanisms, etc.]
+
+3.5 Error Handling
+-------------------
+[Explain how errors are communicated, e.g., error codes, retry mechanisms.]
+If a client receives a packet meant for the server, it should ignore it.
+
+3.6 Security
+-------------
+[Detail encryption methods, authentication tokens, and security features.]
+
+=======================================================================
+4. Use Cases
+=======================================================================
+[Describe practical scenarios where the protocol will be used.]
+
+Example:
+1. Player joins a multiplayer game lobby.
+2. Server broadcasts real-time game updates to all clients.
+
+=======================================================================
+5. Performance Considerations
+=======================================================================
+[Discuss latency, bandwidth, scalability, and optimizations.]
+
+=======================================================================
+6. Compatibility and Versioning
+=======================================================================
+[Describe how the protocol handles version mismatches and deprecation.]
+
+=======================================================================
+7. Examples
+=======================================================================
+[Provide concrete examples of protocol usage, such as a typical message exchange sequence. Include diagrams if necessary.]
+
+=======================================================================
+8. Security Considerations
+=======================================================================
+[Explain potential threats (e.g., replay attacks, spoofing) and how they are mitigated.]
+
+=======================================================================
+9. Implementation Notes
+=======================================================================
+[Offer guidelines for implementers, such as preferred libraries, language compatibility, or testing strategies.]
+
+=======================================================================
+10. Glossary
+=======================================================================
+[List terms and their definitions that readers might need for clarity.]
+
+=======================================================================
+11. References
+=======================================================================
+[Include any standards, previous RFCs, or external documents referenced.]
+
+=======================================================================
+Appendix
+=======================================================================
+[Add supplementary information, pseudocode, extended examples, or test cases.]
+
+=======================================================================
+Changelog
+=======================================================================
+[Track changes between versions of the RFC, if applicable.]
+
+- Version 1.0: Initial draft. 5 december 2024
