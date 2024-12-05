@@ -31,7 +31,7 @@ void System::Render::processEvents() {
     }
 }
 
-void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes,sparse_array<Text>& texts) {
+void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes,sparse_array<Text>& texts, sparse_array<Hitbox>& hitboxes) {
     window.clear();
 
     for (size_t i = 0; i < positions.size() && i < parallaxes.size() && i < sprites.size(); i++) {
@@ -41,7 +41,6 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
             while (x < window.getSize().x) {
                 sprites[i].value().setPosition(x, positions[i].value().y);
                 window.draw(sprites[i].value(), &shader);
-                // window.draw(sprites[i].value());
                 x += width;
             }
         }
@@ -50,7 +49,18 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
         if (positions[i].has_value() && sprites[i].has_value()) {
             sprites[i].value().setPosition(positions[i].value().x, positions[i].value().y);
             window.draw(sprites[i].value(), &shader);
-            // window.draw(sprites[i].value());
+        }
+    }
+
+    for (size_t i = 0; i < positions.size() && i < hitboxes.size(); i++) {
+        if (positions[i].has_value() && hitboxes[i].has_value()) {
+            sf::RectangleShape hitbox;
+            hitbox.setSize(hitboxes[i].value().getSize());
+            hitbox.setPosition(positions[i].value().x + hitboxes[i].value().getOffset().x, positions[i].value().y + hitboxes[i].value().getOffset().y);
+            hitbox.setFillColor(sf::Color::Transparent);
+            hitbox.setOutlineColor(sf::Color::Red);
+            hitbox.setOutlineThickness(1);
+            window.draw(hitbox);
         }
     }
 

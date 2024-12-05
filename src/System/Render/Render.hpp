@@ -14,7 +14,7 @@ namespace System {
             bool isOpen();
             sf::RenderWindow& getWindow();
             void processEvents();
-            void update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes, sparse_array<Text>& texts);
+            void update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes, sparse_array<Text>& texts,sparse_array<Hitbox>& hitboxes);
 
         private:
             sf::RenderWindow window;

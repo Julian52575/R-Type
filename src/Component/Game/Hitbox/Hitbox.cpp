@@ -7,3 +7,11 @@ Hitbox::Hitbox(sf::Vector2f size, sf::Vector2f offset) {
 }
 
 Hitbox::~Hitbox() {}
+
+sf::Vector2f Hitbox::getSize() {
+    return this->size;
+}
+
+sf::Vector2f Hitbox::getOffset() {
+    return this->offset;
+}
