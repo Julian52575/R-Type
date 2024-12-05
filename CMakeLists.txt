@@ -17,9 +17,9 @@ add_subdirectory(gameEngine)
 add_subdirectory(game)
 
 if (WIN32)
-    install(TARGETS Front DESTINATION bin)
+    install(TARGETS game DESTINATION bin)
 else()
-    install(TARGETS Front DESTINATION /usr/bin)
+    install(TARGETS game DESTINATION /usr/bin)
 endif()
 
 if(WIN32)

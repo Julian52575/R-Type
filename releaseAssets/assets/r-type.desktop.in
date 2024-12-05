@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=R-Type
+Comment=A Networked Space Shooter
+Exec=/usr/bin/R-Type
+Icon=r-type
+Terminal=false
+Type=Application
+Categories=Game;
