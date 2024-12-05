@@ -14,11 +14,6 @@
  */
 struct User {
     /**
-     * @brief Unique identifier for the user.
-     */
-    int32_t id;
-
-    /**
      * @brief UDP endpoint associated with the user, used for network communication.
      */
     asio::ip::udp::endpoint endpoint;
