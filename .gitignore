@@ -1,3 +1,6 @@
+R-Type
+.vscode
+*.o
 #Template .gitignore
 
 *.o
@@ -5,4 +8,5 @@
 build
 *.log
 doxygen/*
+bs
 .vscode
