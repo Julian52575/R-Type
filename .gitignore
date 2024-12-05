@@ -1,2 +1,6 @@
 *.deb
 *.msi
+CMakeUserPresets.json
+_CPack_Packages/
+build
+*.cmake
