@@ -1,0 +1,32 @@
+{
+    "sprite": {
+        "path": "assets/images/laser.png",
+        "scale": {
+            "x": 0.05,
+            "y": 0.05
+        },
+        "origin": {
+            "x": 0,
+            "y": 0
+        }
+    },
+    "position": {
+        "x": 0,
+        "y": 0
+    },
+    "velocity": {
+        "x": 100,
+        "y": 0
+    },
+    "lifetime": 5.0,
+    "hitbox": {
+        "size": {
+            "x": 30,
+            "y": 20
+        },
+        "offset": {
+            "x": 20,
+            "y": 20
+        }
+    }
+}
