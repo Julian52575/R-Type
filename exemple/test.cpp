@@ -7,7 +7,6 @@ using asio::ip::udp;
 
 enum class CustomMsgTypes : uint32_t {
   ServerConnexionRequest,
-  ServerConnexionResponse,
   Message
 };
 void handleMessage(Message<CustomMsgTypes> msg, ClientConnection<CustomMsgTypes> &client) {
@@ -16,10 +15,6 @@ void handleMessage(Message<CustomMsgTypes> msg, ClientConnection<CustomMsgTypes>
     char data[256];
     msg >> data;
     std::cout << "Data: " << data << std::endl;
-  } else if (msg.header.type == CustomMsgTypes::ServerConnexionResponse) {
-    unsigned int id;
-    msg >> id;
-    client.SetId(id);
   } else {
     std::cerr << "Unknown message type" << std::endl;
   }

@@ -24,11 +24,6 @@ template <typename T>
 class ClientConnection {
 private:
     /**
-     * @brief The unique ID assigned to the client by the server.
-     */
-    unsigned int m_id;
-
-    /**
      * @brief ASIO context for managing asynchronous operations.
      */
     asio::io_context m_context;
@@ -84,20 +79,6 @@ public:
     std::optional<Message<T>> Receive();
 
     /**
-     * @brief Sets the unique ID of the client.
-     *
-     * @param id The ID assigned to the client by the server.
-     */
-    void SetId(unsigned int id);
-
-    /**
-     * @brief Gets the unique ID of the client.
-     *
-     * @return The client's ID.
-     */
-    unsigned int GetId() { return m_id; }
-
-    /**
      * @brief Destructor for the client connection.
      *
      * Stops the ASIO context, joins the thread, and cleans up the socket.
@@ -113,7 +94,6 @@ ClientConnection<T>::ClientConnection(std::string ip, int32_t port)
     m_remote_endpoint = std::make_shared<asio::ip::udp::endpoint>(asio::ip::make_address(ip), port);
     m_threadContext = std::thread([this]() { m_context.run(); });
     m_socket.open(asio::ip::udp::v4());
-    m_id = 0;
     accept();
     Message<T> msg;
     msg.header.type = T::ServerConnexionRequest;
@@ -132,12 +112,7 @@ void ClientConnection<T>::accept() {
                     std::vector<uint8_t> data(recv_packet_buf->begin(), recv_packet_buf->begin() + length);
                     Message<T> msg = desirialized<T>(data);
                     std::cout << msg << std::endl;
-                    if (msg.header.type == T::ServerConnexionResponse) {
-                        msg >> m_id;
-                        std::cout << "[CLIENT] New ID: " << m_id << std::endl;
-                    } else {
-                        m_qMessagesIn.push(msg);
-                    }
+                    m_qMessagesIn.push(msg);
                 } catch (const std::exception& e) {
                     std::cerr << "[CLIENT] Error deserializing message: " << e.what() << std::endl;
                 }
@@ -152,7 +127,6 @@ void ClientConnection<T>::accept() {
 
 template <typename T>
 bool ClientConnection<T>::Send(Message<T> &msg) {
-    msg << m_id;
     std::vector<uint8_t> serialized_msg = msg.serialize();
 
     m_socket.async_send_to(asio::buffer(serialized_msg), *m_remote_endpoint,
@@ -170,11 +144,6 @@ bool ClientConnection<T>::Send(Message<T> &msg) {
 template <typename T>
 std::optional<Message<T>> ClientConnection<T>::Receive() {
     return m_qMessagesIn.pop();
-}
-
-template <typename T>
-void ClientConnection<T>::SetId(unsigned int id) {
-    m_id = id;
 }
 
 template <typename T>

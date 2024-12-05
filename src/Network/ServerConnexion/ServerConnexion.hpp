@@ -11,6 +11,7 @@
 #include <thread>
 #include <algorithm>
 #include <stdexcept>
+#include <utility>
 #define MAX_UDP_BUFF_SIZE 4096
 
 /**
@@ -39,7 +40,7 @@ private:
     /**
      * @brief Thread-safe queue to store incoming messages.
      */
-    tsqueue<OwnedMessage<T>> m_qMessagesIn;
+    tsqueue<std::pair<asio::ip::udp::endpoint, Message<T>>> m_qMessagesIn;
 
     /**
      * @brief List of users connected to the server.
@@ -92,14 +93,18 @@ public:
      * @return A reference to the user.
      * @throws std::runtime_error if the user with the given ID is not found.
      */
-    User &GetUser(unsigned int id);
+    User &GetUser(asio::ip::udp::endpoint endpoint);
+
+    void AddUser(User &user) {
+        m_vUsers.push_back(user);
+    }
 
     /**
      * @brief Retrieves the next incoming message from the queue.
      *
      * @return An optional containing the next message, or std::nullopt if no messages are available.
      */
-    std::optional<OwnedMessage<T>> Receive();
+    std::optional<std::pair<asio::ip::udp::endpoint, Message<T>>> Receive();
 
     /**
      * @brief Destructor for the server connection.
@@ -129,31 +134,7 @@ void ServerConnection<T>::accept() {
                     std::vector<uint8_t> data(recv_packet_buf->begin(), recv_packet_buf->begin() + length);
                     Message<T> msg = desirialized<T>(data);
                     std::cout << msg << std::endl;
-
-                    if (msg.header.type == T::ServerConnexionRequest) {
-                        User user;
-                        user.endpoint = *remote_endpoint;
-                        user.id = m_vUsers.empty() ? 1 : m_vUsers.back().id + 1;
-                        m_vUsers.push_back(user);
-                        std::cout << "[SERVER] User connected, ID: " << user.id << std::endl;
-
-                        Message<T> responseMsg;
-                        responseMsg.header.type = T::ServerConnexionResponse;
-                        responseMsg << user.id;
-                        Send(responseMsg, user);
-                    } else {
-                        try {
-                            unsigned int id;
-                            if (msg.header.size == 0) {
-                                throw std::runtime_error("Message has no ID");
-                            }
-                            msg >> id;
-                            User user = GetUser(id);
-                            m_qMessagesIn.push(OwnedMessage<T>(user, msg));
-                        } catch (const std::runtime_error &e) {
-                            std::cerr << e.what() << '\n';
-                        }
-                    }
+                    m_qMessagesIn.push({*remote_endpoint, msg});
                 } catch (const std::exception &e) {
                     std::cerr << "[SERVER] Error deserializing message: " << e.what() << std::endl;
                 }
@@ -186,8 +167,10 @@ std::vector<User> &ServerConnection<T>::GetUsers() {
 }
 
 template <typename T>
-User &ServerConnection<T>::GetUser(unsigned int id) {
-    auto it = std::find_if(m_vUsers.begin(), m_vUsers.end(), [id](const User &u) { return u.id == id; });
+User &ServerConnection<T>::GetUser(asio::ip::udp::endpoint endpoint) {
+    auto it = std::find_if(m_vUsers.begin(), m_vUsers.end(), [endpoint](const User &user) {
+        return user.endpoint == endpoint;
+    });
 
     if (it != m_vUsers.end()) {
         return *it;
@@ -205,7 +188,7 @@ bool ServerConnection<T>::SendAll(const Message<T> &msg) {
 }
 
 template <typename T>
-std::optional<OwnedMessage<T>> ServerConnection<T>::Receive() {
+std::optional<std::pair<asio::ip::udp::endpoint, Message<T>>> ServerConnection<T>::Receive() {
     return m_qMessagesIn.pop();
 }
 
