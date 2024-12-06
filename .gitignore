@@ -10,3 +10,6 @@ build
 doxygen/*
 bs
 .vscode
+CMakeUserPresets.json
+librengine.so
+rtype
