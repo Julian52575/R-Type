@@ -1,4 +1,4 @@
-#include "src/System/Collision/Collision.hpp"
+#include "./Collision.hpp"
 
 System::Collision::Collision() {}
 

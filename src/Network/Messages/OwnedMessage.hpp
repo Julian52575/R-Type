@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "src/Network/User/User.hpp"
-#include "src/Network/Messages/Message.hpp"
+#include "../User/User.hpp"
+#include "../Messages/Message.hpp"
 
 /**
  * @class OwnedMessage

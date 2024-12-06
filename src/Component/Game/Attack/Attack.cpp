@@ -1,4 +1,4 @@
-#include "src/Component/Game/Attack/Attack.hpp"
+#include "./Attack.hpp"
 
 Attack::Attack(int damage, float attackSpeed) {
     this->damage = damage;

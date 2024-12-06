@@ -1,4 +1,4 @@
-#include "src/Component/Render/Shader/Shader.hpp"
+#include "./Shader.hpp"
 #include <memory>
 #include <string>
 #include <unordered_map>

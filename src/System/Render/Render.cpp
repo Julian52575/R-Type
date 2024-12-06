@@ -1,4 +1,4 @@
-#include "src/System/Render/Render.hpp"
+#include "./Render.hpp"
 
 System::Render::Render() {
     window.create(sf::VideoMode(800, 600), "ECS");

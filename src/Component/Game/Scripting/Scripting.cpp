@@ -1,4 +1,4 @@
-#include "src/Component/Game/Scripting/Scripting.hpp"
+#include "./Scripting.hpp"
 #include <utility>
 #include <iostream>
 #include <vector>

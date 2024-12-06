@@ -1,9 +1,9 @@
 #pragma once
 #include "../../Sparse_Array.hpp"
 #include "../../Component/Liste.hpp"
-#include <vector>
 #include "../../Entities/Entity/Entity.hpp"
 
+#include <vector>
 namespace System {
     class Lifetime {
         public:

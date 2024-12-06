@@ -1,4 +1,4 @@
-#include "Lifetime.hpp"
+#include "./Lifetime.hpp"
 
 System::Lifetime::Lifetime() {}
 
