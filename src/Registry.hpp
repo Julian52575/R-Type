@@ -15,9 +15,9 @@
 #include <typeindex>
 #include <any>
 
-#include "src/Sparse_Array.hpp"
-#include "src/Component/Liste.hpp"
-#include "src/ECSExecption.hpp"
+#include "./Sparse_Array.hpp"
+#include "./Component/Liste.hpp"
+#include "./ECSExecption.hpp"
 
 class registry {
     public:

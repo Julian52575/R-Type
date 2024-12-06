@@ -1,4 +1,4 @@
-#include "src/Entities/Maker/EntityMaker.hpp"
+#include "./EntityMaker.hpp"
 #include <utility>
 #include <memory>
 #include <string>
@@ -94,13 +94,13 @@ void EntityMaker::parseAnimations(const nlohmann::json& json) {
     }
     if (!json["animations"].contains("frameRect"))
         throw std::runtime_error("Animations must have a frameRect");
-    
+
     if (!json["animations"]["frameRect"].contains("x") || !json["animations"]["frameRect"].contains("y") || !json["animations"]["frameRect"].contains("width") || !json["animations"]["frameRect"].contains("height"))
         throw std::runtime_error("frameRect must have x, y, width and height");
-    
+
     if (!json["animations"].contains("frameCount"))
         throw std::runtime_error("Animations must have frameCount");
-    
+
     if (!json["animations"].contains("frameDuration"))
         throw std::runtime_error("Animations must have frameDuration");
 

@@ -1,4 +1,4 @@
-#include "src/System/Parallax/Parallax.hpp"
+#include "./Parallax.hpp"
 
 System::Parallax::Parallax() {}
 

@@ -1,4 +1,4 @@
-#include "KeyBoard.hpp"
+#include "./KeyBoard.hpp"
 
 System::KeyBoardInput::KeyBoardInput() {}
 
@@ -11,7 +11,7 @@ void System::KeyBoardInput::update(sparse_array<Controllable>& keyBoards, sparse
                 velocities[i].value().y = -(velocities[i].value().getBase().second);
             else if (sf::Keyboard::isKeyPressed(keyBoards[i].value().down))
                 velocities[i].value().y = velocities[i].value().getBase().second;
-            else 
+            else
                 velocities[i].value().y = 0;
 
             if (sf::Keyboard::isKeyPressed(keyBoards[i].value().left))
@@ -40,7 +40,7 @@ void System::KeyBoardInput::update(sparse_array<Controllable>& keyBoards, sparse
 void System::KeyBoardInput::shoot(sparse_array<Controllable>& keyBoards, sparse_array<Position>& positions, std::function<void(float, float)> makePlayerAttack) {
     for (size_t i = 0; i < keyBoards.size() && i < positions.size(); i++) {
         if (keyBoards[i].has_value() && positions[i].has_value()) {
-            if (sf::Keyboard::isKeyPressed(keyBoards[i].value().shoot) || 
+            if (sf::Keyboard::isKeyPressed(keyBoards[i].value().shoot) ||
                 sf::Joystick::isButtonPressed(0, 1) || // O button for PS5 controller
                 sf::Joystick::isButtonPressed(0, 0)) { // A button for Nintendo controller
                 float playerX = positions[i].value().x;

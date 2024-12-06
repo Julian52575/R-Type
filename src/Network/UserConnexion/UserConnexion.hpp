@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "src/Network/tsqueue.hpp"
+#include "../tsqueue.hpp"
 #include "Messages/Message.hpp"
 
 #include <asio.hpp>

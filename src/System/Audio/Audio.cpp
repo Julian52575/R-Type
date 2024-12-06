@@ -1,4 +1,4 @@
-#include "src/System/Audio/Audio.hpp"
+#include "./Audio.hpp"
 
 System::Audio::Audio() {}
 

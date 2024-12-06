@@ -1,4 +1,4 @@
-#include "src/Component/Render/Sprite/Sprite.hpp"
+#include "./Sprite.hpp"
 #include <string>
 #include <memory>
 #include <utility>

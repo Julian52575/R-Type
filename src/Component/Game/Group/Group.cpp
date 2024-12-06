@@ -1,4 +1,4 @@
-#include "src/Component/Game/Group/Group.hpp"
+#include "./Group.hpp"
 #include <string>
 
 Group::Group() {}

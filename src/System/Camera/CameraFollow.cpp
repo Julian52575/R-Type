@@ -1,4 +1,4 @@
-#include "CameraFollow.hpp"
+#include "./CameraFollow.hpp"
 
 System::CameraFollow::CameraFollow() {}
 
