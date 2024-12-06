@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../tsqueue.hpp"
-#include "Messages/Message.hpp"
+#include "../Messages/Message.hpp"
 
 #include <asio.hpp>
 #include <vector>
