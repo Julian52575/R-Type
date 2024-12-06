@@ -1,0 +1,8 @@
+[requires]
+sfml/2.6.2
+asio/1.32.0
+lua/5.4.7
+
+[generators]
+CMakeDeps
+CMakeToolchain
