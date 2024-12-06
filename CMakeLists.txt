@@ -21,18 +21,21 @@ target_include_directories(GAME PRIVATE
     ${nlohmann-json3-dev_SOURCE_DIR}/include
 )
 
-find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics)
+find_library(R-ENGINE
+    NAMES rengine REQUIRED)
+set(SFML_STATIC_LIBRARIES FALSE)
+find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio)
 find_package(ASIO REQUIRED)
 find_package(LUA REQUIRED)
 
-target_link_libraries(GAME PRIVATE
+target_link_libraries(GAME PUBLIC
+    rengine
     asio::asio
-    sfml-system
+    sfml-system 
     sfml-window
     sfml-graphics
     sfml-audio
     lua5.4
-    rengine
 )
 
 set_target_properties(GAME PROPERTIES OUTPUT_NAME "rtype")
