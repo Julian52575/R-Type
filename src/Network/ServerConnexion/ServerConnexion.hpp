@@ -1,7 +1,8 @@
 #pragma once
 
 #include "../tsqueue.hpp"
-#include "../Messages/OwnedMessage.hpp"
+#include "../Messages/Message.hpp"
+#include "../User/User.hpp"
 
 #include <asio.hpp>
 #include <vector>
@@ -133,7 +134,6 @@ void ServerConnection<T>::accept() {
                 try {
                     std::vector<uint8_t> data(recv_packet_buf->begin(), recv_packet_buf->begin() + length);
                     Message<T> msg = desirialized<T>(data);
-                    std::cout << msg << std::endl;
                     m_qMessagesIn.push({*remote_endpoint, msg});
                 } catch (const std::exception &e) {
                     std::cerr << "[SERVER] Error deserializing message: " << e.what() << std::endl;
