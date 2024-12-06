@@ -10,3 +10,13 @@ build
 doxygen/*
 bs
 .vscode
+CMakeUserPresets.json
+*.a
+*.so
+*.cmake
+Makefile
+CMakeCache.txt
+CMakeFiles/
+*.test
+lol
+rengine/
