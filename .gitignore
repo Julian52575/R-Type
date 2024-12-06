@@ -17,3 +17,5 @@ CMakeUserPresets.json
 Makefile
 CMakeCache.txt
 CMakeFiles/
+*.test
+lol
