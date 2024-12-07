@@ -2,6 +2,9 @@
 #include "../Entity/Entity.hpp"
 #include "../../Sparse_Array.hpp"
 #include "../../Component/Liste.hpp"
+#include "../../Registry.hpp"
+#include "../../Exceptions/JsonParseExecption.hpp"
+
 
 #include <SFML/Graphics.hpp>
 #include <utility>
@@ -38,10 +41,19 @@ class EntityMaker {
         sparse_array<Clickable> clickable;
         sparse_array<Controllable> controllable;
 
-
-
         void setEntity(Entity e);
+        void DumpEntity(Entity e);
+        void DumpEntity();
+
         void parseJson(const std::string &path);
+
+        void UpdatePosition(Entity e, float x, float y);
+        void UpdatePosition(float x, float y);
+
+        void UpdateVelocity(Entity e, float x, float y);
+        void UpdateVelocity(float x, float y);
+
+    private:
         void parseSprite(const nlohmann::json& json);
         void parsePosition(const nlohmann::json& json);
         void parseVelocity(const nlohmann::json& json);
@@ -52,8 +64,8 @@ class EntityMaker {
         void parseLifetime(const nlohmann::json& json);
         void parseCamera(const nlohmann::json& json);
         void parseHitbox(const nlohmann::json& json);
-
-    private:
         std::shared_ptr<Entity> e;
+        registry reg;
+
 };
 

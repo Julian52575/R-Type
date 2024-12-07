@@ -5,62 +5,13 @@
 
 GraphicalCore::GraphicalCore() {
     this->maker = std::make_unique<EntityMaker>();
-
-    maker->acc = reg.register_component<Acceleration>();
-    maker->pos = reg.register_component<Position>();
-    maker->rot = reg.register_component<Rotation>();
-    maker->scale = reg.register_component<Scale>();
-    maker->velo = reg.register_component<Velocity>();
-
-    maker->animation = reg.register_component<Component::Animation>();
-    maker->camera = reg.register_component<Camera>();
-    maker->music = reg.register_component<Music>();
-    maker->parallax = reg.register_component<Component::Parallax>();
-    maker->shader = reg.register_component<Shader>();
-    maker->sound = reg.register_component<Sound>();
-    maker->sprite = reg.register_component<Sprite>();
-    maker->text = reg.register_component<Text>();
-
-    maker->attack = reg.register_component<Attack>();
-    maker->group = reg.register_component<Group>();
-    maker->health = reg.register_component<Health>();
-    maker->hitbox = reg.register_component<Hitbox>();
-    maker->lifetime = reg.register_component<Component::LifeTime>();
-    maker->scripting = reg.register_component<Scripting>();
-
-    maker->clickable = reg.register_component<Clickable>();
-    maker->controllable = reg.register_component<Controllable>();
 }
 
 GraphicalCore::~GraphicalCore(){}
 
 void GraphicalCore::destroy_entity(Entity e){
     this->em.destroyEntity(e);
-
-    maker->acc.erase(e);
-    maker->pos.erase(e);
-    maker->rot.erase(e);
-    maker->scale.erase(e);
-    maker->velo.erase(e);
-
-    maker->animation.erase(e);
-    maker->camera.erase(e);
-    maker->music.erase(e);
-    maker->parallax.erase(e);
-    maker->shader.erase(e);
-    maker->sound.erase(e);
-    maker->sprite.erase(e);
-    maker->text.erase(e);
-
-    maker->attack.erase(e);
-    maker->group.erase(e);
-    maker->health.erase(e);
-    maker->hitbox.erase(e);
-    maker->lifetime.erase(e);
-    maker->scripting.erase(e);
-
-    maker->clickable.erase(e);
-    maker->controllable.erase(e);
+    this->maker->DumpEntity(e);
 }
 
 void GraphicalCore::MakeEntity(const std::string path){

@@ -20,9 +20,9 @@ class GraphicalCore {
 
 
     private:
-        registry reg;
         EntityManager em;
         std::unique_ptr<EntityMaker> maker;
+        
         System::movement movement;
         System::KeyBoardInput keyBoardInput;
         System::Collision collision;

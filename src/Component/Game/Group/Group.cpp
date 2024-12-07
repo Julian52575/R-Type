@@ -1,5 +1,6 @@
 #include "./Group.hpp"
 #include <string>
+#include <cstdint>
 
 Group::Group() {}
 
@@ -18,7 +19,7 @@ void Group::add(std::string group) {
 }
 
 void Group::remove(std::string group) {
-    for (size_t i = 0; i < this->groups.size(); i++) {
+    for (uint32_t i = 0; i < this->groups.size(); i++) {
         if (this->groups[i] == group) {
             this->groups.erase(this->groups.begin() + i);
             return;

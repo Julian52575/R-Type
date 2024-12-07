@@ -4,12 +4,12 @@
 #include <vector>
 #include <iostream>
 
-#include "../../ECSExecption.hpp"
+#include "../../Exceptions/ECSExecption.hpp"
 #include "../Entity/Entity.hpp"
 
 class EntityManager {
     public:
-        explicit EntityManager(std::size_t maxEntities = 1000);
+        explicit EntityManager(uint32_t maxEntities = 1000);
         ~EntityManager();
         Entity createEntity();
         void destroyEntity(Entity entity);

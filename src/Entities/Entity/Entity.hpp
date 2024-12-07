@@ -3,11 +3,11 @@
 
 class Entity {
     public:
-        explicit Entity(std::size_t id);
-        operator std::size_t() const;
-        std::size_t getId() const;
+        explicit Entity(uint32_t id);
+        operator uint32_t() const;
+        uint32_t getId() const;
 
     private:
-        std::size_t id;
+        uint32_t id;
 };
 

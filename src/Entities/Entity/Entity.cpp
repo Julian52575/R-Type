@@ -1,12 +1,11 @@
 #include "./Entity.hpp"
 
-Entity::Entity(std::size_t id) : id(id) {}
+Entity::Entity(uint32_t id) : id(id) {}
 
-Entity::operator std::size_t() const {
+Entity::operator uint32_t() const {
     return this->id;
 }
 
-std::size_t Entity::getId() const {
+uint32_t Entity::getId() const {
     return this->id;
 }
-
