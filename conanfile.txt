@@ -1,0 +1,13 @@
+[requires]
+sfml/2.6.2
+asio/1.32.0
+lua/5.4.7
+
+[options]
+pkg/sfml:shared=True  # SFML is dynamically linked
+pkg/asio:header_only=True  # ASIO is header-only
+pkg/lua:shared=True  # Dynamically linked Lua
+
+[generators]
+CMakeDeps
+CMakeToolchain

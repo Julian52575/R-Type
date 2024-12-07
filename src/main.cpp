@@ -1,5 +1,5 @@
-#include "Core/Graphical/GraphicalCore.hpp"
-#include "Component/Liste.hpp"
+#include <rengine/Rengine.hpp>
+#include <SFML/Main.hpp>
 
 int main(void) {
     GraphicalCore core;
