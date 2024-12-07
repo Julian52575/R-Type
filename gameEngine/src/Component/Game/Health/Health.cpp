@@ -1,4 +1,4 @@
-#include "src/Component/Game/Health/Health.hpp"
+#include "./Health.hpp"
 
 Health::Health(int _health, int _maxHealth) {
     if (_health > _maxHealth)

@@ -1,4 +1,4 @@
-#include "src/Component/Render/Animation/Animation.hpp"
+#include "./Animation.hpp"
 
 Component::Animation::Animation(sf::IntRect rectSize, int nbrFrames, float speed){
     this->rectSize = rectSize;

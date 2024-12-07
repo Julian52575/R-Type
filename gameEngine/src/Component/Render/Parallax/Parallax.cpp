@@ -1,4 +1,4 @@
-#include "src/Component/Render/Parallax/Parallax.hpp"
+#include "./Parallax.hpp"
 
 Component::Parallax::Parallax(float speed) : speed(speed) {}
 

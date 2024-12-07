@@ -1,4 +1,4 @@
-#include "src/Component/Render/Text/Text.hpp"
+#include "./Text.hpp"
 #include <utility>
 #include <string>
 

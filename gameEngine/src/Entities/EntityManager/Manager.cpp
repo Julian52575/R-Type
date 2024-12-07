@@ -1,4 +1,4 @@
-#include "src/Entities/EntityManager/Manager.hpp"
+#include "./Manager.hpp"
 #include <vector>
 
 EntityManager::EntityManager(std::size_t maxEntities){

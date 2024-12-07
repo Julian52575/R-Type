@@ -1,4 +1,4 @@
-#include "Camera.hpp"
+#include "./Camera.hpp"
 
 Camera::Camera(sf::FloatRect rect) : sf::View(rect) {
     this->x = rect.left;

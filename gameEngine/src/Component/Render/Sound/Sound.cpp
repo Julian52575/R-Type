@@ -1,4 +1,4 @@
-#include "src/Component/Render/Sound/Sound.hpp"
+#include "./Sound.hpp"
 #include <string>
 
 Sound::Sound(const std::string& filename) {
