@@ -4,3 +4,5 @@ CMakeUserPresets.json
 _CPack_Packages/
 build
 *.cmake
+style_error.log
+rtype

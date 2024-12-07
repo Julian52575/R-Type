@@ -14,29 +14,29 @@ if (WIN32)
 endif()
 
 add_subdirectory(gameEngine)
-add_subdirectory(game)
+add_subdirectory(releaseAssets)
 
 if (WIN32)
-    install(TARGETS game DESTINATION bin)
+    install(TARGETS releaseAssets DESTINATION bin)
 else()
-    install(TARGETS game DESTINATION /usr/bin)
+    install(TARGETS releaseAssets DESTINATION /usr/bin)
 endif()
 
 if(WIN32)
     set(CPACK_GENERATOR "WIX")
 
     set(CPACK_WIX_SHORTCUTS_ON_DESKTOP ON)
-    set(CPACK_WIX_CREATE_DESKTOP_SHORTCUTS "Front")
+    set(CPACK_WIX_CREATE_DESKTOP_SHORTCUTS "releaseAssets")
     set(CPACK_WIX_PRODUCT_GUID "108415bb-0622-44d8-a270-8c22799aeb7d")
 
-    set(CPACK_WIX_PROGRAM_ICON "${CMAKE_SOURCE_DIR}/front/assets/icon/r-type.ico")
+    set(CPACK_WIX_PROGRAM_ICON "${CMAKE_SOURCE_DIR}/releaseAssets/assets/icon/r-type.ico")
 else()
     set(CPACK_GENERATOR "DEB")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "KK")
 
-    install(FILES "${CMAKE_SOURCE_DIR}/front/assets/icon/r-type.png" DESTINATION /usr/share/icons)
+    install(FILES "${CMAKE_SOURCE_DIR}/releaseAssets/assets/icon/r-type.png" DESTINATION /usr/share/icons)
 
-    configure_file("${CMAKE_SOURCE_DIR}/front/assets/r-type.desktop.in" "${CMAKE_BINARY_DIR}/r-type.desktop" @ONLY)
+    configure_file("${CMAKE_SOURCE_DIR}/releaseAssets/assets/r-type.desktop.in" "${CMAKE_BINARY_DIR}/r-type.desktop" @ONLY)
     install(FILES "${CMAKE_BINARY_DIR}/r-type.desktop" DESTINATION /usr/share/applications)
 
 endif()
