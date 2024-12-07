@@ -88,14 +88,14 @@ The client must only be in control of a single entity at any time. It may create
     2, GamePartPlugin   , A plugin (see Terminology)            , file content, varies;
 
 - Action:
-    0, Move             , Move                                                  , Entity In-Game id + x + y     , 2 + 2 + 2;
-    1, Shoot 1          , Primary shoot action                                  , Entity In-Game id             , 2;
-    2, Shoot 2          , Secondary shoot action                                , Entity In-Game id             , 2;
-    3, Shoot 3          , Tertiary shoot action                                 , Entity In-Game id             , 2;
-    4, Dodge            , Evasive maneuver                                      , Entity In-Game id             , 2;
-    5, Barrier          , Protective action                                     , Entity In-Game id             , 2;
-    6, Death            , No HP left                                            , Entity In-Game id             , 2;
-    7, Ultimate         , Ultimate action                                       , Entity In-Game id             , 2;
+    0, Move             , Move (in pixel)                                       , x + y         , 2 + 2;
+    1, Shoot 1          , Primary shoot action                                  , None;
+    2, Shoot 2          , Secondary shoot action                                , None;
+    3, Shoot 3          , Tertiary shoot action                                 , None;
+    4, Dodge            , Evasive maneuver                                      , None;
+    5, Barrier          , Protective action                                     , None;
+    6, Death            , No HP left                                            , None;
+    7, Ultimate         , Ultimate action                                       , None;
 
 - Info:
     0, InfoAll              , Every info in the ordre listed below                  , Info {1 -> 7}                                    , Info {1 -> 7} (29)
@@ -297,3 +297,4 @@ Changelog
 - Version 1.0: Initial draft. 5 december 2024
 - Version 1.1: Added strength && Updated Move* with strength && Added InfoAll. 6 december 2024. 17:10UTC
 - Version 1.2: Concat all 4 move precision into a single one with X & Y. 7 december 2024. 16:01UTC
+- Version 1.3: Removed Entity In-Game id from all Precision::Action. 7 decembre 2024. 16:07UTC
