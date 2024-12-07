@@ -88,17 +88,14 @@ The client must only be in control of a single entity at any time. It may create
     2, GamePartPlugin   , A plugin (see Terminology)            , file content, varies;
 
 - Action:
-    0, MoveUp           , Move to the top of the screen (-y coordinate)         , Entity In-Game id + Strength  , 2 + 1;
-    1, MoveDown         , Move to the bottom of the screen (+y coordinate)      , Entity In-Game id + Strength  , 2 + 1;
-    2, MoveRight        , Move to the right of the screen (+x coordinate)       , Entity In-Game id + Strength  , 2 + 1;
-    3, MoveLeft         , Move to the left of the screen (-x coordinate)        , Entity In-Game id + Strength  , 2 + 1;
-    4, Shoot 1          , Primary shoot action                                  , Entity In-Game id     , 2;
-    5, Shoot 2          , Secondary shoot action                                , Entity In-Game id     , 2;
-    6, Shoot 3          , Tertiary shoot action                                 , Entity In-Game id     , 2;
-    7, Dodge            , Evasive maneuver                                      , Entity In-Game id     , 2;
-    8, Barrier          , Protective action                                     , Entity In-Game id     , 2;
-    9, Death            , No HP left                                            , Entity In-Game id     , 2;
-    A, Ultimate         , Ultimate action                                       , Entity In-Game id     , 2;
+    0, Move             , Move                                                  , Entity In-Game id + x + y     , 2 + 2 + 2;
+    1, Shoot 1          , Primary shoot action                                  , Entity In-Game id             , 2;
+    2, Shoot 2          , Secondary shoot action                                , Entity In-Game id             , 2;
+    3, Shoot 3          , Tertiary shoot action                                 , Entity In-Game id             , 2;
+    4, Dodge            , Evasive maneuver                                      , Entity In-Game id             , 2;
+    5, Barrier          , Protective action                                     , Entity In-Game id             , 2;
+    6, Death            , No HP left                                            , Entity In-Game id             , 2;
+    7, Ultimate         , Ultimate action                                       , Entity In-Game id             , 2;
 
 - Info:
     0, InfoAll              , Every info in the ordre listed below                  , Info {1 -> 7}                                    , Info {1 -> 7} (29)
@@ -299,3 +296,4 @@ Changelog
 
 - Version 1.0: Initial draft. 5 december 2024
 - Version 1.1: Added strength && Updated Move* with strength && Added InfoAll. 6 december 2024. 17:10UTC
+- Version 1.2: Concat all 4 move precision into a single one with X & Y. 7 december 2024. 16:01UTC
