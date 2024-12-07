@@ -1,4 +1,4 @@
-#include "src/Component/User_Action/Controllable/Controllable.hpp"
+#include "./Controllable.hpp"
 
 Controllable::Controllable() {}
 

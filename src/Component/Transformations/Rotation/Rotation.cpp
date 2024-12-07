@@ -1,4 +1,4 @@
-#include "src/Component/Transformations/Rotation/Rotation.hpp"
+#include "./Rotation.hpp"
 
 Rotation::Rotation(float angle){
     this->angle = angle;

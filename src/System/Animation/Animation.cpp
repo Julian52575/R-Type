@@ -1,4 +1,4 @@
-#include "src/System/Animation/Animation.hpp"
+#include "./Animation.hpp"
 
 System::Animation::Animation(){}
 

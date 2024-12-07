@@ -1,7 +1,7 @@
 #pragma once
 
-#include "src/Network/tsqueue.hpp"
-#include "src/Network/Messages/OwnedMessage.hpp"
+#include "../tsqueue.hpp"
+#include "../Messages/OwnedMessage.hpp"
 
 #include <asio.hpp>
 #include <vector>

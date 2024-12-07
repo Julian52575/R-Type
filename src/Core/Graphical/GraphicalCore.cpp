@@ -1,4 +1,4 @@
-#include "src/Core/Graphical/GraphicalCore.hpp"
+#include "./GraphicalCore.hpp"
 #include <memory>
 #include <utility>
 #include <string>

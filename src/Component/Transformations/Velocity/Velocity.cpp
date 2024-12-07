@@ -1,4 +1,4 @@
-#include "src/Component/Transformations/Velocity/Velocity.hpp"
+#include "./Velocity.hpp"
 #include <utility>
 
 Velocity::Velocity(float x, float y){

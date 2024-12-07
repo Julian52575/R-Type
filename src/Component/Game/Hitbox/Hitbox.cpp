@@ -1,4 +1,4 @@
-#include "src/Component/Game/Hitbox/Hitbox.hpp"
+#include "./Hitbox.hpp"
 
 Hitbox::Hitbox(sf::Vector2f size, sf::Vector2f offset) {
     this->size = size;

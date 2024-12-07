@@ -1,4 +1,4 @@
-#include "src/Component/Game/LifeTime/LifeTime.hpp"
+#include "./LifeTime.hpp"
 
 
 

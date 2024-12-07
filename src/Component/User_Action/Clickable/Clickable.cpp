@@ -1,4 +1,4 @@
-#include "src/Component/User_Action/Clickable/Clickable.hpp"
+#include "./Clickable.hpp"
 
 Clickable::Clickable() {}
 

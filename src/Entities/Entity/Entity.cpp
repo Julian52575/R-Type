@@ -1,4 +1,4 @@
-#include "src/Entities/Entity/Entity.hpp"
+#include "./Entity.hpp"
 
 Entity::Entity(std::size_t id) : id(id) {}
 

@@ -1,4 +1,4 @@
-#include "src/Component/Transformations/Acceleration/Acceleration.hpp"
+#include "./Acceleration.hpp"
 
 Acceleration::Acceleration(float x, float y){
     this->x = x;
