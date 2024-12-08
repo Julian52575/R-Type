@@ -1,42 +1,42 @@
 # PowerShell Script: .installHeader.ps1
 
 # Find all .hpp files excluding specified directories
-$HPP_LIST = Get-ChildItem -Recurse -Include *.hpp | 
-    Where-Object { -not $_.FullName -match "\\lol\\|\\build\\|\\rengine\\" }
+$PWD = Get-Location
+$PWD = "$PWD\"
+Write-Host "PWD: $PWD"
+$HPP_LIST = Get-ChildItem -Path "src/" -Recurse -Filter "*.hpp"
 
 # Target directories
 $INSTALL_PARENT_DIR = "C:\Program Files\Include"
-$INSTALL_DIR = "$INSTALL_PARENT_DIR\rengine"
-
-# Rights check
-$TEST_FILE = "rengine.test"
-New-Item -ItemType File -Path $TEST_FILE | Out-Null
-
-try {
-    Move-Item -Path $TEST_FILE -Destination $INSTALL_PARENT_DIR
-    Remove-Item -Path "$INSTALL_PARENT_DIR\$TEST_FILE" -ErrorAction SilentlyContinue
-} catch {
-    Write-Warning "WARNING: Cannot copy dev headers into $INSTALL_DIR."
-    $INSTALL_DIR = (Get-Location).Path + "\rengine"
-    Write-Warning "Installing in $INSTALL_DIR instead."
-    Write-Warning "Copy $INSTALL_DIR to $INSTALL_PARENT_DIR yourself."
-}
+$INSTALL_DIR = "$INSTALL_PARENT_DIR\rengine\"
 
 # Clear target directory
 if (Test-Path $INSTALL_DIR) {
     Remove-Item -Recurse -Force $INSTALL_DIR
 }
-New-Item -ItemType Directory -Path $INSTALL_DIR | Out-Null
-
-# Copy headers
-foreach ($header in $HPP_LIST) {
-    $targetDir = Join-Path $INSTALL_DIR ($header.DirectoryName -replace [regex]::Escape((Get-Location).Path), "")
-    New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
-    Copy-Item -Path $header.FullName -Destination $targetDir
+New-Item -Path $INSTALL_DIR -Force -ItemType directory -Verbose
+Copy-Item -Path "./*.hpp" -Destination $INSTALL_DIR -Verbose
+try {
+    # Copy headers
+    #Write-Host "Hpp list: $HPP_LIST"
+    foreach ($header in $HPP_LIST) {
+        $aaa = $header.FullName.Substring($PWD.Length)
+        Write-Host "Copying"
+        Write-Host $header.fullName
+        Write-Host "to"
+        Write-Host "$INSTALL_DIR$aaa"
+        try {
+            $folder = $aaa
+            Write-Host "Folder: $folder"
+            New-Item -Path $INSTALL_DIR$folder -Force -ItemType directory -Verbose
+        } catch {
+            continue
+        }
+        Copy-Item -Path $header.FullName -Destination $INSTALL_DIR$aaa -Verbose
+    }
+} catch {
+    Write-Warning "WARNING: Cannot copy dev headers into $INSTALL_DIR."
+    exit 84
 }
 
 Write-Host "Installed dev headers in $INSTALL_DIR!"
-
-if ($INSTALL_DIR -ne "$INSTALL_PARENT_DIR\rengine") {
-    Write-Warning "WARNING: Move $INSTALL_DIR to $INSTALL_PARENT_DIR\rengine"
-}

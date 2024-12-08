@@ -1,5 +1,5 @@
 # PowerShell Script
-$LIB = "librengine.sln"
+$LIB = "librengine.dll"
 $RIGHT = $true
 
 # Check if the library exists and is executable
@@ -22,7 +22,7 @@ Write-Host "Installing dev header..."
 ./.installHeader.ps1
 
 if (-not $RIGHT) {
-    Write-Warning "WARNING: Cannot install $LIB to /usr/lib."
-    Write-Warning "Move $LIB to /usr/lib manually."
+    Write-Warning "WARNING: Cannot install $LIB to your path."
+    Write-Warning "Move $LIB yourself."
 }
 

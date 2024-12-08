@@ -23,7 +23,10 @@ Invoke-Expression 'ninja -C build'
 
 # Check if the .dll was successfully built
 if (Test-Path "build\$LIB_NAME") {
-    Move-Item -Path "build\$LIB_NAME" -Destination "."
+    if (Test-Path "$LIB_NAME") {
+    } else {
+        Move-Item -Path "build\$LIB_NAME" -Destination "."
+    }
     Write-Host "Successfully built $LIB_NAME!"
 } else {
     Write-Error "Failed to build $LIB_NAME. Check the build logs for errors."
