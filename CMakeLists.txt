@@ -6,6 +6,10 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_library(rengine SHARED
     ${SRC_FILES}
 )
+
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 set(SFML_STATIC_LIBRARIES FALSE)
@@ -24,4 +28,5 @@ target_link_libraries(rengine PUBLIC
 
 target_include_directories(rengine PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE ${CONAN_INCLUDE_DIRS}
 )
