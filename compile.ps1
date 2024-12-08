@@ -3,7 +3,7 @@ $LIB_NAME = "librengine.dll"
 $PROJECT_FILE = "build\build.ninja"
 
 # Run Conan to install dependencies
-conan install . --output-folder=build --build=missing
+conan install conanfile.txt --output-folder=build --build=missing 
 
 # Run CMake to generate the solution file
 cmake -B build -G "Ninja" `
@@ -22,8 +22,8 @@ if (-Not (Test-Path $PROJECT_FILE)) {
 Invoke-Expression 'ninja -C build'
 
 # Check if the .dll was successfully built
-if (Test-Path "build\Release\$LIB_NAME") {
-    Move-Item -Path "build\Release\$LIB_NAME" -Destination "."
+if (Test-Path "build\$LIB_NAME") {
+    Move-Item -Path "build\$LIB_NAME" -Destination "."
     Write-Host "Successfully built $LIB_NAME!"
 } else {
     Write-Error "Failed to build $LIB_NAME. Check the build logs for errors."

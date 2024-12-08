@@ -1,5 +1,9 @@
 #pragma once
-#include <lua5.4/lua.hpp>
+#ifdef _WIN32
+    #include <lua.hpp>
+#else
+    #include <lua5.4/lua.hpp>
+#endif
 #include <iostream>
 #include <any>
 #include <vector>
