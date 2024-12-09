@@ -278,7 +278,11 @@ void EntityMaker::parseText(Entity e, const nlohmann::json& json) {
     std::string font = json["text"]["font"];
     int size = json["text"]["size"];
     sf::Color color(json["text"]["color"]["r"], json["text"]["color"]["g"], json["text"]["color"]["b"], json["text"]["color"]["a"]);
-    this->text.emplace_at(e, font, content, size, color);
+    try { 
+        this->text.emplace_at(e, font, content, size, color);
+    } catch (std::exception &e) {
+        return;
+    }
 }
 
 void EntityMaker::parseAttack(Entity e, const nlohmann::json& json) {
