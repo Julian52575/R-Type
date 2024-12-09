@@ -32,11 +32,8 @@ EntityMaker::EntityMaker() {
 
 EntityMaker::~EntityMaker(){}
 
-void EntityMaker::setEntity(Entity e) {
-    this->e = std::make_shared<Entity>(e);
-}
 
-void EntityMaker::DumpEntity(Entity e){
+void EntityMaker::EraseEntity(Entity e){
     this->acc.erase(e);
     this->pos.erase(e);
     this->rot.erase(e);
@@ -63,30 +60,184 @@ void EntityMaker::DumpEntity(Entity e){
     this->controllable.erase(e);
 }
 
-void EntityMaker::DumpEntity(){
-    DumpEntity(*e);
-}
 
-void EntityMaker::parseJson(const std::string &path) {
+void EntityMaker::parseJson(Entity e, const std::string &path) {
     std::ifstream file(path);
     if (!file.is_open())
         throw JsonParseException("Could not open file: " + path);
-    
+    if (file.peek() == std::ifstream::traits_type::eof())
+        throw JsonParseException("File is empty: " + path);
     nlohmann::json json;
     file >> json;
-    parseSprite(json);
-    parsePosition(json);
-    parseVelocity(json);
-    parseControllable(json);
-    parseAnimations(json);
-    parseParallax(json);
-    parseText(json);
-    parseLifetime(json);
-    parseCamera(json);
-    parseHitbox(json);
+
+    parseAcceleration(e, json);
+    parsePosition(e, json);
+    parseRotation(e, json);
+    parseScale(e, json);
+    parseVelocity(e, json);
+
+    parseAnimations(e, json);
+    parseCamera(e, json);
+    parseMusic(e, json);
+    parseParallax(e, json);
+    parseShader(e, json);
+    parseSound(e, json);
+    parseSprite(e, json);
+    parseText(e, json);
+
+    parseAttack(e, json);
+    parseGroup(e, json);
+    parseHealth(e, json);
+    parseHitbox(e, json);
+    parseLifetime(e, json);
+    parseScripting(e, json);
+
+    parseClickable(e, json);
+    parseControllable(e, json);
+
+    file.close();
 }
 
-void EntityMaker::parseSprite(const nlohmann::json& json) {
+void EntityMaker::parseAcceleration(Entity e, const nlohmann::json& json) {
+    if (!json.contains("acceleration")) {
+        return;
+    }
+    if (!json["acceleration"].contains("x") || !json["acceleration"].contains("y")) {
+        throw JsonParseException("Acceleration must have x and y");
+    }
+    float x = json["acceleration"]["x"];
+    float y = json["acceleration"]["y"];
+    this->acc.emplace_at(e, x, y);
+}
+
+void EntityMaker::parsePosition(Entity e, const nlohmann::json& json) {
+    if (!json.contains("position")) {
+        return;
+    }
+    if (!json["position"].contains("x") || !json["position"].contains("y")) {
+        throw JsonParseException("Position must have x and y");
+    }
+    float x = json["position"]["x"];
+    float y = json["position"]["y"];
+    this->pos.emplace_at(e, x, y);
+}
+
+void EntityMaker::parseRotation(Entity e, const nlohmann::json& json) {
+    if (!json.contains("rotation")) {
+        return;
+    }
+    if (!json["rotation"].contains("angle")) {
+        throw JsonParseException("Rotation must have an angle");
+    }
+    float angle = json["rotation"]["angle"];
+    this->rot.emplace_at(e, angle);
+}
+
+void EntityMaker::parseScale(Entity e, const nlohmann::json& json) {
+    if (!json.contains("scale")) {
+        return;
+    }
+    if (!json["scale"].contains("x") || !json["scale"].contains("y")) {
+        throw JsonParseException("Scale must have x and y");
+    }
+    float x = json["scale"]["x"];
+    float y = json["scale"]["y"];
+    this->scale.emplace_at(e, x, y);
+}
+
+void EntityMaker::parseVelocity(Entity e, const nlohmann::json& json) {
+    if (!json.contains("velocity")) {
+        return;
+    }
+    if (!json["velocity"].contains("x") || !json["velocity"].contains("y")) {
+        throw JsonParseException("Velocity must have x and y");
+    }
+    float x = json["velocity"]["x"];
+    float y = json["velocity"]["y"];
+    this->velo.emplace_at(e, x, y);
+}
+
+void EntityMaker::parseAnimations(Entity e, const nlohmann::json& json) {
+    if (!json.contains("animations")) {
+        return;
+    }
+    if (!json["animations"].contains("frameRect"))
+        throw JsonParseException("Animations must have a frameRect");
+
+    if (!json["animations"]["frameRect"].contains("x") || !json["animations"]["frameRect"].contains("y") || !json["animations"]["frameRect"].contains("width") || !json["animations"]["frameRect"].contains("height"))
+        throw JsonParseException("frameRect must have x, y, width and height");
+
+    if (!json["animations"].contains("frameCount"))
+        throw JsonParseException("Animations must have frameCount");
+
+    if (!json["animations"].contains("frameDuration"))
+        throw JsonParseException("Animations must have frameDuration");
+
+    sf::IntRect rect(json["animations"]["frameRect"]["x"], json["animations"]["frameRect"]["y"], json["animations"]["frameRect"]["width"], json["animations"]["frameRect"]["height"]);
+    int frames = json["animations"]["frameCount"];
+    float duration = json["animations"]["frameDuration"];
+    this->animation.emplace_at(e, rect, frames, duration);
+}
+
+void EntityMaker::parseCamera(Entity e, const nlohmann::json& json) {
+    if (!json.contains("camera")) {
+        return;
+    }
+    if (!json["camera"].contains("rect")) {
+        throw JsonParseException("Camera must have a rect");
+    }
+    if (!json["camera"]["rect"].contains("x") || !json["camera"]["rect"].contains("y") || !json["camera"]["rect"].contains("width") || !json["camera"]["rect"].contains("height")) {
+        throw JsonParseException("Rect must have x, y, width and height");
+    }
+    sf::FloatRect rect(json["camera"]["rect"]["x"], json["camera"]["rect"]["y"], json["camera"]["rect"]["width"], json["camera"]["rect"]["height"]);
+    this->camera.emplace_at(e, rect);
+}
+
+void EntityMaker::parseMusic(Entity e, const nlohmann::json& json) {
+    if (!json.contains("music")) {
+        return;
+    }
+    if (!json["music"].contains("path")) {
+        throw JsonParseException("Music must have a path");
+    }
+    std::string path = json["music"]["path"];
+    this->music.emplace_at(e, path);
+}
+
+void EntityMaker::parseParallax(Entity e, const nlohmann::json& json) {
+    if (!json.contains("parallax")) {
+        return;
+    }
+    if (!json["parallax"].contains("speed")) {
+        throw JsonParseException("Parallax must have a speed");
+    }
+    float speed = json["parallax"]["speed"];
+    this->parallax.emplace_at(e, speed);
+}
+
+void EntityMaker::parseShader(Entity e, const nlohmann::json& json) {
+    if (!json.contains("shader")) {
+        return;
+    }
+    if (!json["shader"].contains("path")) {
+        throw JsonParseException("Shader must have a path");
+    }
+    std::string path = json["shader"]["path"];
+    this->shader.emplace_at(e, path);
+}
+
+void EntityMaker::parseSound(Entity e, const nlohmann::json& json) {
+    if (!json.contains("sound")) {
+        return;
+    }
+    if (!json["sound"].contains("path")) {
+        throw JsonParseException("Sound must have a path");
+    }
+    std::string path = json["sound"]["path"];
+    this->sound.emplace_at(e, path);
+}
+
+void EntityMaker::parseSprite(Entity e, const nlohmann::json& json) {
     if (!json.contains("sprite")) {
         return;
     }
@@ -110,74 +261,10 @@ void EntityMaker::parseSprite(const nlohmann::json& json) {
         }
         origin = std::make_pair(json["sprite"]["origin"]["x"], json["sprite"]["origin"]["y"]);
     }
-    this->sprite.emplace_at(*e, path, scale, origin);
+    this->sprite.emplace_at(e, path, scale, origin);
 }
 
-void EntityMaker::parsePosition(const nlohmann::json& json) {
-    if (!json.contains("position")) {
-        return;
-    }
-    if (!json["position"].contains("x") || !json["position"].contains("y")) {
-        throw JsonParseException("Position must have x and y");
-    }
-    float x = json["position"]["x"];
-    float y = json["position"]["y"];
-    this->pos.emplace_at(*e, x, y);
-}
-
-void EntityMaker::parseVelocity(const nlohmann::json& json) {
-    if (!json.contains("velocity")) {
-        return;
-    }
-    if (!json["velocity"].contains("x") || !json["velocity"].contains("y")) {
-        throw JsonParseException("Velocity must have x and y");
-    }
-    float x = json["velocity"]["x"];
-    float y = json["velocity"]["y"];
-    this->velo.emplace_at(*e, x, y);
-}
-
-void EntityMaker::parseControllable(const nlohmann::json& json) {
-    if (!json.contains("controllable"))
-        return;
-    if (json["controllable"] == true)
-        this->controllable.emplace_at(*e);
-}
-
-void EntityMaker::parseAnimations(const nlohmann::json& json) {
-    if (!json.contains("animations")) {
-        return;
-    }
-    if (!json["animations"].contains("frameRect"))
-        throw JsonParseException("Animations must have a frameRect");
-
-    if (!json["animations"]["frameRect"].contains("x") || !json["animations"]["frameRect"].contains("y") || !json["animations"]["frameRect"].contains("width") || !json["animations"]["frameRect"].contains("height"))
-        throw JsonParseException("frameRect must have x, y, width and height");
-
-    if (!json["animations"].contains("frameCount"))
-        throw JsonParseException("Animations must have frameCount");
-
-    if (!json["animations"].contains("frameDuration"))
-        throw JsonParseException("Animations must have frameDuration");
-
-    sf::IntRect rect(json["animations"]["frameRect"]["x"], json["animations"]["frameRect"]["y"], json["animations"]["frameRect"]["width"], json["animations"]["frameRect"]["height"]);
-    int frames = json["animations"]["frameCount"];
-    float duration = json["animations"]["frameDuration"];
-    this->animation.emplace_at(*e, rect, frames, duration);
-}
-
-void EntityMaker::parseParallax(const nlohmann::json& json) {
-    if (!json.contains("parallax")) {
-        return;
-    }
-    if (!json["parallax"].contains("speed")) {
-        throw JsonParseException("Parallax must have a speed");
-    }
-    float speed = json["parallax"]["speed"];
-    this->parallax.emplace_at(*e, speed);
-}
-
-void EntityMaker::parseText(const nlohmann::json& json) {
+void EntityMaker::parseText(Entity e, const nlohmann::json& json) {
     if (!json.contains("text")) {
         return;
     }
@@ -191,35 +278,48 @@ void EntityMaker::parseText(const nlohmann::json& json) {
     std::string font = json["text"]["font"];
     int size = json["text"]["size"];
     sf::Color color(json["text"]["color"]["r"], json["text"]["color"]["g"], json["text"]["color"]["b"], json["text"]["color"]["a"]);
-    this->text.emplace_at(*e, font, content, size, color);
+    this->text.emplace_at(e, font, content, size, color);
 }
 
-void EntityMaker::parseLifetime(const nlohmann::json& json) {
-    if (!json.contains("lifetime")) {
+void EntityMaker::parseAttack(Entity e, const nlohmann::json& json) {
+    if (!json.contains("attack")) {
         return;
     }
-    float time = json["lifetime"];
-    if (time <= 0) {
-        throw JsonParseException("Lifetime must be positive and non-zero");
+    if (!json["attack"].contains("damage")) {
+        throw JsonParseException("Attack must have damage");
     }
-    this->lifetime.emplace_at(*e, time);
+    if (!json["attack"].contains("cooldown")) {
+        throw JsonParseException("Attack must have cooldown");
+    }
+    float damage = json["attack"]["damage"];
+    float cooldown = json["attack"]["cooldown"];
+    this->attack.emplace_at(e, damage, cooldown);
 }
 
-void EntityMaker::parseCamera(const nlohmann::json& json) {
-    if (!json.contains("camera")) {
+void EntityMaker::parseGroup(Entity e, const nlohmann::json& json) {
+    if (!json.contains("group")) {
         return;
     }
-    if (!json["camera"].contains("rect")) {
-        throw JsonParseException("Camera must have a rect");
-    }
-    if (!json["camera"]["rect"].contains("x") || !json["camera"]["rect"].contains("y") || !json["camera"]["rect"].contains("width") || !json["camera"]["rect"].contains("height")) {
-        throw JsonParseException("Rect must have x, y, width and height");
-    }
-    sf::FloatRect rect(json["camera"]["rect"]["x"], json["camera"]["rect"]["y"], json["camera"]["rect"]["width"], json["camera"]["rect"]["height"]);
-    this->camera.emplace_at(*e, rect);
+    std::vector<std::string> groups = json["group"].get<std::vector<std::string>>();
+    this->group.emplace_at(e, groups);
 }
 
-void EntityMaker::parseHitbox(const nlohmann::json& json) {
+void EntityMaker::parseHealth(Entity e, const nlohmann::json& json) {
+    if (!json.contains("health")) {
+        return;
+    }
+    if (!json["health"].contains("max")) {
+        throw JsonParseException("Health must have max");
+    }
+    if (!json["health"].contains("current")) {
+        throw JsonParseException("Health must have current");
+    }
+    float max = json["health"]["max"];
+    float current = json["health"]["current"];
+    this->health.emplace_at(e, max, current);
+}
+
+void EntityMaker::parseHitbox(Entity e, const nlohmann::json& json) {
     if (!json.contains("hitbox")) {
         return;
     }
@@ -231,26 +331,52 @@ void EntityMaker::parseHitbox(const nlohmann::json& json) {
     }
     sf::Vector2f size(json["hitbox"]["size"]["x"], json["hitbox"]["size"]["y"]);
     sf::Vector2f offset(json["hitbox"]["offset"]["x"], json["hitbox"]["offset"]["y"]);
-    this->hitbox.emplace_at(*e, size, offset);
+    this->hitbox.emplace_at(e, size, offset);
 }
 
+
+void EntityMaker::parseLifetime(Entity e, const nlohmann::json& json) {
+    if (!json.contains("lifetime")) {
+        return;
+    }
+    float time = json["lifetime"];
+    if (time <= 0) {
+        throw JsonParseException("Lifetime must be positive and non-zero");
+    }
+    this->lifetime.emplace_at(e, time);
+}
+
+void EntityMaker::parseScripting(Entity e, const nlohmann::json& json) {
+    if (!json.contains("scripting")) {
+        return;
+    }
+    if (!json["scripting"].contains("path")) {
+        throw JsonParseException("Scripting must have a path");
+    }
+    std::string path = json["scripting"]["path"];
+    this->scripting.emplace_at(e, path);
+}
+
+void EntityMaker::parseClickable(Entity e, const nlohmann::json& json) {
+    if (!json.contains("clickable"))
+        return;
+    if (json["clickable"] == true)
+        this->clickable.emplace_at(e);
+}
+
+void EntityMaker::parseControllable(Entity e, const nlohmann::json& json) {
+    if (!json.contains("controllable"))
+        return;
+    if (json["controllable"] == true)
+        this->controllable.emplace_at(e);
+}
 
 void EntityMaker::UpdatePosition(Entity e, float x, float y) {
     this->pos[e].value().x = x;
     this->pos[e].value().y = y;
 }
 
-void EntityMaker::UpdatePosition(float x, float y) {
-    this->pos[*e].value().x = x;
-    this->pos[*e].value().y = y;
-}
-
 void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
     this->velo[e].value().x = x;
     this->velo[e].value().y = y;
-}
-
-void EntityMaker::UpdateVelocity(float x, float y) {
-    this->velo[*e].value().x = x;
-    this->velo[*e].value().y = y;
 }

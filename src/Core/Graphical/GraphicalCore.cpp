@@ -11,21 +11,12 @@ GraphicalCore::~GraphicalCore(){}
 
 void GraphicalCore::destroy_entity(Entity e){
     this->em.destroyEntity(e);
-    this->maker->DumpEntity(e);
+    this->maker->EraseEntity(e);
 }
 
 void GraphicalCore::MakeEntity(const std::string path){
     Entity e = em.createEntity();
-    maker->setEntity(e);
-    maker->parseJson(path);
-}
-
-void GraphicalCore::MakeParallaxBackground(const std::string& texturePath, float speed){
-    Entity e = em.createEntity();
-    maker->setEntity(e);
-    // maker->setSprite(texturePath, std::make_pair(3.f, 3.f), std::make_pair(0.f, 0.f), sprite);
-    // maker->setPosition(0, 0, pos);
-    // maker->setParallax(speed, parallax);
+    maker->parseJson(e,path);
 }
 
 void GraphicalCore::run(){

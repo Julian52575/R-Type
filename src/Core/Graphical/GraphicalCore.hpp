@@ -15,7 +15,6 @@ class GraphicalCore {
         ~GraphicalCore();
         void destroy_entity(Entity e);
         void run();
-        void MakeParallaxBackground(const std::string& texturePath, float speed);
         void MakeEntity(const std::string path);
 
 
