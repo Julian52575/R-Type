@@ -376,11 +376,19 @@ void EntityMaker::parseControllable(Entity e, const nlohmann::json& json) {
 }
 
 void EntityMaker::UpdatePosition(Entity e, float x, float y) {
-    this->pos[e].value().x = x;
-    this->pos[e].value().y = y;
+    try {
+        this->pos[e].value().x = x;
+        this->pos[e].value().y = y;
+    } catch (std::out_of_range &) {
+        this->pos.emplace_at(e, x, y);
+    }
 }
 
 void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
-    this->velo[e].value().x = x;
-    this->velo[e].value().y = y;
+    try {
+        this->velo[e].value().x = x;
+        this->velo[e].value().y = y;
+    } catch (std::out_of_range &) {
+        this->velo.emplace_at(e, x, y);
+    }
 }

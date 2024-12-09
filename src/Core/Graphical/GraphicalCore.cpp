@@ -14,9 +14,11 @@ void GraphicalCore::destroy_entity(Entity e){
     this->maker->EraseEntity(e);
 }
 
-void GraphicalCore::MakeEntity(const std::string path){
+Entity GraphicalCore::MakeEntity(const std::string path){
     Entity e = em.createEntity();
+    std::cout << "Entity " << e << " created" << std::endl;
     maker->parseJson(e,path);
+    return e;
 }
 
 void GraphicalCore::run(){
@@ -27,9 +29,10 @@ void GraphicalCore::run(){
         this->render.processEvents();
 
         this->keyBoardInput.update(maker->controllable, maker->velo);
-        // this->keyBoardInput.shoot(maker->controllable, maker->pos, std::function<void(float, float)>([this](float x, float y) {
-        //     this->MakePlayerAttack(x, y);
-        // }));
+        this->keyBoardInput.shoot(maker->controllable, maker->pos, std::function<void(float, float)>([this](float x, float y) {
+            Entity e = this->MakeEntity("entities/projectile.json");
+            this->maker->UpdatePosition(e, x, y);
+        }));
         // script.update(this->scripting);
         this->movement.update(maker->pos, maker->velo, deltaTime);
         this->parallaxSystem.update(maker->pos, maker->sprite, maker->parallax, deltaTime);

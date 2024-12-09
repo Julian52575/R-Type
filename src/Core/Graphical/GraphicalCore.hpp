@@ -15,7 +15,7 @@ class GraphicalCore {
         ~GraphicalCore();
         void destroy_entity(Entity e);
         void run();
-        void MakeEntity(const std::string path);
+        Entity MakeEntity(const std::string path);
 
 
     private:
