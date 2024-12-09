@@ -8,7 +8,7 @@ if ! conan --version > /dev/null; then
     fi
 fi
 
-conan install . --output-folder=build --build=missing
+conan install . --output-folder=build --build=missing -c tools.system.package_manager:mode=install
 cmake -B build -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=RELEASE
 if cmake --build build ; then
     chmod a+x build/$LIB_NAME
