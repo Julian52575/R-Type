@@ -29,7 +29,7 @@ void GraphicalCore::run(){
         this->render.processEvents();
 
         this->keyBoardInput.update(maker->controllable, maker->velo);
-        this->keyBoardInput.shoot(maker->controllable, maker->pos, std::function<void(float, float)>([this](float x, float y) {
+        this->keyBoardInput.shoot(maker->controllable, maker->pos, maker->attack, deltaTime, std::function<void(float, float)>([this](float x, float y) {
             Entity e = this->MakeEntity("entities/projectile.json");
             this->maker->UpdatePosition(e, x, y);
         }));
