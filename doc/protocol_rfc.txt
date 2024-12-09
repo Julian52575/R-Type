@@ -32,6 +32,7 @@ The client must only be in control of a single entity at any time. It may create
 - In-Game Identifier: A in-game identifier given to an entity at creation, that identifier may be given to another entity when the 1st holder is removed. 2 Bytes integer.
 - Configuration Identifier: A unique identifier given to an entity, allows the entity to be associated with its Entity Configuration. 2 bytes integer.
 - Entity Configuration: A json file specifying an entity stats and sprites. Is located at entities/ID.json
+- Refresh time: Every 15 frames.
 
 =======================================================================
 2. Protocol Overview
@@ -140,7 +141,7 @@ UDP for in-game communication, TCP for lobby;
 - Initialization:
 [Describe the handshake or connection setup process.]
 
-This example is based on a already playing game that has 2 entity.
+This example is based on an already playing game that has 2 entity.
 Client                   |                      Server
 ------------------------------------------------------
  [
@@ -222,32 +223,55 @@ Shoot 1,
 - Termination:
 Clients are disconnect when the level is over, or every playable entities are dead.
 
-3.3 Server / Client differences
+3.3 In-Game event handling
+---------------------------
+
+[ Every refresh time ]
+The server sends EntityInfo.Info.InfoAll for each entity to every client.
+
+[ Entity action ]
+    [ Player Action ]
+    The client send EntityAction.Action.<currentAction> whenever the player inputs an recognized action.
+
+    [ Enemy Action ]
+    ...
+
+[ Colision between 2 entities ]
+...
+
+[ Entity death ]
+...
+
+3.4 Server / Client differences
 --------------------------------
 The client only sends the action from its playing entity.
 The server sends the action from every entity except the client's playing entity.
 
-3.4 Session Management
+[ Client ]
+The client should be seen as a façade, only displaying what the server tells him to.
+In case of desync, the game, hopefully, stays only desynced until refresh time when the server resends all the EntityInfo.
+Computations on damage dealt or even patern prediction can be made on the client but isn't necessary.
+
+[ Server ]
+...
+
+3.5 Session Management
 -----------------------
 [Describe session lifecycle: authentication, state tracking, rejoining mechanisms, etc.]
 
-3.5 Error Handling
+3.6 Error Handling
 -------------------
 [Explain how errors are communicated, e.g., error codes, retry mechanisms.]
 If a client receives a packet meant for the server, it should ignore it.
 
-3.6 Security
+3.7 Security
 -------------
 [Detail encryption methods, authentication tokens, and security features.]
 
 =======================================================================
 4. Use Cases
 =======================================================================
-[Describe practical scenarios where the protocol will be used.]
-
-Example:
-1. Player joins a multiplayer game lobby.
-2. Server broadcasts real-time game updates to all clients.
+1. Simple game
 
 =======================================================================
 5. Performance Considerations
@@ -295,7 +319,8 @@ Changelog
 [Track changes between versions of the RFC, if applicable.]
 
 - Version 1.0: Initial draft. 5 december 2024
-- Version 1.1: Added strength && Updated Move* with strength && Added InfoAll. 6 december 2024. 17:10UTC
-- Version 1.2: Concat all 4 move precision into a single one with X & Y. 7 december 2024. 16:01UTC
-- Version 1.3: Removed Entity In-Game id from all Precision::Action. 7 decembre 2024. 16:07UTC
-- Version 1.3.2: Removed Entity In-Game id from all Precision::Info, 9 decembre 2024. 10:49UTC
+- Version 1.1: Added strength && Updated Move* with strength && Added InfoAll. 6 december 2024. 17:10UTC+1
+- Version 1.2: Concat all 4 move precision into a single one with X & Y. 7 december 2024. 16:01UTC+1
+- Version 1.3: Removed Entity In-Game id from all Precision::Action. 7 decembre 2024. 16:07UTC+1
+- Version 1.3.2: Removed Entity In-Game id from all Precision::Info, 9 decembre 2024. 10:49UTC+1
+- Version 1.4: Added 3.3 In-Game event handling & Added Client section in 3.4 Server / Client differences. 9 december 2024. 11:44UTC+1
