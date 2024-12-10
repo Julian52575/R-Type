@@ -13,7 +13,8 @@ int main(void)
     Rengine::Rengine core;
     sf::Clock clock;
 
-    core.makeEntity("../rtype2/entities/player.json");
+    core.makeEntity("./entities/player.json");
+    core.makeEntity("./entities/immobile_player.json");
     while (core.getRender().isOpen()) {
         float deltaTime = clock.restart().asSeconds();
         core.getRender().processEvents();
