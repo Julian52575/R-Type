@@ -1,5 +1,4 @@
 #include <rengine/Rengine.hpp>
-#include <rengine/src/Core/Rengine.hpp>
 
 static void playerAttack(Rengine::Rengine& core, float x, float y)
 {
