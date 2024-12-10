@@ -5,7 +5,7 @@ System::KeyBoardInput::KeyBoardInput() {}
 System::KeyBoardInput::~KeyBoardInput() {}
 
 void System::KeyBoardInput::update(sparse_array<Controllable>& keyBoards, sparse_array<Velocity>& velocities) {
-    for (size_t i = 0; i < keyBoards.size() && i < velocities.size(); i++) {
+    for (uint32_t i = 0; i < keyBoards.size() && i < velocities.size(); i++) {
         if (keyBoards[i].has_value() && velocities[i].has_value()) {
             if (sf::Keyboard::isKeyPressed(keyBoards[i].value().up))
                 velocities[i].value().y = -(velocities[i].value().getBase().second);
@@ -22,7 +22,7 @@ void System::KeyBoardInput::update(sparse_array<Controllable>& keyBoards, sparse
                 velocities[i].value().x = 0;
         }
     }
-    for (size_t i = 0; i < keyBoards.size() && i < velocities.size(); i++) {
+    for (uint32_t i = 0; i < keyBoards.size() && i < velocities.size(); i++) {
         if (keyBoards[i].has_value() && velocities[i].has_value()) {
             float joystickX = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
             float joystickY = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
@@ -37,15 +37,19 @@ void System::KeyBoardInput::update(sparse_array<Controllable>& keyBoards, sparse
     }
 }
 
-void System::KeyBoardInput::shoot(sparse_array<Controllable>& keyBoards, sparse_array<Position>& positions, std::function<void(float, float)> makePlayerAttack) {
-    for (size_t i = 0; i < keyBoards.size() && i < positions.size(); i++) {
-        if (keyBoards[i].has_value() && positions[i].has_value()) {
+void System::KeyBoardInput::shoot(sparse_array<Controllable>& keyBoards, sparse_array<Position>& positions, sparse_array<Attack>& attacks,float deltatime, std::function<void(float, float)> makePlayerAttack){
+    for (uint32_t i = 0; i < keyBoards.size() && i < positions.size() && i < attacks.size(); i++) {
+        if (keyBoards[i].has_value() && positions[i].has_value() && attacks[i].has_value()) {
+            attacks[i].value().update(deltatime);
             if (sf::Keyboard::isKeyPressed(keyBoards[i].value().shoot) ||
                 sf::Joystick::isButtonPressed(0, 1) || // O button for PS5 controller
                 sf::Joystick::isButtonPressed(0, 0)) { // A button for Nintendo controller
                 float playerX = positions[i].value().x;
                 float playerY = positions[i].value().y;
-                makePlayerAttack(playerX, playerY);
+                if (attacks[i].value().canAttack()){
+                    makePlayerAttack(playerX, playerY);
+                    attacks[i].value().reset();
+                }
             }
         }
     }

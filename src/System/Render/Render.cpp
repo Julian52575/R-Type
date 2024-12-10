@@ -34,7 +34,7 @@ void System::Render::processEvents() {
 void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes,sparse_array<Text>& texts, sparse_array<Hitbox>& hitboxes) {
     window.clear();
 
-    for (size_t i = 0; i < positions.size() && i < parallaxes.size() && i < sprites.size(); i++) {
+    for (uint32_t i = 0; i < positions.size() && i < parallaxes.size() && i < sprites.size(); i++) {
         if (positions[i].has_value() && parallaxes[i].has_value() && sprites[i].has_value()) {
             float width = sprites[i].value().getGlobalBounds().width;
             float x = positions[i].value().x;
@@ -45,14 +45,14 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
             }
         }
     }
-    for (size_t i = 0; i < positions.size() && i < sprites.size(); i++) {
+    for (uint32_t i = 0; i < positions.size() && i < sprites.size(); i++) {
         if (positions[i].has_value() && sprites[i].has_value()) {
             sprites[i].value().setPosition(positions[i].value().x, positions[i].value().y);
             window.draw(sprites[i].value(), &shader);
         }
     }
 
-    for (size_t i = 0; i < positions.size() && i < hitboxes.size(); i++) {
+    for (uint32_t i = 0; i < positions.size() && i < hitboxes.size(); i++) {
         if (positions[i].has_value() && hitboxes[i].has_value()) {
             sf::RectangleShape hitbox;
             hitbox.setSize(hitboxes[i].value().getSize());
@@ -64,7 +64,7 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
         }
     }
 
-    for (size_t i = 0; i < texts.size() && i < positions.size(); i++) {
+    for (uint32_t i = 0; i < texts.size() && i < positions.size(); i++) {
         if (texts[i].has_value() && positions[i].has_value()) {
             texts[i].value().setPosition(positions[i].value().x, positions[i].value().y);
             window.draw(texts[i].value(), &shader);

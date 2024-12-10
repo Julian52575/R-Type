@@ -8,7 +8,7 @@ if ! test -x $LIB; then
 fi
 
 echo "Installing lib..."
-if ! cp $LIB /usr/lib --verbose; then
+if ! sudo mv $LIB /usr/lib --verbose; then
     RIGHT=False
 
 else
@@ -16,7 +16,7 @@ else
 fi
 
 echo "Installing dev header..."
-./.installHeader.sh
+sudo ./.installHeader.sh
 if [ $RIGHT == False ]; then
     echo "WARNING: Cannot install /usr/lib/$LIB."
     echo "Move $LIB into /usr/lib yourself."

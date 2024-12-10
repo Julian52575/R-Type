@@ -2,6 +2,9 @@
 #include "../Entity/Entity.hpp"
 #include "../../Sparse_Array.hpp"
 #include "../../Component/Liste.hpp"
+#include "../../Registry.hpp"
+#include "../../Exceptions/JsonParseExecption.hpp"
+
 
 #include <SFML/Graphics.hpp>
 #include <utility>
@@ -37,23 +40,33 @@ class EntityMaker {
         sparse_array<Scripting> scripting;
         sparse_array<Clickable> clickable;
         sparse_array<Controllable> controllable;
-
-
-
-        void setEntity(Entity e);
-        void parseJson(const std::string &path);
-        void parseSprite(const nlohmann::json& json);
-        void parsePosition(const nlohmann::json& json);
-        void parseVelocity(const nlohmann::json& json);
-        void parseControllable(const nlohmann::json& json);
-        void parseAnimations(const nlohmann::json& json);
-        void parseParallax(const nlohmann::json& json);
-        void parseText(const nlohmann::json& json);
-        void parseLifetime(const nlohmann::json& json);
-        void parseCamera(const nlohmann::json& json);
-        void parseHitbox(const nlohmann::json& json);
+        void EraseEntity(Entity e);
+        void parseJson(Entity e, const std::string &path);
+        void UpdatePosition(Entity e, float x, float y);
+        void UpdateVelocity(Entity e, float x, float y);
 
     private:
-        std::shared_ptr<Entity> e;
+        void parseAcceleration(Entity e, const nlohmann::json& json);
+        void parsePosition(Entity e, const nlohmann::json& json);
+        void parseRotation(Entity e, const nlohmann::json& json);
+        void parseScale(Entity e, const nlohmann::json& json);
+        void parseVelocity(Entity e, const nlohmann::json& json);
+        void parseAnimations(Entity e, const nlohmann::json& json);
+        void parseCamera(Entity e, const nlohmann::json& json);
+        void parseMusic(Entity e, const nlohmann::json& json);
+        void parseParallax(Entity e, const nlohmann::json& json);
+        void parseShader(Entity e, const nlohmann::json& json);
+        void parseSound(Entity e, const nlohmann::json& json);
+        void parseSprite(Entity e, const nlohmann::json& json);
+        void parseText(Entity e, const nlohmann::json& json);
+        void parseAttack(Entity e, const nlohmann::json& json);
+        void parseGroup(Entity e, const nlohmann::json& json);
+        void parseHealth(Entity e, const nlohmann::json& json);
+        void parseHitbox(Entity e, const nlohmann::json& json);
+        void parseLifetime(Entity e, const nlohmann::json& json);
+        void parseScripting(Entity e, const nlohmann::json& json);
+        void parseClickable(Entity e, const nlohmann::json& json);
+        void parseControllable(Entity e, const nlohmann::json& json);
+        registry reg;
 };
 
