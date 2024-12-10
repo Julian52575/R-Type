@@ -1,17 +1,51 @@
 #include <rengine/Rengine.hpp>
-#include <SFML/Main.hpp>
+#include <rengine/src/Core/Rengine.hpp>
 
-int main(void) {
-    GraphicalCore core;
-    core.MakeEntity("entities/player.json");
-    core.MakeEntity("entities/projectile.json");
-    core.MakeEntity("entities/Message.json");
-    // // core.MakeBackground();
-    // core.MakeParallaxBackground("assets/images/parallax background/plx-1.png", 0.0f);
-    // core.MakeParallaxBackground("assets/images/parallax background/plx-2.png", -15.f);
-    // core.MakeParallaxBackground("assets/images/parallax background/plx-3.png", -30.f);
-    // core.MakeParallaxBackground("assets/images/parallax background/plx-4.png", -45.f);
-    // core.MakeParallaxBackground("assets/images/parallax background/plx-5.png", -60.f);
-    core.run();
-    return 0;
+static void playerAttack(Rengine::Rengine& core, float x, float y)
+{
+    Entity e = core.makeEntity("entities/projectile.json");
+
+    core.getEntityMaker().UpdatePosition(e, x, y);
+}
+
+int main(void)
+{
+    Rengine::Rengine core;
+    sf::Clock clock;
+
+    core.makeEntity("../rtype2/entities/player.json");
+    while (core.getRender().isOpen()) {
+        float deltaTime = clock.restart().asSeconds();
+        core.getRender().processEvents();
+
+        core.getKeyBoardInput().update(core.getEntityMaker().controllable, core.getEntityMaker().velo);
+        core.getKeyBoardInput().shoot(core.getEntityMaker().controllable,
+                core.getEntityMaker().pos, core.getEntityMaker().attack,
+                deltaTime, std::function<void(float, float)>()
+                /* std::function<void(Rengine::Core, float, float)>([core](Rengine::Core& core, float x, float y) {
+                    Entity& e = core.getEntityMaker().MakeEntity("entities/projectile.json");
+
+                    core.getEntityMaker().UpdatePosition(e, x, y);
+                }
+                ) */
+        );
+#warning Implement makePlayerAttack back
+
+        // script.update(this->scripting);
+        core.getMovement().update(core.getEntityMaker().pos, core.getEntityMaker().velo, deltaTime);
+        core.getParallax().update(core.getEntityMaker().pos, core.getEntityMaker().sprite, core.getEntityMaker().parallax, deltaTime);
+        core.getAnimation().update(core.getEntityMaker().animation, core.getEntityMaker().sprite, deltaTime);
+        core.getCollision().update(core.getEntityMaker().pos, core.getEntityMaker().hitbox);
+
+        // mouseInput.update(this->pos, this->velo, this->sprite);
+        // this->audio.update(this->musics, this->sounds);
+        std::vector<Entity> vec =  core.getLifetime().update(core.getEntityMaker().lifetime, deltaTime);
+        for (auto &e : vec) {
+           std::cout << "Entity " << e << " is dead" << std::endl;
+           core.destroyEntity(e);
+        }
+        core.getCameraFollow().update(core.getEntityMaker().pos, core.getEntityMaker().camera, core.getRender().getWindow());
+        core.getRender().update(core.getEntityMaker().pos, core.getEntityMaker().sprite,
+            core.getEntityMaker().parallax, core.getEntityMaker().text, core.getEntityMaker().hitbox);
+    }
 }
