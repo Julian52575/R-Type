@@ -10,6 +10,6 @@ namespace System {
             KeyBoardInput();
             ~KeyBoardInput();
             void update(sparse_array<Controllable>& keyBoards, sparse_array<Velocity>& velocities);
-            void shoot(sparse_array<Controllable>& keyBoards, sparse_array<Position>& positions, std::function<void(float, float)> makePlayerAttack);
+            void shoot(sparse_array<Controllable>& keyBoards, sparse_array<Position>& positions, sparse_array<Attack>& attacks,float deltatime, std::function<void(float, float)> makePlayerAttack);
     };
 }

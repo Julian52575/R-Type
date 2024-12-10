@@ -17,7 +17,7 @@
 
 #include "./Sparse_Array.hpp"
 #include "./Component/Liste.hpp"
-#include "./ECSExecption.hpp"
+#include "./Exceptions/ECSExecption.hpp"
 
 class registry {
     public:

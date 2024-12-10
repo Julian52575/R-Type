@@ -1,20 +1,21 @@
 #include "./Manager.hpp"
 #include <vector>
 
-EntityManager::EntityManager(std::size_t maxEntities){
+EntityManager::EntityManager(uint32_t maxEntities){
     this->activeEntities.resize(maxEntities, false);
-    for (size_t i = 0; i < maxEntities; ++i) {
+    for (uint32_t i = 0; i < maxEntities; ++i) {
         this->availableEntities.push(Entity(i));
     }
 }
 
 EntityManager::~EntityManager() {}
 
-Entity EntityManager::createEntity(){
+Entity& EntityManager::createEntity(){
     if (this->availableEntities.empty()) {
         throw ECSException("No more entities available.");
     }
-    Entity newEntity = this->availableEntities.front();
+    Entity& newEntity = this->availableEntities.front();
+
     this->availableEntities.pop();
     this->activeEntities[newEntity] = true;
     return newEntity;
@@ -37,7 +38,7 @@ bool EntityManager::isEntityActive(Entity entity) const {
 
 std::vector<Entity> EntityManager::getActiveEntities() const {
     std::vector<Entity> entities;
-    for (size_t i = 0; i < this->activeEntities.size(); ++i) {
+    for (uint32_t i = 0; i < this->activeEntities.size(); ++i) {
         if (this->activeEntities[i]) {
             entities.push_back(Entity(i));
         }

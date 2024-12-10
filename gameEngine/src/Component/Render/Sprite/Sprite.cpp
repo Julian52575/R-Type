@@ -10,8 +10,8 @@ Sprite::Sprite(const std::string& filename, std::pair<float, float> scale, std::
         this->MakeTexture();
     } else {
         setTexture(*texture);
+        setOrigin(origin.first, origin.second);
     }
-    setOrigin(origin.first, origin.second);
     setScale(scale.first, scale.second);
 }
 

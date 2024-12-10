@@ -95,10 +95,6 @@ ClientConnection<T>::ClientConnection(std::string ip, int32_t port)
     m_threadContext = std::thread([this]() { m_context.run(); });
     m_socket.open(asio::ip::udp::v4());
     accept();
-    Message<T> msg;
-    msg.header.type = T::ServerConnexionRequest;
-    msg.header.size = 0;
-    Send(msg);
 }
 
 template <typename T>
@@ -111,7 +107,6 @@ void ClientConnection<T>::accept() {
                 try {
                     std::vector<uint8_t> data(recv_packet_buf->begin(), recv_packet_buf->begin() + length);
                     Message<T> msg = desirialized<T>(data);
-                    std::cout << msg << std::endl;
                     m_qMessagesIn.push(msg);
                 } catch (const std::exception& e) {
                     std::cerr << "[CLIENT] Error deserializing message: " << e.what() << std::endl;

@@ -2,7 +2,6 @@ R-Type
 .vscode
 *.o
 #Template .gitignore
-
 *.o
 *.~
 build
@@ -20,3 +19,9 @@ CMakeFiles/
 *.test
 lol
 rengine/
+*.dll
+rtype
+*.out
+.env
+src/main.cpp
+entities/
