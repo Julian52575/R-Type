@@ -10,11 +10,12 @@ EntityManager::EntityManager(uint32_t maxEntities){
 
 EntityManager::~EntityManager() {}
 
-Entity EntityManager::createEntity(){
+Entity& EntityManager::createEntity(){
     if (this->availableEntities.empty()) {
         throw ECSException("No more entities available.");
     }
-    Entity newEntity = this->availableEntities.front();
+    Entity& newEntity = this->availableEntities.front();
+
     this->availableEntities.pop();
     this->activeEntities[newEntity] = true;
     return newEntity;

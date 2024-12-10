@@ -21,3 +21,4 @@ lol
 rengine/
 *.dll
 rtype
+*.out

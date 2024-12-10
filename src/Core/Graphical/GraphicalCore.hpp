@@ -9,27 +9,41 @@
 #include <memory>
 #include <string>
 
-class GraphicalCore {
-    public:
-        GraphicalCore();
-        ~GraphicalCore();
-        void destroy_entity(Entity e);
-        void run();
-        Entity MakeEntity(const std::string path);
+namespace Rengine {
 
+    class Core {
+        public:
+            Core();
+            ~Core();
+            void destroy_entity(Entity e);
+            Entity& MakeEntity(const std::string& path);
 
-    private:
-        EntityManager em;
-        std::unique_ptr<EntityMaker> maker;
-        
-        System::movement movement;
-        System::KeyBoardInput keyBoardInput;
-        System::Collision collision;
-        System::Parallax parallaxSystem;
-        System::Audio audio;
-        System::Animation animations;
-        System::Render render;
-        System::CameraFollow cameraFollow;
-        System::Lifetime lifetimeSystem;
-};
+        public:
+            System::movement& getMovement(void);
+            System::KeyBoardInput& getKeyBoardInput(void);
+            System::Collision& getCollision(void);
+            System::Parallax& getParallax(void);
+            System::Audio& getAudio(void);
+            System::Animation& getAnimation(void);
+            System::Render& getRender(void);
+            System::CameraFollow& getCameraFollow(void);
+            System::Lifetime& getLifetime(void);
+            EntityManager& getEntityManager(void);
+            EntityMaker& getEntityMaker(void);
+
+        private:
+            EntityManager _entityManager;
+            EntityMaker _entityMaker;  // uniqueptr
+            System::movement _movement;
+            System::KeyBoardInput _keyBoardInput;
+            System::Collision _collision;
+            System::Parallax _parallaxSystem;
+            System::Audio _audio;
+            System::Animation _animations;
+            System::Render _render;
+            System::CameraFollow _cameraFollow;
+            System::Lifetime _lifetimeSystem;
+    };  // class Core
+
+}  // namespace Rengine
 

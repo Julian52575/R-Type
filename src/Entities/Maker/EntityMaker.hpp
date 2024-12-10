@@ -24,7 +24,6 @@ class EntityMaker {
         sparse_array<Rotation> rot;
         sparse_array<Scale> scale;
         sparse_array<Velocity> velo;
-        
         sparse_array<Component::Animation> animation;
         sparse_array<Camera> camera;
         sparse_array<Music> music;
@@ -41,13 +40,10 @@ class EntityMaker {
         sparse_array<Scripting> scripting;
         sparse_array<Clickable> clickable;
         sparse_array<Controllable> controllable;
-
         void EraseEntity(Entity e);
         void parseJson(Entity e, const std::string &path);
         void UpdatePosition(Entity e, float x, float y);
         void UpdateVelocity(Entity e, float x, float y);
-
-
 
     private:
         void parseAcceleration(Entity e, const nlohmann::json& json);
@@ -55,7 +51,6 @@ class EntityMaker {
         void parseRotation(Entity e, const nlohmann::json& json);
         void parseScale(Entity e, const nlohmann::json& json);
         void parseVelocity(Entity e, const nlohmann::json& json);
-
         void parseAnimations(Entity e, const nlohmann::json& json);
         void parseCamera(Entity e, const nlohmann::json& json);
         void parseMusic(Entity e, const nlohmann::json& json);
@@ -64,17 +59,14 @@ class EntityMaker {
         void parseSound(Entity e, const nlohmann::json& json);
         void parseSprite(Entity e, const nlohmann::json& json);
         void parseText(Entity e, const nlohmann::json& json);
-
         void parseAttack(Entity e, const nlohmann::json& json);
         void parseGroup(Entity e, const nlohmann::json& json);
         void parseHealth(Entity e, const nlohmann::json& json);
         void parseHitbox(Entity e, const nlohmann::json& json);
         void parseLifetime(Entity e, const nlohmann::json& json);
         void parseScripting(Entity e, const nlohmann::json& json);
-
         void parseClickable(Entity e, const nlohmann::json& json);
         void parseControllable(Entity e, const nlohmann::json& json);
-
         registry reg;
 };
 
