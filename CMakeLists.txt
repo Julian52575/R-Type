@@ -3,6 +3,8 @@ include(FetchContent)
 # Declare project, source file
 project(R-Engine)
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
+list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp) #removing main
+message(STATUS "Removed ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp from compilation")
 
 # Get lua lib on this cmake, conan would never
 FetchContent_Declare(
@@ -22,8 +24,8 @@ add_library(rengine SHARED
 target_include_directories(rengine PUBLIC ${lua_lib_SOURCE_DIR}/src)
 
 # Set Compiler flags
-set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCMAKE_COMPILATION_")
 
 # Conan integration ?
 # list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
@@ -47,7 +49,7 @@ FetchContent_MakeAvailable(nlohmann-json3-dev)
 # Link libs
 target_link_libraries(rengine PUBLIC
     asio::asio
-    sfml-system 
+    sfml-system
     sfml-window
     sfml-graphics
     sfml-audio
