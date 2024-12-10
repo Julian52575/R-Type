@@ -7,12 +7,10 @@
 class Shader {
         private:
             std::shared_ptr<sf::Shader> shader;
-            std::unordered_map<std::string, float> uniforms;
         public:
-            Shader(const std::string& filename, std::unordered_map<std::string, float> uniforms);
+            Shader(const std::string& filename);
             ~Shader();
             sf::Shader& getShader();
             void setUniform(const std::string& name, float value);
-            std::unordered_map<std::string, float> &getUniforms();
 };
 

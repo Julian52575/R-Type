@@ -10,7 +10,7 @@
 #include "src/System/Liste.hpp"
 
 // Core
-#include "src/Core/Graphical/GraphicalCore.hpp"
+#include "src/Core/Rengine.hpp"
 
 // Entities
 #include "src/Entities/Entity/Entity.hpp"
