@@ -9,3 +9,7 @@ Entity::operator uint32_t() const {
 uint32_t Entity::getId() const {
     return this->id;
 }
+
+void Entity::setId(uint32_t id) {
+    this->id = id;
+}
