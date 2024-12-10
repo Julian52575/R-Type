@@ -22,3 +22,6 @@ rengine/
 *.dll
 rtype
 *.out
+.env
+src/main.cpp
+entities/
