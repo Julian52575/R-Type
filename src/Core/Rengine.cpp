@@ -1,21 +1,21 @@
-#include "./GraphicalCore.hpp"
+#include "./Rengine.hpp"
 #include <memory>
 #include <utility>
 #include <string>
 
-Rengine::Core::Core()
+Rengine::Rengine::Rengine()
 {
     //this->maker = std::make_unique<EntityMaker>();
 }
 
-Rengine::Core::~Core() {}
+Rengine::Rengine::~Rengine() {}
 
-void Rengine::Core::destroy_entity(Entity e) {
+void Rengine::Rengine::destroyEntity(Entity e) {
     this->_entityManager.destroyEntity(e);
     this->_entityMaker.EraseEntity(e);
 }
 
-Entity& Rengine::Core::MakeEntity(const std::string& path) {
+Entity& Rengine::Rengine::makeEntity(const std::string& path) {
     Entity& e = this->_entityManager.createEntity();
 
     std::cout << "Entity " << e << " created" << std::endl;
@@ -23,53 +23,53 @@ Entity& Rengine::Core::MakeEntity(const std::string& path) {
     return e;
 }
 
-System::movement& Rengine::Core::getMovement(void)
+System::movement& Rengine::Rengine::getMovement(void)
 {
     return this->_movement;
 }
-System::KeyBoardInput& Rengine::Core::getKeyBoardInput(void)
+System::KeyBoardInput& Rengine::Rengine::getKeyBoardInput(void)
 {
     return this->_keyBoardInput;
 }
-System::Collision& Rengine::Core::getCollision(void)
+System::Collision& Rengine::Rengine::getCollision(void)
 {
     return this->_collision;
 }
-System::Parallax& Rengine::Core::getParallax(void)
+System::Parallax& Rengine::Rengine::getParallax(void)
 {
     return this->_parallaxSystem;
 }
-System::Audio& Rengine::Core::getAudio(void)
+System::Audio& Rengine::Rengine::getAudio(void)
 {
     return this->_audio;
 }
-System::Animation& Rengine::Core::getAnimation(void)
+System::Animation& Rengine::Rengine::getAnimation(void)
 {
     return this->_animations;
 }
-System::Render& Rengine::Core::getRender(void)
+System::Render& Rengine::Rengine::getRender(void)
 {
     return this->_render;
 }
-System::CameraFollow& Rengine::Core::getCameraFollow(void)
+System::CameraFollow& Rengine::Rengine::getCameraFollow(void)
 {
     return this->_cameraFollow;
 }
-System::Lifetime& Rengine::Core::getLifetime(void)
+System::Lifetime& Rengine::Rengine::getLifetime(void)
 {
     return this->_lifetimeSystem;
 }
-EntityManager& Rengine::Core::getEntityManager(void)
+EntityManager& Rengine::Rengine::getEntityManager(void)
 {
     return this->_entityManager;
 }
-EntityMaker& Rengine::Core::getEntityMaker(void)
+EntityMaker& Rengine::Rengine::getEntityMaker(void)
 {
     return this->_entityMaker;
 }
 
 /*
-void GraphicalCore::run(){
+void GraphicalRengine::run(){
     sf::Clock clock;
 
     while (this->render.isOpen()) {

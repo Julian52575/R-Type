@@ -1,22 +1,22 @@
 #pragma once
 
-#include "../../Registry.hpp"
-#include "../../Component/Liste.hpp"
-#include "../../Entities/EntityManager/Manager.hpp"
-#include "../../System/Liste.hpp"
-#include "../../Entities/Maker/EntityMaker.hpp"
+#include "../Registry.hpp"
+#include "../Component/Liste.hpp"
+#include "../Entities/EntityManager/Manager.hpp"
+#include "../System/Liste.hpp"
+#include "../Entities/Maker/EntityMaker.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Rengine {
 
-    class Core {
+    class Rengine {
         public:
-            Core();
-            ~Core();
-            void destroy_entity(Entity e);
-            Entity& MakeEntity(const std::string& path);
+            Rengine();
+            ~Rengine();
+            void destroyEntity(Entity e);
+            Entity& makeEntity(const std::string& path);
 
         public:
             System::movement& getMovement(void);
