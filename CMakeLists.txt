@@ -24,7 +24,7 @@ if (WIN32)
     ## ??
     add_definitions(-D_WIN32_WINNT=0x0A00)
     # Install dir
-    set(INSTALL_ROOT_DIR /Download/R-Type)
+    set(INSTALL_ROOT_DIR bin)
     # CPack exclusive 
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_SHORTCUTS_ON_DESKTOP ON)
