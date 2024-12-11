@@ -1,9 +1,5 @@
 #pragma once
-#ifdef CMAKE_COMPILATION_
-    #include <lua.hpp>
-#else
-    #include <lua5.4/lua.hpp>
-#endif
+#include <lua.hpp>
 #include <iostream>
 #include <any>
 #include <vector>
