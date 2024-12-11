@@ -79,9 +79,8 @@ The client must only be in control of a single entity at any time. It may create
     2, ServerAccept             , Server accepted the connection                                          , None;
     3, ServerDisconnect         , Server is going to disconnect the client                                , Reason of denial (string), strlen(sting);
     4, ClientReady              , Client is ready to play                                                 , None;
-    5, ClientEntityRequest      , The Configuration Id of the entity controlled by the client's player    , Configuration Entity Id     , 2
-    6, PlayableEntityInGameId   , The server tells the client what entity the client's player controls    , In-Game Entity Id           , 2;
-    7, ServerStop       , The server is stopping                                                  , None;
+    5, PlayableEntityInGameId   , The server tells the client what entity the client's player controls    , In-Game Entity Id           , 2;
+    6, ServerStop       , The server is stopping                                                  , None;
 
 - Game parts:
     0, GamePartLevel    , A level (see Terminology)             , file content, varies;
@@ -107,6 +106,7 @@ The client must only be in control of a single entity at any time. It may create
     5, InfoSpeed            , Moving Speed of the entity                            , Speed                                            , 2      ;
     6, InfoMaxSpeed         , Max Moving Speed of the entity                        , Max Speed                                        , 2      ;
     7, InfoDirection        , Facing direction of the entity                        , Direction (see define)                           , 1      ;
+    8, NewEntity            , New entity created                                    , Configuration Id + In-Game Id + X + Y            , 2 + 2 + 2 + 2;
 
 3.2 Message Format
 -------------------
@@ -158,13 +158,6 @@ Client                   |                      Server
                             None
                             ]
                         <-
-[
-ConnexionDetail,
-ClientEntityRequest,
-2,
-0x21
-]
-                        ->
                             [
                             EntityInfo,
                             InGameAndConfigurationId,

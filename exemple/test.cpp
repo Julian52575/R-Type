@@ -57,6 +57,7 @@ struct Communication {
             InfoSpeed = 5,
             InfoMaxSpeed = 6,
             InfoDirection = 7,
+            NewEntity = 8,
         };
     };
 
@@ -65,9 +66,27 @@ struct Communication {
         uint16_t precision;
     };
 };
+
 using asio::ip::udp;
 void handleMessage(Message<Communication::TypeDetail> msg, ClientConnection<Communication::TypeDetail> &client) {
-  std::cout << "Message received: " << std::endl;
+  std::cout << "Message received: " << msg.size() << std::endl;
+  if (msg.header.type.type == Communication::ConnexionDetail && msg.header.type.precision == Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId) {
+    uint16_t id;
+    msg >> id;
+    std::cout << "Playable entity id: " << id << std::endl;
+  }
+
+  if (msg.header.type.type == Communication::EntityInfo && msg.header.type.precision == Communication::main::EntityInfoPrecision::InfoAll) {
+    uint16_t x, y, id;
+    msg >> id >> y >> x;
+    std::cout << "Entity id: " << id << " x: " << x << " y: " << y << std::endl;
+  }
+
+  if (msg.header.type.type == Communication::EntityInfo && msg.header.type.precision == Communication::main::EntityInfoPrecision::NewEntity) {
+    uint16_t x, y, id;
+    msg >> x >> y >> id;
+    std::cout << "New entity id: " << id << " x: " << x << " y: " << y << std::endl;
+  }
 }
 
 int main(int argc, char* argv[])
@@ -84,7 +103,7 @@ int main(int argc, char* argv[])
   msg.header.size = 0;
   client.Send(msg);
 
-  for (std::string line; std::getline(std::cin, line);) {
+  while (1) {
     for (std::optional<Message<Communication::TypeDetail>> msg = client.Receive(); msg; msg = client.Receive()) {
       handleMessage(*msg, client);
     }
