@@ -128,8 +128,6 @@ bool ClientConnection<T>::Send(Message<T> &msg) {
         [serialized_msg](std::error_code ec, std::size_t bytes_transferred) {
             if (ec) {
                 std::cerr << "[CLIENT] Failed to send message: " << ec.message() << std::endl;
-            } else {
-                std::cout << "Message sent successfully (" << bytes_transferred << " bytes)" << std::endl;
             }
         }
     );

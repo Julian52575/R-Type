@@ -22,7 +22,7 @@ void System::Render::processEvents() {
         if (event.type == sf::Event::Closed) {
             window.close();
         }
-        if (event.type == sf::Event::KeyPressed) {
+        if (event.type == sf::Event::KeyPressed && window.hasFocus()) {
             if (event.key.code == sf::Keyboard::D) {
                 shaderIndex = (shaderIndex + 1) % shaders.size();
                 shader.loadFromFile(shaders[shaderIndex], sf::Shader::Fragment);
