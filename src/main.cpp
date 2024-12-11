@@ -1,51 +1,78 @@
-#include <rengine/Rengine.hpp>
-#include <rengine/src/Core/Rengine.hpp>
+#include "include/game.hpp"
 
-static void playerAttack(Rengine::Rengine& core, float x, float y)
-{
-    Entity e = core.makeEntity("entities/projectile.json");
+void sendVeloUpdate(Game &game) {
+    Message<Communication::TypeDetail> msg;
+    Entity player = *game.getPlayer();
 
-    core.getEntityMaker().UpdatePosition(e, x, y);
+    msg.header.type = {Communication::EntityAction, Communication::main::EntityActionPrecision::Move};
+    msg.header.size = 0;
+    float x = game.getCore().getEntityMaker().velo[player].value().x;
+    float y = game.getCore().getEntityMaker().velo[player].value().y;
+
+    msg << y << x;
+    game.getClient().Send(msg);
 }
 
-int main(void)
+int main(int ac, char **argv)
 {
-    Rengine::Rengine core;
-    sf::Clock clock;
-
-    core.makeEntity("../rtype2/entities/player.json");
-    while (core.getRender().isOpen()) {
-        float deltaTime = clock.restart().asSeconds();
-        core.getRender().processEvents();
-
-        core.getKeyBoardInput().update(core.getEntityMaker().controllable, core.getEntityMaker().velo);
-        core.getKeyBoardInput().shoot(core.getEntityMaker().controllable,
-                core.getEntityMaker().pos, core.getEntityMaker().attack,
-                deltaTime, std::function<void(float, float)>()
-                /* std::function<void(Rengine::Core, float, float)>([core](Rengine::Core& core, float x, float y) {
-                    Entity& e = core.getEntityMaker().MakeEntity("entities/projectile.json");
-
-                    core.getEntityMaker().UpdatePosition(e, x, y);
-                }
-                ) */
-        );
-#warning Implement makePlayerAttack back
-
-        // script.update(this->scripting);
-        core.getMovement().update(core.getEntityMaker().pos, core.getEntityMaker().velo, deltaTime);
-        core.getParallax().update(core.getEntityMaker().pos, core.getEntityMaker().sprite, core.getEntityMaker().parallax, deltaTime);
-        core.getAnimation().update(core.getEntityMaker().animation, core.getEntityMaker().sprite, deltaTime);
-        core.getCollision().update(core.getEntityMaker().pos, core.getEntityMaker().hitbox);
-
-        // mouseInput.update(this->pos, this->velo, this->sprite);
-        // this->audio.update(this->musics, this->sounds);
-        std::vector<Entity> vec =  core.getLifetime().update(core.getEntityMaker().lifetime, deltaTime);
-        for (auto &e : vec) {
-           std::cout << "Entity " << e << " is dead" << std::endl;
-           core.destroyEntity(e);
+    try {
+        sf::Clock clock;
+        if (ac != 4) {
+            std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
+            return 1;
         }
-        core.getCameraFollow().update(core.getEntityMaker().pos, core.getEntityMaker().camera, core.getRender().getWindow());
-        core.getRender().update(core.getEntityMaker().pos, core.getEntityMaker().sprite,
-            core.getEntityMaker().parallax, core.getEntityMaker().text, core.getEntityMaker().hitbox);
+        std::string ip = argv[1];
+        uint16_t port = std::stoi(argv[2]);
+        Game game(ip, port);
+        Message<Communication::TypeDetail> msg;
+        int i = std::stoi(argv[3]);
+        int x = 0;
+
+        msg.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::ClientConnexion};
+        msg.header.size = 0;
+        game.getClient().Send(msg);
+
+        while (game.getCore().getRender().isOpen()) {
+            float deltaTime = clock.restart().asSeconds();
+            for (std::optional<Message<Communication::TypeDetail>> msg = game.getClient().Receive(); msg; msg = game.getClient().Receive()) {
+                game.handleMessage(*msg);
+            }
+            game.getCore().getRender().processEvents();
+
+            game.getCore().getKeyBoardInput().update(game.getCore().getEntityMaker().controllable, game.getCore().getEntityMaker().velo);
+            game.getCore().getKeyBoardInput().shoot(game.getCore().getEntityMaker().controllable,
+                    game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().attack,
+                    deltaTime, std::function<void(float, float)>()
+                    /* std::function<void(Rengine::Core, float, float)>([core](Rengine::Core& core, float x, float y) {
+                        Entity& e = core.getEntityMaker().MakeEntity("entities/projectile.json");
+
+                        core.getEntityMaker().UpdatePosition(e, x, y);
+                    }
+                    ) */
+            );
+    #warning Implement makePlayerAttack back
+
+            // script.update(this->scripting);
+            game.getCore().getMovement().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().velo, deltaTime);
+            game.getCore().getParallax().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().sprite, game.getCore().getEntityMaker().parallax, deltaTime);
+            game.getCore().getAnimation().update(game.getCore().getEntityMaker().animation, game.getCore().getEntityMaker().sprite, deltaTime);
+            game.getCore().getCollision().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().hitbox);
+
+            // mouseInput.update(this->pos, this->velo, this->sprite);
+            // this->audio.update(this->musics, this->sounds);
+            game.getCore().getCameraFollow().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().camera, game.getCore().getRender().getWindow());
+            game.getCore().getRender().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().sprite,
+                game.getCore().getEntityMaker().parallax, game.getCore().getEntityMaker().text, game.getCore().getEntityMaker().hitbox);
+            if (game.getPlayer() != nullptr && i == 1)
+                sendVeloUpdate(game);
+        }
+        Message<Communication::TypeDetail> disconectPlayer;
+
+        disconectPlayer.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::ClientDisconnect};
+        disconectPlayer.header.size = 0;
+        game.getClient().Send(disconectPlayer);
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
     }
 }
