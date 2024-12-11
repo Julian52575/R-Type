@@ -54,7 +54,7 @@ void EntityMaker::EraseEntity(Entity e){
     this->health.erase(e);
     this->hitbox.erase(e);
     this->lifetime.erase(e);
-    this->scripting.erase(e);
+    this->scripting.erase(e); //cette ligne fais buguer le lua
 
     this->clickable.erase(e);
     this->controllable.erase(e);
@@ -351,13 +351,13 @@ void EntityMaker::parseLifetime(Entity e, const nlohmann::json& json) {
 }
 
 void EntityMaker::parseScripting(Entity e, const nlohmann::json& json) {
-    if (!json.contains("scripting")) {
+    if (!json.contains("script")) {
         return;
     }
-    if (!json["scripting"].contains("path")) {
+    if (!json["script"].contains("path")) {
         throw JsonParseException("Scripting must have a path");
     }
-    std::string path = json["scripting"]["path"];
+    std::string path = json["script"]["path"];
     this->scripting.emplace_at(e, path);
 }
 
