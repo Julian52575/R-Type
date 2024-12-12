@@ -2,6 +2,7 @@
 sfml/2.6.2
 asio/1.32.0
 lua/5.4.7
+nlohmann_json/3.11.3
 
 [options]
 pkg/sfml:shared=True  # SFML is dynamically linked
