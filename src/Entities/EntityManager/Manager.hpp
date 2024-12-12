@@ -18,5 +18,5 @@ class EntityManager {
 
     private:
         std::queue<Entity> availableEntities;
-        std::vector<bool> activeEntities;
+        std::vector<std::pair<Entity, bool>> activeEntities;
 };

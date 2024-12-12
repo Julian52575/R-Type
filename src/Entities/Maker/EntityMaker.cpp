@@ -382,6 +382,9 @@ void EntityMaker::UpdatePosition(Entity e, float x, float y) {
     } catch (std::out_of_range &) {
         this->pos.emplace_at(e, x, y);
     }
+    catch (std::bad_optional_access &) {
+        this->pos.emplace_at(e, x, y);
+    }
 }
 
 void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
@@ -389,6 +392,9 @@ void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
         this->velo[e].value().x = x;
         this->velo[e].value().y = y;
     } catch (std::out_of_range &) {
+        this->velo.emplace_at(e, x, y);
+    }
+    catch (std::bad_optional_access &) {
         this->velo.emplace_at(e, x, y);
     }
 }
@@ -399,6 +405,9 @@ void EntityMaker::UpdateGroup(Entity e, std::string group) {
     } catch (std::out_of_range &) {
         this->group.emplace_at(e, std::vector<std::string>{group});
     }
+    catch (std::bad_optional_access &) {
+        this->group.emplace_at(e, std::vector<std::string>{group});
+    }
 }
 
 void EntityMaker::InverseEntityX(Entity e) {
@@ -406,15 +415,21 @@ void EntityMaker::InverseEntityX(Entity e) {
         this->velo[e].value().x = -this->velo[e].value().x;
     } catch (std::out_of_range &) {
     }
+    catch (std::bad_optional_access &) {
+    }
 
     try {
         this->sprite[e].value().setScale(-this->sprite[e].value().getScale().x, this->sprite[e].value().getScale().y);
     } catch (std::out_of_range &) {
     }
+    catch (std::bad_optional_access &) {
+    }
 
     try{
         this->hitbox[e].value().setOffset(-(this->hitbox[e].value().getOffset().x + this->hitbox[e].value().getSize().x), this->hitbox[e].value().getOffset().y);
     } catch (std::out_of_range &) {
+    }
+    catch (std::bad_optional_access &) {
     }
 
 }
