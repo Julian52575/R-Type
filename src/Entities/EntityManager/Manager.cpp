@@ -17,11 +17,11 @@ Entity& EntityManager::createEntity(){
     if (this->availableEntities.empty()) {
         throw ECSException("No more entities available.");
     }
-    Entity& newEntity = this->availableEntities.front();
-
+    Entity newEntity = this->availableEntities.front();
     this->availableEntities.pop();
-    this->activeEntities[newEntity].second = true;
-    return newEntity;
+
+    this->activeEntities[newEntity.getId()] = std::make_pair(newEntity, true);
+    return this->activeEntities[newEntity.getId()].first;
 }
 
 void EntityManager::destroyEntity(Entity entity){
