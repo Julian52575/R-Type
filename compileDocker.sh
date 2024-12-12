@@ -12,7 +12,7 @@ fi
 
 docker stop $CONTAINER 2> /dev/null
 docker rm $CONTAINER 2> /dev/null
-
+rm -rf build/ || true
 docker run --rm \
     --name $CONTAINER \
     -v "$SOURCE_FOLDER:$DEST_FOLDER:rw" \

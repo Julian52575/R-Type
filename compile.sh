@@ -26,5 +26,5 @@ if cmake --build build ; then
 fi
 #cpack --config build/CPackConfig.cmake
 
-deactivate
-rm -rf venvconan
+deactivate || true
+rm -rf venvconan || true
