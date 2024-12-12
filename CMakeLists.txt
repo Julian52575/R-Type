@@ -49,7 +49,9 @@ endif()
 
 # Set installing rules
 install(TARGETS release DESTINATION ${INSTALL_ROOT_DIR})
-install(DIRECTORY "game/assets" DESTINATION "${INSTALL_ROOT_DIR}/assets") 
+install(DIRECTORY "game/assets" DESTINATION "${INSTALL_ROOT_DIR}") 
+install(DIRECTORY "release/assets/icon" DESTINATION "${INSTALL_ROOT_DIR}/assets")
+install(FILES "release/assets/r-type.desktop.in" DESTINATION "${INSTALL_ROOT_DIR}/assets")
 
 # Set Cpack variables
 set(CPACK_PACKAGE_NAME "R-Type")
