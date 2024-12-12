@@ -34,8 +34,10 @@ void System::Render::processEvents() {
 void System::Render::update(sparse_array<Position>& positions, sparse_array<Sprite>& sprites, sparse_array<Component::Parallax>& parallaxes,sparse_array<Text>& texts, sparse_array<Hitbox>& hitboxes) {
     window.clear();
 
+    std::vector<uint32_t> parallaxIndices;
     for (uint32_t i = 0; i < positions.size() && i < parallaxes.size() && i < sprites.size(); i++) {
         if (positions[i].has_value() && parallaxes[i].has_value() && sprites[i].has_value()) {
+            parallaxIndices.push_back(i);
             float width = sprites[i].value().getGlobalBounds().width;
             float x = positions[i].value().x;
             while (x < window.getSize().x) {
@@ -45,8 +47,9 @@ void System::Render::update(sparse_array<Position>& positions, sparse_array<Spri
             }
         }
     }
+
     for (uint32_t i = 0; i < positions.size() && i < sprites.size(); i++) {
-        if (positions[i].has_value() && sprites[i].has_value()) {
+        if (positions[i].has_value() && sprites[i].has_value() && std::find(parallaxIndices.begin(), parallaxIndices.end(), i) == parallaxIndices.end()) {
             sprites[i].value().setPosition(positions[i].value().x, positions[i].value().y);
             window.draw(sprites[i].value(), &shader);
         }

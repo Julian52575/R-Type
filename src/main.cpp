@@ -2,12 +2,45 @@
 #include <cstddef>
 #include <functional>
 
+using entityToMake = std::tuple<std::string, float, float, float>;
+
+std::vector<entityToMake> load_level(const std::string &path){
+    std::ifstream file(path);
+    if (!file.is_open())
+        throw JsonParseException("Could not open file: " + path);
+    if (file.peek() == std::ifstream::traits_type::eof())
+        throw JsonParseException("File is empty: " + path);
+    nlohmann::json json;
+    file >> json;
+
+    std::vector<entityToMake> entities;
+    for (const auto& entity : json["entities"]) {
+        float pos_x = entity["position"]["x"];
+        float pos_y = entity["position"]["y"];
+        float spawnTime = entity["spawntime"];
+        std::string entity_path = entity["entity"];
+
+        entities.push_back(std::make_tuple(entity_path, pos_x, pos_y, spawnTime));
+        std::cout << "Entity: " << entity_path << " at (" << pos_x << ", " << pos_y << ") at time " << spawnTime << std::endl;
+    }
+    return entities;
+}
+
 int main(void)
 {
+    std::vector<entityToMake> entities = load_level("levels/level1.json");
     Rengine::Rengine core;
     sf::Clock clock;
     try {
-        core.makeEntity("entities/ennemy.json");
+        core.makeEntity("entities/parallax/1.json");
+        core.makeEntity("entities/parallax/2.json");
+        core.makeEntity("entities/parallax/3.json");
+        core.makeEntity("entities/parallax/4.json");
+        core.makeEntity("entities/parallax/5.json");
+        // Entity ennemi = core.makeEntity("entities/dragon_rouge.json");
+        // core.getEntityMaker().InverseEntityX(ennemi);
+        // Entity ennemi2 = core.makeEntity("entities/dragon_noir.json");
+        // core.getEntityMaker().InverseEntityX(ennemi2);
         core.makeEntity("entities/player.json");
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -42,20 +75,41 @@ int main(void)
         //enneemy
         core.getScript().updateAttack(core.getEntityMaker().scripting, core.getEntityMaker().attack, core.getEntityMaker().pos, deltaTime,
             std::function<void(float, float)>([&core](float x, float y) {
-                Entity e = core.makeEntity("entities/projectile.json");
-                core.getEntityMaker().UpdatePosition(e, x, y);
-                core.getEntityMaker().UpdateGroup(e, "ennemy");
-                core.getEntityMaker().InverseEntityX(e);
+                try {
+                    Entity e = core.makeEntity("entities/projectile.json");
+                    core.getEntityMaker().UpdatePosition(e, x, y);
+                    core.getEntityMaker().UpdateGroup(e, "ennemy");
+                    core.getEntityMaker().InverseEntityX(e);
+                } catch (const std::exception& e) {
+                    std::cerr << "Error Entyt cannot be created for ennemy" << std::endl;
+                }
             })
         );
         //player
         core.getKeyBoardInput().shoot(core.getEntityMaker().controllable,core.getEntityMaker().pos, core.getEntityMaker().attack,deltaTime,
             std::function<void(float, float)>([&core](float x, float y) {
-                Entity e = core.makeEntity("entities/projectile.json");
-                core.getEntityMaker().UpdatePosition(e, x, y);
-                core.getEntityMaker().UpdateGroup(e, "player");
+                try {
+                    Entity e = core.makeEntity("entities/projectile.json");
+                    core.getEntityMaker().UpdatePosition(e, x+35, y+15);
+                    core.getEntityMaker().UpdateGroup(e, "player");
+                } catch (const std::exception& e) {
+                    std::cerr << "Error Entyt cannot be created for player" << std::endl;
+                }
             })
         );
+        for (auto &entity : entities) {
+            std::get<3>(entity) -= deltaTime;
+            if (std::get<3>(entity) <= 0) {
+                try {
+                    Entity e = core.makeEntity(std::get<0>(entity));
+                    core.getEntityMaker().UpdatePosition(e, std::get<1>(entity), std::get<2>(entity));
+                    core.getEntityMaker().InverseEntityX(e);
+                    entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+                } catch (const std::exception& e) {
+                    std::cerr << "Error Entyt cannot be created for player" << std::endl;
+                }
+            }
+        }
 
         //regles de jeu (genre si pv < 0 alors mort ou limite de temps excpirée)
         std::vector<Entity> vec = core.getLifetime().update(core.getEntityMaker().lifetime, deltaTime);
