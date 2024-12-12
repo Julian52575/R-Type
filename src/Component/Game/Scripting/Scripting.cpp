@@ -5,7 +5,6 @@
 #include <string>
 
 Scripting::Scripting() {
-    // L = luaL_newstate();
     L = std::shared_ptr<lua_State>(luaL_newstate(), [](lua_State* L){ lua_close(L); });
     if (!L) {
         std::cerr << "Lua error: cannot create Lua state" << std::endl;
@@ -18,9 +17,7 @@ Scripting::Scripting(const std::string& filename) : Scripting() {
     LoadScript(filename);
 }
 
-Scripting::~Scripting() {
-    // lua_close(L.get());
-}
+Scripting::~Scripting() {}
 
 void Scripting::LoadScript(const std::string& filename) {
     lua_settop(L.get(), 0);

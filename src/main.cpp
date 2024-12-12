@@ -7,7 +7,6 @@ int main(void)
     Rengine::Rengine core;
     sf::Clock clock;
     try {
-        core.makeEntity("entities/parallax1.json");
         core.makeEntity("entities/ennemy.json");
         core.makeEntity("entities/player.json");
     } catch (const std::exception& e) {
@@ -27,20 +26,34 @@ int main(void)
         core.getMovement().update(core.getEntityMaker().pos, core.getEntityMaker().velo, deltaTime);
 
         //Systeme de collision
-        // core.getCollision().update(core.getEntityMaker().pos, core.getEntityMaker().hitbox);
+        core.getCollision().update(core.getEntityMaker().pos, core.getEntityMaker().hitbox,
+        std::function<bool(Entity, Entity)>([&core](Entity e1, Entity e2) {
+            if (core.getEntityMaker().group[e1].has_value() && core.getEntityMaker().group[e2].has_value()){
+                if (!core.getEntityMaker().group[e1].value().has(core.getEntityMaker().group[e2].value().getGroups())) {
+                    core.destroyEntity(e1);
+                    core.destroyEntity(e2);
+                    return true;
+                }
+            }
+            return false;
+        }));
 
-        //Spawn de projectile (ennemy/player)
+        //Spawn de projectile
+        //enneemy
         core.getScript().updateAttack(core.getEntityMaker().scripting, core.getEntityMaker().attack, core.getEntityMaker().pos, deltaTime,
             std::function<void(float, float)>([&core](float x, float y) {
                 Entity e = core.makeEntity("entities/projectile.json");
                 core.getEntityMaker().UpdatePosition(e, x, y);
-                core.getEntityMaker().UpdateVelocity(e, -100, 0);
+                core.getEntityMaker().UpdateGroup(e, "ennemy");
+                core.getEntityMaker().InverseEntityX(e);
             })
         );
+        //player
         core.getKeyBoardInput().shoot(core.getEntityMaker().controllable,core.getEntityMaker().pos, core.getEntityMaker().attack,deltaTime,
             std::function<void(float, float)>([&core](float x, float y) {
                 Entity e = core.makeEntity("entities/projectile.json");
                 core.getEntityMaker().UpdatePosition(e, x, y);
+                core.getEntityMaker().UpdateGroup(e, "player");
             })
         );
 

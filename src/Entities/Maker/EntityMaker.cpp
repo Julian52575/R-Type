@@ -392,3 +392,29 @@ void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
         this->velo.emplace_at(e, x, y);
     }
 }
+
+void EntityMaker::UpdateGroup(Entity e, std::string group) {
+    try {
+        this->group[e].value().add(group);
+    } catch (std::out_of_range &) {
+        this->group.emplace_at(e, std::vector<std::string>{group});
+    }
+}
+
+void EntityMaker::InverseEntityX(Entity e) {
+    try {
+        this->velo[e].value().x = -this->velo[e].value().x;
+    } catch (std::out_of_range &) {
+    }
+
+    try {
+        this->sprite[e].value().setScale(-this->sprite[e].value().getScale().x, this->sprite[e].value().getScale().y);
+    } catch (std::out_of_range &) {
+    }
+
+    try{
+        this->hitbox[e].value().setOffset(-(this->hitbox[e].value().getOffset().x + this->hitbox[e].value().getSize().x), this->hitbox[e].value().getOffset().y);
+    } catch (std::out_of_range &) {
+    }
+
+}
