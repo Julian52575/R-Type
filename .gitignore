@@ -23,5 +23,8 @@ rengine/
 rtype
 *.out
 .env
-src/main.cpp
 entities/
+src/main.cpp
+script/R-Type-1.0.0-Linux.deb
+_CPack_Packages/
+R-Type-1.0.0-Linux.deb

@@ -100,6 +100,10 @@ public:
         m_vUsers.push_back(user);
     }
 
+    void RemoveUser(User &user) {
+        m_vUsers.erase(std::remove(m_vUsers.begin(), m_vUsers.end(), user), m_vUsers.end());
+    }
+
     /**
      * @brief Retrieves the next incoming message from the queue.
      *
@@ -154,8 +158,6 @@ bool ServerConnection<T>::Send(const Message<T> &msg, User recipient) {
         [serialized_msg](std::error_code ec, std::size_t bytes_transferred) {
             if (ec) {
                 std::cerr << "[SERVER] Failed to send message: " << ec.message() << std::endl;
-            } else {
-                std::cout << "Message sent successfully (" << bytes_transferred << " bytes)" << std::endl;
             }
         });
     return true;

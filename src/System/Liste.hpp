@@ -9,3 +9,4 @@
 #include "./Collision/Collision.hpp"
 #include "./Lifetime/Lifetime.hpp"
 #include "./Camera/CameraFollow.hpp"
+#include "./Script/Script.hpp"

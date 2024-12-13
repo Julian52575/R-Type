@@ -44,6 +44,8 @@ class EntityMaker {
         void parseJson(Entity e, const std::string &path);
         void UpdatePosition(Entity e, float x, float y);
         void UpdateVelocity(Entity e, float x, float y);
+        void UpdateGroup(Entity e, std::string group);
+        void InverseEntityX(Entity e);
 
     private:
         void parseAcceleration(Entity e, const nlohmann::json& json);

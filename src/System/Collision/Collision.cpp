@@ -4,7 +4,7 @@ System::Collision::Collision() {}
 
 System::Collision::~Collision() {}
 
-void System::Collision::update(sparse_array<Position>& positions, sparse_array<Hitbox>& hitboxes) {
+void System::Collision::update(sparse_array<Position>& positions, sparse_array<Hitbox>& hitboxes, std::function<bool(Entity, Entity)> onCollision) {
     for (uint32_t i = 0; i < positions.size() && i < hitboxes.size(); i++) {
         if (positions[i].has_value() && hitboxes[i].has_value()) {
             for (uint32_t j = i + 1; j < positions.size() && j < hitboxes.size(); j++) {
@@ -17,8 +17,10 @@ void System::Collision::update(sparse_array<Position>& positions, sparse_array<H
                     if (pos1x < pos2x + hitboxes[j].value().getSize().x &&
                         pos1x + hitboxes[i].value().getSize().x > pos2x &&
                         pos1y < pos2y + hitboxes[j].value().getSize().y &&
-                        pos1y + hitboxes[i].value().getSize().y > pos2y) {
-                        std::cout << "Collision detected between " << i << " and " << j << std::endl;
+                        pos1y + hitboxes[i].value().getSize().y > pos2y
+                        ) {
+                            if (onCollision(Entity(i), Entity(j)))
+                                break;
                     }
                 }
             }
