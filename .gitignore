@@ -6,3 +6,4 @@ build
 *.cmake
 style_error.log
 rtype
+venvconan/

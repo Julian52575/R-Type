@@ -41,7 +41,6 @@ else()
     install(FILES "${CMAKE_SOURCE_DIR}/release/assets/icon/r-type.png" DESTINATION /usr/share/icons)
     configure_file("${CMAKE_SOURCE_DIR}/release/assets/r-type.desktop.in" "${CMAKE_BINARY_DIR}/r-type.desktop" @ONLY)
     install(FILES "${CMAKE_BINARY_DIR}/r-type.desktop" DESTINATION /usr/share/applications)
-    execute_process(COMMAND ln -s /usr/bin/R-Type /usr/local/games/R-Type)
     # Dependencies
     #set(CPACK_DEBIAN_PACKAGE_DEPENDS "SFML lua")
 

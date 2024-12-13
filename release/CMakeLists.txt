@@ -1,10 +1,4 @@
-file(GLOB_RECURSE SRC_FILES "../game/src/*.cpp" "../gameEngine/src/*.cpp")
-
-# Copy game assets
-file(COPY "../game/assets/" DESTINATION "./assets/")
-file(COPY "../game/shaders/" DESTINATION "./assets")
-file(COPY "../game/entities/" DESTINATION "./assets")
-file(COPY "../game/scripts/" DESTINATION "./assets")
+file(GLOB_RECURSE SRC_FILES "../game/src/*.cpp" "../rengine/src/*.cpp")
 
 # Set source code
 add_executable(release
@@ -16,11 +10,13 @@ target_include_directories(release PUBLIC
     "../gameEngine/"
     "../game/src/"
     $<TARGET_PROPERTY:nlohmann_json::nlohmann_json,INTERFACE_INCLUDE_DIRECTORIES>
+    ".."
 )
 
 # Set compile flags
 target_compile_options(release PRIVATE
     "-DCMAKE_COMPILATION_"
+    
 )
 
 find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics)
