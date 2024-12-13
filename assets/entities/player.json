@@ -1,15 +1,5 @@
 {
-    "sprite": {
-        "path": "assets/images/player.png",
-        "scale": {
-            "x": 1.0,
-            "y": 1.0
-        },
-        "origin": {
-            "x": 80,
-            "y": 143
-        }
-    },
+    "controllable": true,
     "position": {
         "x": 0,
         "y": 0
@@ -17,6 +7,17 @@
     "velocity": {
         "x": 100,
         "y": 100
+    },
+    "attack": {
+        "damage": 10,
+        "cooldown": 0.5
+    },
+    "sprite": {
+        "path": "assets/images/player.png",
+        "origin": {
+            "x": 80,
+            "y": 143.5
+        }
     },
     "animations": {
         "frameRect": {
@@ -26,21 +27,17 @@
             "height": 287
         },
         "frameCount": 9,
-        "frameDuration": 0.1
+        "frameDuration": 0.08
     },
-    "attack": {
-        "damage": 10,
-        "cooldown": 0.5
-    },
+    "group": ["player"],
     "hitbox": {
         "size": {
-            "x": 80,
-            "y": 40
+            "x": 70,
+            "y": 30
         },
         "offset": {
-            "x": -40,
-            "y": -5
+            "x": -30,
+            "y": 0
         }
     }
 }
-  
