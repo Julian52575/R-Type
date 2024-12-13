@@ -27,9 +27,10 @@ if (WIN32)
     set(INSTALL_ROOT_DIR bin)
     # CPack exclusive 
     set(CPACK_GENERATOR "WIX")
+    set(CPACK_WIX_VERSION 4)
     set(CPACK_WIX_SHORTCUTS_ON_DESKTOP ON)
     set(CPACK_WIX_CREATE_DESKTOP_SHORTCUTS "release")
-    set(CPACK_WIX_PRODUCT_GUID "108415bb-0622-44d8-a270-8c22799aeb7d")
+    #set(CPACK_WIX_PRODUCT_GUID "108415bb-0622-44d8-a270-8c22799aeb7d")
     set(CPACK_WIX_PROGRAM_ICON "${CMAKE_SOURCE_DIR}/release/assets/icon/r-type.ico")
 else()
     # Install dir
