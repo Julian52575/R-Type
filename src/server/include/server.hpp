@@ -75,7 +75,7 @@ class Server {
         ServerConnection<Communication::TypeDetail> server;
         bool isRunning = true;
         void handleMessage(Message<Communication::TypeDetail> &msg, const asio::ip::udp::endpoint &endpoint);
-        std::unique_ptr<std::unordered_map<User, Entity>> users;
+        std::unordered_map<User, Entity> users;
 
         System::movement movement;
         System::Collision collision;
@@ -85,10 +85,12 @@ class Server {
         explicit Server(int32_t port);
         void destroy_entity(Entity e);
         void run();
-        Entity MakeEntity(const std::string path);
+        Entity &MakeEntity(uint16_t configurationId);
         ServerConnection<Communication::TypeDetail> &getServer() { return server; }
-        std::unique_ptr<std::unordered_map<User, Entity>> &getUsers() { return users; }
+        std::unordered_map<User, Entity> &getUsers() { return users; }
         std::unique_ptr<EntityMaker> &getMaker() { return maker; }
         std::vector<Entity> getEntities() { return em.getActiveEntities(); }
         ~Server() = default;
 };
+
+std::string find_entity_path(uint16_t id);

@@ -1,8 +1,9 @@
 #include "../include/Command/Connexion.hpp"
 
 static bool handleClientConnexion(Message<Communication::TypeDetail> &msg, User &user, Server &server) {
-    Entity entity = server.MakeEntity("entities/player.json");
-    server.getUsers()->insert({user, entity});
+    Entity &entity = server.MakeEntity(3);
+    uint16_t configurationId = 3;
+    server.getUsers().insert({user, entity});
 
     Message<Communication::TypeDetail> responseMessage;
     responseMessage.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId};
@@ -16,18 +17,18 @@ static bool handleClientConnexion(Message<Communication::TypeDetail> &msg, User 
     BroadCastMessage.header.size = 0;
     float x = server.getMaker()->pos[entity].value().x;
     float y = server.getMaker()->pos[entity].value().y;
-    BroadCastMessage << id << x << y;
+    BroadCastMessage << id << x << y << configurationId;
     server.getServer().SendAll(BroadCastMessage);
     return true;
 }
 
 static bool handleClientDisconnect(Message<Communication::TypeDetail> &msg, User &user, Server &server) {
-    Entity entity = server.getUsers()->at(user);
+    Entity &entity = server.getUsers().at(user);
     uint16_t id = entity.getId();
 
     std::cout << "[SERVER] Client disconnected with id: " << entity.getId() << " from " << user.endpoint << std::endl;
     server.destroy_entity(entity);
-    server.getUsers()->erase(user);
+    server.getUsers().erase(user);
     server.getServer().RemoveUser(user);
     Message<Communication::TypeDetail> BroadCastMessage;
 

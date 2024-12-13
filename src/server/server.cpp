@@ -6,7 +6,6 @@
 Server::Server(int32_t port) : server(port) {
     this->maker = std::make_unique<EntityMaker>();
 
-    users = std::make_unique<std::unordered_map<User, Entity>>();
     maker->acc = reg.register_component<Acceleration>();
     maker->pos = reg.register_component<Position>();
     maker->rot = reg.register_component<Rotation>();
@@ -20,9 +19,11 @@ Server::Server(int32_t port) : server(port) {
     maker->scripting = reg.register_component<Scripting>();
 }
 
-Entity Server::MakeEntity(const std::string path){
-    Entity e = em.createEntity();
+Entity &Server::MakeEntity(uint16_t configurationId) {
+    std::string path = find_entity_path(configurationId);
+    Entity &e = em.createEntity();
     maker->parseJson(e, path);
+    e.setConfigId(configurationId);
     return e;
 }
 
@@ -41,36 +42,6 @@ void Server::destroy_entity(Entity e){
     maker->lifetime.erase(e);
     maker->scripting.erase(e);
 }
-
-// void handleConnexionClient(Message<Communication::TypeDetail> &msg, const asio::ip::udp::endpoint &endpoint, Server &server) {
-//     if (msg.header.type.type == Communication::TypeDetail::type::ConnexionDetail) {
-//         User user;
-//         user.endpoint = endpoint;
-//         server.getServer().AddUser(user);
-//         Entity entity = server.MakeEntity("entities/player.json");
-//         server.getUsers()->insert({user, entity});
-//         Message<Communication::TypeDetail> msg;
-//         msg.header.type.type = {Communication::ConnexionDetail, Communication::
-//     }
-//     if (msg.header.type.type ==htrrgre) {
-//         User user = server.getServer().GetUser(endpoint);
-//         Entity entity = server.getUsers()->at(user);
-//         server.getUsers()->erase(user);
-//         server.getServer().RemoveUser(user);
-//         server.destroy_entity(entity);
-//     }
-//     if (msg.header.type.type == bouge) {
-//         User user = server.getServer().GetUser(endpoint);
-//         Entity entity = server.getUsers()->at(user);
-//         float x = 0;
-//         float y = 0;
-
-//         msg >> x >> y;
-
-//         server.getMaker()->velo[entity].value().x = x;
-//         server.getMaker()->velo[entity].value().y = y;
-//     }
-// }
 
 void Server::handleMessage(Message<Communication::TypeDetail> &msg, const asio::ip::udp::endpoint &endpoint) {
     User user;
@@ -105,7 +76,6 @@ void Server::run() {
         std::chrono::duration<double> elapsed = currentTime - lastTime;
         double deltaTime = elapsed.count();
         lastTime = currentTime;
-
         time += deltaTime;
 
         for (std::optional<std::pair<asio::ip::udp::endpoint, Message<Communication::TypeDetail>>> msg = server.Receive(); msg; msg = server.Receive()) {
@@ -113,9 +83,17 @@ void Server::run() {
         }
 
         this->movement.update(maker->pos, maker->velo, deltaTime);
-        this->collision.update(maker->pos, maker->hitbox);
+        try {
+            
+            for (size_t i = 0; i < maker->attack.size(); i++) {
+                if (maker->attack[i].has_value())
+                    this->maker->attack[i].value().update(deltaTime);
+            }
+        } catch (const std::exception &e) {
+            std::cerr << "gegrege: " << e.what() << std::endl;
+        }
         this->lifetimeSystem.update(maker->lifetime, deltaTime);
-        for (auto &entity : em.getActiveEntities()) {
+        for (auto entity : em.getActiveEntities()) {
             sendEntityInfo(entity, *this);
         }
     }

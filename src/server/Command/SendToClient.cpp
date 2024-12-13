@@ -7,9 +7,10 @@ bool sendEntityInfo(Entity &entity, Server &server) {
     msg.header.size = 0;
 
     uint16_t id = entity.getId();
+    uint16_t configurationId = entity.getConfigId();
     float x = server.getMaker()->pos[entity].value().x;
     float y = server.getMaker()->pos[entity].value().y;
-    msg << id << x << y;
+    msg << id << x << y << configurationId;
     server.getServer().SendAll(msg);
     return true;
 }
