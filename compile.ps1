@@ -9,10 +9,10 @@ if (Test-Path "build") {
 }
 
 # Run Conan to install dependencies
-conan install conanfile.txt --output-folder=build --build=missing 
+conan install conanfile.txt --output-folder=build --build=missing -s compiler="msvc" -s compiler.version=194 -s compiler.runtime=dynamic
 
 # Run CMake to generate the solution file
-cmake -B build -G "Visual Studio 17 2022" `
+cmake -B build -G "Visual Studio 17 2022" -A x64 `
       -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" `
       -DCMAKE_BUILD_TYPE=Release `
 
