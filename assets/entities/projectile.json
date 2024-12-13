@@ -1,0 +1,38 @@
+{
+    "sprite": {
+        "path": "assets/imgaes/bdf.png",
+        "scale": {
+            "x": 0.5,
+            "y": 0.5
+        },
+        "origin": {
+            "x": 75,
+            "y": 75
+        }
+    },
+    "animations":{
+        "frameRect":{
+            "x":0,
+            "y":0,
+            "width":150,
+            "height":150
+        },
+        "frameCount": 6,
+        "frameDuration": 0.05
+    },
+    "velocity": {
+        "x": 200,
+        "y": 0
+    },
+    "lifetime": 5,
+    "hitbox":{
+        "size": {
+            "x": 32,
+            "y": 24
+        },
+        "offset": {
+            "x": -12,
+            "y": -12
+        }
+    }
+}

@@ -16,3 +16,4 @@ rtype
 rengine/
 *.deb
 _CPack_Packages/
+venvconan/
