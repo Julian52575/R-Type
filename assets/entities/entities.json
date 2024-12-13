@@ -1,6 +1,5 @@
 {
-    "1": "entities/Message.json",
-    "2": "entities/player.json",
-    "3": "entities/projectile.json",
-    "4": "entities/vaisseau.json"
+    "1": "assets/entities/Message.json",
+    "2": "assets/entities/projectile.json",
+    "3": "assets/entities/player.json"
 }

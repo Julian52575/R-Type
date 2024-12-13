@@ -1,4 +1,11 @@
 #include "include/game.hpp"
+#include <csignal>
+
+volatile std::sig_atomic_t gSignalStatus = 0;
+
+void signalHandler(int signal) {
+    gSignalStatus = signal;
+}
 
 void sendVeloUpdate(Game &game) {
     Message<Communication::TypeDetail> msg;
@@ -15,9 +22,10 @@ void sendVeloUpdate(Game &game) {
 
 int main(int ac, char **argv)
 {
+    std::signal(SIGINT, signalHandler);
     try {
         sf::Clock clock;
-        if (ac != 4) {
+        if (ac != 3) {
             std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
             return 1;
         }
@@ -25,14 +33,13 @@ int main(int ac, char **argv)
         uint16_t port = std::stoi(argv[2]);
         Game game(ip, port);
         Message<Communication::TypeDetail> msg;
-        int i = std::stoi(argv[3]);
         int x = 0;
 
         msg.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::ClientConnexion};
         msg.header.size = 0;
         game.getClient().Send(msg);
 
-        while (game.getCore().getRender().isOpen()) {
+        while (game.getCore().getRender().isOpen() && gSignalStatus == 0) {
             float deltaTime = clock.restart().asSeconds();
             for (std::optional<Message<Communication::TypeDetail>> msg = game.getClient().Receive(); msg; msg = game.getClient().Receive()) {
                 game.handleMessage(*msg);
@@ -40,32 +47,31 @@ int main(int ac, char **argv)
             game.getCore().getRender().processEvents();
 
             game.getCore().getKeyBoardInput().update(game.getCore().getEntityMaker().controllable, game.getCore().getEntityMaker().velo);
-            game.getCore().getKeyBoardInput().shoot(game.getCore().getEntityMaker().controllable,
-                    game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().attack,
-                    deltaTime, std::function<void(float, float)>()
-                    /* std::function<void(Rengine::Core, float, float)>([core](Rengine::Core& core, float x, float y) {
-                        Entity& e = core.getEntityMaker().MakeEntity("entities/projectile.json");
+            game.getCore().getKeyBoardInput().shoot(game.getCore().getEntityMaker().controllable, game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().attack, deltaTime,
+                std::function<void(float, float)>([&game](float x, float y) {
+                    Message<Communication::TypeDetail> msg;
 
-                        core.getEntityMaker().UpdatePosition(e, x, y);
-                    }
-                    ) */
+                    msg.header.type = {Communication::EntityAction, Communication::main::EntityActionPrecision::Shoot1};
+                    msg.header.size = 0;
+
+                    game.getClient().Send(msg);
+                })
             );
-    #warning Implement makePlayerAttack back
 
-            // script.update(this->scripting);
             game.getCore().getMovement().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().velo, deltaTime);
             game.getCore().getParallax().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().sprite, game.getCore().getEntityMaker().parallax, deltaTime);
             game.getCore().getAnimation().update(game.getCore().getEntityMaker().animation, game.getCore().getEntityMaker().sprite, deltaTime);
-            game.getCore().getCollision().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().hitbox);
-
-            // mouseInput.update(this->pos, this->velo, this->sprite);
-            // this->audio.update(this->musics, this->sounds);
             game.getCore().getCameraFollow().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().camera, game.getCore().getRender().getWindow());
             game.getCore().getRender().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().sprite,
                 game.getCore().getEntityMaker().parallax, game.getCore().getEntityMaker().text, game.getCore().getEntityMaker().hitbox);
-            if (game.getPlayer() != nullptr && i == 1)
+            if (game.getPlayer() != nullptr)
                 sendVeloUpdate(game);
         }
+
+        if (gSignalStatus != 0) {
+            std::cout << "Caught signal " << gSignalStatus << ", stopping the game..." << std::endl;
+        }
+
         Message<Communication::TypeDetail> disconectPlayer;
 
         disconectPlayer.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::ClientDisconnect};

@@ -1,32 +1,38 @@
 {
     "sprite": {
-        "path": "assets/images/laser.png",
+        "path": "assets/images/bdf.png",
         "scale": {
-            "x": 0.05,
-            "y": 0.05
+            "x": 0.5,
+            "y": 0.5
         },
         "origin": {
-            "x": 0,
-            "y": 0
+            "x": 32.5,
+            "y": 32.5
         }
     },
-    "position": {
-        "x": 0,
-        "y": 0
+    "animations":{
+        "frameRect":{
+            "x":0,
+            "y":0,
+            "width":150,
+            "height":150
+        },
+        "frameCount": 6,
+        "frameDuration": 0.05
     },
     "velocity": {
-        "x": 100,
+        "x": 200,
         "y": 0
     },
-    "lifetime": 5.0,
-    "hitbox": {
+    "lifetime": 5,
+    "hitbox":{
         "size": {
-            "x": 30,
-            "y": 20
+            "x": 32,
+            "y": 24
         },
         "offset": {
-            "x": 20,
-            "y": 20
+            "x": 10,
+            "y": 8
         }
     }
 }

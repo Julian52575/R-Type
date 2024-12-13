@@ -4,6 +4,7 @@
 #include <rengine/RengineNetwork.hpp>
 #include <unordered_map>
 #include <memory>
+#include "include/utils.hpp"
 
 struct Communication {
     enum Type : uint16_t {

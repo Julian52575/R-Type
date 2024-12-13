@@ -1,9 +1,10 @@
 #include "include/game.hpp"
 
-Entity &GetOrCreateEntity(std::unordered_map<uint16_t, Entity> &entities, uint16_t id, Rengine::Rengine &core, std::string path) {
+Entity &GetOrCreateEntity(std::unordered_map<uint16_t, Entity> &entities, uint16_t id, Rengine::Rengine &core, std::string path, uint16_t configId) {
     if (entities.find(id) == entities.end()) {
         Entity e = core.makeEntity(path);
         entities.emplace(id, e);
+        e.setConfigId(configId);
     }
     return entities.at(id);
 }
@@ -14,7 +15,7 @@ void handleCommunicationDetail(Message<Communication::TypeDetail> &msg, Game &ga
             uint16_t id;
             msg >> id;
 
-            Entity NewEntity = GetOrCreateEntity(game.getEntities(), id, game.getCore(), "assets/entities/player.json");
+            Entity NewEntity = GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(3), 3);
             game.setPlayer(NewEntity);
             break;
         }
@@ -50,12 +51,12 @@ void handleEntityAction(Message<Communication::TypeDetail> &msg, Game &game) {
 void handleEntityInfo(Message<Communication::TypeDetail> &msg, Game &game) {
     switch (msg.header.type.precision) {
         case Communication::main::EntityInfoPrecision::InfoAll: {
-            uint16_t id;
+            uint16_t id, configId;
             float x, y;
 
-            msg >> y >> x >> id;
+            msg >> configId >> y >> x >> id;
             try {
-                Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), "assets/entities/player.json");
+                Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(configId), configId); 
                 game.getCore().getEntityMaker().UpdatePosition(e, x, y);
             } catch (std::out_of_range &e) {
                 std::cerr << "Entity with id " << id << " not found" << std::endl;
@@ -64,11 +65,12 @@ void handleEntityInfo(Message<Communication::TypeDetail> &msg, Game &game) {
         }
 
         case Communication::main::EntityInfoPrecision::NewEntity: {
-            uint16_t id;
+            uint16_t id, configId;
             float x, y;
 
-            msg >> y >> x >> id;
-            Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), "assets/entities/player.json");
+            std::cout << "New entity: " << id << " " << configId << " " << x << " " << y << std::endl;
+            msg >> configId >> y >> x >> id;
+            Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(configId), configId);
             game.getCore().getEntityMaker().UpdatePosition(e, x, y);
             break;
         }
