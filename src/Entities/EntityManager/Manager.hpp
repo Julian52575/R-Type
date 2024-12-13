@@ -9,7 +9,7 @@
 
 class EntityManager {
     public:
-        explicit EntityManager(uint32_t maxEntities = 1000);
+        explicit EntityManager(uint32_t maxEntities = 10000);
         ~EntityManager();
         Entity& createEntity();
         void destroyEntity(Entity entity);
