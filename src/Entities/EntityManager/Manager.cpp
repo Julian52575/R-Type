@@ -1,9 +1,7 @@
 #include "./Manager.hpp"
 #include <vector>
 
-EntityManager::EntityManager(uint32_t maxEntities){
-    // this->activeEntities.resize(maxEntities, false);
-    
+EntityManager::EntityManager(uint32_t maxEntities){    
     for (uint32_t i = 0; i < maxEntities; ++i) {
         Entity entity(i);
         this->availableEntities.push(entity);
