@@ -48,6 +48,10 @@ bool handleGlobalConnexion(Message<Communication::TypeDetail> &msg, User &user, 
         case Communication::main::ConnexionDetailPrecision::ClientDisconnect:
             return handleClientDisconnect(msg, user, server);
 
+        case Communication::main::ConnexionDetailPrecision::RequestPlaybleEntity:
+            std::cout << "[SERVER] Request for a playable entity from " << user.endpoint << std::endl;
+            return true;
+
         default:
             std::cerr << "[SERVER] Unknown ConnexionDetailPrecision: " << msg.header.type.precision << std::endl;
             return false;

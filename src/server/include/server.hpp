@@ -29,6 +29,7 @@ struct Communication {
             ClientReady = 4,
             PlayableEntityInGameId = 5,
             ServerStop = 6,
+            RequestPlaybleEntity = 7,
         };
 
         enum JsonDetailPrecision : uint16_t {
