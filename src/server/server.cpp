@@ -28,6 +28,13 @@ Entity &Server::MakeEntity(uint16_t configurationId) {
 }
 
 void Server::destroy_entity(Entity e){
+    Message<Communication::TypeDetail> msg;
+
+    msg.header.type = {Communication::EntityInfo, Communication::main::EntityInfoPrecision::DeleteEntity};
+    msg.header.size = 0;
+
+    uint16_t id = e.getId();
+    msg << id;
     this->em.destroyEntity(e);
 
     maker->acc.erase(e);
@@ -41,6 +48,8 @@ void Server::destroy_entity(Entity e){
     maker->hitbox.erase(e);
     maker->lifetime.erase(e);
     maker->scripting.erase(e);
+
+    this->server.SendAll(msg);
 }
 
 void Server::handleMessage(Message<Communication::TypeDetail> &msg, const asio::ip::udp::endpoint &endpoint) {
@@ -70,13 +79,16 @@ void Server::run() {
     using Clock = std::chrono::steady_clock;
     auto lastTime = Clock::now();
     double time = 0;
+    sf::Clock clock;
+    double time2 = 0;
 
     while (this->isRunning) {
         auto currentTime = Clock::now();
         std::chrono::duration<double> elapsed = currentTime - lastTime;
-        double deltaTime = elapsed.count();
+        float deltaTime = clock.restart().asSeconds();
         lastTime = currentTime;
         time += deltaTime;
+        time2 += deltaTime;
 
         for (std::optional<std::pair<asio::ip::udp::endpoint, Message<Communication::TypeDetail>>> msg = server.Receive(); msg; msg = server.Receive()) {
             handleMessage(msg->second, msg->first);
@@ -92,9 +104,19 @@ void Server::run() {
         } catch (const std::exception &e) {
             std::cerr << "gegrege: " << e.what() << std::endl;
         }
-        this->lifetimeSystem.update(maker->lifetime, deltaTime);
-        for (auto entity : em.getActiveEntities()) {
-            sendEntityInfo(entity, *this);
+        std::vector<Entity> vec = this->lifetimeSystem.update(maker->lifetime, deltaTime);
+
+        for (auto &e : vec) {
+            destroy_entity(e);
+        }
+        if (time > 0.002) {
+            for (auto entity : em.getActiveEntities()) {
+                sendEntityInfo(entity, *this);
+            }
+            time = 0;
+        }
+        if (time2 > 2) {
+            
         }
     }
 }

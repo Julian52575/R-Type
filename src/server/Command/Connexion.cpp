@@ -40,6 +40,18 @@ static bool handleClientDisconnect(Message<Communication::TypeDetail> &msg, User
     return true;
 }
 
+static bool handleRequestPlayableEntity(Message<Communication::TypeDetail> &msg, User &user, Server &server) {
+    Entity &entity = server.getUsers().at(user);
+
+    Message<Communication::TypeDetail> responseMessage;
+    responseMessage.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId};
+    uint16_t id = entity.getId();
+    responseMessage << id;
+    server.getServer().Send(responseMessage, user);
+    return true;
+}
+
+
 bool handleGlobalConnexion(Message<Communication::TypeDetail> &msg, User &user, Server &server) {
     switch (msg.header.type.precision) {
         case Communication::main::ConnexionDetailPrecision::ClientConnexion:
@@ -47,6 +59,9 @@ bool handleGlobalConnexion(Message<Communication::TypeDetail> &msg, User &user, 
 
         case Communication::main::ConnexionDetailPrecision::ClientDisconnect:
             return handleClientDisconnect(msg, user, server);
+
+        case Communication::main::ConnexionDetailPrecision::RequestPlaybleEntity:
+            return handleRequestPlayableEntity(msg, user, server);
 
         default:
             std::cerr << "[SERVER] Unknown ConnexionDetailPrecision: " << msg.header.type.precision << std::endl;
