@@ -2,7 +2,7 @@
 
 System::Render::Render() {
     window.create(sf::VideoMode(800, 600), "ECS");
-    this->shader.loadFromFile("shaders/colorblind_default.frag", sf::Shader::Fragment);
+    this->shader.loadFromFile("assets/shaders/colorblind_default.frag", sf::Shader::Fragment);
     this->shaderIndex = 0;
 }
 
