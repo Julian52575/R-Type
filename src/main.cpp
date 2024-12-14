@@ -69,7 +69,7 @@ int main(int ac, char **argv)
             if (game.getPlayer() != nullptr) {
                 sendVeloUpdate(game);
 
-            } else if (deltaTime2 > 4) {
+            } else if (deltaTime2 > 4 && game.isFinished() == false) {
                 std::cout << "Requesting playable entity" << std::endl;
                 Message<Communication::TypeDetail> msg;
 
