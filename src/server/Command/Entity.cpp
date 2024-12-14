@@ -14,13 +14,14 @@ bool handleGlobalEntity(Message<Communication::TypeDetail> &msg, User &user, Ser
 
         case Communication::main::EntityActionPrecision::Shoot1: {
             Entity entity = server.getUsers().at(user);
-            Entity &bullet = server.MakeEntity(2);
-            float x, y;
 
             if (server.getMaker()->attack[entity].value().canAttack()) {
+                Entity &bullet = server.MakeEntity(2);
+                float x, y;
                 x = server.getMaker()->pos[entity].value().x;
                 y = server.getMaker()->pos[entity].value().y;
                 server.getMaker()->UpdatePosition(bullet, x, y);
+                server.getMaker()->UpdateGroup(bullet, "player");
                 Message<Communication::TypeDetail> BroadCastMessage;
                 BroadCastMessage.header.type = {Communication::EntityInfo, Communication::main::EntityInfoPrecision::NewEntity};
                 BroadCastMessage.header.size = 0;

@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
         Server server(port);
         server.run();
     } catch(const std::exception& e) {
-        std::cerr << e.what() << '\n';
+        std::cerr << "[SERVER] Uncatched Error: " << e.what() << '\n';
         return 84;
     }
 }

@@ -90,33 +90,89 @@ void Server::run() {
         time += deltaTime;
         time2 += deltaTime;
 
-        for (std::optional<std::pair<asio::ip::udp::endpoint, Message<Communication::TypeDetail>>> msg = server.Receive(); msg; msg = server.Receive()) {
-            handleMessage(msg->second, msg->first);
+        try {
+            for (std::optional<std::pair<asio::ip::udp::endpoint, Message<Communication::TypeDetail>>> msg = server.Receive(); msg; msg = server.Receive()) {
+                handleMessage(msg->second, msg->first);
+            }
+        } catch(const std::exception& e) {
+            std::cerr << "[SERVER] Handle MEssage Error: " << e.what() << '\n';
         }
 
-        this->movement.update(maker->pos, maker->velo, deltaTime);
         try {
-            
+            this->movement.update(maker->pos, maker->velo, deltaTime);
+        } catch(const std::exception& e) {
+            std::cerr << "[SERVER] Movement Error: " << e.what() << '\n';
+        }
+
+        try {
             for (size_t i = 0; i < maker->attack.size(); i++) {
                 if (maker->attack[i].has_value())
                     this->maker->attack[i].value().update(deltaTime);
             }
         } catch (const std::exception &e) {
-            std::cerr << "gegrege: " << e.what() << std::endl;
+            std::cerr << "[SERVER] Attack Error: " << e.what() << std::endl;
         }
-        std::vector<Entity> vec = this->lifetimeSystem.update(maker->lifetime, deltaTime);
+        try {
+            collision.update(maker->pos, maker->hitbox,
+                std::function<bool(Entity, Entity)>([this](Entity e1, Entity e2) {
+                    if (maker->group[e1].has_value() && maker->group[e2].has_value()){
+                        if (!maker->group[e1].value().has(maker->group[e2].value().getGroups())) {
+                                this->destroy_entity(e1);
+                                this->destroy_entity(e2);
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                )
+            );
+        } catch (const std::exception &e) {
+            std::cerr << "[SERVER] Collision Error: " << e.what() << std::endl;
+        }
 
-        for (auto &e : vec) {
-            destroy_entity(e);
+        try {
+            script.updateMovement(maker->scripting, maker->velo, maker->pos);
+        } catch(const std::exception& e) {
+            std::cerr << "[SERVER] Script Update Mouvement Error: " << e.what() << '\n';
         }
-        if (time > 0.002) {
-            for (auto entity : em.getActiveEntities()) {
-                sendEntityInfo(entity, *this);
+
+        try {
+            script.updateAttack(maker->scripting, maker->attack, maker->pos, deltaTime,
+                std::function<void(float, float)>([this](float x, float y) {
+                    Entity e = this->MakeEntity(2);
+                    maker->UpdatePosition(e, x, y);
+                    maker->UpdateGroup(e, "ennemy");
+                    maker->InverseEntityX(e);
+                })
+            );
+        } catch(const std::exception& e) {
+            std::cerr << "[SERVER] Script Update Attack Error: " << e.what() << '\n';
+        }
+
+        try {
+            std::vector<Entity> vec = this->lifetimeSystem.update(maker->lifetime, deltaTime);
+            for (auto &e : vec) {
+                destroy_entity(e);
             }
+        } catch (const std::exception &e) {
+            std::cerr << "[SERVER] Lifetime Error: " << e.what() << std::endl;
+        }
+
+        try {
+            if (time > 0.002) {
+                for (auto entity : em.getActiveEntities()) {
+                    sendEntityInfo(entity, *this);
+                }
+                time = 0;
+            }
+        } catch(const std::exception& e) {
+            std::cerr << "[SERVER] Sending Entity Error: " << e.what() << '\n';
             time = 0;
         }
-        if (time2 > 2) {
-            
+
+        if (time2 > 10) {
+            this->MakeEntity(4);
+            time2 = 0;
         }
     }
 }

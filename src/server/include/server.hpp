@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+#include <stdint.h>
 
 struct Communication {
     enum Type : uint16_t {
@@ -82,6 +83,7 @@ class Server {
         System::movement movement;
         System::Collision collision;
         System::Lifetime lifetimeSystem;
+        System::Script script;
 
     public:
         explicit Server(int32_t port);
