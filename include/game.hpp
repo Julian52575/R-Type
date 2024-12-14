@@ -28,6 +28,7 @@ struct Communication {
             ClientReady = 4,
             PlayableEntityInGameId = 5,
             ServerStop = 6,
+            RequestPlaybleEntity = 7,
         };
 
         enum JsonDetailPrecision : uint16_t {
@@ -57,6 +58,7 @@ struct Communication {
             InfoMaxSpeed = 6,
             InfoDirection = 7,
             NewEntity = 8,
+            DeleteEntity = 9,
         };
     };
 
@@ -75,6 +77,9 @@ class Game {
         ClientConnection<Communication::TypeDetail> &getClient();
         std::shared_ptr<Entity> getPlayer();
         void setPlayer(Entity &player);
+        void setPlayerNull();
+        void setFinished(bool finished);
+        bool isFinished() const;
         ~Game();
 
     private:
@@ -82,4 +87,5 @@ class Game {
         std::unordered_map<uint16_t, Entity> entities;
         Rengine::Rengine core;
         std::shared_ptr<Entity> player;
+        bool finished = false;
 };

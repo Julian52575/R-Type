@@ -56,7 +56,7 @@ void handleEntityInfo(Message<Communication::TypeDetail> &msg, Game &game) {
 
             msg >> configId >> y >> x >> id;
             try {
-                Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(configId), configId); 
+                Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(configId), configId);
                 game.getCore().getEntityMaker().UpdatePosition(e, x, y);
             } catch (std::out_of_range &e) {
                 std::cerr << "Entity with id " << id << " not found" << std::endl;
@@ -68,10 +68,27 @@ void handleEntityInfo(Message<Communication::TypeDetail> &msg, Game &game) {
             uint16_t id, configId;
             float x, y;
 
-            std::cout << "New entity: " << id << " " << configId << " " << x << " " << y << std::endl;
             msg >> configId >> y >> x >> id;
             Entity e = GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(configId), configId);
             game.getCore().getEntityMaker().UpdatePosition(e, x, y);
+            break;
+        }
+
+        case Communication::main::EntityInfoPrecision::DeleteEntity: {
+            uint16_t id;
+
+            msg >> id;
+            try {
+                std::cout << "Deleting entity: " << id << std::endl;
+                Entity e = game.getEntities().at(id);
+                if (game.getPlayer() != nullptr && game.getPlayer()->getId() == e.getId()) {
+                    game.setFinished(true);
+                    game.setPlayerNull();
+                }
+                game.getCore().destroyEntity(e);
+            } catch (std::out_of_range &e) {
+                std::cerr << "Entity with id " << id << " not found" << std::endl;
+            }
             break;
         }
 
@@ -83,6 +100,14 @@ void handleEntityInfo(Message<Communication::TypeDetail> &msg, Game &game) {
 
 Game::Game(std::string ip, uint16_t port) : client(ip, port) {
     player = nullptr;
+}
+
+void Game::setFinished(bool finished) {
+    this->finished = finished;
+}
+
+bool Game::isFinished() const {
+    return finished;
 }
 
 void Game::handleMessage(Message<Communication::TypeDetail> &msg) {
@@ -100,7 +125,7 @@ void Game::handleMessage(Message<Communication::TypeDetail> &msg) {
             handleEntityInfo(msg, *this);
             break;
         default:
-            std::cerr << "[CLIENT] Unknown message type " << msg.header.type.type << std::endl;
+            std::cout << "Unknown message type " << msg.header.type.type << std::endl;
             break;
     }
 }
@@ -125,6 +150,10 @@ void Game::setPlayer(Entity &pl) {
     this->player = std::make_shared<Entity>(pl);
     core.getEntityMaker().controllable.emplace_at(pl);
     std::cout << "Player set: " << pl << std::endl;
+}
+
+void Game::setPlayerNull() {
+    this->player = nullptr;
 }
 
 Game::~Game() {

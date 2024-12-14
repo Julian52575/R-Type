@@ -25,6 +25,7 @@ int main(int ac, char **argv)
     std::signal(SIGINT, signalHandler);
     try {
         sf::Clock clock;
+        sf::Clock clock2;
         if (ac != 3) {
             std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
             return 1;
@@ -39,8 +40,9 @@ int main(int ac, char **argv)
         msg.header.size = 0;
         game.getClient().Send(msg);
 
-        while (game.getCore().getRender().isOpen() && gSignalStatus == 0) {
+        while (game.getCore().getRender().isOpen() && gSignalStatus == 0 && !game.isFinished()) {
             float deltaTime = clock.restart().asSeconds();
+            float deltaTime2 = clock2.getElapsedTime().asSeconds();
             for (std::optional<Message<Communication::TypeDetail>> msg = game.getClient().Receive(); msg; msg = game.getClient().Receive()) {
                 game.handleMessage(*msg);
             }
@@ -64,8 +66,18 @@ int main(int ac, char **argv)
             game.getCore().getCameraFollow().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().camera, game.getCore().getRender().getWindow());
             game.getCore().getRender().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().sprite,
                 game.getCore().getEntityMaker().parallax, game.getCore().getEntityMaker().text, game.getCore().getEntityMaker().hitbox);
-            if (game.getPlayer() != nullptr)
+            if (game.getPlayer() != nullptr) {
                 sendVeloUpdate(game);
+
+            } else if (deltaTime2 > 4) {
+                std::cout << "Requesting playable entity" << std::endl;
+                Message<Communication::TypeDetail> msg;
+
+                msg.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::RequestPlaybleEntity};
+                msg.header.size = 0;
+                game.getClient().Send(msg);
+                clock2.restart();
+            }
         }
 
         if (gSignalStatus != 0) {
