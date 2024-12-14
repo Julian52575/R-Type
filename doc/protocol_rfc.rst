@@ -319,3 +319,5 @@ Changelog
 - Version 1.3.2: Removed Entity In-Game id from all Precision::Info, 9 decembre 2024. 10:49UTC+1
 - Version 1.4: Added 3.3 In-Game event handling & Added Client section in 3.4 Server / Client differences. 9 december 2024. 11:44UTC+1
 - Version 1.5: Added 3.1.1 Payload Precision & Request Playable Entity. 14 december 2024. 12:56UTC+1
+- Version 1.6: Added NewEntity in 3.1.1 Info
+ 
