@@ -26,12 +26,19 @@ int main(int ac, char **argv)
     try {
         sf::Clock clock;
         sf::Clock clock2;
-        if (ac != 3) {
+        std::string ip;
+        uint16_t port;
+        if (ac == 1) {
+            ip = "127.0.0.1";
+            port = 4242;
+        } else if (ac != 3) {
             std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
             return 1;
+        } else {
+            ip = argv[1];
+            port = std::stoi(argv[2]);
         }
-        std::string ip = argv[1];
-        uint16_t port = std::stoi(argv[2]);
+        std::cout << "Connecting to " << ip << ":" << port << std::endl;
         Game game(ip, port);
         Message<Communication::TypeDetail> msg;
         int x = 0;
@@ -39,6 +46,12 @@ int main(int ac, char **argv)
         msg.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::ClientConnexion};
         msg.header.size = 0;
         game.getClient().Send(msg);
+
+        game.getCore().makeEntity("assets/entities/parallax/1.json");
+        game.getCore().makeEntity("assets/entities/parallax/2.json");
+        game.getCore().makeEntity("assets/entities/parallax/3.json");
+        game.getCore().makeEntity("assets/entities/parallax/4.json");
+        game.getCore().makeEntity("assets/entities/parallax/5.json");
 
         while (game.getCore().getRender().isOpen() && gSignalStatus == 0 && !game.isFinished()) {
             float deltaTime = clock.restart().asSeconds();
