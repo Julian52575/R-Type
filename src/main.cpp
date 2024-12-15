@@ -29,8 +29,19 @@ int main(int ac, char **argv)
         std::string ip;
         uint16_t port;
         if (ac == 1) {
-            ip = "127.0.0.1";
-            port = 4242;
+            std::string path = "serverConfig.json";
+            std::ifstream file(path);
+
+            if (!file.is_open()) {
+                std::cerr << "Could not open file " << path << std::endl;
+                return 1;
+            }
+
+            nlohmann::json config;
+            file >> config;
+            file.close();
+            ip = config["ip"];
+            port = config["port"];
         } else if (ac != 3) {
             std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
             return 1;

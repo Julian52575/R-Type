@@ -3,7 +3,7 @@
  * @brief Implements the Game class methods for managing entities, communication, and player state.
  */
 
-#include "include/game.hpp"
+#include "../include/game.hpp"
 
 /**
  * @brief Handles a message containing JSON detail information.
