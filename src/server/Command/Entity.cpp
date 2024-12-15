@@ -1,5 +1,17 @@
 #include "../include/Command/Entity.hpp"
 
+/**
+ * @brief Handles entity actions based on the received message.
+ *
+ * This function processes different types of entity actions, such as movement and shooting, 
+ * depending on the precision value in the received message. It updates the state of the 
+ * entity accordingly, sending messages to all clients if necessary.
+ *
+ * @param msg The message containing the entity action details.
+ * @param user The user who triggered the entity action.
+ * @param server The server instance used to process the action and update entities.
+ * @return true if the entity action was successfully handled, false otherwise.
+ */
 bool handleGlobalEntity(Message<Communication::TypeDetail> &msg, User &user, Server &server) {
     switch (msg.header.type.precision) {
         case Communication::main::EntityActionPrecision::Move: {

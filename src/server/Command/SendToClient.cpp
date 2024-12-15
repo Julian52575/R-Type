@@ -1,5 +1,15 @@
 #include "../include/Command/SendToClient.hpp"
 
+/**
+ * @brief Sends the information of an entity to all connected clients.
+ *
+ * This function constructs a message containing the entity's ID, configuration ID, 
+ * and position (x, y), and sends it to all connected clients via the server.
+ *
+ * @param entity The entity whose information is to be sent.
+ * @param server The server instance used to send the message.
+ * @return true if the entity information was successfully sent, false otherwise.
+ */
 bool sendEntityInfo(Entity &entity, Server &server) {
     Message<Communication::TypeDetail> msg;
 

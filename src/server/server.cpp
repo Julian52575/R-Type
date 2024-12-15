@@ -3,6 +3,17 @@
 #include "include/Command/SendToClient.hpp"
 #include "include/Command/Entity.hpp"
 
+/**
+ * @file server.cpp
+ * @brief Implementation of the Server class for server management.
+ */
+
+/**
+ * @brief Constructor of the Server class.
+ * Initializes the server with a given port and configures the entity components.
+ *
+ * @param port The port listened to by the server.
+ */
 Server::Server(int32_t port) : server(port) {
     this->maker = std::make_unique<EntityMaker>();
 
@@ -19,6 +30,12 @@ Server::Server(int32_t port) : server(port) {
     maker->scripting = reg.register_component<Scripting>();
 }
 
+/**
+ * @brief Creates an entity based on a configuration ID.
+ *
+ * @param configurationId The configuration ID of the entity.
+ * @return A reference to the created entity.
+ */
 Entity &Server::MakeEntity(uint16_t configurationId) {
     std::string path = find_entity_path(configurationId);
     Entity &e = em.createEntity();
@@ -27,7 +44,12 @@ Entity &Server::MakeEntity(uint16_t configurationId) {
     return e;
 }
 
-void Server::destroy_entity(Entity e){
+/**
+ * @brief Destroys an entity and cleans up its components.
+ *
+ * @param e The entity to destroy.
+ */
+void Server::destroy_entity(Entity e) {
     Message<Communication::TypeDetail> msg;
 
     msg.header.type = {Communication::EntityInfo, Communication::main::EntityInfoPrecision::DeleteEntity};
@@ -52,6 +74,12 @@ void Server::destroy_entity(Entity e){
     this->server.SendAll(msg);
 }
 
+/**
+ * @brief Handles a message received from a given endpoint.
+ *
+ * @param msg The received message.
+ * @param endpoint The endpoint of the user sending the message.
+ */
 void Server::handleMessage(Message<Communication::TypeDetail> &msg, const asio::ip::udp::endpoint &endpoint) {
     User user;
 
@@ -75,6 +103,11 @@ void Server::handleMessage(Message<Communication::TypeDetail> &msg, const asio::
     }
 }
 
+/**
+ * @brief Starts the main loop of the server.
+ *
+ * Manages entities, messages, collisions, and scripts in a continuous loop while the server is active.
+ */
 void Server::run() {
     using Clock = std::chrono::steady_clock;
     auto lastTime = Clock::now();
@@ -95,7 +128,7 @@ void Server::run() {
                 handleMessage(msg->second, msg->first);
             }
         } catch(const std::exception& e) {
-            std::cerr << "[SERVER] Handle MEssage Error: " << e.what() << '\n';
+            std::cerr << "[SERVER] Handle Message Error: " << e.what() << '\n';
         }
 
         try {
@@ -112,6 +145,7 @@ void Server::run() {
         } catch (const std::exception &e) {
             std::cerr << "[SERVER] Attack Error: " << e.what() << std::endl;
         }
+
         try {
             collision.update(maker->pos, maker->hitbox,
                 std::function<bool(Entity, Entity)>([this](Entity e1, Entity e2) {
@@ -133,7 +167,7 @@ void Server::run() {
         try {
             script.updateMovement(maker->scripting, maker->velo, maker->pos);
         } catch(const std::exception& e) {
-            std::cerr << "[SERVER] Script Update Mouvement Error: " << e.what() << '\n';
+            std::cerr << "[SERVER] Script Update Movement Error: " << e.what() << '\n';
         }
 
         try {
@@ -141,7 +175,7 @@ void Server::run() {
                 std::function<void(float, float)>([this](float x, float y) {
                     Entity e = this->MakeEntity(2);
                     maker->UpdatePosition(e, x, y);
-                    maker->UpdateGroup(e, "ennemy");
+                    maker->UpdateGroup(e, "enemy");
                     maker->InverseEntityX(e);
                 })
             );
