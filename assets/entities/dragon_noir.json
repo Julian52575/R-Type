@@ -21,7 +21,7 @@
         "frameDuration": 0.08
     },
     "velocity" : {
-        "x": -75,
+        "x": 75,
         "y": 0
     },
     "hitbox":{
