@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <memory>
 #include "./utils.hpp"
+#include <string>
 
 /**
  * @struct Communication

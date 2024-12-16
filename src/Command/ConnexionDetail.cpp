@@ -17,10 +17,10 @@
  */
 static void HandleReceivePlyableEntityId(Message<Communication::TypeDetail> &msg, Game &game) {
     uint16_t id;
-    
+
     msg >> id;
     Entity NewEntity = game.GetOrCreateEntity(game.getEntities(), id, game.getCore(), find_entity_path(3), 3);
-    
+
     game.setPlayer(NewEntity);
 }
 
