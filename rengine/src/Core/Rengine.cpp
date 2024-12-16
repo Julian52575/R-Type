@@ -16,49 +16,65 @@ void Rengine::Rengine::destroyEntity(Entity e) {
 }
 
 Entity& Rengine::Rengine::makeEntity(const std::string& path) {
-    Entity& e = this->_entityManager.createEntity();
-
-    std::cout << "Entity " << e << " created" << std::endl;
-    this->_entityMaker.parseJson(e, path);
-    return e;
+    try {
+        Entity& e = this->_entityManager.createEntity();
+        this->_entityMaker.parseJson(e, path);
+        return e;
+    } catch (const std::exception& e) {
+        throw e;
+    }
 }
 
 System::movement& Rengine::Rengine::getMovement(void)
 {
     return this->_movement;
 }
+
 System::KeyBoardInput& Rengine::Rengine::getKeyBoardInput(void)
 {
     return this->_keyBoardInput;
 }
+
 System::Collision& Rengine::Rengine::getCollision(void)
 {
     return this->_collision;
 }
+
 System::Parallax& Rengine::Rengine::getParallax(void)
 {
     return this->_parallaxSystem;
 }
+
 System::Audio& Rengine::Rengine::getAudio(void)
 {
     return this->_audio;
 }
+
 System::Animation& Rengine::Rengine::getAnimation(void)
 {
     return this->_animations;
 }
+
 System::Render& Rengine::Rengine::getRender(void)
 {
     return this->_render;
 }
+
 System::CameraFollow& Rengine::Rengine::getCameraFollow(void)
 {
     return this->_cameraFollow;
 }
+
 System::Lifetime& Rengine::Rengine::getLifetime(void)
 {
     return this->_lifetimeSystem;
 }
+
+System::Script& Rengine::Rengine::getScript(void)
+{
+    return this->_scriptSystem;
+}
+
 EntityManager& Rengine::Rengine::getEntityManager(void)
 {
     return this->_entityManager;

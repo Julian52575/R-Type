@@ -54,7 +54,7 @@ void EntityMaker::EraseEntity(Entity e){
     this->health.erase(e);
     this->hitbox.erase(e);
     this->lifetime.erase(e);
-    this->scripting.erase(e);
+    this->scripting.erase(e); //cette ligne fais buguer le lua
 
     this->clickable.erase(e);
     this->controllable.erase(e);
@@ -351,13 +351,13 @@ void EntityMaker::parseLifetime(Entity e, const nlohmann::json& json) {
 }
 
 void EntityMaker::parseScripting(Entity e, const nlohmann::json& json) {
-    if (!json.contains("scripting")) {
+    if (!json.contains("script")) {
         return;
     }
-    if (!json["scripting"].contains("path")) {
+    if (!json["script"].contains("path")) {
         throw JsonParseException("Scripting must have a path");
     }
-    std::string path = json["scripting"]["path"];
+    std::string path = json["script"]["path"];
     this->scripting.emplace_at(e, path);
 }
 
@@ -382,6 +382,9 @@ void EntityMaker::UpdatePosition(Entity e, float x, float y) {
     } catch (std::out_of_range &) {
         this->pos.emplace_at(e, x, y);
     }
+    catch (std::bad_optional_access &) {
+        this->pos.emplace_at(e, x, y);
+    }
 }
 
 void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
@@ -391,4 +394,42 @@ void EntityMaker::UpdateVelocity(Entity e, float x, float y) {
     } catch (std::out_of_range &) {
         this->velo.emplace_at(e, x, y);
     }
+    catch (std::bad_optional_access &) {
+        this->velo.emplace_at(e, x, y);
+    }
+}
+
+void EntityMaker::UpdateGroup(Entity e, std::string group) {
+    try {
+        this->group[e].value().add(group);
+    } catch (std::out_of_range &) {
+        this->group.emplace_at(e, std::vector<std::string>{group});
+    }
+    catch (std::bad_optional_access &) {
+        this->group.emplace_at(e, std::vector<std::string>{group});
+    }
+}
+
+void EntityMaker::InverseEntityX(Entity e) {
+    try {
+        this->velo[e].value().x = -this->velo[e].value().x;
+    } catch (std::out_of_range &) {
+    }
+    catch (std::bad_optional_access &) {
+    }
+
+    try {
+        this->sprite[e].value().setScale(-this->sprite[e].value().getScale().x, this->sprite[e].value().getScale().y);
+    } catch (std::out_of_range &) {
+    }
+    catch (std::bad_optional_access &) {
+    }
+
+    try{
+        this->hitbox[e].value().setOffset(-(this->hitbox[e].value().getOffset().x + this->hitbox[e].value().getSize().x), this->hitbox[e].value().getOffset().y);
+    } catch (std::out_of_range &) {
+    }
+    catch (std::bad_optional_access &) {
+    }
+
 }

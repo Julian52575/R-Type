@@ -7,7 +7,7 @@ Write-Host "PWD: $PWD"
 $HPP_LIST = Get-ChildItem -Path "src/" -Recurse -Filter "*.hpp"
 
 # Target directories
-$INSTALL_PARENT_DIR = "C:\Program Files\Include"
+$INSTALL_PARENT_DIR = "C:\ProgramData\Include"
 $INSTALL_DIR = "$INSTALL_PARENT_DIR\rengine\"
 
 # Clear target directory
