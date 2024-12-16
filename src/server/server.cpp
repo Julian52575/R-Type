@@ -137,7 +137,7 @@ void Server::run() {
     sf::Clock clock;
     double time2 = 0;
 
-    std::vector<entityToMake> entities = load_level("assets/levels/level1.json");
+    std::vector<entityToMake> entities = load_level("assets/levels/level2.json");
     while (this->isRunning) {
         auto currentTime = Clock::now();
         std::chrono::duration<double> elapsed = currentTime - lastTime;

@@ -36,7 +36,7 @@ struct Communication {
          * @brief Enum for precision of NOOP messages.
          */
         enum NOOPPrecision : uint16_t {
-            NOOP = 0 ///< No operation.
+            NOOP = 0  ///< No operation.
         };
 
         /**
@@ -81,7 +81,7 @@ struct Communication {
          */
         enum EntityInfoPrecision : uint16_t {
             InfoAll = 0,              ///< All information about an entity.
-            InGameAndConfigurationId = 1, ///< In-game and configuration ID of an entity.
+            InGameAndConfigurationId = 1,  ///< In-game and configuration ID of an entity.
             InfoPosition = 2,         ///< Position information of an entity.
             InfoHP = 3,               ///< Current health points of an entity.
             InfoMaxHp = 4,            ///< Maximum health points of an entity.
@@ -98,7 +98,7 @@ struct Communication {
      */
     struct TypeDetail {
         Type type;          ///< The main communication type.
-        uint16_t precision; ///< The precision level for the communication type.
+        uint16_t precision;  ///< The precision level for the communication type.
     };
 };
 
@@ -107,12 +107,12 @@ struct Communication {
  */
 class Server {
 private:
-    registry reg; ///< The registry for managing entities.
-    EntityManager em; ///< The entity manager for creating and managing entities.
-    std::unique_ptr<EntityMaker> maker; ///< The maker responsible for creating entities.
-    ServerConnection<Communication::TypeDetail> server; ///< The server connection for communication.
-    bool isRunning = true; ///< Indicates whether the server is running.
-    
+    registry reg;  ///< The registry for managing entities.
+    EntityManager em;  ///< The entity manager for creating and managing entities.
+    std::unique_ptr<EntityMaker> maker;  ///< The maker responsible for creating entities.
+    ServerConnection<Communication::TypeDetail> server;  ///< The server connection for communication.
+    bool isRunning = true;  ///< Indicates whether the server is running.
+
     /**
      * @brief Handles incoming messages.
      * 
@@ -122,13 +122,13 @@ private:
      * @param endpoint The endpoint from which the message originated.
      */
     void handleMessage(Message<Communication::TypeDetail> &msg, const asio::ip::udp::endpoint &endpoint);
-    
-    std::unordered_map<User, Entity> users; ///< Map of users and their associated entities.
 
-    System::movement movement; ///< System for managing entity movement.
-    System::Collision collision; ///< System for handling entity collisions.
-    System::Lifetime lifetimeSystem; ///< System for managing entity lifetimes.
-    System::Script script; ///< System for executing scripts.
+    std::unordered_map<User, Entity> users;  ///< Map of users and their associated entities.
+
+    System::movement movement;  ///< System for managing entity movement.
+    System::Collision collision;  ///< System for handling entity collisions.
+    System::Lifetime lifetimeSystem;  ///< System for managing entity lifetimes.
+    System::Script script;  ///< System for executing scripts.
 
 public:
     /**
