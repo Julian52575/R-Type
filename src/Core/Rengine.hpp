@@ -28,6 +28,7 @@ namespace Rengine {
             System::Render& getRender(void);
             System::CameraFollow& getCameraFollow(void);
             System::Lifetime& getLifetime(void);
+            System::Script& getScript(void);
             EntityManager& getEntityManager(void);
             EntityMaker& getEntityMaker(void);
 
@@ -43,6 +44,7 @@ namespace Rengine {
             System::Render _render;
             System::CameraFollow _cameraFollow;
             System::Lifetime _lifetimeSystem;
+            System::Script _scriptSystem;
     };  // class Core
 
 }  // namespace Rengine
