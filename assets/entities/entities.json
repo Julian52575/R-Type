@@ -1,5 +1,7 @@
 {
     "1": "assets/entities/Message.json",
     "2": "assets/entities/projectile.json",
-    "3": "assets/entities/player.json"
+    "3": "assets/entities/player.json",
+    "4": "assets/entities/dragon_rouge.json",
+    "5": "assets/entities/dragon_noir.json"
 }

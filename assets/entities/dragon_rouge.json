@@ -41,7 +41,7 @@
     },
     "attack": {
         "damage": 10,
-        "cooldown": 1
+        "cooldown": 4
     },
     "group": ["ennemy"]
 }
