@@ -1,0 +1,12 @@
+{
+    "entities":[
+        {
+            "position":{
+                "x":750,
+                "y":750
+            },
+            "entity": "entities/dragon_bleu.json",
+            "spawntime": 0
+        }
+    ]
+}
