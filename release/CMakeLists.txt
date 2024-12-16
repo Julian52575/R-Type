@@ -1,8 +1,15 @@
-file(GLOB_RECURSE SRC_FILES "../game/src/*.cpp" "../rengine/src/*.cpp")
+file(GLOB_RECURSE GAME_FILES "../game/src/*.cpp")
+file(GLOB_RECURSE RENGINE_FILES "../rengine/src/*.cpp")
+list(REMOVE_ITEM RENGINE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../rengine/src/main.cpp) #removing main
+
+message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "Compiling game:\n${GAME_FILES}")
+message(STATUS "Compiling rengine:\n${RENGINE_FILES}")
 
 # Set source code
 add_executable(release
-    ${SRC_FILES}
+    ${GAME_FILES}
+    ${RENGINE_FILES}
     resources.rc
 )
 
