@@ -27,6 +27,7 @@ target_link_libraries(release PRIVATE
     sfml-audio
     lua::lua
     nlohmann_json::nlohmann_json
+    ws2_32
 )
 
 # Set include
