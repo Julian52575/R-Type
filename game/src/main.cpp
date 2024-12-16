@@ -25,12 +25,31 @@ int main(int ac, char **argv)
     std::signal(SIGINT, signalHandler);
     try {
         sf::Clock clock;
-        if (ac != 3) {
+        sf::Clock clock2;
+        std::string ip;
+        uint16_t port;
+        if (ac == 1) {
+            std::string path = "serverConfig.json";
+            std::ifstream file(path);
+
+            if (!file.is_open()) {
+                std::cerr << "Could not open file " << path << std::endl;
+                return 1;
+            }
+
+            nlohmann::json config;
+            file >> config;
+            file.close();
+            ip = config["ip"];
+            port = config["port"];
+        } else if (ac != 3) {
             std::cerr << "Usage: " << argv[0] << " <ip> <port>" << std::endl;
             return 1;
+        } else {
+            ip = argv[1];
+            port = std::stoi(argv[2]);
         }
-        std::string ip = argv[1];
-        uint16_t port = std::stoi(argv[2]);
+        std::cout << "Connecting to " << ip << ":" << port << std::endl;
         Game game(ip, port);
         Message<Communication::TypeDetail> msg;
         int x = 0;
@@ -39,8 +58,15 @@ int main(int ac, char **argv)
         msg.header.size = 0;
         game.getClient().Send(msg);
 
-        while (game.getCore().getRender().isOpen() && gSignalStatus == 0) {
+        game.getCore().makeEntity("assets/entities/parallax/1.json");
+        game.getCore().makeEntity("assets/entities/parallax/2.json");
+        game.getCore().makeEntity("assets/entities/parallax/3.json");
+        game.getCore().makeEntity("assets/entities/parallax/4.json");
+        game.getCore().makeEntity("assets/entities/parallax/5.json");
+
+        while (game.getCore().getRender().isOpen() && gSignalStatus == 0 && !game.isFinished()) {
             float deltaTime = clock.restart().asSeconds();
+            float deltaTime2 = clock2.getElapsedTime().asSeconds();
             for (std::optional<Message<Communication::TypeDetail>> msg = game.getClient().Receive(); msg; msg = game.getClient().Receive()) {
                 game.handleMessage(*msg);
             }
@@ -64,8 +90,18 @@ int main(int ac, char **argv)
             game.getCore().getCameraFollow().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().camera, game.getCore().getRender().getWindow());
             game.getCore().getRender().update(game.getCore().getEntityMaker().pos, game.getCore().getEntityMaker().sprite,
                 game.getCore().getEntityMaker().parallax, game.getCore().getEntityMaker().text, game.getCore().getEntityMaker().hitbox);
-            if (game.getPlayer() != nullptr)
+            if (game.getPlayer() != nullptr) {
                 sendVeloUpdate(game);
+
+            } else if (deltaTime2 > 4 && game.isFinished() == false) {
+                std::cout << "Requesting playable entity" << std::endl;
+                Message<Communication::TypeDetail> msg;
+
+                msg.header.type = {Communication::ConnexionDetail, Communication::main::ConnexionDetailPrecision::RequestPlaybleEntity};
+                msg.header.size = 0;
+                game.getClient().Send(msg);
+                clock2.restart();
+            }
         }
 
         if (gSignalStatus != 0) {

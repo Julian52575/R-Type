@@ -1,6 +1,6 @@
 {
     "sprite":{
-        "path":"sprite/parallax/plx-5.png",
+        "path":"assets/images/parallax-background/plx-5.png",
         "scale":{
             "x":3,
             "y":3
