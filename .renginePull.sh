@@ -1,3 +1,3 @@
 #!/bin/bash
 
-git subtree pull --prefix=rengine/ . "game_engine-release" --squash
+git subtree pull --prefix=rengine/ . "origin/game_engine-release" --squash
