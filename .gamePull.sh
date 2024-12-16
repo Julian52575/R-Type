@@ -1,3 +1,3 @@
 #!/bin/bash
 
-git subtree pull --prefix=game/ . "rtype_game-dev" --squash
+git subtree pull --prefix=game/ . "origin/rtype_game-dev" --squash
