@@ -18,6 +18,9 @@ bool sendEntityInfo(Entity &entity, Server &server) {
 
     uint16_t id = entity.getId();
     uint16_t configurationId = entity.getConfigId();
+    if (server.getMaker()->pos[entity].has_value() == false)
+        return false;
+
     float x = server.getMaker()->pos[entity].value().x;
     float y = server.getMaker()->pos[entity].value().y;
     msg << id << x << y << configurationId;

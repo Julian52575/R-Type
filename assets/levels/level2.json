@@ -1,0 +1,11 @@
+{
+	"entities": [
+		{"position": {"x": 820, "y": 89}, "configID": 4, "spawntime": 1},
+		{"position": {"x": 820, "y": 361}, "configID": 5, "spawntime": 10},
+		{"position": {"x": 820, "y": 21}, "configID": 5, "spawntime": 2},
+		{"position": {"x": 820, "y": 199}, "configID": 5, "spawntime": 4},
+		{"position": {"x": 820, "y": 550}, "configID": 4, "spawntime": 7},
+		{"position": {"x": 820, "y": 37}, "configID": 4, "spawntime": 1},
+		{"position": {"x": 820, "y": 528}, "configID": 4, "spawntime": 10}
+	]
+}

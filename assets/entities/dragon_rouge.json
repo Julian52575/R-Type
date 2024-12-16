@@ -2,7 +2,7 @@
     "sprite":{
         "path": "assets/images/Dragon_rouge.png",
         "scale": {
-            "x": 0.8,
+            "x": -0.8,
             "y": 0.8
         },
         "origin": {
@@ -25,10 +25,6 @@
         "x": 50,
         "y": 100
     },
-    "position": {
-        "x": 600,
-        "y": 0
-    },
     "hitbox":{
         "size": {
             "x":75,
@@ -44,7 +40,7 @@
     },
     "attack": {
         "damage": 10,
-        "cooldown": 4
+        "cooldown": 5
     },
-    "group": ["ennemy"]
+    "group": ["enemy"]
 }

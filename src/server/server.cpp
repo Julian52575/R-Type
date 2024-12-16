@@ -8,6 +8,28 @@
  * @brief Implementation of the Server class for server management.
  */
 
+using entityToMake = std::tuple<uint16_t, float, float, float>;
+
+std::vector<entityToMake> load_level(const std::string &path){
+    std::ifstream file(path);
+    if (!file.is_open())
+        throw JsonParseException("Could not open file: " + path);
+    if (file.peek() == std::ifstream::traits_type::eof())
+        throw JsonParseException("File is empty: " + path);
+    nlohmann::json json;
+    file >> json;
+
+    std::vector<entityToMake> entities;
+    for (const auto& entity : json["entities"]) {
+        float pos_x = entity["position"]["x"];
+        float pos_y = entity["position"]["y"];
+        float spawnTime = entity["spawntime"];
+        uint16_t configID = entity["configID"];
+        entities.push_back(std::make_tuple(configID, pos_x, pos_y, spawnTime));
+    }
+    return entities;
+}
+
 /**
  * @brief Constructor of the Server class.
  * Initializes the server with a given port and configures the entity components.
@@ -115,6 +137,7 @@ void Server::run() {
     sf::Clock clock;
     double time2 = 0;
 
+    std::vector<entityToMake> entities = load_level("assets/levels/level2.json");
     while (this->isRunning) {
         auto currentTime = Clock::now();
         std::chrono::duration<double> elapsed = currentTime - lastTime;
@@ -204,9 +227,18 @@ void Server::run() {
             time = 0;
         }
 
-        if (time2 > 10) {
-            this->MakeEntity(4);
-            time2 = 0;
+        for (auto &entity : entities) {
+            std::get<3>(entity) -= deltaTime;
+            if (std::get<3>(entity) <= 0) {
+                try {
+                    Entity e = this->MakeEntity(std::get<0>(entity));
+                    this->maker->UpdatePosition(e, std::get<1>(entity), std::get<2>(entity));
+                    this->maker->InverseEntityX(e);
+                    entities.erase(std::remove(entities.begin(), entities.end(), entity), entities.end());
+                } catch (const std::exception& e) {
+                    std::cerr << "Error Ennemy cannot be created" << std::endl;
+                }
+            }
         }
     }
 }

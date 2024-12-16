@@ -43,5 +43,5 @@
         "damage": 10,
         "cooldown": 0.8
     },
-    "group": ["ennemy"]
+    "group": ["enemy"]
 }
