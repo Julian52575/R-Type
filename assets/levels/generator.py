@@ -14,9 +14,9 @@ def make_entity(entities,nbr_entities):
 def make_level(entities,level_name,nbr_enitities):
 
 
-    with open(f"levels/{level_name}.json", "w") as f:
+    with open(f"{level_name}.json", "w") as f:
         f.write("{\n")
-        f.write('\t"entities": [\n')
+        f.write('\t"configID": [\n')
         for i in range(nbr_enitities):
             entity = make_entity(entities,nbr_enitities)
             print(entity)
@@ -30,7 +30,7 @@ def make_level(entities,level_name,nbr_enitities):
 
 
 if __name__ == "__main__":
-    entities = ["entities/dragon_rouge.json", "entities/dragon_noir.json"]
+    entities = [4, 5]
     nbr_arg = len(sys.argv)
     if nbr_arg !=3:
         print("Generator.py [levelName] [number of entities]")
