@@ -2,7 +2,7 @@
     "sprite":{
         "path": "assets/images/Dragon_noir.png",
         "scale": {
-            "x": 0.5,
+            "x": -0.5,
             "y": 0.5
         },
         "origin": {
@@ -20,12 +20,10 @@
         "frameCount": 9,
         "frameDuration": 0.08
     },
-
     "velocity" : {
-        "x": 75,
+        "x": -75,
         "y": 0
     },
-
     "hitbox":{
         "size": {
             "x":100,
@@ -43,5 +41,5 @@
         "damage": 10,
         "cooldown": 0.8
     },
-    "group": ["ennemy"]
+    "group": ["enemy"]
 }
