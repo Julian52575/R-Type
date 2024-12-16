@@ -148,6 +148,8 @@ ClientConnection<T>::~ClientConnection() {
     if (m_socket.is_open()) {
         m_socket.close();
     }
+#ifdef DEBUG
     std::cout << "[CLIENT] Server stopped" << std::endl;
+#endif
 }
 

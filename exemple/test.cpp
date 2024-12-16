@@ -10,11 +10,15 @@ enum class CustomMsgTypes : uint32_t {
   Message
 };
 void handleMessage(Message<CustomMsgTypes> msg, ClientConnection<CustomMsgTypes> &client) {
+#ifdef DEBUG
   std::cout << "Message received: " << msg << std::endl;
+#endif
   if (msg.header.type == CustomMsgTypes::Message) {
     char data[256];
     msg >> data;
+  #ifdef DEBUG
     std::cout << "Data: " << data << std::endl;
+  #endif
   } else {
     std::cerr << "Unknown message type" << std::endl;
   }

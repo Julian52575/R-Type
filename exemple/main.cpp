@@ -5,7 +5,9 @@ enum class CustomMsgTypes : uint32_t {
     Message
 };
 void handleMessage(Message<CustomMsgTypes> &msg, const asio::ip::udp::endpoint &endpoint ,ServerConnection<CustomMsgTypes> &server) {
+#ifdef DEBUG
     std::cout << "Message received: " << msg << " From: " << endpoint << std::endl;
+#endif
     if (msg.header.type == CustomMsgTypes::ServerConnexionRequest) {
         User user;
         user.endpoint = endpoint;
@@ -13,7 +15,9 @@ void handleMessage(Message<CustomMsgTypes> &msg, const asio::ip::udp::endpoint &
     } else if (msg.header.type == CustomMsgTypes::Message) {
         char data[256];
         msg >> data;
+    #ifdef DEBUG
         std::cout << "Data: " << data << std::endl;
+    #endif
     } else {
         std::cerr << "Unknown message type" << std::endl;
     }
