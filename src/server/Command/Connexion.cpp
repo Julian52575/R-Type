@@ -13,6 +13,10 @@
  * @return true if the connection was successfully handled, false otherwise.
  */
 static bool handleClientConnexion(Message<Communication::TypeDetail> &msg, User &user, Server &server) {
+    if (server.getUsers().find(user) != server.getUsers().end()) {
+        std::cerr << "[SERVER] User already connected: " << user.endpoint << std::endl;
+        return false;
+    }
     Entity &entity = server.MakeEntity(3);
     uint16_t configurationId = 3;
     server.getUsers().insert({user, entity});
