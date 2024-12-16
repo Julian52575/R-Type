@@ -52,6 +52,8 @@ install(TARGETS release DESTINATION ${INSTALL_ROOT_DIR})
 install(DIRECTORY "game/assets" DESTINATION "${INSTALL_ROOT_DIR}") 
 install(DIRECTORY "release/assets/icon" DESTINATION "${INSTALL_ROOT_DIR}/assets")
 install(FILES "release/assets/r-type.desktop.in" DESTINATION "${INSTALL_ROOT_DIR}/assets")
+install(FILES "game/serverConfig.json" DESTINATION "${INSTALL_ROOT_DIR}")
+
 
 # Set Cpack variables
 set(CPACK_PACKAGE_NAME "R-Type")
