@@ -28,8 +28,9 @@ int main()
       socket.receive_from(asio::buffer(recv_buf), remote_endpoint);
 
       std::string message = make_daytime_string();
-
+  #ifdef DEBUG
       std::cout << "Received message: " << recv_buf.data() << " from " << remote_endpoint << std::endl;
+  #endif
       std::error_code ignored_error;
       socket.send_to(asio::buffer(message),
           remote_endpoint, 0, ignored_error);

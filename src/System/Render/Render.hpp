@@ -19,7 +19,7 @@ namespace System {
         private:
             sf::RenderWindow window;
             sf::Shader shader;
-            std::vector<std::string> shaders = {"shaders/colorblind_default.frag", "shaders/colorblind_deuteranopia.frag", "shaders/colorblind_protanopia.frag", "shaders/colorblind_tritanopia.frag"};
+            std::vector<std::string> shaders = {"assets/shaders/colorblind_default.frag", "assets/shaders/colorblind_deuteranopia.frag", "assets/shaders/colorblind_protanopia.frag", "assets/shaders/colorblind_tritanopia.frag"};
             int shaderIndex;
     };
 }  // namespace System

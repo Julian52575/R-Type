@@ -124,7 +124,9 @@ ServerConnection<T>::ServerConnection(int32_t port)
     : m_socket(m_context, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)) {
     m_threadContext = std::thread([this]() { m_context.run(); });
     accept();
+#ifdef DEBUG
     std::cout << "[SERVER] Server started on: " << m_socket.local_endpoint() << std::endl;
+#endif
 }
 
 template <typename T>
@@ -203,6 +205,8 @@ ServerConnection<T>::~ServerConnection() {
     if (m_socket.is_open()) {
         m_socket.close();
     }
+#ifdef DEBUG
     std::cout << "[SERVER] Server stopped" << std::endl;
+#endif
 }
 

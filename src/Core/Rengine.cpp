@@ -107,7 +107,9 @@ void GraphicalRengine::run(){
         // this->audio.update(this->musics, this->sounds);
         std::vector<Entity> vec =  this->lifetimeSystem.update(maker->lifetime, deltaTime);
         for (auto &e : vec) {
+        #ifdef DEBUG
            std::cout << "Entity " << e << " is dead" << std::endl;
+        #endif
            this->destroy_entity(e);
         }
         this->cameraFollow.update(maker->pos, maker->camera,render.getWindow());
