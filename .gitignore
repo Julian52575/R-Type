@@ -5,3 +5,5 @@ _CPack_Packages/
 build/
 rtype
 style_error.log
+*.out
+*.so
