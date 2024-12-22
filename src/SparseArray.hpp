@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <vector>
 #include <utility>
@@ -19,6 +20,13 @@
 
 namespace Rengine {
 
+    /**
+     * @addtogroup Rengine
+     * @namespace Rengine
+     * @class SparseArray
+     * @template Component The type to store.
+     * @brief A container.
+    */
     template <typename Component>
     class SparseArray {
         public:
@@ -31,20 +39,36 @@ namespace Rengine {
             using const_iterator = typename container_t :: const_iterator;
 
         public:
+            /**
+            * @fn SparseArray
+            * @brief Create a new instance of SparseArray.
+            */
             SparseArray(void) = default;  // You can add more constructors .
-
-            SparseArray(SparseArray const &og)  // copy constructor
+            /**
+            * @fn SparseArray
+            * @brief The copy constructor.
+            */
+            SparseArray(SparseArray const &og)
             {
                 this->_data = og._data;
             }
-
-            SparseArray(SparseArray &&og) noexcept  // move constructor
+            /**
+            * @fn SparseArray
+            * @brief The move constructor.
+            */
+            SparseArray(SparseArray &&og) noexcept
             {
                 this->_data = std::move(og._data);
             }
-
+            /**
+            * @fn ~SparseArray
+            * @brief Destruct an instance of SparseArray.
+            */
             ~SparseArray(void) = default;
-
+            /**
+            * @fn operator=
+            * @brief The copy assignment operator.
+            */
             SparseArray &operator=(SparseArray const &og)  // copy assignment operator
             {
                 if (this != &og) {
@@ -52,14 +76,21 @@ namespace Rengine {
                 }
                 return *this;
             }
-            SparseArray &operator=(SparseArray &&og) noexcept  // move assignment operator
+            /**
+            * @fn operator=
+            * @brief The move assignment operator.
+            */
+            SparseArray &operator=(SparseArray &&og) noexcept
             {
                 if (this != &og) {
                     this->_data = std::move(og._data);
                 }
                 return *this;
             }
-
+            /**
+            * @fn operator[]
+            * @brief Return a reference to the object stored at position idx.
+            */
             reference_type operator[](size_t idx)
             {
                 if (idx >= this->_data.size()) {
@@ -67,6 +98,10 @@ namespace Rengine {
                 }
                 return this->_data[idx];
             }
+            /**
+            * @fn operator[]
+            * @brief Return a const reference to the object stored at position idx.
+            */
             const_reference_type operator[](size_t idx) const
             {
                 if (idx >= this->_data.size()) {
@@ -74,77 +109,133 @@ namespace Rengine {
                 }
                 return this->_data[idx];
             }
-
+            /**
+            * @fn begin
+            * @brief Returns a iterator to the start of the SparseArray.
+            */
             iterator begin(void)
             {
                 return this->_data.begin();
             }
+            /**
+            * @fn begin
+            * @brief Returns a const iterator to the start of the SparseArray.
+            */
             const_iterator begin(void) const
             {
                 return this->_data.begin();
             }
+            /**
+            * @fn begin
+            * @brief Returns a const iterator to the start of the SparseArray. (c style)
+            */
             const_iterator cbegin(void) const
             {
                 return this->_data.cbegin();
             }
-
+            /**
+            * @fn begin
+            * @brief Returns a iterator one after the end of the SparseArray.
+            */
             iterator end(void)
             {
                 return this->_data.end();
             }
+            /**
+            * @fn begin
+            * @brief Returns a iterator one after the end of the SparseArray.
+            */
             const_iterator end(void) const
             {
                 return this->_data.end();
             }
+            /**
+            * @fn begin
+            * @brief Returns a iterator one after the end of the SparseArray.
+            */
             const_iterator cend(void) const
             {
                 return this->_data.cend();
             }
-
+            /**
+            * @fn size
+            * @brief Returns the number of object stored in the SparseArray.
+            */
             size_type size(void) const
             {
                 return this->_data.size();
             }
-
-            reference_type insertAt(size_type pos, Component const &con)
+            /**
+            * @fn insertAt
+            * @param idx Index at which to store the new object.
+            * @param con Reference to the new Component to store.
+            * @brief Add con at the index idx of the SparseArray.
+            * Note: The SparseArray will be resized if idx W this->size()
+            */
+            reference_type insertAt(size_type idx, Component const &con)
             {
-                if (pos >= this->_data.size()) {
-                    this->_data.resize(pos + 1);
+                if (idx >= this->size()) {
+                    this->_data.resize(idx + 1);
                 }
                 // this->_data.insert(pos, con);
-                this->_data[pos] = con;
-                return this->_data[pos];
+                this->_data[idx] = con;
+                return this->_data[idx];
             }
-            reference_type insertAt(size_type pos, Component &&con)
+            /**
+            * @fn insertAt
+            * @param idx Index at which to store the new object.
+            * @param con Reference to the new Component to store.
+            * @brief Add con at the index idx of the SparseArray.
+            * Note: The SparseArray will be resized if idx W this->size()
+            */
+            reference_type insertAt(size_type idx, Component &&con)
             {
-                if (pos >= this->_data.size()) {
-                    this->_data.resize(pos + 1);
+                if (idx >= this->size()) {
+                    this->_data.resize(idx + 1);
                 }
-                auto it = std::next(this->_data.begin(), pos);
+                auto it = std::next(this->_data.begin(), idx);
 
                 this->_data.insert(it, con);
                 //this->_data[pos] = std::move(con);
-                return this->_data[pos];
+                return this->_data[idx];
             }
-
+            /**
+            * @fn emplaceAt
+            * @param idx Index at which to store the new object.
+            * @param args Parameter pack to unpack to the constructor of the SparseArray templated class.
+            * @brief Construct a new object at the index idx of the SparseArray.
+            * Note: The SparseArray will be resized if idx W this->size()
+            */
             template <class ... Params>
-            reference_type emplaceAt( size_type pos, Params &&... args)
+            reference_type emplaceAt( size_type idx, Params &&... args)
             {
-                if (pos >= this->_data.size()) {
-                    this->_data.resize(pos + 1);
+                if (idx >= this->size()) {
+                    this->_data.resize(idx + 1);
                 }
-                this->_data[pos].emplace(std::forward<Params>(args)...);
-                return this->_data[pos];
+                this->_data[idx].emplace(std::forward<Params>(args)...);
+                return this->_data[idx];
             }
-
+            /**
+            * @fn erase
+            * @exception std::out_of_range pos is > this->size().
+            * @brief Call the destructor of the object at pos.
+            */
             void erase(size_type pos)
             {
                 if (pos >= this->_data.size()) {
-                    throw std::out_of_range("SparseArray: Index " + pos + " out of range");
+                    std::string err = "SparseArray: Index " + std::to_string(pos) + " is out of range";
+
+                    throw std::out_of_range(err);
                 }
                 this->_data[pos].reset();
             }
-
+            /**
+            * @fn getIndex
+            * @exception std::out_of_range pos is > this->size().
+            * return i The index of the object con.
+            * return static_cast<size_type>(-1) The object was not found.
+            * @brief Get the index of the con object.
+            */
             size_type getIndex(value_type const &con) const
             {
                 size_type i = 0;
@@ -155,9 +246,15 @@ namespace Rengine {
                     }
                     i++;
                 }
-                return (size_type) -1;
+                return static_cast<size_type>(-1);
             }
-
+            /**
+            * @fn getIndex
+            * @exception std::out_of_range pos is > this->size().
+            * return i The index of the object con.
+            * return (size_type)-1 The object was not found.
+            * @brief Get the index of the con object.
+            */
             size_type getIndex(Component const &con) const
             {
                 for (size_type i = 0; i < this->_data.size(); ++i) {
