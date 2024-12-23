@@ -99,13 +99,13 @@ namespace Rengine {
                 this->_destroyFunction = fun;
             }
             /**
-            * @fn destroyAllComponents
+            * @fn destroy
             * @brief Call the destroy function set beforehand by this->setDestroyFunction.
             * Calling this function results in a No-Op starting from the 2nd call to avoid invalid erasure.
             * Note: Does not call the destructor of this class.
             * Note: If no destroy function has been set, this does nothing.
             */
-            void destroyAllComponents(void)
+            void destroy(void)
             {
                 this->_destroyFunction(*this);
             }

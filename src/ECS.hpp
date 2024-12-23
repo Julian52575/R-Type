@@ -85,7 +85,7 @@ namespace Rengine {
                 if (this->_currentEntities[idx].has_value() == false) {
                     throw ECSExceptionEntityNotFound();
                 }
-                this->_currentEntities[idx].value().destroyAllComponents();
+                this->_currentEntities[idx].value().destroy();
                 this->_currentEntities[idx].reset();
             }
             /**
