@@ -43,7 +43,16 @@ namespace Rengine {
             * @fn SparseArray
             * @brief Create a new instance of SparseArray.
             */
-            SparseArray(void) = default;  // You can add more constructors .
+            SparseArray(void) = default;
+            /**
+            * @fn SparseArray
+            * @param size The number of element held by the underlying container.
+            * @brief Create a new instance of SparseArray.
+            */
+            SparseArray(size_type size)
+            {
+                this->_data.resize(size);
+            }
             /**
             * @fn SparseArray
             * @brief The copy constructor.
@@ -232,8 +241,8 @@ namespace Rengine {
             /**
             * @fn getIndex
             * @exception std::out_of_range pos is > this->size().
-            * return i The index of the object con.
-            * return static_cast<size_type>(-1) The object was not found.
+            * @return i The index of the object con.
+            * @return static_cast<size_type>(-1) The object was not found.
             * @brief Get the index of the con object.
             */
             size_type getIndex(value_type const &con) const
@@ -251,8 +260,8 @@ namespace Rengine {
             /**
             * @fn getIndex
             * @exception std::out_of_range pos is > this->size().
-            * return i The index of the object con.
-            * return (size_type)-1 The object was not found.
+            * @return i The index of the object con.
+            * @return (size_type)-1 The object was not found.
             * @brief Get the index of the con object.
             */
             size_type getIndex(Component const &con) const
@@ -264,10 +273,29 @@ namespace Rengine {
                 }
                 return static_cast<size_type>(-1);
             }
+            /**
+            * @fn getIndex
+            * @param length The number of element to add to the SparseArray.
+            * @brief Resize the SparseArray by adding size element to it.
+            * Resizing to a smaller size results in a No-Op to avoid glitches.
+            * Ie: size 10 + addSize(15) = 25 elements and max index [24]
+            */
+            void addSize(size_type size)
+            {
+                size_type oldSize = this->_data.size();
+                size_type newSize = this->_data.size() + size;
+
+                if (newSize < oldSize) {
+                    return;
+                }
+                this->_data.resize(this->_data.size() + size);
+            }
 
         private :
             container_t _data;
     };
 }  // namespace Rengine
+
+
 
 #endif  // SRC_SparseArray_HPP_

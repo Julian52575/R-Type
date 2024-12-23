@@ -1,26 +1,5 @@
-/*
-#include "ComponentRegistry.hpp"
-
-int main(void)
-{
-    Rengine::ComponentRegistry a;
-    Rengine::SparseArray<int>& s = a.registerComponent<int>();
-    Rengine::SparseArray<int>& s2 = a.getComponents<int>();
-
-    s.emplaceAt(15, 15);
-    s.insertAt(42, 42);
-    s.insertAt(84, 84);
-    s.erase(15);
-    s.erase(42);
-    std::cout << s[15].has_value() << std::endl;
-    std::cout << s[42].has_value() << std::endl;
-    std::cout << s[84].value() << std::endl;
-    return 84;
-}
-*/
-
-#include "ComponentRegistry.hpp"
-#include "Entity.hpp"
+#include "ECS.hpp"
+#include "SparseArray.hpp"
 
 void destroy(Rengine::Entity& e)
 {
@@ -29,13 +8,21 @@ void destroy(Rengine::Entity& e)
 
 int main(void)
 {
-    Rengine::ComponentRegistry reg;
-    reg.registerComponent<int>();
-    Rengine::Entity en = Rengine::Entity(reg, 42);
+    Rengine::ECS ecs = Rengine::ECS(90);
+    Rengine::SparseArray<int> sp = ecs.registerComponent<int>();
 
-    en.setDestroyFunction(destroy);
-    en.addComponent<int>(42);
-    en.removeComponent<int>();
-    en.destroyAllComponents();
-    return int(en);
+    sp.emplaceAt(5, 5);
+    sp.emplaceAt(12, 12);
+    auto i = 0;
+    for (auto &it : sp) {
+        std::cout << i << ": ";
+        if (it.has_value() == false) {
+            std::cout << "NA";
+        } else {
+            std::cout << it.value();
+        }
+        std::cout << std::endl;
+        i++;
+    }
+    return sp.size();
 }

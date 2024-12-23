@@ -33,17 +33,19 @@ namespace Rengine {
             * @fn addComponent
             * @template Component The component class to construct and link to this entity.
             * @template Params The parameter to unpack to the constructor of the Component class.
-            * @exception std::runtime_error Exception raised when Component is not already registered.
             * @brief Add a component and link it to this entity.
             */
             template <class Component, class ... Params>
             void addComponent(Params &&... args)
             {
+                // Try to retrive the SparseArray and emplaceAt
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
 
                     sp.emplaceAt(this->_id, std::forward<Params>(args)...);
-                } catch (std::exception &e) {
+                }
+                // Component not registred ?
+                catch (ComponentRegistryExceptionNotRegistred& e) {
                     throw e;
                 }
             }
@@ -60,7 +62,9 @@ namespace Rengine {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
 
                     sp.erase(this->_id);
-                } catch (std::exception &e) {
+                }
+                // Component not registred ?
+                catch (ComponentRegistryExceptionNotRegistred &e) {
                     throw e;
                 }
             }

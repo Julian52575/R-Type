@@ -20,6 +20,14 @@
 
 namespace Rengine {
 
+    class ComponentRegistryExceptionAlreadyRegistred : public std::exception {
+        public:
+            const char *what() { return "ComponentRegistry: Component already registered."; };
+    };
+    class ComponentRegistryExceptionNotRegistred : public std::exception {
+        public:
+            const char *what() { return "ComponentRegistry: Component not registered."; };
+    };
     /**
      * @addtogroup Rengine
      * @namespace Rengine
@@ -28,6 +36,7 @@ namespace Rengine {
     */
     class ComponentRegistry {
         public:
+            using size_type = typename SparseArray<int> :: size_type;
             /**
             * @fn registerComponent
             * @template Component The type to be registered in the registry.
@@ -42,9 +51,34 @@ namespace Rengine {
                 auto it = this->_componentsArrays.find(i);
 
                 if (it != this->_componentsArrays.end()) {
-                    throw std::runtime_error("ComponentRegistry: Component already registered.");
+                    throw ComponentRegistryExceptionAlreadyRegistred();
                 }
                 this->_componentsArrays[i] = SparseArray<Component>();
+                return std::any_cast<SparseArray<Component>&>(this->_componentsArrays[i]);
+            }
+            /**
+            * @fn registerComponent
+            * @template Component The type to be registered in the registry.
+            * @param size The default number of element in the SparseArray.
+            * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
+            * @exception std::runtime_error Exception raised when Component is already registered.
+            * @brief Create a new SparseArray of the templated type and stores it.
+            */
+            template <class Component>
+            SparseArray<Component>& registerComponent(size_type size)
+            {
+                auto i = std::type_index(typeid(Component));
+                auto it = this->_componentsArrays.find(i);
+
+                if (it != this->_componentsArrays.end()) {
+                    throw ComponentRegistryExceptionAlreadyRegistred();
+                }
+                SparseArray<Component> sp = SparseArray<Component>();
+
+                if (sp.size() < size) {
+                    sp.addSize(size - sp.size());
+                }
+                this->_componentsArrays[i] = std::move(sp);
                 return std::any_cast<SparseArray<Component>&>(this->_componentsArrays[i]);
             }
             /**
@@ -61,7 +95,7 @@ namespace Rengine {
                 auto it = this->_componentsArrays.find(i);
 
                 if (it == this->_componentsArrays.end()) {
-                    throw std::runtime_error("ComponentRegistry: Component not registered.");
+                    throw ComponentRegistryExceptionNotRegistred();
                 }
                 return std::any_cast<SparseArray<Component>&>(it->second);
             }
@@ -79,7 +113,7 @@ namespace Rengine {
                 auto it = this->_componentsArrays.find(i);
 
                 if (it == this->_componentsArrays.end()) {
-                    throw std::runtime_error("ComponentRegistry: Component not registered.");
+                    throw ComponentRegistryExceptionNotRegistred();
                 }
                 return std::any_cast<SparseArray<Component>&>(it->second);
             }
