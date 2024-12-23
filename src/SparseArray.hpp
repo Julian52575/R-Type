@@ -167,6 +167,18 @@ namespace Rengine {
                 return this->_data.cend();
             }
             /**
+            * @fn reset
+            * @param idx Index of the element to reset
+            * @brief Reset the element at index idx.
+            */
+            void reset(size_type idx)
+            {
+                if (idx > this->size()) {
+                    return;
+                }
+                this->_data[idx].reset();
+            }
+            /**
             * @fn size
             * @brief Returns the number of object stored in the SparseArray.
             */

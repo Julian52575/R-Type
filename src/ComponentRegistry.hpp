@@ -22,11 +22,11 @@ namespace Rengine {
 
     class ComponentRegistryExceptionAlreadyRegistred : public std::exception {
         public:
-            const char *what() { return "ComponentRegistry: Component already registered."; };
+            const char *what() const noexcept { return "ComponentRegistry: Component already registered."; };
     };
     class ComponentRegistryExceptionNotRegistred : public std::exception {
         public:
-            const char *what() { return "ComponentRegistry: Component not registered."; };
+            const char *what() const noexcept { return "ComponentRegistry: Component not registered."; };
     };
     /**
      * @addtogroup Rengine

@@ -19,7 +19,8 @@ namespace Rengine {
     class Entity {
     #define ENTITYDESTROYNOOP std::function<void(Entity&)>([this](Entity&) {return;})
         public:
-            Entity(ComponentRegistry& reg, size_t id) : _registry(reg), _id(id) {};
+            using size_type = typename ComponentRegistry :: size_type;
+            Entity(ComponentRegistry& reg, size_type id) : _registry(reg), _id(id) {};
             ~Entity(void) = default;
             /**
             * @fn int
