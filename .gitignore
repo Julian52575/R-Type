@@ -8,3 +8,4 @@ style_error.log
 *.out
 *.so
 doxygen/
+*.log
