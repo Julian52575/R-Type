@@ -143,7 +143,7 @@ namespace Rengine {
             {
                 try {
                     return this->_registry.registerComponent<Component>();
-                } catch (ComponentRegistryExceptionNotRegistred& e) {
+                } catch (ComponentRegistryExceptionAlreadyRegistred& e) {
                     return this->_registry.getComponents<Component>();
                 }
             }

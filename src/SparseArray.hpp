@@ -252,7 +252,6 @@ namespace Rengine {
             }
             /**
             * @fn getIndex
-            * @exception std::out_of_range pos is > this->size().
             * @return i The index of the object con.
             * @return static_cast<size_type>(-1) The object was not found.
             * @brief Get the index of the con object.
@@ -271,7 +270,6 @@ namespace Rengine {
             }
             /**
             * @fn getIndex
-            * @exception std::out_of_range pos is > this->size().
             * @return i The index of the object con.
             * @return (size_type)-1 The object was not found.
             * @brief Get the index of the con object.
