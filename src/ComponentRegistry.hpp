@@ -22,11 +22,11 @@ namespace Rengine {
 
     class ComponentRegistryExceptionAlreadyRegistred : public std::exception {
         public:
-            const char *what() const noexcept { return "ComponentRegistry: Component already registered."; };
+            const char *what() const noexcept { return "Rengine::ComponentRegistry: Component already registered."; };
     };
     class ComponentRegistryExceptionNotRegistred : public std::exception {
         public:
-            const char *what() const noexcept { return "ComponentRegistry: Component not registered."; };
+            const char *what() const noexcept { return "Rengine::ComponentRegistry: Component not registered."; };
     };
     /**
      * @addtogroup Rengine
@@ -121,8 +121,6 @@ namespace Rengine {
         private:
             //                      Type    -   SparseArray<Type>
             std::unordered_map<std::type_index, std::any> _componentsArrays;
-            //                      Type    - std::function<ComponentRegistry&, Type&, SparseArray::size_t>
-            std::unordered_map<std::type_index, std::any> _functionArrays;
     };
 
 }  // namespace Rengine

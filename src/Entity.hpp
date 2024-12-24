@@ -5,10 +5,15 @@
 #include <cstdint>
 #include <exception>
 #include <functional>
+#include <optional>
 #include "ComponentRegistry.hpp"
 
 namespace Rengine {
 
+    class EntityExceptionComponentNotLinked : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::Entity: Component is not linked to this entity."; };
+    };
     /**
      * @addtogroup Rengine
      * @namespace Rengine
@@ -67,6 +72,34 @@ namespace Rengine {
                 // Component not registred ?
                 catch (ComponentRegistryExceptionNotRegistred &e) {
                     throw e;
+                }
+            }
+            /**
+            * @fn getComponent
+            * @template Component The component class to get.
+            * @exception EntityExceptionComponentNotLinked This entity has not been linked to this Component class.
+            * @return A reference to the component linked to this entity.
+            * @brief Get the component linked to this entity.
+            */
+            template <class Component>
+            Component& getComponent(void)
+            {
+                try {
+                    SparseArray<Component>& sp = this->_registry.getComponents<Component>();
+                    // Out of bound index
+                    if (sp.size() < this->_id) {
+                        throw EntityExceptionComponentNotLinked();
+                    }
+                    std::optional<Component>& con = sp[this->_id];
+                    // No component for this entity
+                    if (con.has_value() == false) {
+                        throw EntityExceptionComponentNotLinked();
+                    }
+                    return con.value();
+                }
+                // Component not registred in the registry
+                catch (ComponentRegistryExceptionNotRegistred& e) {
+                    throw EntityExceptionComponentNotLinked();
                 }
             }
             /**

@@ -6,18 +6,28 @@
 #include "ComponentRegistry.hpp"
 #include "Entity.hpp"
 #include "SparseArray.hpp"
+#include "any"
 #include <cstddef>
+#include <functional>
 #include <memory>
+#include <stdexcept>
 
 namespace Rengine {
 
-    class ECSExceptionEntityNotFound : public std::exception {
+    class ECSExceptionComponentNotRegistred : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::ECS: Trying to access an unregistered component."; };
+    };    class ECSExceptionEntityNotFound : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: The provided entity is not registered in the ECS."; };
     };
     class ECSExceptionCannotAddEntityLimit : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: Cannot add entity, the limit has been reached."; };
+    };
+    class ECSExceptionNoComponentFunction : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::ECS: No component function has been set."; };
     };
     /**
      * @addtogroup Rengine
@@ -133,7 +143,7 @@ namespace Rengine {
             {
                 try {
                     return this->_registry.registerComponent<Component>();
-                } catch (ComponentRegistryExceptionAlreadyRegistred&) {
+                } catch (ComponentRegistryExceptionNotRegistred& e) {
                     return this->_registry.getComponents<Component>();
                 }
             }
@@ -149,16 +159,74 @@ namespace Rengine {
             {
                 try {
                     return this->_registry.registerComponent<Component>();
-                } catch (ComponentRegistryExceptionAlreadyRegistred&) {
+                } catch (ComponentRegistryExceptionNotRegistred& e) {
                     return this->_registry.getComponents<Component>();
                 }
             }
+            /**
+            * @fn setComponentFunction
+            * @template Component The type you want to bind to the function.
+            * @brief Bind a function to a type for future use.
+            * This function takes a reference to the ECS and a reference to an entity and its Component.
+            * The ECS will call this function for each Component stored.
+            */
+            template<class Component>
+            void setComponentFunction(std::function<void(const Rengine::ECS&, Component&, Rengine::Entity&)> fun)
+            {
+                auto i = std::type_index(typeid(Component));
+
+                this->_functionArray[i] = fun;
+            }
+            /**
+            * @fn runComponentFunction
+            * @template Component The type you want to run.
+            * @brief Run the function, previously set with this->setComponentFunction, on each entity and its component of the templated type.
+            */
+            template<class Component>
+            void runComponentFunction(void)
+            {
+                auto i = std::type_index(typeid(Component));
+                auto it = this->_functionArray.find(i);
+
+                // No function ?
+                if (it == this->_functionArray.end()) {
+                    throw ECSExceptionNoComponentFunction();
+                }
+                // Try to:
+                // Retrive function
+                // Parse entity list
+                // Call function with each component / entity
+                try {
+                    auto fun = std::any_cast<std::function<void(const ECS&, Component&, Entity&)>>(it->second);
+
+                    for (auto eit : this->_currentEntities) {
+                        // Ignore uninitialised entities
+                        if (eit.has_value() == false) {
+                            continue;
+                        }
+                        try {
+                            auto con = eit->getComponent<Component>();
+                            fun(*this, con, *eit);
+                        }
+                        // Ignore entities that do not have this Component
+                        catch (EntityExceptionComponentNotLinked& e) {
+                            continue;
+                        }
+                    }
+                // Any cast fail.
+                } catch (std::bad_any_cast &e) {
+                    throw std::runtime_error("Rengine::ECS: Type mismatch when retriving Component function.");
+                }
+            }
+
 
         private:
             ComponentRegistry _registry;
             #define DEFAULTSPARSEARRAYSIZE 100
             size_type _sparseArrayDefaultSize = DEFAULTSPARSEARRAYSIZE;
             SparseArray<Entity> _currentEntities;
+            //                      Type    - std::function<void(const ECS&, Component&, Entity&)>
+            std::unordered_map<std::type_index, std::any> _functionArray;
 
     };  // class ECS
 }  // namespace Rengine
