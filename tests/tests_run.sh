@@ -35,18 +35,21 @@ if [ $(basename $(pwd)) != "tests" ]; then
     exit 84
 fi
 
+# Test suite
 runTest "SparseArray_t.cpp" "SparseArray"
-
+runTest "ECS_t.cpp" "ECS"
 
 #check failure size for print / return status
-FAILURE_LIST=(${FAILURE_LIST// /\n})
-if [ ${#FAILURE_LIST[@]} -ne 0 ] ; then
+#FAILURE_LIST=(${FAILURE_LIST// /\n})
+if [ "$FAILURE_LIST" != "" ] ; then
     echo "Failures (${#FAILURE_LIST[@]}):"
     for failure in "${FAILURE_LIST[@]}"
     do
         echo "- $failure"
     done
     exit 84
+else
+    echo "All success !"
+    exit 0
 fi
 
-exit 0
