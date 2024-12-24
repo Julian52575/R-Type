@@ -183,7 +183,7 @@ namespace Rengine {
             * @brief Run the function, previously set with this->setComponentFunction, on each entity and its component of the templated type.
             */
             template<class Component>
-            void runComponentFunction(void)
+            void runComponentFunction(void) const
             {
                 auto i = std::type_index(typeid(Component));
                 auto it = this->_functionArray.find(i);
@@ -218,7 +218,6 @@ namespace Rengine {
                     throw std::runtime_error("Rengine::ECS: Type mismatch when retriving Component function.");
                 }
             }
-
 
         private:
             ComponentRegistry _registry;
