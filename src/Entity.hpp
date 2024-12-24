@@ -40,15 +40,17 @@ namespace Rengine {
             * @template Component The component class to construct and link to this entity.
             * @template Params The parameter to unpack to the constructor of the Component class.
             * @brief Add a component and link it to this entity.
+            * @return A reference to the newly created component, stored in the registry.
             */
             template <class Component, class ... Params>
-            void addComponent(Params &&... args)
+            Component& addComponent(Params &&... args)
             {
                 // Try to retrive the SparseArray and emplaceAt
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
 
                     sp.emplaceAt(this->_id, std::forward<Params>(args)...);
+                    return sp[this->_id].value();
                 }
                 // Component not registred ?
                 catch (ComponentRegistryExceptionNotRegistred& e) {
