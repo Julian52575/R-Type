@@ -2,6 +2,14 @@
 #include <memory>
 #include "../src/ECS.hpp"
 
+TEST(ECS, startingSize)
+{
+    Rengine::ECS::size_type size = 12;
+    Rengine::ECS ecs(size);
+
+    Rengine::SparseArray<int>& sp = ecs.registerComponent<int>();
+    EXPECT_EQ(sp.size(), size);
+}
 TEST(ECS, addGetEntity)
 {
     Rengine::ECS ecs;

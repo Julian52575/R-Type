@@ -38,11 +38,12 @@ fi
 # Test suite
 runTest "SparseArray_t.cpp" "SparseArray"
 runTest "ECS_t.cpp" "ECS"
+runTest "Entity_t.cpp" "Entity"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
 if [ "$FAILURE_LIST" != "" ] ; then
-    echo "Failures (${#FAILURE_LIST[@]}):"
+    echo "Failures (${#FAILURE_LIST[@]}):\tSee the logs folder for more info."
     for failure in "${FAILURE_LIST[@]}"
     do
         echo "- $failure"
