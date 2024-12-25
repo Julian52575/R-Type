@@ -43,6 +43,7 @@ fi
 
 # Test suite
 runTest "SparseArray_t.cpp" "SparseArray"
+runTest "ComponentRegistry_t.cpp" "ComponentRegistry"
 runTest "ECS_t.cpp" "ECS"
 runTest "Entity_t.cpp" "Entity"
 
