@@ -24,6 +24,16 @@ TEST(Entity, removeComponent)
     e.removeComponent<int>();
     EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionComponentNotLinked);
 }
+TEST(Entity, removeComponentNoExcept)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity &e = ecs.addEntity();
+    Rengine::SparseArray<int>& sp = ecs.registerComponent<int>();
+    int& con = e.addComponent<int>(0);
+
+    e.removeComponent<int>();
+    EXPECT_NO_THROW(e.removeComponentNoExcept<int>());
+}
 TEST(Entity, getComponent)
 {
     Rengine::ECS ecs;
@@ -67,4 +77,13 @@ TEST(Entity, destroyComponentsWithUserProvidedFunction)
     e.destroyComponents();
     EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionNotActive);
     EXPECT_EQ(entityTmp, int(e));
+}
+TEST(Entity, setGetflag)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity &e = ecs.addEntity();
+    uint64_t flag = 12;
+
+    e.setFlag(flag);
+    EXPECT_EQ(e.getFlag(), flag);
 }
