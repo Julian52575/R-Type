@@ -1,4 +1,7 @@
 #!/bin/bash
+RED='\033[0;31m'
+GRN='\033[0;32m'
+NC='\033[0m' # No Color
 CXX="g++"
 CXXFLAGS+="-std=c++17 -isystem /usr/local/include -pthread -lgtest -lgtest_main"
 FAILURE_LIST=""
@@ -25,8 +28,11 @@ function runTest () {
         echo "Error: Cannot compile '$TESTNAME'. See '$LOGFILE'."
         return 84
     fi
-    if ! ./$OUTPUTFILE > $LOGFILE; then
+    if ! ./$OUTPUTFILE 1>> $LOGFILE 2>> $LOGFILE; then
         FAILURE_LIST="$FAILURE_LIST""$TESTNAME "
+    else
+        echo -e "$GRN$TESTNAME: Success.$NC"
+
     fi
 }
 
@@ -43,10 +49,10 @@ runTest "Entity_t.cpp" "Entity"
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
 if [ "$FAILURE_LIST" != "" ] ; then
-    echo "Failures (${#FAILURE_LIST[@]}):\tSee the logs folder for more info."
+    echo -e "Failure(s) (${#FAILURE_LIST[@]}):\tSee the logs/bins folders for more info."
     for failure in "${FAILURE_LIST[@]}"
     do
-        echo "- $failure"
+        echo -e "$RED$failure: Failure.$NC"
     done
     exit 84
 else

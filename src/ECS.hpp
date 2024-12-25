@@ -19,7 +19,7 @@ namespace Rengine {
             const char *what() const noexcept { return "Rengine::ECS: Trying to access an unregistered component."; };
     };    class ECSExceptionEntityNotFound : public std::exception {
         public:
-            const char *what() const noexcept { return "Rengine::ECS: The provided entity is not registered in the ECS."; };
+            const char *what() const noexcept { return "Rengine::ECS: The asked entity is not registered in the ECS."; };
     };
     class ECSExceptionCannotAddEntityLimit : public std::exception {
         public:
@@ -59,7 +59,21 @@ namespace Rengine {
             * @fn ~ECS
             * @brief Destroy an instance of ECS.
             */
-            ~ECS(void) = default;
+            ~ECS(void)
+            {
+                for (auto eit : this->_currentEntities) {
+                    if (eit.has_value() == false) {
+                        continue;
+                    }
+                    try {
+                        this->removeEntity(*eit);
+                    }
+                    // Ignore previously destroyed entities
+                    catch (EntityExceptionNotActive &e) {
+                        continue;
+                    }
+                }
+            }
             /**
             * @fn addEntity
             * @exception ECSExceptionCannotAddEntityLimit The entity limit has been reached and no place is available.
@@ -95,7 +109,7 @@ namespace Rengine {
                 if (this->_currentEntities[idx].has_value() == false) {
                     throw ECSExceptionEntityNotFound();
                 }
-                this->_currentEntities[idx].value().destroy();
+                this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
             }
             /**

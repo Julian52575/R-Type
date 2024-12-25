@@ -14,15 +14,20 @@ namespace Rengine {
         public:
             const char *what() const noexcept { return "Rengine::Entity: Component is not linked to this entity."; };
     };
+    class EntityExceptionNotActive : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::Entity: Trying to use a previously destroyed entity."; };
+    };
     /**
      * @addtogroup Rengine
      * @namespace Rengine
      * @class Entity
      * @brief A abstraction class holding the index of the associated components in the registry.
-     * Do not construct it yourself, get it from the ECS.
+     * Note: Do not construct it yourself, get it from the ECS.
+     * Note: If the instance of the ECS used to create this entity is destroyed, this entity is destroy alongside it.
     */
     class Entity {
-    #define ENTITYDESTROYNOOP std::function<void(Entity&)>([this](Entity&) {return;})
+    #define _RENGINEENTITYDESTROYNOOP_ std::function<void(Entity&)>([this](Entity&) {return;})
         public:
             using size_type = typename ComponentRegistry :: size_type;
             Entity(ComponentRegistry& reg, size_type id) : _registry(reg), _id(id) {};
@@ -31,7 +36,7 @@ namespace Rengine {
             * @fn int
             * @return The index of the component linked to the entity in the SparseArrays.
             */
-            operator int(void) const
+            operator int(void) const noexcept
             {
                 return this->_id;
             }
@@ -39,12 +44,18 @@ namespace Rengine {
             * @fn addComponent
             * @template Component The component class to construct and link to this entity.
             * @template Params The parameter to unpack to the constructor of the Component class.
-            * @brief Add a component and link it to this entity.
             * @return A reference to the newly created component, stored in the registry.
+            * @exception EntityExceptionNotActive This entity has been previously destroyed.
+            * @brief Add a component and link it to this entity.
+            * Be careful not to use a reference to an destroyed component.
             */
             template <class Component, class ... Params>
             Component& addComponent(Params &&... args)
             {
+                // Previously destroyed entity.
+                if (this->_active == false) {
+                    throw EntityExceptionNotActive();
+                }
                 // Try to retrive the SparseArray and emplaceAt
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
@@ -60,12 +71,17 @@ namespace Rengine {
             /**
             * @fn removeComponent
             * @template Component The component class to remove.
-            * @exception std::runtime_error Exception raised when Component is not already registered.
+            * @exception ComponentRegistryExceptionNotRegistred Exception raised when Component is not already registered.
+            * @exception EntityExceptionNotActive This entity has been previously destroyed.
             * @brief Remove the component linked to this entity.
             */
             template <class Component>
             void removeComponent(void)
             {
+                // Previously destroyed entity.
+                if (this->_active == false) {
+                    throw EntityExceptionNotActive();
+                }
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
 
@@ -77,15 +93,42 @@ namespace Rengine {
                 }
             }
             /**
+            * @fn removeComponentNoExcept
+            * @template Component The component class to remove.
+            * @brief this->removeComponent without any exception.
+            * Does nothing if Component is not linked to this entity or if this entity has already been destroyed.
+            */
+            template <class Component>
+            void removeComponentNoExcept(void) noexcept
+            {
+                if (this->_active == false) {
+                    return;
+                }
+                try {
+                    SparseArray<Component>& sp = this->_registry.getComponents<Component>();
+
+                    sp.erase(this->_id);
+                }
+                // Component not registred ?
+                catch (ComponentRegistryExceptionNotRegistred &e) {
+                    return;
+                }
+            }
+            /**
             * @fn getComponent
             * @template Component The component class to get.
             * @exception EntityExceptionComponentNotLinked This entity has not been linked to this Component class.
+            * @exception EntityExceptionNotActive This entity has been previously destroyed.
             * @return A reference to the component linked to this entity.
             * @brief Get the component linked to this entity.
             */
             template <class Component>
             Component& getComponent(void)
             {
+                // Previously destroyed entity.
+                if (this->_active == false) {
+                    throw EntityExceptionNotActive();
+                }
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
                     // Out of bound index
@@ -107,11 +150,16 @@ namespace Rengine {
             /**
             * @fn setFlag
             * @param flag A 64 unsigned integer.
+            * @exception EntityExceptionNotActive This entity has been previously destroyed.
             * @brief Set a int flag to the entity for easing recognition of entity types.
             * Tip : Use binary or to add multiple flag.
             */
             void setFlag(uint64_t flag)
             {
+                // Previously destroyed entity.
+                if (this->_active == false) {
+                    throw EntityExceptionNotActive();
+                }
                 this->_flag = flag;
             }
             /**
@@ -120,36 +168,57 @@ namespace Rengine {
             * @brief Get the int flag to the entity for easing recognition of entity types.
             * Tip : Use binary or to add multiple flag.
             */
-            uint64_t getFlag(void) const
+            uint64_t getFlag(void) const noexcept
             {
                 return this->_flag;
             }
             /**
-            * @fn setDestroyFunction
+            * @fn setComponentsDestroyFunction
+            * @exception EntityExceptionNotActive This entity has been previously destroyed.
             * @param fun The function returning a void and taking a reference to this entity.
-            * @brief Set the function to be called when this->destroy() is called.
+            * @brief Set the function to be called by this->destroy().
+            * This function should remove ALL the linked components to avoid glitches.
             */
-            void setDestroyFunction(const std::function<void(Entity &)> fun)
+            void setComponentsDestroyFunction(const std::function<void(Rengine::Entity &)> fun)
             {
+                // Previously destroyed entity.
+                if (this->_active == false) {
+                    throw EntityExceptionNotActive();
+                }
                 this->_destroyFunction = fun;
             }
             /**
-            * @fn destroy
-            * @brief Call the destroy function set beforehand by this->setDestroyFunction.
-            * Calling this function results in a No-Op starting from the 2nd call to avoid invalid erasure.
-            * Note: Does not call the destructor of this class.
-            * Note: If no destroy function has been set, this does nothing.
+            * @fn destroyComponents
+            * @exception EntityExceptionNotActive This entity has been previously destroyed.
+            * @brief Call the destroy function set beforehand by this->setDestroyFunction to remove all linked Component.
+            * The entity itself is not destroyed but is considered as such, using it will result in a EntityExceptionNotActive.
+            * Note: If this->setDestroyFunction has not been called previously,
+            * this function will only set the entity as not active.
             */
-            void destroy(void)
+            void destroyComponents(void)
             {
+                // Previously destroyed entity.
+                if (this->_active == false) {
+                    throw EntityExceptionNotActive();
+                }
                 this->_destroyFunction(*this);
+                this->_active = false;
+            }
+            /**
+            * @fn isActive
+            * @brief Return true if the Entity has not been destroyed by this->destroy.
+            */
+            bool isActive(void) const noexcept
+            {
+                return this->_active;
             }
 
         private:
             size_t _id = (size_t) -1;
             ComponentRegistry& _registry;
             uint64_t _flag = 0;
-            std::function<void(Entity &)> _destroyFunction = ENTITYDESTROYNOOP;
+            std::function<void(Rengine::Entity &)> _destroyFunction = _RENGINEENTITYDESTROYNOOP_;
+            bool _active = true;
 
     };  // class Entity
 

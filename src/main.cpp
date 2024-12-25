@@ -14,12 +14,21 @@ void floatRunnerFunction(const Rengine::ECS& ecs, float& f, Rengine::Entity& e)
     std::cout << "floatRunnerFunction with [f = " << f << "] [e = " << int(e) << "]." << std::endl;
 }
 
+void byeByeComponent(Rengine::Entity& e)
+{
+    std::cout << "Entity " << int(e) << ": Bye bye." << std::endl;
+    e.removeComponentNoExcept<int>();
+    e.removeComponentNoExcept<float>();
+}
+
 int main(void)
 {
     Rengine::ECS ecs = Rengine::ECS(5);
     Rengine::Entity& e0 = ecs.addEntity();
     Rengine::Entity& e1 = ecs.addEntity();
 
+    //e0.setComponentsDestroyFunction(byeByeComponent);
+    //e1.setComponentsDestroyFunction(byeByeComponent);
     ecs.registerComponent<int>();
     ecs.setComponentFunction<float>(floatRunnerFunction);
     ecs.registerComponent<float>();
