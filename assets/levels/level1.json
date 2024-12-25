@@ -1,9 +1,0 @@
-{
-	"entities": [
-		{"position": {"x": 820, "y": 261}, "entity": "entities/dragon_noir.json", "spawntime": 1},
-		{"position": {"x": 820, "y": 316}, "entity": "entities/dragon_rouge.json", "spawntime": 1},
-		{"position": {"x": 820, "y": 267}, "entity": "entities/dragon_noir.json", "spawntime": 1},
-		{"position": {"x": 820, "y": 71}, "entity": "entities/dragon_noir.json", "spawntime": 2},
-		{"position": {"x": 820, "y": 369}, "entity": "entities/dragon_noir.json", "spawntime": 5}
-	]
-}

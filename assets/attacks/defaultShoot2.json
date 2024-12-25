@@ -1,0 +1,23 @@
+{
+    "attack": {
+        "type": "buff",
+        "cooldown": 1.5s,
+        "buffs": [
+            {
+                "attack": 1.5,
+                "duration": 3.0s
+            },
+            {
+                "speed": 2.0,
+                "duration": 1.0s
+            },
+            {
+                "hp": 100
+            },
+            {
+                "defense": 1.5,
+                "duration": 1.5s
+            }
+        ]
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "attack": {
+        "type": "shoot",
+        "cooldown": 3.0s,
+        "missiles": [
+            {
+                "json": "entities/missiles1.json",
+                "offset": {
+                    "x": 10, "y": 12
+                },
+                "velocity": {
+                    "x": 15, "y": 0
+                }
+            },
+            {
+                "json": "entities/missiles1.json",
+                "offset": {
+                    "x": 10, "y": 12
+                },
+                "velocity": {
+                    "x": 15, "y": -5
+                }
+            },
+            {
+                "json": "entities/missiles1.json",
+                "offset": {
+                    "x": 10, "y": 12
+                },
+                "velocity": {
+                    "x": 15, "y": -5
+                }
+            }
+        ]
+    }
+}
