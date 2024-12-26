@@ -1,7 +1,7 @@
 {
     "attack": {
         "type": "shoot",
-        "cooldown": 0.5s,
+        "cooldown": 0.5,
         "missiles": [
             {
                 "json": "entities/missiles1.json",
