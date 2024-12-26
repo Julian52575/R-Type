@@ -26,8 +26,8 @@ namespace RType {
             // Parse type
             std::string type = attackField["type"];
             std::vector<std::pair<std::string, RType::Config::AttackType>> bind = {
-                {"buff", RType::Config::AttackType::AttackTypeBuff},
-                {"shoot", RType::Config::AttackType::AttackTypeShoot}
+                {"buff", RType::Config::AttackType::AttackTypeBuffs},
+                {"missiles", RType::Config::AttackType::AttackTypeMissiles}
             };
             auto it = bind.begin();
             while (it != bind.end()) {
@@ -89,11 +89,11 @@ namespace RType {
                 this->parseGeneral(j["attack"]);
                 j = j["attack"];
                 // Buff type
-                if (this->_type == AttackType::AttackTypeBuff) {
+                if (this->_type == AttackType::AttackTypeBuffs) {
                     this->parseBuffs(j["buffs"]);
                 }
                 // Shoot type
-                else if (this->_type == AttackType::AttackTypeShoot) {
+                else if (this->_type == AttackType::AttackTypeMissiles) {
                     this->parseMissiles(j["missiles"]);
                 }
                 // Unknow type
@@ -110,15 +110,15 @@ namespace RType {
         }
         const std::vector<BuffConfig>& AttackConfig::getBuffs(void) const
         {
-            if (this->_type != AttackType::AttackTypeBuff || this->_buffsVector.has_value() == false) {
-                throw AttackConfigExceptionAccessBuffOnShootType();
+            if (this->_type != AttackType::AttackTypeBuffs || this->_buffsVector.has_value() == false) {
+                throw AttackConfigExceptionWrongTypeAccess();
             }
             return this->_buffsVector.value();
         }
         const std::vector<MissileConfig>& AttackConfig::getMissiles(void) const
         {
-            if (this->_type != AttackType::AttackTypeShoot || this->_missilesVector.has_value() == false) {
-                throw AttackConfigExceptionAccessShootOnBuffType();
+            if (this->_type != AttackType::AttackTypeMissiles || this->_missilesVector.has_value() == false) {
+                throw AttackConfigExceptionWrongTypeAccess();
             }
             return this->_missilesVector.value();
         }

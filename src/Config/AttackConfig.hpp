@@ -15,16 +15,10 @@ namespace RType {
 
     namespace Config {
 
-        class AttackConfigExceptionAccessBuffOnShootType : public std::exception {
+        class AttackConfigExceptionWrongTypeAccess : public std::exception {
         public:
             const char *what() const noexcept {
-                return "RType::Config::AttackConfig Trying to access buffs on shoot attack type.";
-            };
-        };
-        class AttackConfigExceptionAccessShootOnBuffType : public std::exception {
-        public:
-            const char *what() const noexcept {
-                return "RType::Config::AttackConfig Trying to access shoots on buff attack type.";
+                return "RType::Config::AttackConfig Trying to access wrong type vector.";
             };
         };
         class AttackConfigExceptionFileError : public std::exception {
@@ -84,14 +78,14 @@ namespace RType {
                 AttackType getType(void) const noexcept;
                 /**
                 * @fn getBuffs
-                * @exception AttackConfigExceptionAccessBuffOnShootType This function is called on a Shoot type attack.
-                * @brief Get the vector of RType::Config::BuffData
+                * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeBuffs
+                * @brief Get a vector of RType::Config::BuffData
                 */
                 const std::vector<BuffConfig>& getBuffs(void) const;
                 /**
                 * @fn getMissiles
-                * @exception AttackConfigExceptionAccessShootOnBuffType This function is called on a Buff type attack.
-                * @brief Get the vector of RType::Config::MissileData
+                * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeMissiles
+                * @brief Get a vector of RType::Config::MissileData
                 */
                 const std::vector<MissileConfig>& getMissiles(void) const;
                 /**
@@ -107,19 +101,19 @@ namespace RType {
             private:
                 /**
                 * @fn parseGeneral
-                * @exception ??? a
+                * @exception std::runtime_exception An error occured when parsing the json fields.
                 * @brief Update this class by parsing the general fields.
                 */
                 void parseGeneral(nlohmann::json &attackField);
                 /**
                 * @fn parseBuffs
-                * @exception ??? a
+                * @exception std::runtime_exception An error occured when parsing the json fields.
                 * @brief Update this class by parsing the buff specifics fields.
                 */
                 void parseBuffs(nlohmann::json &buffsField);
                 /**
                 * @fn parseMissiles
-                * @exception ??? a
+                * @exception std::runtime_exception An error occured when parsing the json fields.
                 * @brief Update this class by parsing the missiles specifics fields.
                 */
                 void parseMissiles(nlohmann::json &missilesField);

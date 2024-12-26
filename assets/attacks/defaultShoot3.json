@@ -1,6 +1,6 @@
 {
     "attack": {
-        "type": "shoot",
+        "type": "missiles",
         "cooldown": 3.0,
         "missiles": [
             {

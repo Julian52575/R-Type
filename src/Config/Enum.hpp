@@ -13,8 +13,8 @@ namespace RType {
         */
         enum AttackType {
             AttackTypeNA = 0x00,
-            AttackTypeShoot = 0x01,
-            AttackTypeBuff = 0x02
+            AttackTypeMissiles = 0x01,
+            AttackTypeBuffs = 0x02
         };
         /**
         * @addtogroup RType::Config
