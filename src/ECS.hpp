@@ -17,7 +17,8 @@ namespace Rengine {
     class ECSExceptionComponentNotRegistred : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: Trying to access an unregistered component."; };
-    };    class ECSExceptionEntityNotFound : public std::exception {
+    };
+    class ECSExceptionEntityNotFound : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: The asked entity is not registered in the ECS."; };
     };

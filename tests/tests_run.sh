@@ -46,11 +46,12 @@ runTest "SparseArray_t.cpp" "SparseArray"
 runTest "ComponentRegistry_t.cpp" "ComponentRegistry"
 runTest "ECS_t.cpp" "ECS"
 runTest "Entity_t.cpp" "Entity"
+runTest "Resolver/AResolver_t.cpp" "Resolver"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
 if [ "$FAILURE_LIST" != "" ] ; then
-    echo -e "Failure(s) (${#FAILURE_LIST[@]}):\tSee the logs/bins folders for more info."
+    echo -e "Failure(s) (${#FAILURE_LIST[@]}):\tSee the logs and/or bins folders for more info."
     for failure in "${FAILURE_LIST[@]}"
     do
         echo -e "$RED$failure: Failure.$NC"
