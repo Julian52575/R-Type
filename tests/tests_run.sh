@@ -42,12 +42,13 @@ if [ $(basename $(pwd)) != "tests" ]; then
 fi
 
 # Test suite
-runTest "Config/AttackConfig_t.cpp ../src/Config/*.cpp" "AttackConfig"
+runTest "Config/AttackConfig_t.cpp ../src/Config/AttackConfig.cpp" "AttackConfig"
+runTest "Config/EntityConfig_t.cpp ../src/Config/AttackConfig.cpp ../src/Config/EntityConfig.cpp " "EntityConfig"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
 if [ "$FAILURE_LIST" != "" ] ; then
-    echo -e "Failure(s) (${#FAILURE_LIST[@]}):\tSee the logs/bins folders for more info."
+    echo -e "Failure(s) (${#FAILURE_LIST[@]}):\tSee the logs and/or bins folders for more info."
     for failure in "${FAILURE_LIST[@]}"
     do
         echo -e "$RED$failure: Failure.$NC"

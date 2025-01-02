@@ -1,7 +1,7 @@
 {
     "entity": {
         "sprite": {
-            "assetPath": "assets/images/white.png",
+            "assetPath": "assets/images/red.png",
             "origin": {
                 "x": 0,
                 "y": 0
@@ -17,7 +17,7 @@
                 "frameCount": 5,
                 "frameDuration": 0.08,
                 "frameDisplacement": {
-                    "x": 1, "y": 0
+                    "x": 25, "y": 0
                 }
             }
         },
@@ -37,16 +37,10 @@
             "minSpeed": 5,
             "acceleration": 0.1
         },
-        "attacks": {
-            "shoot1": {
-                "json": "attacks/defaultShoot1.json"
-            },
-            "shoot2": {
-                "json": "attacks/defaultShoot2.json"
-            },
-            "shoot3": {
-                "json": "attacks/defaultShoot3.json"
-            }
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
         }
     }
 }

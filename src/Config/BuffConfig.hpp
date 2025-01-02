@@ -3,6 +3,7 @@
 #define _SRC_CONFIG_BUFFCONFIG_HPP_
 #include <nlohmann/json.hpp>
 #include <stdexcept>
+
 #include "./Enum.hpp"
 
 namespace RType {

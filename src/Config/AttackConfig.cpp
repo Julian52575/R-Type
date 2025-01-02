@@ -46,12 +46,12 @@ namespace RType {
             if (buffsField.size() == 0) {
                 throw std::runtime_error("Empty 'buffs' field.");
             }
-            auto vector = std::vector<BuffConfig>(buffsField.size());
+            auto vector = std::vector<RType::Config::BuffConfig>(buffsField.size());
             std::vector<int>::size_type count = 0;
 
             // Create a new RType::Config::BuffData base on the current field of the 'buffs' field.
             for (auto it : buffsField) {
-                vector[count] = std::move(BuffConfig(it));
+                vector[count] = std::move(RType::Config::BuffConfig(it));
                 count += 1;
             }
             this->_buffsVector = std::move(vector);
@@ -108,14 +108,14 @@ namespace RType {
         {
             return this->_type;
         }
-        const std::vector<BuffConfig>& AttackConfig::getBuffs(void) const
+        const std::vector<RType::Config::BuffConfig>& AttackConfig::getBuffs(void) const
         {
             if (this->_type != AttackType::AttackTypeBuffs || this->_buffsVector.has_value() == false) {
                 throw AttackConfigExceptionWrongTypeAccess();
             }
             return this->_buffsVector.value();
         }
-        const std::vector<MissileConfig>& AttackConfig::getMissiles(void) const
+        const std::vector<RType::Config::MissileConfig>& AttackConfig::getMissiles(void) const
         {
             if (this->_type != AttackType::AttackTypeMissiles || this->_missilesVector.has_value() == false) {
                 throw AttackConfigExceptionWrongTypeAccess();

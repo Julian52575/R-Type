@@ -1,6 +1,8 @@
+//
 #include <gtest/gtest.h>
 #include <stdexcept>
 #include <vector>
+
 #include "../../src/Config/AttackConfig.hpp"
 #define _BUFFJSONPATH_ "Config/buff.json"
 /* The buff.json for reference, if different then trouble

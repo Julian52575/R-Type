@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
+
 #include "./Enum.hpp"
 
 namespace RType {

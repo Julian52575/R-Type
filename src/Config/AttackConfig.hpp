@@ -1,6 +1,8 @@
 // Objective: Json to AttackConfig
 //
 //
+#ifndef _SRC_CONFIG_ATTACKCONFIG_HPP_
+#define _SRC_CONFIG_ATTACKCONFIG_HPP_
 #include <cstddef>
 #include <string>
 #include <utility>
@@ -8,8 +10,8 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
-#include "./MissileConfig.hpp"
-#include "./BuffConfig.hpp"
+#include "BuffConfig.hpp"
+#include "MissileConfig.hpp"
 
 namespace RType {
 
@@ -81,13 +83,13 @@ namespace RType {
                 * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeBuffs
                 * @brief Get a vector of RType::Config::BuffData
                 */
-                const std::vector<BuffConfig>& getBuffs(void) const;
+                const std::vector<RType::Config::BuffConfig>& getBuffs(void) const;
                 /**
                 * @fn getMissiles
                 * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeMissiles
                 * @brief Get a vector of RType::Config::MissileData
                 */
-                const std::vector<MissileConfig>& getMissiles(void) const;
+                const std::vector<RType::Config::MissileConfig>& getMissiles(void) const;
                 /**
                 * @fn getCooldown
                 * @return RType::Config::AttackType The type of the attack. See RType::Config::AttackType.
@@ -122,9 +124,10 @@ namespace RType {
                 AttackType _type = AttackType::AttackTypeNA;
                 double _cooldown = 0.0;
                 // Buff + cooldown
-                std::optional<std::vector<BuffConfig>> _buffsVector;
+                std::optional<std::vector<RType::Config::BuffConfig>> _buffsVector;
                 // Missile json -> <offset, velocity>
-                std::optional<std::vector<MissileConfig>> _missilesVector;
+                std::optional<std::vector<RType::Config::MissileConfig>> _missilesVector;
         };
     }
 }
+#endif
