@@ -66,7 +66,7 @@ namespace RType {
         enum SceneEndCondition {
             SceneEndConditionNA,
             SceneEndConditionTime,
-            SceneEndConditionBoss
+            SceneEndConditionBossDefeat
         };  // enum SceneEndCondition
         union SceneEndConditionData {
             float time;

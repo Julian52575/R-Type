@@ -210,27 +210,43 @@ TEST(LevelConfig, Scenes)
     const RType::Config::SceneEntityConfig& scene1Entity1 = scene1.enemies[0];
     const RType::Config::SceneEntityConfig& scene1Entity2 = scene1.enemies[1];
 
+    // scene1Entity1
     compareEntityConfig(scene1Entity1.entityConfig);
     ASSERT_EQ(scene1Entity1.xSpawn, 2000);
     ASSERT_EQ(scene1Entity1.ySpawn, 540);
     ASSERT_FALSE(scene1Entity1.isBoss);
+    // scene1Entity2
     compareEntityConfig(scene1Entity2.entityConfig);
     ASSERT_EQ(scene1Entity2.xSpawn, 2150);
     ASSERT_EQ(scene1Entity2.ySpawn, 1000);
     ASSERT_FALSE(scene1Entity2.isBoss);
+
+    /* Scene2 */
+    const RType::Config::SceneConfig& scene2 = scenes[1];
+
+    ASSERT_EQ(scene2.endCondition, RType::Config::SceneEndCondition::SceneEndConditionBossDefeat);
+    ASSERT_EQ(scene2.scrollingSpeed, 30.30f);
+    ASSERT_EQ(scene2.backgroundImages.size(), 2);
+    compareImageConfigData(scene2.backgroundImages[0].getConfig());
+    compareImageConfigData(scene2.backgroundImages[1].getConfig());
+    ASSERT_EQ(scene2.enemies.size(), 3);
+    const RType::Config::SceneEntityConfig& scene2Entity1 = scene2.enemies[0];
+    const RType::Config::SceneEntityConfig& scene2Entity2 = scene2.enemies[1];
+    const RType::Config::SceneEntityConfig& scene2Entity3 = scene2.enemies[2];
+
+    // scene2Entity1
+    ASSERT_EQ(scene2Entity1.xSpawn, 2300);
+    ASSERT_EQ(scene2Entity1.ySpawn, 540);
+    ASSERT_FALSE(scene2Entity1.isBoss);
+    compareEntityConfig(scene2Entity1.entityConfig);
+    // scene2Entity2
+    ASSERT_EQ(scene2Entity2.xSpawn, 2600);
+    ASSERT_EQ(scene2Entity2.ySpawn, 1000);
+    ASSERT_FALSE(scene2Entity2.isBoss);
+    compareEntityConfig(scene2Entity2.entityConfig);
+    // scene2Entity3
+    ASSERT_EQ(scene2Entity3.xSpawn, 2900);
+    ASSERT_EQ(scene2Entity3.ySpawn, 100);
+    ASSERT_TRUE(scene2Entity3.isBoss);
+    compareEntityConfig(scene2Entity3.entityConfig);
 }
-/*
-                "enemies": [
-                    {
-                        "json": "Config/entity.json",
-                        "x": 2000,
-                        "y": 540
-                    },
-                    {
-                        "json": "Config/entity.json",
-                        "x": 2150,
-                        "y": 1000
-                    }
-                ],
-                "endCondition": "time",
-                "endConditionTime": 10.10*/

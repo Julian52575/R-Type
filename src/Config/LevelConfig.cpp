@@ -71,7 +71,7 @@ namespace RType {
         {
             std::vector<std::pair<std::string, SceneEndCondition>> endCond = {
                 {"time", SceneEndConditionTime},
-                {"bossDefeat", SceneEndConditionBoss}
+                {"bossDefeat", SceneEndConditionBossDefeat}
             };
             std::string condStr = scene["endCondition"];
             auto it = endCond.begin();
@@ -94,7 +94,7 @@ namespace RType {
                     this->endConditionData.time = scene["endConditionTime"];
                     break;
 
-                case SceneEndConditionBoss:
+                case SceneEndConditionBossDefeat:
                     // check Boss enemy
                     for (auto it : this->enemies) {
                         if (it.isBoss == true) {
