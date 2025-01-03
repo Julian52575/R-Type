@@ -3,43 +3,43 @@
         "scenes": [
             {
                 "background": [
-                    "images/background.json"
+                    "Config/image.json"
                 ],
                 "scrollingSpeed": 15.15,
                 "enemies": [
                     {
-                        "json": "assets/entities/template.json",
+                        "json": "Config/entity.json",
                         "x": 2000,
                         "y": 540
                     },
                     {
-                        "json": "assets/entities/template.json",
+                        "json": "Config/entity.json",
                         "x": 2150,
                         "y": 1000
                     }
                 ],
                 "endCondition": "time",
-                "endConditionTime": 10.0
+                "endConditionTime": 10.10
             },
             {
                 "background": [
-                    "images/background.json",
-                    "images/cloud.json"
+                    "Config/image.json",
+                    "Config/image.json"
                 ],
                 "scrollingSpeed": 30.30,
                 "enemies": [
                     {
-                        "json": "assets/entities/template.json",
+                        "json": "Config/entity.json",
                         "x": 2300,
                         "y": 540
                     },
                     {
-                        "json": "assets/entities/template.json",
+                        "json": "Config/entity.json",
                         "x": 2600,
                         "y": 1000
                     },
                     {
-                        "json": "assets/entities/template.json",
+                        "json": "Config/entity.json",
                         "x": 2900,
                         "y": 100,
                         "boss": true

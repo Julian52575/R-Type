@@ -1,4 +1,6 @@
 //
+#ifndef _SRC_CONFIG_IMAGECONFIG_HPP_
+#define _SRC_CONFIG_IMAGECONFIG_HPP_
 #include <nlohmann/json.hpp>
 
 namespace RType {
@@ -38,7 +40,6 @@ namespace RType {
             std::string _concat;
         };
 
-
         struct ImageConfigData {
             std::string texturePath;
             std::pair<uint16_t, uint16_t> originOffset;
@@ -68,3 +69,4 @@ namespace RType {
         };  // class ImageConfig
     }  // namespace Config
 }  // namespace RType
+#endif
