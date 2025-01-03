@@ -133,6 +133,9 @@ namespace RType {
 
                     this->_scenes.push_back(config);
                 }
+                if (this->_scenes.size() == 0) {
+                    throw std::runtime_error("Error: no scenes.");
+                }
             }
             // Error on parsing
             catch (std::exception &e) {

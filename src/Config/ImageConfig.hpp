@@ -39,7 +39,12 @@ namespace RType {
         private:
             std::string _concat;
         };
-
+        /**
+        * @addtogroup RType::Config
+        * @namespace Config
+        * @class ImageConfigData
+        * @brief A structure of the fields specified inside the image json.
+        */
         struct ImageConfigData {
             std::string texturePath;
             std::pair<uint16_t, uint16_t> originOffset;
@@ -54,12 +59,32 @@ namespace RType {
             };
             EntityConfigSpriteAnimation animation;
         };
-
+        /**
+        * @addtogroup RType::Config
+        * @namespace Config
+        * @class ImageConfig
+        * @brief This class encapsulate the image json.
+        * Is used to convert a jsonPath to a class of c++ variable.
+        */
         class ImageConfig {
             public:
+                /**
+                * @fn ImageConfig
+                * @brief Do not call this default constructor, it will create an empty ImageConfig.
+                */
                 ImageConfig(void) = default;
+                /**
+                * @fn ImageConfig
+                * @param jsonPath The path to a json image configuration.
+                * The image configuration must start with the 'image' field.
+                */
                 ImageConfig(const std::string& jsonPath);
                 ~ImageConfig(void) = default;
+                /**
+                * @fn getConfig
+                * @return RType::Config::ImageConfigData A structure containing the image configuration.
+                * @brief Return the configuration of the image.
+                */
                 const ImageConfigData& getConfig(void) const noexcept;
 
             private:

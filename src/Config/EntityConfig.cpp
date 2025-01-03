@@ -61,6 +61,9 @@ namespace RType {
             if (id == 0 || id > 3) {
                 id = 3;
             }
+            if (id == 0) {
+                id = 1;
+            }
             return this->_attacks[id - 1];
         }
 
