@@ -136,7 +136,7 @@ static inline RType::Config::ImageConfigData getExpectedImageConfigData(void)
 }
 static inline RType::Config::EntityConfig getExpectedEntityConfig(void)
 {
-    RType::Config::EntityConfig config("entity.json");
+    RType::Config::EntityConfig config("Config/entity.json");
 
     return config;
 }
@@ -186,8 +186,8 @@ static inline void compareEntityConfig(const RType::Config::EntityConfig& con)
     ASSERT_EQ(chara.persistsOffScreen, exChara.persistsOffScreen);
     // Attack
     ASSERT_EQ(con.getAttack(0).has_value(), expectedEntity.getAttack(0).has_value());
-    ASSERT_EQ(con.getAttack(1).has_value(), expectedEntity.getAttack(0).has_value());
-    ASSERT_EQ(con.getAttack(2).has_value(), expectedEntity.getAttack(0).has_value());
+    ASSERT_EQ(con.getAttack(1).has_value(), expectedEntity.getAttack(1).has_value());
+    ASSERT_EQ(con.getAttack(2).has_value(), expectedEntity.getAttack(2).has_value());
 }
 
 TEST(LevelConfig, Scenes)
@@ -196,11 +196,41 @@ TEST(LevelConfig, Scenes)
     const std::vector<RType::Config::SceneConfig>& scenes = lvl.getScenes();
 
     ASSERT_EQ(scenes.size(), 2);
+    /* Scene1 */
     const RType::Config::SceneConfig& scene1 = scenes[0];
 
-    ASSERT_EQ(scene1._scrollingSpeed, 15.15f);
-    ASSERT_EQ(scene1._endCondition, RType::Config::SceneEndCondition::SceneEndConditionTime);
-    ASSERT_EQ(scene1._endConditionData.time, 10.10f);
-    ASSERT_EQ(scene1._backgroundImages.size(), 1);
-    compareImageConfigData(scene1._backgroundImages[0].getConfig());
+    ASSERT_EQ(scene1.scrollingSpeed, 15.15f);
+    ASSERT_EQ(scene1.endCondition, RType::Config::SceneEndCondition::SceneEndConditionTime);
+    ASSERT_EQ(scene1.endConditionData.time, 10.10f);
+    ASSERT_EQ(scene1.backgroundImages.size(), 1);
+    // Background
+    compareImageConfigData(scene1.backgroundImages[0].getConfig());
+    // Enemies
+    ASSERT_EQ(scene1.enemies.size(), 2);
+    const RType::Config::SceneEntityConfig& scene1Entity1 = scene1.enemies[0];
+    const RType::Config::SceneEntityConfig& scene1Entity2 = scene1.enemies[1];
+
+    compareEntityConfig(scene1Entity1.entityConfig);
+    ASSERT_EQ(scene1Entity1.xSpawn, 2000);
+    ASSERT_EQ(scene1Entity1.ySpawn, 540);
+    ASSERT_FALSE(scene1Entity1.isBoss);
+    compareEntityConfig(scene1Entity2.entityConfig);
+    ASSERT_EQ(scene1Entity2.xSpawn, 2150);
+    ASSERT_EQ(scene1Entity2.ySpawn, 1000);
+    ASSERT_FALSE(scene1Entity2.isBoss);
 }
+/*
+                "enemies": [
+                    {
+                        "json": "Config/entity.json",
+                        "x": 2000,
+                        "y": 540
+                    },
+                    {
+                        "json": "Config/entity.json",
+                        "x": 2150,
+                        "y": 1000
+                    }
+                ],
+                "endCondition": "time",
+                "endConditionTime": 10.10*/

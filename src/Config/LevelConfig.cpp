@@ -16,7 +16,7 @@ namespace RType {
 
         SceneConfig::SceneConfig(nlohmann::json& scene)
         {
-            this->_scrollingSpeed = scene["scrollingSpeed"];
+            this->scrollingSpeed = scene["scrollingSpeed"];
             // Background
             try {
                 this->parseBackground(scene["background"]);
@@ -46,7 +46,7 @@ namespace RType {
         void SceneConfig::parseBackground(nlohmann::json& backgroundField)
         {
             for (auto it : backgroundField) {
-                this->_backgroundImages.push_back(RType::Config::ImageConfig(it));
+                this->backgroundImages.push_back(RType::Config::ImageConfig(it));
             }
         }
         void SceneConfig::parseEnemies(nlohmann::json& enemiesField)
@@ -63,7 +63,7 @@ namespace RType {
                 } catch (std::exception& e) {
                     ;  //Ignore boss not found. damn bro that's crazy
                 }
-                this->_enemies.push_back(config);
+                this->enemies.push_back(config);
             }
         }
 
@@ -78,7 +78,7 @@ namespace RType {
             /* Convert str to Enum */
             while (it != endCond.end()) {
                 if (it->first == condStr) {
-                    this->_endCondition = it->second;
+                    this->endCondition = it->second;
                     break;
                 }
                 it++;
@@ -89,14 +89,14 @@ namespace RType {
             /* Enum Unique field */
             uint8_t bossCount = 0;
 
-            switch (this->_endCondition) {
+            switch (this->endCondition) {
                 case SceneEndConditionTime:
-                    this->_endConditionData.time = scene["endConditionTime"];
+                    this->endConditionData.time = scene["endConditionTime"];
                     break;
 
                 case SceneEndConditionBoss:
                     // check Boss enemy
-                    for (auto it : this->_enemies) {
+                    for (auto it : this->enemies) {
                         if (it.isBoss == true) {
                             bossCount += 1;
                             if (bossCount >= 2) {
