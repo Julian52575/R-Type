@@ -1,0 +1,48 @@
+{
+    "level": {
+        "scenes": [
+            {
+                "background": [
+                    "images/background.jpeg"
+                ],
+                "scrollingSpeed": 15.15,
+                "enemies": [
+                    {
+                        "entities/template.json",
+                        "x": 2000,
+                        "y": 540
+                    },
+                    {
+                        "entities/template.json",
+                        "x": 2150,
+                        "y": 1000
+                    }
+                ]
+            },
+            {
+                "background": [
+                    "images/background.jpeg",
+                    "images/cloud.jpeg"
+                ],
+                "scrollingSpeed": 30.30,
+                "enemies": [
+                    {
+                        "entities/template.json",
+                        "x": 2300,
+                        "y": 540
+                    },
+                    {
+                        "entities/template.json",
+                        "x": 2600,
+                        "y": 1000
+                    },
+                    {
+                        "entities/template.json",
+                        "x": 2900,
+                        "y": 100
+                    }
+                ]
+            }
+        ]
+    }
+}

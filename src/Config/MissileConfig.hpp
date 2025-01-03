@@ -6,7 +6,7 @@
 #include <string>
 #include <utility>
 
-#include "./Enum.hpp"
+#include "./AttackBuffTypeEnum.hpp"
 
 namespace RType {
 

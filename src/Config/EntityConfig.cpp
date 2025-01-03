@@ -28,7 +28,7 @@ namespace RType {
             try {
                 j = nlohmann::json::parse(f);
                 j = j["entity"];  // Get entity general field
-                this->parseSprite(j["sprite"]);
+                this->_sprite = ImageConfig(j["sprite"]);
                 this->parseHitbox(j["hitbox"]);
                 this->parseStats(j["stats"]);
                 this->parseCharacteristics(j["characteristics"]);
@@ -52,7 +52,7 @@ namespace RType {
         {
             return this->_hitbox;
         }
-        const EntityConfigSprite& EntityConfig::getSprite(void) const noexcept
+        const ImageConfig& EntityConfig::getSprite(void) const noexcept
         {
             return this->_sprite;
         }
@@ -64,39 +64,6 @@ namespace RType {
             return this->_attacks[id - 1];
         }
 
-        void EntityConfig::parseSprite(nlohmann::json& spriteField)
-        {
-            // TextureScale
-            try {
-                float scaleX = spriteField["scale"]["x"];
-                float scaleY = spriteField["scale"]["y"];
-
-                this->_sprite.textureScale = {scaleX, scaleY};
-            } catch (std::exception &e) {
-                this->_sprite.textureScale = {1, 1};
-            }
-            // OriginOffset
-            try {
-                this->_sprite.originOffset = {spriteField["origin"]["x"], spriteField["origin"]["y"]};
-            } catch (std::exception &e) {
-                this->_sprite.originOffset = {0, 0};
-            }
-            this->_sprite.texturePath = spriteField["texturePath"];
-            // Animation
-            try {
-                nlohmann::json animationField = spriteField["animations"];
-
-                this->_sprite.animation.frameRectXY = {animationField["frameRect"]["x"], animationField["frameRect"]["y"]};
-                this->_sprite.animation.frameRectWidthHeight = {animationField["frameRect"]["width"], animationField["frameRect"]["height"]};
-                this->_sprite.animation.frameCount = animationField["frameCount"];
-                this->_sprite.animation.frameDuration = animationField["frameDuration"];
-                this->_sprite.animation.frameDisplacement = {animationField["frameDisplacement"]["x"], animationField["frameDisplacement"]["y"]};
-            } catch (std::exception &e) {
-                std::string msg = e.what();
-
-                throw std::runtime_error("An error occured when parsing 'animations':" + msg);
-            }
-        }
         void EntityConfig::parseHitbox(nlohmann::json& hitboxField)
         {
             this->_hitbox.size = {hitboxField["size"]["x"], hitboxField["size"]["y"]};

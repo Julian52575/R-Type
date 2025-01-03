@@ -43,7 +43,8 @@ fi
 
 # Test suite
 runTest "Config/AttackConfig_t.cpp ../src/Config/AttackConfig.cpp" "AttackConfig"
-runTest "Config/EntityConfig_t.cpp ../src/Config/AttackConfig.cpp ../src/Config/EntityConfig.cpp " "EntityConfig"
+runTest "Config/ImageConfig_t.cpp ../src/Config/ImageConfig.cpp" "ImageConfig"
+runTest "Config/EntityConfig_t.cpp ../src/Config/AttackConfig.cpp ../src/Config/EntityConfig.cpp ../src/Config/ImageConfig.cpp" "EntityConfig"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})

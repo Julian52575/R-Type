@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <stdexcept>
 
-#include "./Enum.hpp"
+#include "./AttackBuffTypeEnum.hpp"
 
 namespace RType {
 

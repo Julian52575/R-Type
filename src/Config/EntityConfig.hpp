@@ -9,8 +9,8 @@
 #include <utility>
 #include <optional>
 
-#include "./Enum.hpp"
 #include "./AttackConfig.hpp"
+#include "./ImageConfig.hpp"
 
 namespace RType {
 
@@ -94,18 +94,17 @@ namespace RType {
                 const EntityConfigStats& getStats(void) const noexcept;
                 const EntityConfigCharacteristics& getCharacteristics(void) const noexcept;
                 const EntityConfigHitbox& getHitbox(void) const noexcept;
-                const EntityConfigSprite& getSprite(void) const noexcept;
+                const ImageConfig& getSprite(void) const noexcept;
                 const std::optional<AttackConfig>& getAttack(uint8_t id) const noexcept;
 
             private:
+                ImageConfig _sprite;
                 EntityConfigStats _stats;
                 EntityConfigCharacteristics _characteristics;
                 EntityConfigHitbox _hitbox;
-                EntityConfigSprite _sprite;
                 std::optional<AttackConfig> _attacks[3];
 
             private:
-                void parseSprite(nlohmann::json& spriteField);
                 void parseHitbox(nlohmann::json& hitboxField);
                 void parseStats(nlohmann::json& statsField);
                 void parseCharacteristics(nlohmann::json& charaField);

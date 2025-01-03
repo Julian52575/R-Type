@@ -13,7 +13,7 @@
 #include "./AttackConfig.hpp"
 #include "./MissileConfig.hpp"
 #include "./BuffConfig.hpp"
-#include "Enum.hpp"
+#include "./AttackBuffTypeEnum.hpp"
 
 namespace RType {
 

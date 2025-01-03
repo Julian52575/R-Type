@@ -59,9 +59,9 @@
 TEST(EntityConfig, EntityConfigSprite)
 {
     auto con = RType::Config::EntityConfig("Config/entity.json");
-    RType::Config::EntityConfigSprite sp = con.getSprite();
+    const RType::Config::ImageConfigData &sp = con.getSprite().getConfig();
     // Sprite
-    RType::Config::EntityConfigSprite expectedSprite;
+    RType::Config::ImageConfigData expectedSprite;
 
     expectedSprite.texturePath = "assets/images/red.png";
     expectedSprite.originOffset = {1, 2};
