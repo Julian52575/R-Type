@@ -17,32 +17,21 @@
 namespace Rengine {
     namespace Graphics {
 
-        GraphicManager::GraphicManager(GraphicManagerLibrary requestedLib,
-            Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle)
+        GraphicManager::GraphicManager(Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle)
         {
-            this->_requestedLib = requestedLib;
-            switch (requestedLib) {
-
             // SFML
-            #ifdef RENGINEGRAPHICS_USELIB_SFML
-                case (GraphicManagerLibrarySFML):
-                    this->_window =
-                        std::make_unique<Rengine::Graphics::SFMLWindow>(sf::VideoMode({windowSize.x, windowSize.y}), windowTitle);
-                    break;
-            #endif
+        #ifdef RENGINEGRAPHICS_USELIB_SFML
+            this->_window =
+                std::make_unique<Rengine::Graphics::SFMLWindow>(sf::VideoMode({windowSize.x, windowSize.y}), windowTitle);
+            return;
+        #endif
 
             // SDL
-            #ifdef RENGINEGRAPHICS_USELIB_SDL
-                case (GraphicManagerLibrarySDL):
-                    this->_window =
-                        std::make_unique<Rengine::Graphics::SDLWindow>();
-                    break;
-            #endif
-
-                default:
-                    throw GraphicManagerException("The requested library is unknow.");
-            }
-
+        #ifdef RENGINEGRAPHICS_USELIB_SDL
+            this->_window = std::make_unique<Rengine::Graphics::SDLWindow>();
+            return;
+        #endif
+            throw GraphicManagerException("No graphical library set. Check your rengine build.");
         }
         std::unique_ptr<IWindow>& GraphicManager::getWindow(void) noexcept
         {
@@ -50,24 +39,16 @@ namespace Rengine {
         }
         std::shared_ptr<ASprite> GraphicManager::createSprite(const SpriteSpecs& spriteSpecs)
         {
-            switch (this->_requestedLib) {
-
             // SFML
-            #ifdef RENGINEGRAPHICS_USELIB_SFML
-                case (GraphicManagerLibrarySFML):
-                    return std::make_shared<Rengine::Graphics::SFMLSprite>(spriteSpecs);
-            #endif
+        #ifdef RENGINEGRAPHICS_USELIB_SFML
+            return std::make_shared<Rengine::Graphics::SFMLSprite>(spriteSpecs);
+        #endif
 
             // SDL
-            #ifdef RENGINEGRAPHICS_USELIB_SDL
-                case (GraphicManagerLibrarySDL):
-                    break;
-            #endif
-
-                default:
-                    break;
-            }
-            throw GraphicManagerException("The requested library is unknow.");
+        #ifdef RENGINEGRAPHICS_USELIB_SDL
+            ;
+        #endif
+            throw GraphicManagerException("No graphical library set. Check your rengine build.");
         }
 
     }  // namespace Rengine

@@ -34,21 +34,14 @@ namespace Rengine {
                 std::string _msg;
         };
 
-        enum GraphicManagerLibrary {
-            GraphicManagerLibraryNA,
-            GraphicManagerLibrarySFML,
-            GraphicManagerLibrarySDL
-        };
-
         class GraphicManager {
             public:
-                GraphicManager(GraphicManagerLibrary requestedLib, Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle);
+                GraphicManager(Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle);
                 ~GraphicManager(void) = default;
                 std::unique_ptr<IWindow>& getWindow(void) noexcept;
                 std::shared_ptr<ASprite> createSprite(const SpriteSpecs& spriteSpecs);
 
             private:
-                GraphicManagerLibrary _requestedLib;
                 std::unique_ptr<IWindow> _window = nullptr;
 
         };  // class GraphicManager
