@@ -3,4 +3,6 @@
 
 #include "src/ECS.hpp"
 
+#include "src/Graphics/GraphicManager.hpp"
+
 #endif  // _RENGINE_HPP_
