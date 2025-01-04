@@ -2,6 +2,7 @@
 #ifndef _SRC_GRAPHICS_SDL_SDLWINDOW_HPP_
 #define _SRC_GRAPHICS_SDL_SDLWINDOW_HPP_
 
+#include <memory>
 #include <optional>
 
 #include "../IWindow.hpp"
@@ -15,7 +16,7 @@ namespace Rengine {
                 SDLWindow(void) = default;
                 ~SDLWindow(void) = default;
                 void render(void);
-                void addSpriteToRender(Rengine::Graphics::ASprite& sprite, const Rengine::Graphics::vector2D<float>& position);
+                void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position);
 
             private:
         };

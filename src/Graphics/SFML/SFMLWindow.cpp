@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <exception>
+#include <memory>
 
 #include "SFMLWindow.hpp"
 #include "SFMLSprite.hpp"
@@ -19,10 +20,10 @@ namespace Rengine {
             this->_renderWindow.display();
             this->_renderWindow.clear();
         }
-        void SFMLWindow::addSpriteToRender(Rengine::Graphics::ASprite& sprite, const Rengine::Graphics::vector2D<float>& position)
+        void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position)
         {
             try {
-                Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) sprite;
+                Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) *sprite;
                 sf::Sprite& sfSprite = sfmlSprite.getSfSprite();
                 sf::Vector2f posVector = {position.x, position.y};
 

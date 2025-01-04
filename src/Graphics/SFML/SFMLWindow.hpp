@@ -5,6 +5,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <optional>
+#include <memory>
 
 #include "../IWindow.hpp"
 #include "SFMLSprite.hpp"
@@ -17,7 +18,7 @@ namespace Rengine {
                 SFMLWindow(const sf::VideoMode& videoMode, const std::string& windowTitle);
                 ~SFMLWindow(void) = default;
                 void render(void);
-                void addSpriteToRender(Rengine::Graphics::ASprite& sprite, const Rengine::Graphics::vector2D<float>& position);
+                void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position);
                 bool isOpen(void);
                 void close(void);
 

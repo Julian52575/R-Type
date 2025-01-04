@@ -5,6 +5,7 @@
 #include "Vector.hpp"
 
 #include <cstdint>
+#include <memory>
 
 namespace Rengine {
     namespace Graphics {
@@ -29,7 +30,7 @@ namespace Rengine {
         class IWindow {
             public:
                 virtual ~IWindow(void) = default;
-                virtual void addSpriteToRender(Rengine::Graphics::ASprite& sprite, const Rengine::Graphics::vector2D<float>& position) = 0;
+                virtual void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position) = 0;
                 virtual void render(void) = 0;
                 virtual bool isOpen(void) = 0;
                 virtual void close(void) = 0;
