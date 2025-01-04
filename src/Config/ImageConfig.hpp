@@ -1,7 +1,10 @@
 //
 #ifndef _SRC_CONFIG_IMAGECONFIG_HPP_
 #define _SRC_CONFIG_IMAGECONFIG_HPP_
+#include <rengine/Rengine.hpp>
+
 #include <nlohmann/json.hpp>
+#include <rengine/src/Graphics/SpriteSpecs.hpp>
 
 namespace RType {
 
@@ -39,26 +42,7 @@ namespace RType {
         private:
             std::string _concat;
         };
-        /**
-        * @addtogroup RType::Config
-        * @namespace Config
-        * @class ImageConfigData
-        * @brief A structure of the fields specified inside the image json.
-        */
-        struct ImageConfigData {
-            std::string texturePath;
-            std::pair<uint16_t, uint16_t> originOffset;
-            std::pair<float, float> textureScale;
 
-            struct EntityConfigSpriteAnimation {
-                std::pair<uint16_t, uint16_t> frameRectXY;
-                std::pair<uint16_t, uint16_t> frameRectWidthHeight;
-                uint16_t frameCount;
-                float frameDuration;
-                std::pair<uint16_t, uint16_t> frameDisplacement;
-            };
-            EntityConfigSpriteAnimation animation;
-        };
         /**
         * @addtogroup RType::Config
         * @namespace Config
@@ -82,14 +66,14 @@ namespace RType {
                 ~ImageConfig(void) = default;
                 /**
                 * @fn getConfig
-                * @return RType::Config::ImageConfigData A structure containing the image configuration.
+                * @return Rengine::Graphics::SpriteSpecs A structure containing the image configuration.
                 * @brief Return the configuration of the image.
                 */
-                const ImageConfigData& getConfig(void) const noexcept;
+                const Rengine::Graphics::SpriteSpecs& getConfig(void) const noexcept;
 
             private:
                 void parseImage(nlohmann::json& imageField);
-                ImageConfigData _data;
+                Rengine::Graphics::SpriteSpecs _data;
 
         };  // class ImageConfig
     }  // namespace Config

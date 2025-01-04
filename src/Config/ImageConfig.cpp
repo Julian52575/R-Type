@@ -29,7 +29,7 @@ namespace RType {
                 throw ImageConfigExceptionInvalidJsonFile(jsonPath, e.what());
             }
         }
-        const ImageConfigData& ImageConfig::getConfig(void) const noexcept
+        const Rengine::Graphics::SpriteSpecs& ImageConfig::getConfig(void) const noexcept
         {
             return this->_data;
         }
