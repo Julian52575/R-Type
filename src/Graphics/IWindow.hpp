@@ -2,7 +2,7 @@
 #ifndef _SRC_GRAPHICS_IWINDOW_HPP_
 #define _SRC_GRAPHICS_IWINDOW_HPP_
 #include "ASprite.hpp"
-#include "Vector2.hpp"
+#include "Vector.hpp"
 
 #include <cstdint>
 

@@ -1,7 +1,7 @@
 //
 #include "ASprite.hpp"
 #include "SpriteSpecs.hpp"
-#include "Vector2.hpp"
+#include "Vector.hpp"
 
 namespace Rengine {
     namespace Graphics {

@@ -16,7 +16,7 @@
 
 #include "IWindow.hpp"
 #include "ASprite.hpp"
-#include "Vector2.hpp"
+#include "Vector.hpp"
 #include "SpriteSpecs.hpp"
 
 namespace Rengine {

@@ -3,7 +3,7 @@
 #define _SRC_GRAPHICS_ASPRITE_HPP_
 
 #include "SpriteSpecs.hpp"
-#include "Vector2.hpp"
+#include "Vector.hpp"
 
 namespace Rengine {
     namespace Graphics {

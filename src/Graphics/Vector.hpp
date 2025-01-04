@@ -21,6 +21,18 @@ namespace Rengine {
             providedInteger y;
         };
 
+        template <class I>
+        bool operator==(const vector2D<I>& a, const vector2D<I>& b)
+        {
+            if (a.x != b.x) {
+                return false;
+            }
+            if (a.y != b.y) {
+                return false;
+            }
+            return true;
+        }
+
         /**
         * @addtogroup Rengine::Graphics
         * @namespace Graphics

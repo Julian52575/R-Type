@@ -3,7 +3,8 @@
 #define _SRC_GRAPHICS_SPRITESPECS_HPP_
 #include <cstdint>
 #include <string>
-#include "Vector2.hpp"
+
+#include "Vector.hpp"
 
 namespace Rengine {
     namespace Graphics {
