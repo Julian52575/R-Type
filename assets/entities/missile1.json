@@ -1,46 +1,31 @@
 {
     "entity": {
-        "sprite": {
-            "assetPath": "assets/images/red.png",
-            "origin": {
-                "x": 0,
-                "y": 0
-            },
-            "scale": {
-                "x": 10,
-                "y": 10
-            },
-            "animations": {
-                "frameRect": {
-                    "x": 0, "y": 0, "width": 25, "height": 25
-                },
-                "frameCount": 5,
-                "frameDuration": 0.08,
-                "frameDisplacement": {
-                    "x": 25, "y": 0
-                }
-            }
-        },
+        "sprite": "assets/images/red.json",
         "hitbox": {
             "size": {
-                "x": 25, "y": 25
+                "x": 13, "y": 14
             },
             "offset": {
-                "x": 0, "y": 0
+                "x": 15, "y": 16
             }
         },
         "stats": {
-            "hp": 100,
-            "attack": 25,
-            "defense": 10,
-            "maxSpeed": 25,
-            "minSpeed": 5,
-            "acceleration": 0.1
+            "hp": 17,
+            "attack": 18,
+            "defense": 19,
+            "minSpeed": 20,
+            "acceleration": 21.21,
+            "maxSpeed": 22,
+            "enemyColisionDamage": 23
         },
         "characteristics": {
             "enemyDamageOnColision": true,
             "damagedOnColision": true,
             "persistsOffScreen": false
+        },
+        "attacks": {
+            "shoot1": "Config/buff.json",
+            "shoot2": "Config/missiles.json"
         }
     }
 }

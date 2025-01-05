@@ -54,6 +54,7 @@ namespace RType {
         * @class EntityConfigStats
         * @brief A structure of the fields specified for the entity's stats.
         */
+#warning Separate X and Y speed
         struct EntityConfigStats {
             uint16_t hp;
             uint16_t attack;
@@ -84,26 +85,6 @@ namespace RType {
         struct EntityConfigHitbox {
             std::pair<uint16_t, uint16_t> size;
             std::pair<uint16_t, uint16_t> offsetFromSpriteOrigin;
-        };
-        /**
-        * @addtogroup RType::Config
-        * @namespace Config
-        * @class EntityConfigSprite
-        * @brief A structure of the fields specified for the entity's sprite.
-        */
-        struct EntityConfigSprite {
-            std::string texturePath;
-            std::pair<uint16_t, uint16_t> originOffset;
-            std::pair<float, float> textureScale;
-
-            struct EntityConfigSpriteAnimation {
-                std::pair<uint16_t, uint16_t> frameRectXY;
-                std::pair<uint16_t, uint16_t> frameRectWidthHeight;
-                uint16_t frameCount;
-                float frameDuration;
-                std::pair<uint16_t, uint16_t> frameDisplacement;
-            };
-            EntityConfigSpriteAnimation animation;
         };
         /**
         * @addtogroup RType::Config
