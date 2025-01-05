@@ -43,7 +43,7 @@ namespace Rengine {
         template <class providedInteger>
         struct vector3D {
             // Ensure the templated class is derived from int
-            static_assert(std::is_base_of<int, providedInteger>::value);
+            static_assert(std::is_integral<providedInteger>::value || std::is_floating_point_v<providedInteger>);
             providedInteger x;
             providedInteger y;
             providedInteger z;

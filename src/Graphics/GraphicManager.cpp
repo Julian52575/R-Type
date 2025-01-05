@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "GraphicManager.hpp"
+#include "AWindow.hpp"
 
 #ifdef RENGINEGRAPHICS_USELIB_SFML
     #include "SFML/SFMLWindow.hpp"
@@ -33,7 +34,7 @@ namespace Rengine {
         #endif
             throw GraphicManagerException("No graphical library set. Check your rengine build.");
         }
-        std::unique_ptr<IWindow>& GraphicManager::getWindow(void) noexcept
+        std::unique_ptr<AWindow>& GraphicManager::getWindow(void) noexcept
         {
             return this->_window;
         }

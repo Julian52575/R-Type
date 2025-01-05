@@ -3,6 +3,7 @@
 #define _SRC_GRAPHICS_IWINDOW_HPP_
 #include "ASprite.hpp"
 #include "Vector.hpp"
+#include "UserInputManager.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -27,13 +28,21 @@ namespace Rengine {
         * @class IWindow
         * @brief The window class, library independent.
         */
-        class IWindow {
+        class AWindow {
             public:
-                virtual ~IWindow(void) = default;
+                virtual ~AWindow(void) = default;
                 virtual void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position) = 0;
                 virtual void render(void) = 0;
                 virtual bool isOpen(void) = 0;
                 virtual void close(void) = 0;
+                Rengine::Graphics::UserInputManager& getInputManager(void) noexcept
+                {
+                    return this->_inputManager;
+                }
+                virtual void pollInput(void) = 0;
+
+            protected:
+                UserInputManager _inputManager;
         };  // class IWindow
     }  // namespace Graphics
 }  // namespace Rengine

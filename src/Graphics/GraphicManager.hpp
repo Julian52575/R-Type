@@ -14,7 +14,7 @@
     #include "./SDL/SDLWindow.hpp"
 #endif
 
-#include "IWindow.hpp"
+#include "AWindow.hpp"
 #include "ASprite.hpp"
 #include "Vector.hpp"
 #include "SpriteSpecs.hpp"
@@ -38,11 +38,11 @@ namespace Rengine {
             public:
                 GraphicManager(Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle);
                 ~GraphicManager(void) = default;
-                std::unique_ptr<IWindow>& getWindow(void) noexcept;
+                std::unique_ptr<AWindow>& getWindow(void) noexcept;
                 std::shared_ptr<ASprite> createSprite(const SpriteSpecs& spriteSpecs);
 
             private:
-                std::unique_ptr<IWindow> _window = nullptr;
+                std::unique_ptr<AWindow> _window = nullptr;
 
         };  // class GraphicManager
 
