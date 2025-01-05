@@ -3,6 +3,6 @@
 
 #include "src/ECS.hpp"
 
-#include "src/Graphics/GraphicManager.hpp"
+#include "src/Resolver/AResolver.hpp"
 
 #endif  // _RENGINE_HPP_

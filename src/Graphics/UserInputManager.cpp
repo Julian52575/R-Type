@@ -29,7 +29,7 @@ namespace Rengine {
             }
             this->_inputVector.push_back(input);
         }
-        void UserInputManager::reset(void)
+        void UserInputManager::clear(void)
         {
             this->_inputVector.clear();
         }

@@ -96,10 +96,10 @@ namespace Rengine {
                 const_iterator begin(void) const;
                 const_iterator end(void) const;
                 /**
-                * @fn reset
+                * @fn clear
                 * @brief Remove all the user input from the vector.
                 */
-                void reset(void);
+                void clear(void);
                 /**
                 * @fn size
                 * @return The number of input since the last reset.

@@ -29,12 +29,12 @@ namespace Rengine {
 
             // SDL
         #ifdef RENGINEGRAPHICS_USELIB_SDL
-            this->_window = std::make_unique<Rengine::Graphics::SDLWindow>();
+            this->_window = std::make_shared<Rengine::Graphics::SDLWindow>();
             return;
         #endif
             throw GraphicManagerException("No graphical library set. Check your rengine build.");
         }
-        std::unique_ptr<AWindow>& GraphicManager::getWindow(void) noexcept
+        std::shared_ptr<AWindow>& GraphicManager::getWindow(void) noexcept
         {
             return this->_window;
         }
