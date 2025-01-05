@@ -28,6 +28,7 @@ namespace Rengine {
             UserInputTypeJoystickLeftPressed,
             UserInputTypeJoystickRightMove,
             UserInputTypeJoystickRightPressed,
+            UserInputTypeJoystickButton,
             UserInputTypeWindowClosed
         };
         std::ostream& operator<<(std::ostream& os, const UserInputType& inputType);
@@ -57,6 +58,7 @@ namespace Rengine {
             * @brief the position of the joystick from -100 to +100
             */
             Rengine::Graphics::vector2D<float> joystickPosition;
+            unsigned int joystickButton;
         };
         /**
         * @addtogroup Rengine::Graphics

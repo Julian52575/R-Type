@@ -113,7 +113,6 @@ namespace Rengine {
                         newInput.data.mousePosition.x = event.mouseButton.x;
                         newInput.data.mousePosition.y = event.mouseButton.y;
                         break;
-
                     // Joystick connection
                     case sf::Event::JoystickConnected:
                         newInput.type = UserInputTypeJoystickConnected;
@@ -121,10 +120,14 @@ namespace Rengine {
                     case sf::Event::JoystickDisconnected:
                         newInput.type = UserInputTypeJoystickDisconnected;
                         break;
-
                     // Joystick movement
                     case sf::Event::JoystickMoved:
                         newInput = this->processJoystickMove(event);
+                        break;
+                    // Joystick button
+                    case sf::Event::JoystickButtonPressed:
+                        newInput.type = UserInputTypeJoystickButton;
+                        newInput.data.joystickButton = event.joystickButton.button;
                         break;
 
                     default:

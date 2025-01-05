@@ -80,6 +80,9 @@ namespace Rengine {
                 case UserInputTypeWindowClosed:
                     str = "UserInputTypeWindowClosed";
                     break;
+                case UserInputTypeJoystickButton:
+                    str = "UserInputTypeJoystickButton";
+                    break;
                 default:
                     str = "Unknow";
                     break;
