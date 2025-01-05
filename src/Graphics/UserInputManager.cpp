@@ -37,5 +37,62 @@ namespace Rengine {
         {
             return this->_inputVector.size();
         }
+
+
+        std::ostream& operator<<(std::ostream& os, const UserInputType& inputType)
+        {
+            std::string str;
+
+            switch (inputType) {
+                case UserInputTypeNA:
+                    str = "UserInputTypeNA";
+                    break;
+                case UserInputTypeKeyboardChar:
+                    str = "UserInputTypeKeyboardChar";
+                    break;
+                case UserInputTypeKeyboardSpecial:
+                    str = "UserInputTypeKeyboardSpecial";
+                    break;
+                case UserInputTypeMouseLeftClick:
+                    str = "UserInputTypeMouseLeftClick";
+                    break;
+                case UserInputTypeMouseRightClick:
+                    str = "UserInputTypeMouseRightClick";
+                    break;
+                case UserInputTypeJoystickConnected:
+                    str = "UserInputTypeJoystickConnected";
+                    break;
+                case UserInputTypeJoystickDisconnected:
+                    str = "UserInputTypeJoystickDisconnected";
+                    break;
+                case UserInputTypeJoystickLeftMove:
+                    str = "UserInputTypeJoystickLeftMove";
+                    break;
+                case UserInputTypeJoystickLeftPressed:
+                    str = "UserInputTypeJoystickLeftPressed";
+                    break;
+                case UserInputTypeJoystickRightMove:
+                    str = "UserInputTypeJoystickRightMove";
+                    break;
+                case UserInputTypeJoystickRightPressed:
+                    str = "UserInputTypeJoystickRightPressed";
+                    break;
+                case UserInputTypeWindowClosed:
+                    str = "UserInputTypeWindowClosed";
+                    break;
+                default:
+                    str = "Unknow";
+                    break;
+            }
+            os << "UserInputType::" << str << std::endl;
+            return os;
+        }
+
+        std::ostream& operator<<(std::ostream& os, const UserInput& input)
+        {
+            os << input.type;
+            return os;
+        }
+
     }  // namespace Graphic
 }  // namespace Rengine

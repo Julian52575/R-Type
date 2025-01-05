@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include "Vector.hpp"
 
@@ -29,12 +30,17 @@ namespace Rengine {
             UserInputTypeJoystickRightPressed,
             UserInputTypeWindowClosed
         };
+        std::ostream& operator<<(std::ostream& os, const UserInputType& inputType);
 
         enum InputTypeKeyboardSpecial {
             UserInputTypeKeyboardSpecialNA,
             UserInputTypeKeyboardSpecialESCAPE,
             UserInputTypeKeyboardSpecialTAB,
-            UserInputTypeKeyboardSpecialSHIFT
+            UserInputTypeKeyboardSpecialSHIFT,
+            UserInputTypeKeyboardSpecialArrowUP,
+            UserInputTypeKeyboardSpecialArrowDOWN,
+            UserInputTypeKeyboardSpecialArrowLEFT,
+            UserInputTypeKeyboardSpecialArrowRIGHT
         };
 
         /**
@@ -62,6 +68,8 @@ namespace Rengine {
             UserInputType type = UserInputTypeNA;
             UserInputData data = {0};
         };
+        std::ostream& operator<<(std::ostream& os, const UserInput& input);
+
         /**
         * @addtogroup Rengine::Graphics
         * @namespace Graphics
