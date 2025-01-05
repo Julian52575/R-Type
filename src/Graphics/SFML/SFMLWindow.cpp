@@ -34,6 +34,16 @@ namespace Rengine {
                 {sf::Keyboard::W, {UserInputTypeKeyboardChar, 'W'}}, {sf::Keyboard::X, {UserInputTypeKeyboardChar, 'X'}},
                 {sf::Keyboard::Y, {UserInputTypeKeyboardChar, 'Y'}}, {sf::Keyboard::Z, {UserInputTypeKeyboardChar, 'Z'}},
                 {sf::Keyboard::Space, {UserInputTypeKeyboardChar, ' '}},
+                {sf::Keyboard::Num0, {UserInputTypeKeyboardChar, '0'}}, {sf::Keyboard::Numpad0, {UserInputTypeKeyboardChar, '0'}},
+                {sf::Keyboard::Num1, {UserInputTypeKeyboardChar, '1'}}, {sf::Keyboard::Numpad1, {UserInputTypeKeyboardChar, '1'}},
+                {sf::Keyboard::Num2, {UserInputTypeKeyboardChar, '2'}}, {sf::Keyboard::Numpad2, {UserInputTypeKeyboardChar, '2'}},
+                {sf::Keyboard::Num3, {UserInputTypeKeyboardChar, '3'}}, {sf::Keyboard::Numpad3, {UserInputTypeKeyboardChar, '3'}},
+                {sf::Keyboard::Num4, {UserInputTypeKeyboardChar, '4'}}, {sf::Keyboard::Numpad4, {UserInputTypeKeyboardChar, '4'}},
+                {sf::Keyboard::Num5, {UserInputTypeKeyboardChar, '5'}}, {sf::Keyboard::Numpad5, {UserInputTypeKeyboardChar, '5'}},
+                {sf::Keyboard::Num6, {UserInputTypeKeyboardChar, '6'}}, {sf::Keyboard::Numpad6, {UserInputTypeKeyboardChar, '6'}},
+                {sf::Keyboard::Num7, {UserInputTypeKeyboardChar, '7'}}, {sf::Keyboard::Numpad7, {UserInputTypeKeyboardChar, '7'}},
+                {sf::Keyboard::Num8, {UserInputTypeKeyboardChar, '8'}}, {sf::Keyboard::Numpad8, {UserInputTypeKeyboardChar, '8'}},
+                {sf::Keyboard::Num9, {UserInputTypeKeyboardChar, '9'}}, {sf::Keyboard::Numpad9, {UserInputTypeKeyboardChar, '9'}},
                 // Special
                 {sf::Keyboard::Escape, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialESCAPE}},
                 {sf::Keyboard::Tab, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialTAB}},
@@ -88,6 +98,16 @@ namespace Rengine {
                         if (newInput.type == UserInputType::UserInputTypeNA) {
                             continue;
                         }
+                        break;
+                    // Mouse click
+                    case sf::Event::MouseButtonPressed:
+                        if (event.mouseButton.button == sf::Mouse::Button::Right) {
+                            newInput.type = UserInputTypeMouseRightClick;
+                        } else {
+                            newInput.type = UserInputTypeMouseRightClick;
+                        }
+                        newInput.data.mousePosition.x = event.mouseButton.x;
+                        newInput.data.mousePosition.y = event.mouseButton.y;
                         break;
 
                     // Joystick connection
