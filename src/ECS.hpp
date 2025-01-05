@@ -220,7 +220,7 @@ namespace Rengine {
                             continue;
                         }
                         try {
-                            auto con = eit->getComponent<Component>();
+                            Component& con = eit->getComponent<Component>();
                             fun(*this, con, *eit);
                         }
                         // Ignore entities that do not have this Component
