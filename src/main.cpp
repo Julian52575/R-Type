@@ -92,7 +92,7 @@ inline static void setUpPlayer(Rengine::Entity& player, Rengine::Graphics::Graph
 
 int main(void)
 {
-    Rengine::Graphics::GraphicManager graphicManager({500, 500}, "R-Type");
+    Rengine::Graphics::GraphicManager graphicManager({1920, 1080}, "R-Type");
     std::shared_ptr<Rengine::Graphics::AWindow>& window = graphicManager.getWindow();
     Rengine::ECS ecs;
     Rengine::Entity& player = ecs.addEntity();
