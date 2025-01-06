@@ -16,6 +16,13 @@
 namespace Rengine {
     namespace Graphics {
 
+        /**
+        * @addtogroup Rengine::Graphics
+        * @namespace Graphics
+        * @class SFMLWindow
+        * @brief Implementation of AWindow using the SFML library.
+        * See AWindow.
+        */
         class SFMLWindow : public AWindow {
             public:
                 SFMLWindow(const sf::VideoMode& videoMode, const std::string& windowTitle);

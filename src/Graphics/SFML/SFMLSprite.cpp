@@ -19,10 +19,7 @@ namespace Rengine {
                     std::string msg = e.what();
                     throw SpriteException(msg);
                 }
-                this->setSpriteSpecs(spriteSpecs);
-            }
-            void SFMLSprite::setSpriteSpecs(const Rengine::Graphics::SpriteSpecs& spriteSpecs)
-            {
+                // setSpriteSpecs
                 this->_spriteSpecs = spriteSpecs;
                 sf::IntRect rect;
 

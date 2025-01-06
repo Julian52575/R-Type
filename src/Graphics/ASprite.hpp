@@ -29,12 +29,33 @@ namespace Rengine {
         */
         class ASprite {
             public:
-                ASprite(const Rengine::Graphics::SpriteSpecs& spriteSpecs, uint64_t _creationTimeMicroseconds);
+                /**
+                * @fn ASprite
+                * @param spriteSpecs The specs of the sprite.
+                * @param creationTimeMicroseconds The time of creation in microseconds.
+                * @brief Create the base class for sprites.
+                */
+                ASprite(const Rengine::Graphics::SpriteSpecs& spriteSpecs, uint64_t creationTimeMicroseconds);
                 virtual ~ASprite(void) = default;
+                /**
+                * @fn getSpriteSpecs
+                * @return SpriteSpecs A const reference to the specs used to create this sprite.
+                * @brief Return the specs of the sprite.
+                */
                 const Rengine::Graphics::SpriteSpecs& getSpriteSpecs(void) const noexcept;
+                /**
+                * @fn advanceFrame
+                * @param frameCount The number of frame to advance the sprite's animation.
+                * @brief Advance the sprite's animation by the requested amount. 1 by default
+                * Note: 0 does nothing
+                */
                 virtual void advanceFrame(int16_t frameCount = 1) = 0;
+                /**
+                * @fn advanceFrameFromTime
+                * @param currentTimeMicroseconds The current time in microseconds.
+                * @brief Advance the sprite's animation depending on the current time.
+                */
                 virtual void advanceFrameFromTime(uint64_t currentTimeMicroseconds) = 0;
-                virtual void setSpriteSpecs(const Rengine::Graphics::SpriteSpecs& spriteSpecs) = 0;
 
             protected:
                 Rengine::Graphics::SpriteSpecs _spriteSpecs;

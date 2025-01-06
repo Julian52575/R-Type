@@ -10,7 +10,13 @@
 
 namespace Rengine {
     namespace Graphics {
-
+        /**
+        * @addtogroup Rengine::Graphics
+        * @namespace Graphics
+        * @class SFMLSprite
+        * @brief Implementation of ASprite using the SFML library.
+        * See ASprite.
+        */
         class SFMLSprite : public ASprite {
             public:
                 SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTimeMicroseconds);
@@ -19,7 +25,6 @@ namespace Rengine {
                 void advanceFrameFromTime(uint64_t currentTimeMicroseconds);
                 sf::Sprite& getSfSprite(void) noexcept;
                 const sf::Sprite& getSfSprite(void) const noexcept;
-                void setSpriteSpecs(const Rengine::Graphics::SpriteSpecs& spriteSpecs);
 
             private:
                 void applyCurrentFrameTexture(void);

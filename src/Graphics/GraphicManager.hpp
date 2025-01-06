@@ -33,12 +33,34 @@ namespace Rengine {
             private:
                 std::string _msg;
         };
-
+        /**
+        * @addtogroup Rengine::Graphics
+        * @namespace Graphics
+        * @class GraphicManager
+        * @brief The entrypoint class for managing graphics in the rengine.
+        */
         class GraphicManager {
             public:
+                /**
+                * @fn GraphicManager
+                * @param windowSize a Vector2D<uint16_t> containing the size of the window.
+                * @param windowTitle a std::string contianing the title of the window.
+                * @brief Create the graphic manager and the window.
+                */
                 GraphicManager(const Rengine::Graphics::vector2D<uint16_t>& windowSize, const std::string& windowTitle);
                 ~GraphicManager(void) = default;
+                /**
+                * @fn getWindow
+                * @brief Return a reference to the window.
+                */
                 std::shared_ptr<AWindow>& getWindow(void) noexcept;
+                /**
+                * @fn createSprite
+                * @param spriteSpecs The specs of the new sprite.
+                * @brief Create a new sprite following the spriteSpecs,
+                * this sprite is sure to be usable with the window returned by this->getWindow().
+                * Note: this sprite is not stored in the GraphicManager.
+                */
                 std::shared_ptr<ASprite> createSprite(const SpriteSpecs& spriteSpecs);
 
             private:
