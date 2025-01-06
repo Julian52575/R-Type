@@ -18,12 +18,12 @@
 namespace Rengine {
     namespace Graphics {
 
-        GraphicManager::GraphicManager(const Rengine::Graphics::vector2D<uint16_t>& windowSize, const std::string& windowTitle)
+        GraphicManager::GraphicManager(const WindowSpecs& windowSpecs)
         {
             // SFML
         #ifdef RENGINEGRAPHICS_USELIB_SFML
             this->_window =
-                std::make_unique<Rengine::Graphics::SFMLWindow>(sf::VideoMode({windowSize.x, windowSize.y}), windowTitle);
+                std::make_unique<Rengine::Graphics::SFMLWindow>(windowSpecs);
             return;
         #endif
 

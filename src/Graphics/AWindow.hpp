@@ -4,6 +4,7 @@
 #include "ASprite.hpp"
 #include "Vector.hpp"
 #include "UserInputManager.hpp"
+#include "WindowSpecs.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -30,6 +31,13 @@ namespace Rengine {
         */
         class AWindow {
             public:
+                /**
+                * @fn AWindow
+                * @param windowSpecs The specs of the to-be-created window
+                * @param maxInputPerFrame The max number of input to be processed per frame
+                * @brief Create the bass class of windows.
+                */
+                AWindow(const WindowSpecs& windowSpecs, uint16_t maxInputPerFrame = 100) : _windowSpecs(windowSpecs), _inputManager(maxInputPerFrame) {}
                 virtual ~AWindow(void) = default;
                 /**
                 * @fn addSpriteToRender
@@ -65,6 +73,10 @@ namespace Rengine {
                 {
                     return this->_inputManager;
                 }
+                const Rengine::Graphics::WindowSpecs& getSpecs(void) const noexcept
+                {
+                    return this->_windowSpecs;
+                }
                 /**
                 * @fn pollInput
                 * @brief Register the user's input into the input manager.
@@ -84,6 +96,7 @@ namespace Rengine {
                 virtual float getElapsedTimeSeconds(void) const noexcept = 0;
 
             protected:
+                WindowSpecs _windowSpecs;
                 UserInputManager _inputManager;
         };  // class IWindow
     }  // namespace Graphics

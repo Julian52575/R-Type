@@ -18,6 +18,7 @@
 #include "ASprite.hpp"
 #include "Vector.hpp"
 #include "SpriteSpecs.hpp"
+#include "WindowSpecs.hpp"
 
 namespace Rengine {
     namespace Graphics {
@@ -43,11 +44,10 @@ namespace Rengine {
             public:
                 /**
                 * @fn GraphicManager
-                * @param windowSize a Vector2D<uint16_t> containing the size of the window.
-                * @param windowTitle a std::string contianing the title of the window.
+                * @param windowSpecs The specs of the to-be-created window
                 * @brief Create the graphic manager and the window.
                 */
-                GraphicManager(const Rengine::Graphics::vector2D<uint16_t>& windowSize, const std::string& windowTitle);
+                GraphicManager(const WindowSpecs& windowSpecs);
                 ~GraphicManager(void) = default;
                 /**
                 * @fn getWindow

@@ -1,4 +1,6 @@
 //
+#include <SFML/Config.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window.hpp>
@@ -6,6 +8,7 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/WindowStyle.hpp>
 #include <exception>
 #include <memory>
 #include <iostream>
@@ -16,9 +19,9 @@
 namespace Rengine {
     namespace Graphics {
 
-        SFMLWindow::SFMLWindow(const sf::VideoMode& videoMode, const std::string& windowTitle) : _renderWindow(videoMode, windowTitle)
+
+        void SFMLWindow::initSfKeyboardBindVector(void)
         {
-            this->_clock.restart();
             this->_sfKeyboardToUserInputBindVector = {
                 // Alphabet
                 {sf::Keyboard::A, {UserInputTypeKeyboardChar, 'A'}}, {sf::Keyboard::B, {UserInputTypeKeyboardChar, 'B'}},
@@ -54,6 +57,53 @@ namespace Rengine {
                 {sf::Keyboard::Left, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowLEFT}},
                 {sf::Keyboard::Right, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowRIGHT}},
             };  // this->_sfKeyboardToUserInputBindVector
+        }
+
+        void SFMLWindow::applyWindowSpecs(void)
+        {
+            // Options
+            unsigned int style = sf::Style::None;
+
+            if (this->_windowSpecs.options.isBorderless == true) {
+                // skip all other styles
+                goto styleApply;
+            }
+            style |= sf::Style::Close;
+            if (this->_windowSpecs.options.isFullscreen == true) {
+                style |= sf::Style::Fullscreen;
+            }
+            if (this->_windowSpecs.options.isResizable == true) {
+                style |= sf::Style::Resize;
+            }
+styleApply:
+            if (style == sf::Style::Fullscreen) {
+                this->_renderWindow.create(sf::VideoMode::getDesktopMode(), this->_windowSpecs.title, style);
+            } else {
+                this->_renderWindow.create({this->_windowSpecs.resolution.x, this->_windowSpecs.resolution.y}, this->_windowSpecs.title, style);
+            }
+            // Background color
+            this->_backgroundColor.r = this->_windowSpecs.backgroundColor.x;
+            this->_backgroundColor.g = this->_windowSpecs.backgroundColor.y;
+            this->_backgroundColor.b = this->_windowSpecs.backgroundColor.z;
+            // framerateLimit
+            this->_renderWindow.setFramerateLimit(this->_windowSpecs.framerateLimit);
+            // Icon
+            try {
+                sf::Image icon;
+
+                icon.loadFromFile(this->_windowSpecs.iconImagePath);
+                this->_renderWindow.setIcon(this->_windowSpecs.iconSize.x, this->_windowSpecs.iconSize.y, icon.getPixelsPtr());
+            } catch (std::exception& e) {;}
+            // Options (re)
+            this->_renderWindow.setMouseCursorVisible(this->_windowSpecs.options.isCursorVisible);
+            this->_renderWindow.setVerticalSyncEnabled(this->_windowSpecs.options.enableVsync);
+        }
+
+        SFMLWindow::SFMLWindow(const WindowSpecs& windowSpecs) : AWindow(windowSpecs)
+        {
+            this->applyWindowSpecs();
+            this->initSfKeyboardBindVector();
+            this->_clock.restart();
         }
         void SFMLWindow::render(void)
         {
@@ -201,6 +251,7 @@ namespace Rengine {
         {
             return this->_clock.getElapsedTime().asSeconds();
         }
+
 
     }  // namespace Rengine
 }  // namespace Graphics

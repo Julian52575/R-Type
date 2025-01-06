@@ -2,6 +2,7 @@
 #ifndef _SRC_GRAPHICS_INPUTMANAGER_HPP_
 #define _SRC_GRAPHICS_INPUTMANAGER_HPP_
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 #include <iostream>
@@ -84,7 +85,9 @@ namespace Rengine {
                 using size_type = typename container_t :: size_type;
                 using iterator = typename container_t :: iterator;
                 using const_iterator = typename container_t :: const_iterator;
-                UserInputManager(std::size_t maxInputPerFrame = 100);
+
+            public:
+                UserInputManager(uint16_t maxInputPerFrame = 100);
                 ~UserInputManager(void) = default;
 
             public:
@@ -119,7 +122,7 @@ namespace Rengine {
 
             private:
                 container_t _inputVector;
-                std::size_t _maxInputPerFrame;
+                uint16_t _maxInputPerFrame;
         };
 
 

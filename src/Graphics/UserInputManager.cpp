@@ -8,7 +8,7 @@
 namespace Rengine {
     namespace Graphics {
 
-        UserInputManager::UserInputManager(std::size_t maxInputPerFrame)
+        UserInputManager::UserInputManager(uint16_t maxInputPerFrame)
         {
             this->_maxInputPerFrame = maxInputPerFrame;
             this->_inputVector.reserve(maxInputPerFrame);

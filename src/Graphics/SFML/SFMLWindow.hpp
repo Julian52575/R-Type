@@ -25,7 +25,7 @@ namespace Rengine {
         */
         class SFMLWindow : public AWindow {
             public:
-                SFMLWindow(const sf::VideoMode& videoMode, const std::string& windowTitle);
+                SFMLWindow(const WindowSpecs& windowSpecs);
                 ~SFMLWindow(void) = default;
                 void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
                     const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true);
@@ -37,7 +37,10 @@ namespace Rengine {
                 float getElapsedTimeSeconds(void) const noexcept;
 
             private:
+                void initSfKeyboardBindVector(void);
+                void applyWindowSpecs(void);
                 sf::RenderWindow _renderWindow;
+                sf::Color _backgroundColor;
                 sf::Clock _clock;
                 std::vector<std::pair<sf::Keyboard::Key, UserInput>> _sfKeyboardToUserInputBindVector;
                 /**
