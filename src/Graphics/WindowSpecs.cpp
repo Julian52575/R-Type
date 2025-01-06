@@ -76,9 +76,14 @@ namespace Rengine {
                 this->backgroundColor.y = j["backgroundColor"]["g"];
                 this->backgroundColor.z = j["backgroundColor"]["b"];
             } catch (std::exception& e) {;}
-            // iconPath
+            // iconImagePath
             try {
-                this->iconPath = j["iconPath"];
+                this->iconImagePath = j["icon"]["imagePath"];
+            } catch (std::exception& e) {;}
+            // iconSize
+            try {
+                this->iconSize.x = j["icon"]["width"];
+                this->iconSize.y = j["icon"]["height"];
             } catch (std::exception& e) {;}
             // options
             this->parseJsonOptions(j["options"]);

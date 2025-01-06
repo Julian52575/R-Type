@@ -10,7 +10,11 @@
         "g": 2,
         "b": 3
     },
-    "iconPath": "assets/icon.png",
+    "icon": {
+        "imagePath": "assets/icon.png",
+        "width": 10,
+        "height": 11
+    },
     "options": {
         "isFullscreen": false,
         "isResizable": true,

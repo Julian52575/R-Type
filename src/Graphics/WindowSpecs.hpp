@@ -57,7 +57,12 @@ namespace Rengine {
             /**
             * @brief The path to the window's icon.
             */
-            std::string iconPath;
+            std::string iconImagePath;
+            /**
+            * @brief The size of the icon
+            * Default: 0x, 0y
+            */
+            Rengine::Graphics::vector2D<uint8_t> iconSize = {0, 0};
 
             /**
             * @addtogroup Rengine::Graphics

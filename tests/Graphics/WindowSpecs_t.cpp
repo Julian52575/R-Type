@@ -3,8 +3,7 @@
 
 #include "../../src/Graphics/WindowSpecs.hpp"
 
-
-/* window.json be like:
+/* window.json =
 {
     "title": "window",
     "resolution": {
@@ -17,7 +16,11 @@
         "g": 2,
         "b": 3
     },
-    "iconPath": "assets/icon.png",
+    "icon": {
+        "imagePath": "assets/icon.png",
+        "width": 10,
+        "height": 11
+    },
     "options": {
         "isFullscreen": false,
         "isResizable": true,
@@ -25,7 +28,7 @@
         "enableVsync": true,
         "isCursorVisible": true
     }
-} */
+}*/
 
 TEST(WindowSpecs, buildFromJson)
 {
@@ -39,7 +42,9 @@ TEST(WindowSpecs, buildFromJson)
     EXPECT_EQ(specs.backgroundColor.x, 1);
     EXPECT_EQ(specs.backgroundColor.y, 2);
     EXPECT_EQ(specs.backgroundColor.z, 3);
-    EXPECT_EQ(specs.iconPath, "assets/icon.png");
+    EXPECT_EQ(specs.iconImagePath, "assets/icon.png");
+    EXPECT_EQ(specs.iconSize.x, 10);
+    EXPECT_EQ(specs.iconSize.y, 11);
     // options
     EXPECT_EQ(specs.options.isFullscreen, false);
     EXPECT_EQ(specs.options.isResizable, true);
