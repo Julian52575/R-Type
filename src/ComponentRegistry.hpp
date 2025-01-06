@@ -5,8 +5,8 @@
 //
 //
 
-#ifndef SRC_ComponentRegistry_HPP_
-#define SRC_ComponentRegistry_HPP_
+#ifndef SRC_COMPONENTREGISTRY_HPP_
+#define SRC_COMPONENTREGISTRY_HPP_
 #include <exception>
 #include <stdexcept>
 #include <type_traits>
@@ -125,4 +125,4 @@ namespace Rengine {
 
 }  // namespace Rengine
 
-#endif  // SRC_ComponentRegistry_HPP_
+#endif  // SRC_COMPONENTREGISTRY_HPP_

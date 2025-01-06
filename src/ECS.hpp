@@ -3,14 +3,16 @@
 
 #ifndef SRC_ECS_HPP_
 #define SRC_ECS_HPP_
-#include "ComponentRegistry.hpp"
-#include "Entity.hpp"
-#include "SparseArray.hpp"
-#include "any"
+
 #include <cstddef>
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <unordered_map>
+
+#include "ComponentRegistry.hpp"
+#include "Entity.hpp"
+#include "SparseArray.hpp"
 
 namespace Rengine {
 
@@ -52,7 +54,7 @@ namespace Rengine {
             * @param entityLimit The default amount of entity usable.
             * @brief Create a new instance of ECS.
             */
-            ECS(size_type entityLimit) : _sparseArrayDefaultSize(entityLimit)
+            explicit ECS(size_type entityLimit) : _sparseArrayDefaultSize(entityLimit)
             {
                 this->_currentEntities.addSize(this->_sparseArrayDefaultSize);
             };
@@ -241,7 +243,6 @@ namespace Rengine {
             SparseArray<Entity> _currentEntities;
             //                      Type    - std::function<void(const ECS&, Component&, Entity&)>
             std::unordered_map<std::type_index, std::any> _functionArray;
-
     };  // class ECS
 }  // namespace Rengine
 #endif  // SRC_ECS_HPP_
