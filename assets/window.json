@@ -1,0 +1,25 @@
+{
+    "title": "R-Type",
+    "resolution": {
+        "width": 1920,
+        "height": 1080
+    },
+    "framerateLimit": 60,
+    "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+    },
+    "icon": {
+        "imagePath": "assets/images/red.png",
+        "width": 10,
+        "height": 10
+    },
+    "options": {
+        "isFullscreen": true,
+        "isResizable": true,
+        "isBorderless": false,
+        "enableVsync": true,
+        "isCursorVisible": true
+    }
+}

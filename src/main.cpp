@@ -2,6 +2,7 @@
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
+#include <rengine/src/Graphics/WindowSpecs.hpp>
 #include <vector>
 
 #include "Components/Position.hpp"
@@ -66,7 +67,6 @@ static void processSprite(const Rengine::ECS& ecs, RType::Components::Sprite& sp
     auto pos = entity.getComponent<RType::Components::Position>();
 
     spriteComponent.renderSprite(pos.getVector2D());
-    spriteComponent.advanceFrame(1);
 }
 
 /* Set Up */
@@ -92,7 +92,8 @@ inline static void setUpPlayer(Rengine::Entity& player, Rengine::Graphics::Graph
 
 int main(void)
 {
-    Rengine::Graphics::GraphicManager graphicManager({1920, 1080}, "R-Type");
+    Rengine::Graphics::WindowSpecs specs; specs.buildFromJson("assets/window.json");
+    Rengine::Graphics::GraphicManager graphicManager(specs);
     std::shared_ptr<Rengine::Graphics::AWindow>& window = graphicManager.getWindow();
     Rengine::ECS ecs;
     Rengine::Entity& player = ecs.addEntity();
