@@ -1,9 +1,10 @@
 # Declare project, source file
 cmake_minimum_required(VERSION 3.20)
 project(R-Engine)
-file(GLOB_RECURSE SRC_FILES src/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp)
 list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp) #removing main
 message(STATUS "Removed ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp from compilation")
+message(STATUS "Compiling ${SRC_FILES}...")
 
 set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,6 +13,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set Compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCMAKE_COMPILATION_")
+# Use SFML
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRENGINEGRAPHICS_USELIB_SFML")
 
 # Conan integration ?
 # list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
