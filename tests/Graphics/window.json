@@ -1,0 +1,25 @@
+{
+    "title": "window",
+    "resolution": {
+        "width": 800,
+        "height": 600
+    },
+    "framerateLimit": 60,
+    "backgroundColor": {
+        "r": 1,
+        "g": 2,
+        "b": 3
+    },
+    "icon": {
+        "imagePath": "assets/icon.png",
+        "width": 10,
+        "height": 11
+    },
+    "options": {
+        "isFullscreen": false,
+        "isResizable": true,
+        "isBorderless": false,
+        "enableVsync": true,
+        "isCursorVisible": true
+    }
+}
