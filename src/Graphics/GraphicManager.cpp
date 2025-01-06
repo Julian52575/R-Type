@@ -18,7 +18,7 @@
 namespace Rengine {
     namespace Graphics {
 
-        GraphicManager::GraphicManager(Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle)
+        GraphicManager::GraphicManager(const Rengine::Graphics::vector2D<uint16_t>& windowSize, const std::string& windowTitle)
         {
             // SFML
         #ifdef RENGINEGRAPHICS_USELIB_SFML
@@ -42,7 +42,7 @@ namespace Rengine {
         {
             // SFML
         #ifdef RENGINEGRAPHICS_USELIB_SFML
-            return std::make_shared<Rengine::Graphics::SFMLSprite>(spriteSpecs);
+            return std::make_shared<Rengine::Graphics::SFMLSprite>(spriteSpecs, this->_window->getElapsedTimeMicroseconds());
         #endif
 
             // SDL

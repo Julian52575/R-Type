@@ -13,14 +13,16 @@ namespace Rengine {
 
         class SFMLSprite : public ASprite {
             public:
-                SFMLSprite(const SpriteSpecs& spriteSpecs);
+                SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTimeMicroseconds);
                 ~SFMLSprite(void) = default;
-                void advanceFrame(const int16_t frameCount);
+                void advanceFrame(int16_t frameCount = 1);
+                void advanceFrameFromTime(uint64_t currentTimeMicroseconds);
                 sf::Sprite& getSfSprite(void) noexcept;
                 const sf::Sprite& getSfSprite(void) const noexcept;
                 void setSpriteSpecs(const Rengine::Graphics::SpriteSpecs& spriteSpecs);
 
             private:
+                void applyCurrentFrameTexture(void);
                 sf::Sprite _sprite;
                 sf::Texture _texture;
         };  // class SFMLSprite

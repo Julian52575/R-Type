@@ -31,7 +31,8 @@ namespace Rengine {
         class AWindow {
             public:
                 virtual ~AWindow(void) = default;
-                virtual void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position) = 0;
+                virtual void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
+                    const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true) = 0;
                 virtual void render(void) = 0;
                 virtual bool isOpen(void) = 0;
                 virtual void close(void) = 0;
@@ -40,6 +41,8 @@ namespace Rengine {
                     return this->_inputManager;
                 }
                 virtual void pollInput(void) = 0;
+                virtual uint64_t getElapsedTimeMicroseconds(void) const noexcept = 0;
+                virtual float getElapsedTimeSeconds(void) const noexcept = 0;
 
             protected:
                 UserInputManager _inputManager;

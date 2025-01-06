@@ -4,6 +4,7 @@
 
 #include "SpriteSpecs.hpp"
 #include "Vector.hpp"
+#include <cstdint>
 
 namespace Rengine {
     namespace Graphics {
@@ -28,15 +29,17 @@ namespace Rengine {
         */
         class ASprite {
             public:
-                ASprite(const Rengine::Graphics::SpriteSpecs& spriteSpecs);
+                ASprite(const Rengine::Graphics::SpriteSpecs& spriteSpecs, uint64_t _creationTimeMicroseconds);
                 virtual ~ASprite(void) = default;
                 const Rengine::Graphics::SpriteSpecs& getSpriteSpecs(void) const noexcept;
-                virtual void advanceFrame(const int16_t frameCount) = 0;
+                virtual void advanceFrame(int16_t frameCount = 1) = 0;
+                virtual void advanceFrameFromTime(uint64_t currentTimeMicroseconds) = 0;
                 virtual void setSpriteSpecs(const Rengine::Graphics::SpriteSpecs& spriteSpecs) = 0;
 
             protected:
                 Rengine::Graphics::SpriteSpecs _spriteSpecs;
-                uint16_t _currentFrame = 0;
+                uint8_t _currentFrame = 0;
+                uint64_t _creationTimeMicroseconds = 0;
         };  // class IWindow
     }  // namespace Graphics
 }  // namespace Rengine

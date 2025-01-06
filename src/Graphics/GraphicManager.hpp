@@ -36,7 +36,7 @@ namespace Rengine {
 
         class GraphicManager {
             public:
-                GraphicManager(Rengine::Graphics::vector2D<uint16_t> windowSize, const std::string& windowTitle);
+                GraphicManager(const Rengine::Graphics::vector2D<uint16_t>& windowSize, const std::string& windowTitle);
                 ~GraphicManager(void) = default;
                 std::shared_ptr<AWindow>& getWindow(void) noexcept;
                 std::shared_ptr<ASprite> createSprite(const SpriteSpecs& spriteSpecs);

@@ -18,7 +18,7 @@ namespace Rengine {
 
         SFMLWindow::SFMLWindow(const sf::VideoMode& videoMode, const std::string& windowTitle) : _renderWindow(videoMode, windowTitle)
         {
-            UserInput a;
+            this->_clock.restart();
             this->_sfKeyboardToUserInputBindVector = {
                 // Alphabet
                 {sf::Keyboard::A, {UserInputTypeKeyboardChar, 'A'}}, {sf::Keyboard::B, {UserInputTypeKeyboardChar, 'B'}},
@@ -53,16 +53,20 @@ namespace Rengine {
                 {sf::Keyboard::Down, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowDOWN}},
                 {sf::Keyboard::Left, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowLEFT}},
                 {sf::Keyboard::Right, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowRIGHT}},
-            };
+            };  // this->_sfKeyboardToUserInputBindVector
         }
         void SFMLWindow::render(void)
         {
             this->_renderWindow.display();
             this->_renderWindow.clear();
         }
-        void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite, const Rengine::Graphics::vector2D<float>& position)
+        void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
+            const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
         {
             try {
+                if (updateAnimationFrame == true) {
+                    sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
+                }
                 Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) *sprite;
                 sf::Sprite& sfSprite = sfmlSprite.getSfSprite();
                 sf::Vector2f posVector = {position.x, position.y};
@@ -188,6 +192,14 @@ namespace Rengine {
                 // Right Joystick
             }
             return input;
+        }
+        uint64_t SFMLWindow::getElapsedTimeMicroseconds(void) const noexcept
+        {
+            return this->_clock.getElapsedTime().asMicroseconds();
+        }
+        float SFMLWindow::getElapsedTimeSeconds(void) const noexcept
+        {
+            return this->_clock.getElapsedTime().asSeconds();
         }
 
     }  // namespace Rengine
