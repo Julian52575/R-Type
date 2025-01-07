@@ -9,6 +9,7 @@
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
+#include <utility>
 
 #include "ComponentRegistry.hpp"
 #include "Entity.hpp"
@@ -31,6 +32,10 @@ namespace Rengine {
     class ECSExceptionNoComponentFunction : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: No component function has been set."; };
+    };
+    class ECSExceptionBadComponentFunctionType : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::ECS: The component function and the provided template have different type definition."; };
     };
     /**
      * @addtogroup Rengine
@@ -188,7 +193,22 @@ namespace Rengine {
             * The ECS will call this function for each Component stored.
             */
             template<class Component>
-            void setComponentFunction(std::function<void(const Rengine::ECS&, Component&, Rengine::Entity&)> fun)
+            void setComponentFunction(const std::function<void(const Rengine::ECS&, Component&, Rengine::Entity&)> fun)
+            {
+                auto i = std::type_index(typeid(Component));
+
+                this->_functionArray[i] = fun;
+            }
+            /**
+            * @fn setComponentFunction
+            * @template Component The type you want to bind to the function.
+            * @template Parameters The additional parameters to the component function
+            * @brief Bind a function to a type for future use.
+            * This function takes a reference to the ECS and a reference to an entity and its Component.
+            * The ECS will call this function for each Component stored.
+            */
+            template<class Component, class ... Parameters>
+            void setComponentFunction(const std::function<void(const Rengine::ECS&, Component&, Rengine::Entity&, Parameters&&...)>& fun)
             {
                 auto i = std::type_index(typeid(Component));
 
@@ -223,7 +243,51 @@ namespace Rengine {
                         }
                         try {
                             Component& con = eit->getComponent<Component>();
+
                             fun(*this, con, *eit);
+                        }
+                        // Ignore entities that do not have this Component
+                        catch (EntityExceptionComponentNotLinked& e) {
+                            continue;
+                        }
+                    }
+                // Any cast fail.
+                } catch (std::bad_any_cast &e) {
+                    throw ECSExceptionBadComponentFunctionType();
+                }
+            }
+            /**
+            * @fn runComponentFunction
+            * @template Component The type you want to run.
+            * @template Parameters The additional parameters for the component function
+            * @brief Run the function, previously set with this->setComponentFunction, on each entity and its component of the templated type.
+            */
+            template<class Component, class ... Parameters>
+            void runComponentFunction(Parameters&& ... params) const
+            {
+                auto i = std::type_index(typeid(Component));
+                auto it = this->_functionArray.find(i);
+
+                // No function ?
+                if (it == this->_functionArray.end()) {
+                    throw ECSExceptionNoComponentFunction();
+                }
+                // Try to:
+                // Retrive function
+                // Parse entity list
+                // Call function with each component / entity
+                try {
+                    auto fun = std::any_cast<std::function<void(const ECS&, Component&, Entity&, Parameters&&...)>>(it->second);
+
+                    for (auto eit : this->_currentEntities) {
+                        // Ignore uninitialised entities
+                        if (eit.has_value() == false) {
+                            continue;
+                        }
+                        try {
+                            Component& con = eit->getComponent<Component>();
+
+                            fun(*this, con, eit.value(), std::forward<Parameters>(params)...);
                         }
                         // Ignore entities that do not have this Component
                         catch (EntityExceptionComponentNotLinked& e) {
