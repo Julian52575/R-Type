@@ -64,7 +64,7 @@ namespace RType {
             }
             // No match
             if (it == this->_inputNetworkBindVector.end()) {
-                throw ActionException("Unsupported UserInput");
+                return;
             }
 
             // Handle movement

@@ -12,6 +12,8 @@
 #include "Config/EntityConfig.hpp"
 #include "Network/EntityAction.hpp"
 
+#include "Game/SceneManager.hpp"
+
 /* Window input to Component Action */
 static void processInputs(std::shared_ptr<Rengine::Graphics::AWindow> &window, Rengine::Entity& player)
 {
@@ -40,8 +42,8 @@ static void processActions(const Rengine::ECS& ecs, RType::Components::Action& a
         switch (it.type) {
             // Move
             case RType::Network::EntityActionType::EntityActionTypeMove:
-                newPos.x += (0.01 * it.data.moveVelocity.x);
-                newPos.y += (0.01 * it.data.moveVelocity.y);
+                newPos.x +=  it.data.moveVelocity.x;
+                newPos.y +=  it.data.moveVelocity.y;
                 pos.setX(newPos.x);
                 pos.setY(newPos.y);
                 break;
@@ -90,21 +92,48 @@ inline static void setUpPlayer(Rengine::Entity& player, Rengine::Graphics::Graph
     player.addComponent<RType::Components::Position>(10, 0);
 }
 
+enum Scene {
+    SceneMenu,
+    SceneGame,
+    SceneGameOver
+};
+
 int main(void)
 {
     Rengine::Graphics::WindowSpecs specs; specs.buildFromJson("assets/window.json");
     Rengine::Graphics::GraphicManager graphicManager(specs);
     std::shared_ptr<Rengine::Graphics::AWindow>& window = graphicManager.getWindow();
     Rengine::ECS ecs;
-    Rengine::Entity& player = ecs.addEntity();
-
     setUpEcs(ecs);
+
+    Rengine::Entity& player = ecs.addEntity();
     setUpPlayer(player, graphicManager);
+
+    RType::SceneManager<Scene> sceneManager;
+
+    sceneManager.addScene(SceneGame, [&ecs, &sceneManager, &window, &player]() {
+        auto entities = sceneManager.getCurrentSceneEntities();
+        processInputs(window, player);
+        for (auto& entity : entities) {
+            processActions(ecs, entity.getComponent<RType::Components::Action>(), entity);
+            processSprite(ecs, entity.getComponent<RType::Components::Sprite>(), entity);
+        }
+    });
+
+    sceneManager.addScene(SceneMenu, [&ecs, &sceneManager]() {
+        std::cout << "Menu" << std::endl;
+    });
+
+
+    sceneManager.addScene(SceneGameOver, [&ecs, &sceneManager]() {
+        std::cout << "GameOver" << std::endl;
+    });
+
+    sceneManager.addEntityToScene(SceneGame, player);
+
     while (window->isOpen()) {
         window->pollInput();
-        processInputs(window, player);
-        ecs.runComponentFunction<RType::Components::Action>();
-        ecs.runComponentFunction<RType::Components::Sprite>();
+        sceneManager.callCurrentSceneFunction();
         window->render();
     }
     return 0;
