@@ -50,7 +50,8 @@ namespace Rengine {
             */
             uint16_t framerateLimit = 60;
             /**
-            * @brief The background color
+            * @brief The background color in (r, g, b).
+            * Note: Values are capped at 255.
             * Default: black (0r, 0b, 0g)
             */
             Rengine::Graphics::vector3D<uint8_t> backgroundColor = {0, 0, 0};
