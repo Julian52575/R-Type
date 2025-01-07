@@ -47,7 +47,7 @@ namespace Rengine {
                 * @param windowSpecs The specs of the to-be-created window
                 * @brief Create the graphic manager and the window.
                 */
-                GraphicManager(const WindowSpecs& windowSpecs);
+                GraphicManager(const WindowSpecs& windowSpecs = WindowSpecs());
                 ~GraphicManager(void) = default;
                 /**
                 * @fn getWindow
@@ -67,6 +67,8 @@ namespace Rengine {
                 std::shared_ptr<AWindow> _window = nullptr;
 
         };  // class GraphicManager
+            //
+        GraphicManager& getGraphicManagerSingletone(void) noexcept;
 
     }  // namespace Rengine
 }  // namespace Graphics
