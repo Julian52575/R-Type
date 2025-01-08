@@ -3,6 +3,7 @@
 #define _SRC_GRAPHICS_SPRITESPECS_HPP_
 #include <cstdint>
 #include <string>
+#include <optional>
 
 #include "Vector.hpp"
 
@@ -64,7 +65,7 @@ namespace Rengine {
                 */
                 Rengine::Graphics::vector2D<int16_t> frameDisplacement = {0, 0};
             };
-            SpriteAnimationSpecs animation;
+            std::optional<SpriteAnimationSpecs> animation;
         };  // struct SpriteSpecs
     }  // namespace Graphics
 }  //namespace Rengine

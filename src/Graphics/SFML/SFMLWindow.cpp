@@ -114,7 +114,7 @@ styleApply:
             const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
         {
             try {
-                if (updateAnimationFrame == true) {
+                if (updateAnimationFrame == true && sprite->hasAnimation() == true) {
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
                 }
                 Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) *sprite;

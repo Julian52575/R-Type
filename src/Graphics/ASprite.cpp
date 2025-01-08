@@ -17,6 +17,10 @@ namespace Rengine {
         {
             return this->_spriteSpecs;
         }
+        bool ASprite::hasAnimation(void) const noexcept
+        {
+            return this->_spriteSpecs.animation.has_value();
+        }
 
     }  // namespace Graphics
 }  // namespace Rengine

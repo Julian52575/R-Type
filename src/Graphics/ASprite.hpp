@@ -56,6 +56,12 @@ namespace Rengine {
                 * @brief Advance the sprite's animation depending on the current time.
                 */
                 virtual void advanceFrameFromTime(uint64_t currentTimeMicroseconds) = 0;
+                /**
+                * @fn hasAnimation
+                * @return True is the sprite has animation data, false otherwise
+                * @brief Get whether or not this sprite has animations.
+                */
+                bool hasAnimation(void) const noexcept;
 
             protected:
                 Rengine::Graphics::SpriteSpecs _spriteSpecs;
