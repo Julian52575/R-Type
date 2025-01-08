@@ -5,8 +5,8 @@
 //
 */
 
-#ifndef SRC_SparseArray_HPP_
-#define SRC_SparseArray_HPP_
+#ifndef SRC_SPARSEARRAY_HPP_
+#define SRC_SPARSEARRAY_HPP_
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
@@ -49,7 +49,7 @@ namespace Rengine {
             * @param size The number of element held by the underlying container.
             * @brief Create a new instance of SparseArray.
             */
-            SparseArray(size_type size)
+            explicit SparseArray(size_type size)
             {
                 this->_data.resize(size);
             }
@@ -57,7 +57,7 @@ namespace Rengine {
             * @fn SparseArray
             * @brief The copy constructor.
             */
-            SparseArray(SparseArray const &og)
+            explicit SparseArray(SparseArray const &og)
             {
                 this->_data = og._data;
             }
@@ -65,7 +65,7 @@ namespace Rengine {
             * @fn SparseArray
             * @brief The move constructor.
             */
-            SparseArray(SparseArray &&og) noexcept
+            explicit SparseArray(SparseArray &&og) noexcept
             {
                 this->_data = std::move(og._data);
             }
@@ -217,7 +217,7 @@ namespace Rengine {
                 auto it = std::next(this->_data.begin(), idx);
 
                 this->_data.insert(it, con);
-                //this->_data[pos] = std::move(con);
+                // this->_data[pos] = std::move(con);
                 return this->_data[idx];
             }
             /**
@@ -306,6 +306,4 @@ namespace Rengine {
     };
 }  // namespace Rengine
 
-
-
-#endif  // SRC_SparseArray_HPP_
+#endif  // SRC_SPARSEARRAY_HPP_

@@ -108,13 +108,13 @@ styleApply:
         void SFMLWindow::render(void)
         {
             this->_renderWindow.display();
-            this->_renderWindow.clear();
+            this->_renderWindow.clear(this->_backgroundColor);
         }
         void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
             const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
         {
             try {
-                if (updateAnimationFrame == true) {
+                if (updateAnimationFrame == true && sprite->hasAnimation() == true) {
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
                 }
                 Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) *sprite;

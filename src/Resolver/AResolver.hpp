@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_ARESOLVER_HPP_
-#define _SRC_ARESOLVER_HPP_
+#ifndef SRC_RESOLVER_ARESOLVER_HPP_
+#define SRC_RESOLVER_ARESOLVER_HPP_
 #include <unordered_map>
 
 namespace Rengine {
@@ -27,7 +27,7 @@ namespace Rengine {
                 * @fn get
                 * @param key The key to create / get an element.
                 * @return The 'resultType' binded to 'key'.
-                * @brief Either create a new 'resultType' or fetch the previously created object.
+                * @brief Either create a new 'resultType' and stores it OR fetch the previously created object.
                 */
                 resultType& get(const keyType& key)
                 {
@@ -36,16 +36,14 @@ namespace Rengine {
                     if (it != this->_map.end()) {
                         return this->_map[key];
                     }
-                    resultType newObject = this->createNewElement(key);
-
-                    this->_map[key] = newObject;
+                    this->_map[key] = this->createNewElement(key);
                     return this->_map[key];
                 };
                 /**
                 * @fn remove
                 * @param key The key of the previously created element.
                 * @exception AResolverExceptionUnknowKey No element has been previously registered with the provided key.
-                * @brief Either create a new 'resultType' or fetch the previously created object.
+                * @brief Remove the element refered by key
                 */
                 void remove(const keyType& key)
                 {
@@ -57,18 +55,18 @@ namespace Rengine {
                     this->_map.erase(key);
                 }
 
-            private:
+            protected:
                 std::unordered_map<keyType, resultType> _map;
 
             private:
                 /**
                 * @fn createNewElement
                 * @param key The key to create a new element.
-                * @brief Create a new 'resultType' object.
+                * @brief Create a new 'resultType' object and returns it.
                 */
-                virtual resultType createNewElement(const keyType& key) = 0;
+                inline virtual resultType createNewElement(const keyType& key) = 0;
         };  // class AResolver
     }  // namespace Resolver
 }  // namespace Rengine
 
-#endif
+#endif  // SRC_RESOLVER_ARESOLVER_HPP_

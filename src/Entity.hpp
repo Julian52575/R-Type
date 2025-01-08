@@ -27,10 +27,11 @@ namespace Rengine {
      * Note: If the instance of the ECS used to create this entity is destroyed, this entity is destroy alongside it.
     */
     class Entity {
-    #define _RENGINEENTITYDESTROYNOOP_ std::function<void(Entity&)>([this](Entity&) {return;})
+        #define _RENGINEENTITYDESTROYNOOP_ std::function<void(Entity&)>([this](Entity&) {return;})
+
         public:
             using size_type = typename ComponentRegistry :: size_type;
-            Entity(ComponentRegistry& reg, size_type id) : _registry(reg), _id(id) {};
+            Entity(ComponentRegistry& reg, size_type id) : _registry(reg), _id(id) {}
             ~Entity(void) = default;
             /**
             * @fn int
