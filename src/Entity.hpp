@@ -149,6 +149,36 @@ namespace Rengine {
                 }
             }
             /**
+            * @fn getComponentNoExcept
+            * @template Component The component class to get.
+            * @return An optional reference to the component linked to this entity.
+            * @brief Get the component linked to this entity. No exception are throw
+            */
+            template <class Component>
+            std::optional<std::reference_wrapper<Component>> getComponentNoExcept(void) noexcept
+            {
+                if (this->_active == false) {
+                    return std::nullopt;
+                }
+                try {
+                    SparseArray<Component>& sp = this->_registry.getComponents<Component>();
+                    // Out of bound index
+                    if (sp.size() < this->_id) {
+                        return std::nullopt;
+                    }
+                    std::optional<Component>& con = sp[this->_id];
+                    // No component for this entity
+                    if (con.has_value() == false) {
+                        return std::nullopt;
+                    }
+                    return con.value();
+                }
+                // Component not registred in the registry
+                catch (ComponentRegistryExceptionNotRegistred& e) {
+                    return std::nullopt;
+                }
+            }
+            /**
             * @fn setFlag
             * @param flag A 64 unsigned integer.
             * @exception EntityExceptionNotActive This entity has been previously destroyed.

@@ -1,3 +1,4 @@
+#include <functional>
 #include <gtest/gtest.h>
 #include <memory>
 #include "../src/ECS.hpp"
@@ -86,4 +87,16 @@ TEST(Entity, setGetflag)
 
     e.setFlag(flag);
     EXPECT_EQ(e.getFlag(), flag);
+}
+TEST(Entity, getComponentNoExcept)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+
+    ecs.registerComponent<int>();
+    int& comp = e.addComponent<int>(0);
+    std::optional<std::reference_wrapper<int>> comp2 = e.getComponentNoExcept<int>();
+
+    EXPECT_TRUE(comp2.has_value());
+    EXPECT_EQ(std::addressof(comp), std::addressof(comp2.value().get()));
 }
