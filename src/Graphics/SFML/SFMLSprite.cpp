@@ -23,6 +23,8 @@ namespace Rengine {
                 }
                 // setSpriteSpecs
                 this->_spriteSpecs = spriteSpecs;
+                // scale
+                this->_sprite.setScale({this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y});
                 // animation
                 if (this->_spriteSpecs.animation.has_value() == true) {
                     sf::IntRect rect;
@@ -32,7 +34,6 @@ namespace Rengine {
                     rect.width = this->_spriteSpecs.animation->frameRectWidthHeight.x;
                     rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
                     this->_sprite.setTextureRect(rect);
-                    this->_sprite.setScale({this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y});
                 }
             }
 
