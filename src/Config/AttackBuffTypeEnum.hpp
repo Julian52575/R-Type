@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_CONFIG_ENUM_HPP_
-#define _SRC_CONFIG_ENUM_HPP_
+#ifndef SRC_CONFIG_ATTACKBUFFTYPEENUM_HPP_
+#define SRC_CONFIG_ATTACKBUFFTYPEENUM_HPP_
 
 namespace RType {
 
@@ -30,7 +30,6 @@ namespace RType {
             BuffSpeed = 0x04,
             BuffHpHealTime = 0x05
         };
-
     }  // namespace Config
 }  // namespace RType
-#endif  //_SRC_CONFIG_ENUM_HPP_
+#endif  // SRC_CONFIG_ATTACKBUFFTYPEENUM_HPP_

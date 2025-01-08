@@ -2,6 +2,7 @@
 #ifndef SRC_CONFIG_LEVELCONFIGRESOLVER_HPP_
 #define SRC_CONFIG_LEVELCONFIGRESOLVER_HPP_
 #include <rengine/Rengine.hpp>
+#include <string>
 
 #include "LevelConfig.hpp"
 
@@ -45,7 +46,6 @@ namespace RType {
 
                     return resolver;
                 }
-
         };  // class LevelConfigResolverSingletone
 
     }  // namespace Config

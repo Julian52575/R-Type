@@ -2,6 +2,7 @@
 #ifndef SRC_CONFIG_ENTITYCONFIGRESOLVER_HPP_
 #define SRC_CONFIG_ENTITYCONFIGRESOLVER_HPP_
 #include <rengine/Rengine.hpp>
+#include <string>
 
 #include "EntityConfig.hpp"
 
@@ -45,9 +46,7 @@ namespace RType {
 
                     return resolver;
                 }
-
         };  // class EntityConfigResolverSingletone
-
     }  // namespace Config
 }  // namespace RType
 #endif  // SRC_CONFIG_ENTITYCONFIGRESOLVER_HPP_

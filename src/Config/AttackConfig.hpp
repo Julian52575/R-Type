@@ -1,8 +1,6 @@
 // Objective: Json to AttackConfig
-//
-//
-#ifndef _SRC_CONFIG_ATTACKCONFIG_HPP_
-#define _SRC_CONFIG_ATTACKCONFIG_HPP_
+#ifndef SRC_CONFIG_ATTACKCONFIG_HPP_
+#define SRC_CONFIG_ATTACKCONFIG_HPP_
 #include <cstddef>
 #include <string>
 #include <utility>
@@ -71,7 +69,7 @@ namespace RType {
                 * @brief Create a c++ class from the path of an attack json.
                 */
                 AttackConfig(void) = default;
-                AttackConfig(const std::string& jsonPath);
+                explicit AttackConfig(const std::string& jsonPath);
                 ~AttackConfig(void) = default;
                 /**
                 * @fn getType
@@ -129,6 +127,6 @@ namespace RType {
                 // Missile json -> <offset, velocity>
                 std::optional<std::vector<RType::Config::MissileConfig>> _missilesVector;
         };
-    }
-}
-#endif
+    }  // namespace Config
+}  // namespace RType
+#endif  // SRC_CONFIG_ATTACKCONFIG_HPP_

@@ -1,15 +1,14 @@
 //
-//
-#ifndef _SRC_CONFIG_ENTITYCONFIG_HPP_
-#define _SRC_CONFIG_ENTITYCONFIG_HPP_
+#ifndef SRC_CONFIG_ENTITYCONFIG_HPP_
+#define SRC_CONFIG_ENTITYCONFIG_HPP_
 #include <cstdint>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
 #include <stdexcept>
 #include <utility>
 #include <optional>
+#include <string>
 
-#include "./AttackConfig.hpp"
 #include "./AttackConfig.hpp"
 #include "./ImageConfig.hpp"
 
@@ -107,7 +106,7 @@ namespace RType {
                 * @param jsonPath The path to a json entity configuration.
                 * The entity configuration must start with the 'entity' field.
                 */
-                EntityConfig(const std::string& jsonPath);
+                explicit EntityConfig(const std::string& jsonPath);
                 ~EntityConfig(void) = default;
                 /**
                 * @fn getStats
@@ -159,8 +158,6 @@ namespace RType {
                 void parseCharacteristics(nlohmann::json& charaField);
                 void parseAttacks(nlohmann::json& attacksField);
         };  // class EntityConfig
-
     }  // namespace Config
-
 }  // namespace RType
-#endif
+#endif  // SRC_CONFIG_ENTITYCONFIG_HPP_

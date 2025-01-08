@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_COMPONENTS_POSITION_HPP_
-#define _SRC_COMPONENTS_POSITION_HPP_
+#ifndef SRC_COMPONENTS_POSITION_HPP_
+#define SRC_COMPONENTS_POSITION_HPP_
 #include <cstddef>
 #include <cstdint>
 #include <rengine/Rengine.hpp>
@@ -13,7 +13,7 @@ namespace RType {
         class Position {
             public:
                 Position(void) = default;
-                Position(float x, float y) : _position({x, y}) {};
+                Position(float x, float y) : _position({x, y}) {}
                 ~Position(void) = default;
                 const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept
                 {
@@ -31,7 +31,6 @@ namespace RType {
             private:
                 Rengine::Graphics::vector2D<float> _position = {0, 0};
         };
-    }  // Components
-}  // RType
-
-#endif
+    }  // namespace Components
+}  // namespace RType
+#endif  // SRC_COMPONENTS_POSITION_HPP_

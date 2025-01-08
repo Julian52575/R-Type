@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_COMPONENTS_ACTION_HPP_
-#define _SRC_COMPONENTS_ACTION_HPP_
+#ifndef SRC_COMPONENTS_ACTION_HPP_
+#define SRC_COMPONENTS_ACTION_HPP_
 #include <cstddef>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <stdexcept>
@@ -18,7 +18,7 @@ namespace RType {
 
         class ActionException : public std::exception {
             public:
-                ActionException(const std::string& msg)
+                explicit ActionException(const std::string& msg)
                 {
                     this->_msg = "RType::Component::Action: " + msg;
                 }
@@ -43,7 +43,7 @@ namespace RType {
                 using size_type = typename container_t :: size_type;
                 using iterator = typename container_t :: iterator;
                 using const_iterator = typename container_t :: const_iterator;
-                Action(ActionSource source, const std::string& luaScript = "");
+                explicit Action(ActionSource source, const std::string& luaScript = "");
                 ~Action(void) = default;
                 /**
                 * @fn begin
@@ -87,16 +87,12 @@ namespace RType {
                 */
                 const Rengine::Graphics::UserInput getNeededInput(Network::EntityActionType outcome) const;
 
-
             private:
                 ActionSource _actionSource;
                 container_t _actionVector;
                 void buildBindVector(void);
                 std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> _inputNetworkBindVector;
-
         };  // class Action
-
-    }  // Components
-}  // RType
-
-#endif
+    }  // namespace Components
+}  // namespace RType
+#endif  // SRC_COMPONENTS_ACTION_HPP_

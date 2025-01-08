@@ -1,8 +1,11 @@
-#pragma once
+#ifndef SRC_GAME_SCENEMANAGER_HPP_
+#define SRC_GAME_SCENEMANAGER_HPP_
 
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <utility>
+
 
 #include <rengine/Rengine.hpp>
 
@@ -77,4 +80,6 @@ namespace RType {
             bool _has_current_scene = false;
     };
 
-}
+}  // namespace RType
+#endif  // SRC_GAME_SCENEMANAGER_HPP_
+

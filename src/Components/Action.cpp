@@ -11,7 +11,6 @@
 #include "Action.hpp"
 
 namespace RType {
-
     namespace Components {
 
         Action::Action(ActionSource source, const std::string& luaScript)
@@ -28,7 +27,6 @@ namespace RType {
 
                 default:
                     throw std::runtime_error("RType::Component::Action: Unknow ActionSource.");
-
             }  // switch source
             this->_actionVector.reserve(5);
         }
@@ -50,9 +48,7 @@ namespace RType {
                     // Check KeyboardSpecial
                     if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
                         dataComparaison = (it->first.data.keyboardSpecial == input.data.keyboardSpecial);
-                    }
-                    // Check KeyboardChar
-                    else if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardChar) {
+                    } else if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardChar) {  // Check KeyboardChar
                         dataComparaison = (it->first.data.keyboardChar == input.data.keyboardChar);
                     }
                     if (dataComparaison == true) {
@@ -61,7 +57,7 @@ namespace RType {
                     }
                 }
                 it++;
-            }
+            }  // while it != end
             // No match
             if (it == this->_inputNetworkBindVector.end()) {
                 return;
@@ -93,9 +89,7 @@ namespace RType {
                         // Error handling
                         default:
                             break;
-
                     }  // switch input.data.keyboardSpecial
-
                 } else if (input.type == Rengine::Graphics::UserInputTypeJoystickLeftMove
                         || input.type == Rengine::Graphics::UserInputTypeJoystickRightMove) {
                     moveX = input.data.joystickPosition.x;
@@ -137,9 +131,7 @@ namespace RType {
                     {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialArrowRIGHT},
                     Network::EntityActionType::EntityActionTypeMove
                 }
-
-            };
-
+            };  // this->_inputNetworkBindVector
         }
         Action::const_iterator Action::begin(void) const
         {
@@ -176,6 +168,5 @@ namespace RType {
             }
             return {Rengine::Graphics::UserInputTypeNA, {0}};
         }
-
-    }  // Components
-}  // RType
+    }  // namespace Components
+}  // namespace RType

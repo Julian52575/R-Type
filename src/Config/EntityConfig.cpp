@@ -150,5 +150,5 @@ namespace RType {
                 this->_attacks[2] = resolver.get(attacksField["shoot3"]);
             } catch (std::exception &e) {;}
         }
-    }
-}
+    }  // namespace Config
+}  // namespace RType

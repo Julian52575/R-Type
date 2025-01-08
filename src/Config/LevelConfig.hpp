@@ -1,10 +1,11 @@
 //
-#ifndef _SRC_CONFIG_LEVELCONFIG_HPP_
-#define _SRC_CONFIG_LEVELCONFIG_HPP_
+#ifndef SRC_CONFIG_LEVELCONFIG_HPP_
+#define SRC_CONFIG_LEVELCONFIG_HPP_
 #include <exception>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
 #include <vector>
+#include <string>
 
 #include "EntityConfig.hpp"
 #include "ImageConfig.hpp"
@@ -47,10 +48,9 @@ namespace RType {
         };
         class LevelConfigExceptionConfigurationError : public std::exception {
             public:
-                LevelConfigExceptionConfigurationError(std::string jsonMsg)
+                explicit LevelConfigExceptionConfigurationError(std::string jsonMsg)
                 {
                     std::string msg = "RType::Config::LevelConfig: Configuration Error: '";
-
 
                     this->_concat = msg + jsonMsg + "'.";
                 };
@@ -68,9 +68,11 @@ namespace RType {
             SceneEndConditionTime,
             SceneEndConditionBossDefeat
         };  // enum SceneEndCondition
+
         union SceneEndConditionData {
             float time;
         };  // union SceneEndConditionData
+
         /**
         * @addtogroup RType::Config
         * @namespace Config
@@ -92,7 +94,8 @@ namespace RType {
         */
         class SceneConfig {
             public:
-                SceneConfig(nlohmann::json& scene);
+                SceneConfig(void) = default;
+                explicit SceneConfig(nlohmann::json& scene);
                 ~SceneConfig(void) = default;
 
             public:
@@ -121,7 +124,6 @@ namespace RType {
                 void parseBackground(nlohmann::json& backgroundField);
                 void parseEnemies(nlohmann::json& enemiesField);
                 void parseEndCondition(nlohmann::json& scene);
-
         };  // class SceneConfig
 
         /**
@@ -143,7 +145,7 @@ namespace RType {
                 * @param jsonPath The path to a json level configuration.
                 * The image configuration must start with the 'level' field.
                 */
-                LevelConfig(const std::string& jsonPath);
+                explicit LevelConfig(const std::string& jsonPath);
                 ~LevelConfig(void) = default;
                 /**
                 * @fn getScenes
@@ -154,8 +156,7 @@ namespace RType {
 
             private:
                 std::vector<RType::Config::SceneConfig> _scenes;
-
         };  // class LevelConfig
     }  // namespace Config
 }  // namespace RType
-#endif
+#endif  // SRC_CONFIG_LEVELCONFIG_HPP_

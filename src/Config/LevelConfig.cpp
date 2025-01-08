@@ -67,10 +67,8 @@ namespace RType {
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
                 // Boss
-                try {
+                if (it.contains("boss") == true) {
                     config.isBoss = it["boss"];
-                } catch (std::exception& e) {
-                    ;  //Ignore boss not found. damn bro that's crazy
                 }
                 this->enemies.push_back(config);
             }

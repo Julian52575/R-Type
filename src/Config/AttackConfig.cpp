@@ -91,13 +91,9 @@ namespace RType {
                 // Buff type
                 if (this->_type == AttackType::AttackTypeBuffs) {
                     this->parseBuffs(j["buffs"]);
-                }
-                // Shoot type
-                else if (this->_type == AttackType::AttackTypeMissiles) {
+                } else if (this->_type == AttackType::AttackTypeMissiles) {  // Shoot type
                     this->parseMissiles(j["missiles"]);
-                }
-                // Unknow type
-                else {
+                } else {  // Unknow type
                     throw std::runtime_error("Invalid type.");
                 }
             } catch (std::exception &e) {

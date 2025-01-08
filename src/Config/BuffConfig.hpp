@@ -1,8 +1,10 @@
 //
-#ifndef _SRC_CONFIG_BUFFCONFIG_HPP_
-#define _SRC_CONFIG_BUFFCONFIG_HPP_
+#ifndef SRC_CONFIG_BUFFCONFIG_HPP_
+#define SRC_CONFIG_BUFFCONFIG_HPP_
 #include <nlohmann/json.hpp>
 #include <stdexcept>
+#include <vector>
+#include <string>
 
 #include "./AttackBuffTypeEnum.hpp"
 
@@ -19,7 +21,7 @@ namespace RType {
         class BuffConfig {
             public:
                 BuffConfig(void) = default;
-                BuffConfig(nlohmann::json& buff) {
+                explicit BuffConfig(nlohmann::json& buff) {
                     // Parse buff type
                     std::vector<std::pair<std::string, RType::Config::BuffType>> bind = {
                         {"attack", RType::Config::BuffType::BuffAttack},
@@ -69,8 +71,6 @@ namespace RType {
                 double _duration = 0.0;
                 double _value = 0.0;
         };
-
     }  // namespace Config
-
 }  // namespace RType
-#endif
+#endif  // SRC_CONFIG_BUFFCONFIG_HPP_

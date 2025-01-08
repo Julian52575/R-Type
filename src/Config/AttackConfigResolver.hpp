@@ -1,10 +1,11 @@
 //
-#ifndef _SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
-#define _SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
-
-#include "AttackConfig.hpp"
+#ifndef SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
+#define SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
 
 #include <rengine/Rengine.hpp>
+#include <string>
+
+#include "AttackConfig.hpp"
 
 namespace RType {
     namespace Config {
@@ -51,6 +52,4 @@ namespace RType {
 
     }  // namespace Config
 }  // namespace RType
-
-
-#endif  // _SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
+#endif  // SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_

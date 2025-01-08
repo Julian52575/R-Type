@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_NETWORK_ENTITYACTION_HPP_
-#define _SRC_NETWORK_ENTITYACTION_HPP_
+#ifndef SRC_NETWORK_ENTITYACTION_HPP_
+#define SRC_NETWORK_ENTITYACTION_HPP_
 #include <rengine/src/Graphics/Vector.hpp>
 
 namespace RType {
@@ -29,4 +29,4 @@ namespace RType {
 
     }  // namespace Network
 }  // namespace RType
-#endif
+#endif  // SRC_NETWORK_ENTITYACTION_HPP_

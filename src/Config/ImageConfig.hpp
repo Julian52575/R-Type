@@ -1,8 +1,8 @@
 //
-#ifndef _SRC_CONFIG_IMAGECONFIG_HPP_
-#define _SRC_CONFIG_IMAGECONFIG_HPP_
+#ifndef SRC_CONFIG_IMAGECONFIG_HPP_
+#define SRC_CONFIG_IMAGECONFIG_HPP_
 #include <rengine/Rengine.hpp>
-
+#include <string>
 #include <nlohmann/json.hpp>
 #include <rengine/src/Graphics/SpriteSpecs.hpp>
 
@@ -62,7 +62,7 @@ namespace RType {
                 * @param jsonPath The path to a json image configuration.
                 * The image configuration must start with the 'image' field.
                 */
-                ImageConfig(const std::string& jsonPath);
+                explicit ImageConfig(const std::string& jsonPath);
                 ~ImageConfig(void) = default;
                 /**
                 * @fn getConfig
@@ -74,8 +74,7 @@ namespace RType {
             private:
                 void parseImage(nlohmann::json& imageField);
                 Rengine::Graphics::SpriteSpecs _data;
-
         };  // class ImageConfig
     }  // namespace Config
 }  // namespace RType
-#endif
+#endif  // SRC_CONFIG_IMAGECONFIG_HPP_

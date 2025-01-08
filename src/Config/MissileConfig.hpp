@@ -1,7 +1,6 @@
 //
-//
-#ifndef _SRC_CONFIG_MISSILECONFIG_HPP_
-#define _SRC_CONFIG_MISSILECONFIG_HPP_
+#ifndef SRC_CONFIG_MISSILECONFIG_HPP_
+#define SRC_CONFIG_MISSILECONFIG_HPP_
 #include <nlohmann/json.hpp>
 #include <string>
 #include <utility>
@@ -21,7 +20,7 @@ namespace RType {
     class MissileConfig {
         public:
             MissileConfig(void) = default;
-            MissileConfig(nlohmann::json& missiles) {
+            explicit MissileConfig(nlohmann::json& missiles) {
                 // Parse json
                 this->_jsonPath = missiles["json"];
                 // Parse offset
@@ -51,4 +50,4 @@ namespace RType {
 
     }  // namespace Config
 }  // namespace RType
-#endif
+#endif  // SRC_CONFIG_MISSILECONFIG_HPP_

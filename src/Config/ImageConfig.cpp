@@ -1,6 +1,7 @@
 //
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <string>
 
 #include "ImageConfig.hpp"
 
@@ -58,7 +59,6 @@ namespace RType {
                 }
                 nlohmann::json animationField = imageField["animations"];
 
-
                 this->_data.animation = Rengine::Graphics::SpriteSpecs::SpriteAnimationSpecs();
                 this->_data.animation->frameRectXY = {animationField["frameRect"]["x"], animationField["frameRect"]["y"]};
                 this->_data.animation->frameRectWidthHeight = {animationField["frameRect"]["width"], animationField["frameRect"]["height"]};
@@ -67,6 +67,5 @@ namespace RType {
                 this->_data.animation->frameDisplacement = {animationField["frameDisplacement"]["x"], animationField["frameDisplacement"]["y"]};
             } catch (std::exception &e) {;}
         }
-
-    }
-}
+    }  // namespace Config
+}  // namespace RType
