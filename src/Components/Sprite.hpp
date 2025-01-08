@@ -3,9 +3,9 @@
 #define SRC_COMPONENTS_SPRITE_HPP_
 #include <cstddef>
 #include <memory>
+#include <string>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
-#include <rengine/src/Graphics/ASprite.hpp>
 
 #include "../Config/EntityConfig.hpp"
 
