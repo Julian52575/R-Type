@@ -23,7 +23,7 @@ namespace RType {
             SceneManager(void) = default;
             ~SceneManager(void) = default;
 
-            void addScene(Scene scene, std::function<void()> sceneFunction){
+            void addScene(Scene scene, std::function<void(float)> sceneFunction){
                 this->_scenes[scene] = std::move(sceneFunction);
                 this->_scenes_entities[scene] = std::vector<Rengine::Entity>();
                 if (!this->_has_current_scene){
@@ -64,15 +64,15 @@ namespace RType {
                 return this->_current_scene;
             }
 
-            void callCurrentSceneFunction(void){
+            void callCurrentSceneFunction(float deltaTime){
                 if (!this->_has_current_scene)
                     throw SceneManagerExceptionNoCurrentScene();
-                this->_scenes[this->_current_scene]();
+                this->_scenes[this->_current_scene](deltaTime);
             }
 
         private:
             std::unordered_map<Scene, std::vector<Rengine::Entity>> _scenes_entities;
-            std::unordered_map<Scene, std::function<void()>> _scenes;
+            std::unordered_map<Scene, std::function<void(float)>> _scenes;
             Scene _current_scene;
             bool _has_current_scene = false;
     };

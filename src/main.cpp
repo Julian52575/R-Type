@@ -14,6 +14,9 @@
 
 #include "Game/SceneManager.hpp"
 
+#include <SFML/System/Clock.hpp>
+
+
 /* Window input to Component Action */
 static void processInputs(std::shared_ptr<Rengine::Graphics::AWindow> &window, Rengine::Entity& player)
 {
@@ -64,6 +67,54 @@ static void processActions(const Rengine::ECS& ecs, RType::Components::Action& a
     }  // for it : actionComponent
     actionComponent.clear();
 }
+
+static void InputSystem(Rengine::Entity& entity,float deltatime)
+{
+    RType::Components::Stats& stats = entity.getComponent<RType::Components::Stats>();
+    RType::Components::Position& pos = entity.getComponent<RType::Components::Position>();
+    RType::Components::Action& actionComponent = entity.getComponent<RType::Components::Action>();
+
+    auto currentPos = pos.getVector2D();
+    auto newPos = pos.getVector2D();
+
+    for (auto it : actionComponent) {
+        switch (it.type) {
+            // Move
+            case RType::Network::EntityActionType::EntityActionTypeMove:
+                newPos.x +=  it.data.moveVelocity.x * deltatime;
+                newPos.y +=  it.data.moveVelocity.y * deltatime;
+                pos.setX(newPos.x);
+                pos.setY(newPos.y);
+                break;
+            // Shoot1 -> 3
+            case RType::Network::EntityActionType::EntityActionTypeShoot1:
+                std::cout << "Shoot1" << std::endl;
+                break;
+            case RType::Network::EntityActionType::EntityActionTypeShoot2:
+                std::cout << "Shoot2" << std::endl;
+                break;
+            case RType::Network::EntityActionType::EntityActionTypeShoot3:
+                std::cout << "Shoot3" << std::endl;
+                break;
+
+            default:
+                break;
+        }  // switch it.type
+    }  // for it : actionComponent
+    actionComponent.clear();
+}
+
+
+static void renderSpriteSystem(Rengine::Entity& entity)
+{
+    auto pos = entity.getComponent<RType::Components::Position>();
+    auto spriteComponent = entity.getComponent<RType::Components::Sprite>();
+
+    spriteComponent.renderSprite(pos.getVector2D());
+}
+
+
+
 static void processSprite(const Rengine::ECS& ecs, RType::Components::Sprite& spriteComponent, Rengine::Entity& entity)
 {
     auto pos = entity.getComponent<RType::Components::Position>();
@@ -111,29 +162,31 @@ int main(void)
 
     RType::SceneManager<Scene> sceneManager;
 
-    sceneManager.addScene(SceneGame, [&ecs, &sceneManager, &window, &player]() {
+    sceneManager.addScene(SceneGame, [&ecs, &sceneManager, &window, &player](float deltaTime) {
         auto entities = sceneManager.getCurrentSceneEntities();
         processInputs(window, player);
         for (auto& entity : entities) {
-            processActions(ecs, entity.getComponent<RType::Components::Action>(), entity);
-            processSprite(ecs, entity.getComponent<RType::Components::Sprite>(), entity);
+            InputSystem(entity, deltaTime);
+            renderSpriteSystem(entity);
         }
     });
 
-    sceneManager.addScene(SceneMenu, [&ecs, &sceneManager]() {
+    sceneManager.addScene(SceneMenu, [&ecs, &sceneManager](float deltaTime) {
         std::cout << "Menu" << std::endl;
     });
 
 
-    sceneManager.addScene(SceneGameOver, [&ecs, &sceneManager]() {
+    sceneManager.addScene(SceneGameOver, [&ecs, &sceneManager](float deltaTime) {
         std::cout << "GameOver" << std::endl;
     });
 
     sceneManager.addEntityToScene(SceneGame, player);
 
+    sf::Clock clock;
     while (window->isOpen()) {
+        float deltaTime = clock.restart().asSeconds();
         window->pollInput();
-        sceneManager.callCurrentSceneFunction();
+        sceneManager.callCurrentSceneFunction(deltaTime);
         window->render();
     }
     return 0;
