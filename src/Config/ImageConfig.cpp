@@ -53,18 +53,19 @@ namespace RType {
             this->_data.texturePath = imageField["texturePath"];
             // Animation
             try {
+                if (imageField.contains("animations") == false) {
+                    return;
+                }
                 nlohmann::json animationField = imageField["animations"];
 
-                this->_data.animation.frameRectXY = {animationField["frameRect"]["x"], animationField["frameRect"]["y"]};
-                this->_data.animation.frameRectWidthHeight = {animationField["frameRect"]["width"], animationField["frameRect"]["height"]};
-                this->_data.animation.frameCount = animationField["frameCount"];
-                this->_data.animation.frameDuration = animationField["frameDuration"];
-                this->_data.animation.frameDisplacement = {animationField["frameDisplacement"]["x"], animationField["frameDisplacement"]["y"]};
-            } catch (std::exception &e) {
-                std::string msg = e.what();
 
-                throw std::runtime_error("An error occured when parsing 'animations':" + msg);
-            }
+                this->_data.animation = Rengine::Graphics::SpriteSpecs::SpriteAnimationSpecs();
+                this->_data.animation->frameRectXY = {animationField["frameRect"]["x"], animationField["frameRect"]["y"]};
+                this->_data.animation->frameRectWidthHeight = {animationField["frameRect"]["width"], animationField["frameRect"]["height"]};
+                this->_data.animation->frameCount = animationField["frameCount"];
+                this->_data.animation->frameDuration = animationField["frameDuration"];
+                this->_data.animation->frameDisplacement = {animationField["frameDisplacement"]["x"], animationField["frameDisplacement"]["y"]};
+            } catch (std::exception &e) {;}
         }
 
     }
