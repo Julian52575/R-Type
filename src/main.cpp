@@ -106,11 +106,11 @@ inline static void setUpPlayer(Rengine::Entity& player, Rengine::Graphics::Graph
 
 inline static void setUpBackground(Rengine::Entity& background, Rengine::Graphics::GraphicManager& graphicManager)
 {
-    RType::Config::EntityConfig config("assets/entities/space_background.json");
+    RType::Config::ImageConfig config("assets/images/space_background.json");
 
-    std::cout << "Background" << std::endl;
+    std::cout << "Background scale: " << config.getConfig().textureScale << std::endl;
 
-    background.addComponent<RType::Components::Sprite>(graphicManager, config.getSprite().getConfig());
+    background.addComponent<RType::Components::Sprite>(graphicManager, config.getConfig());
     background.addComponent<RType::Components::Position>(0, 0);
 }
 
@@ -129,7 +129,7 @@ int main(void)
     setUpEcs(ecs);
 
     Rengine::Entity& background = ecs.addEntity();
-    // setUpBackground(background, graphicManager);
+    setUpBackground(background, graphicManager);
 
     Rengine::Entity& player = ecs.addEntity();
     setUpPlayer(player, graphicManager);
@@ -155,8 +155,8 @@ int main(void)
         std::cout << "GameOver" << std::endl;
     });
 
-    sceneManager.addEntityToScene(SceneGame, player);
     sceneManager.addEntityToScene(SceneGame, background);
+    sceneManager.addEntityToScene(SceneGame, player);
 
     sf::Clock clock;
     while (window->isOpen()) {

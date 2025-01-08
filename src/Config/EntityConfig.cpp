@@ -29,12 +29,19 @@ namespace RType {
 
             try {
                 j = nlohmann::json::parse(f);
-                j = j["entity"];  // Get entity general field
-                this->_sprite = ImageConfig(j["sprite"]);
-                this->parseHitbox(j["hitbox"]);
-                this->parseStats(j["stats"]);
-                this->parseCharacteristics(j["characteristics"]);
-                this->parseAttacks(j["attacks"]);
+                if (j.contains("entity") == false)
+                    throw EntityConfigExceptionInvalidJsonFile(jsonPath, "No 'entity' field found.");
+                j = j["entity"];
+                if (j.contains("sprite"))
+                    this->_sprite = ImageConfig(j["sprite"]);
+                if (j.contains("hitbox"))
+                    this->parseHitbox(j["hitbox"]);
+                if (j.contains("stats"))
+                    this->parseStats(j["stats"]);
+                if (j.contains("characteristics"))
+                    this->parseCharacteristics(j["characteristics"]);
+                if (j.contains("attacks"))
+                    this->parseAttacks(j["attacks"]);
             }
             // Error on parsing
             catch (std::exception &e) {
