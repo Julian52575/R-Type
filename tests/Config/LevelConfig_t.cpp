@@ -128,11 +128,11 @@ static inline Rengine::Graphics::SpriteSpecs getExpectedImageConfigData(void)
     expectedImage.texturePath = "assets/images/red.png";
     expectedImage.originOffset = {1, 2};
     expectedImage.textureScale = {3.3f, 4.4f};
-    expectedImage.animation.frameRectXY = {5, 6};
-    expectedImage.animation.frameRectWidthHeight = {7, 8};
-    expectedImage.animation.frameCount = 9;
-    expectedImage.animation.frameDuration = 10.10f;
-    expectedImage.animation.frameDisplacement = {11, 12};
+    expectedImage.animation->frameRectXY = {5, 6};
+    expectedImage.animation->frameRectWidthHeight = {7, 8};
+    expectedImage.animation->frameCount = 9;
+    expectedImage.animation->frameDuration = 10.10f;
+    expectedImage.animation->frameDisplacement = {11, 12};
     return expectedImage;
 }
 static inline RType::Config::EntityConfig getExpectedEntityConfig(void)
@@ -148,11 +148,11 @@ static inline void compareImageConfigData(const Rengine::Graphics::SpriteSpecs& 
     ASSERT_EQ(sp.texturePath, expectedSprite.texturePath);
     ASSERT_EQ(sp.originOffset, expectedSprite.originOffset);
     ASSERT_EQ(sp.textureScale, expectedSprite.textureScale);
-    ASSERT_EQ(sp.animation.frameRectXY, expectedSprite.animation.frameRectXY);
-    ASSERT_EQ(sp.animation.frameRectWidthHeight, expectedSprite.animation.frameRectWidthHeight);
-    ASSERT_EQ(sp.animation.frameCount, expectedSprite.animation.frameCount);
-    ASSERT_EQ(sp.animation.frameDuration, expectedSprite.animation.frameDuration);
-    ASSERT_EQ(sp.animation.frameDisplacement, expectedSprite.animation.frameDisplacement);
+    ASSERT_EQ(sp.animation->frameRectXY, expectedSprite.animation->frameRectXY);
+    ASSERT_EQ(sp.animation->frameRectWidthHeight, expectedSprite.animation->frameRectWidthHeight);
+    ASSERT_EQ(sp.animation->frameCount, expectedSprite.animation->frameCount);
+    ASSERT_EQ(sp.animation->frameDuration, expectedSprite.animation->frameDuration);
+    ASSERT_EQ(sp.animation->frameDisplacement, expectedSprite.animation->frameDisplacement);
 }
 static inline void compareEntityConfig(const RType::Config::EntityConfig& con)
 {

@@ -5,6 +5,7 @@
 #include <rengine/src/Graphics/SpriteSpecs.hpp>
 
 #include "../../src/Config/EntityConfig.hpp"
+#include "../../src/Config//EntityConfigResolver.hpp"
 /* Config/entity.json be like
 {
     "entity": {
@@ -47,19 +48,19 @@ TEST(EntityConfig, EntityConfigSprite)
     expectedSprite.texturePath = "assets/images/red.png";
     expectedSprite.originOffset = {1, 2};
     expectedSprite.textureScale = {3.3, 4.4};
-    expectedSprite.animation.frameRectXY = {5, 6};
-    expectedSprite.animation.frameRectWidthHeight = {7, 8};
-    expectedSprite.animation.frameCount = 9;
-    expectedSprite.animation.frameDuration = 10.10;
-    expectedSprite.animation.frameDisplacement = {11, 12};
+    expectedSprite.animation->frameRectXY = {5, 6};
+    expectedSprite.animation->frameRectWidthHeight = {7, 8};
+    expectedSprite.animation->frameCount = 9;
+    expectedSprite.animation->frameDuration = 10.10;
+    expectedSprite.animation->frameDisplacement = {11, 12};
     ASSERT_EQ(sp.texturePath, expectedSprite.texturePath);
     ASSERT_EQ(sp.originOffset, expectedSprite.originOffset);
     ASSERT_EQ(sp.textureScale, expectedSprite.textureScale);
-    ASSERT_EQ(sp.animation.frameRectXY, expectedSprite.animation.frameRectXY);
-    ASSERT_EQ(sp.animation.frameRectWidthHeight, expectedSprite.animation.frameRectWidthHeight);
-    ASSERT_EQ(sp.animation.frameCount, expectedSprite.animation.frameCount);
-    ASSERT_EQ(sp.animation.frameDuration, expectedSprite.animation.frameDuration);
-    ASSERT_EQ(sp.animation.frameDisplacement, expectedSprite.animation.frameDisplacement);
+    ASSERT_EQ(sp.animation->frameRectXY, expectedSprite.animation->frameRectXY);
+    ASSERT_EQ(sp.animation->frameRectWidthHeight, expectedSprite.animation->frameRectWidthHeight);
+    ASSERT_EQ(sp.animation->frameCount, expectedSprite.animation->frameCount);
+    ASSERT_EQ(sp.animation->frameDuration, expectedSprite.animation->frameDuration);
+    ASSERT_EQ(sp.animation->frameDisplacement, expectedSprite.animation->frameDisplacement);
 }
 TEST(EntityConfig, EntityConfigCharacteristics)
 {
