@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <cstdint>
 #include <math.h>
+#include <rengine/src/Graphics/SpriteSpecs.hpp>
 
 #include "../../src/Config/EntityConfig.hpp"
 /* Config/entity.json be like
@@ -39,9 +40,9 @@
 TEST(EntityConfig, EntityConfigSprite)
 {
     auto con = RType::Config::EntityConfig("Config/entity.json");
-    const RType::Config::ImageConfigData &sp = con.getSprite().getConfig();
+    const Rengine::Graphics::SpriteSpecs &sp = con.getSprite().getConfig();
     // Sprite
-    RType::Config::ImageConfigData expectedSprite;
+    Rengine::Graphics::SpriteSpecs expectedSprite;
 
     expectedSprite.texturePath = "assets/images/red.png";
     expectedSprite.originOffset = {1, 2};

@@ -47,6 +47,7 @@ runTest "Config/ImageConfig_t.cpp ../src/Config/ImageConfig.cpp" "ImageConfig"
 runTest "Config/EntityConfig_t.cpp ../src/Config/AttackConfig.cpp ../src/Config/EntityConfig.cpp ../src/Config/ImageConfig.cpp" "EntityConfig"
 runTest "Config/LevelConfig_t.cpp ../src/Config/LevelConfig.cpp \
     ../src/Config/EntityConfig.cpp ../src/Config/ImageConfig.cpp ../src/Config/AttackConfig.cpp" "LevelConfig"
+runTest "Config/AttackConfigResolver_t.cpp ../src/Config/AttackConfig.cpp" "AttackConfigResolver"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})

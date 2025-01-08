@@ -70,6 +70,7 @@ namespace RType {
                 * @exception AttackConfigExceptionInvalidJsonFile jsonPath has an error.
                 * @brief Create a c++ class from the path of an attack json.
                 */
+                AttackConfig(void) = default;
                 AttackConfig(const std::string& jsonPath);
                 ~AttackConfig(void) = default;
                 /**

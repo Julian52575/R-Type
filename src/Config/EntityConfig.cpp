@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "./AttackConfig.hpp"
+#include "./AttackConfigResolver.hpp"
 #include "EntityConfig.hpp"
 
 namespace RType {
@@ -115,21 +117,24 @@ namespace RType {
         }
         void EntityConfig::parseAttacks(nlohmann::json& attacksField)
         {
+            AttackConfigResolverSingletone singletone;
+            AttackConfigResolver& resolver = singletone.get();
+
             // Shoot1
             try {
-                this->_attacks[0] = AttackConfig(attacksField["shoot1"]);
+                this->_attacks[0] = resolver.get(attacksField["shoot1"]);
             } catch (std::exception &e) {
                 ;
             }
             // Shoot2
             try {
-                this->_attacks[1] = AttackConfig(attacksField["shoot2"]);
+                this->_attacks[1] = resolver.get(attacksField["shoot2"]);
             } catch (std::exception &e) {
                 ;
             }
             // Shoot1
             try {
-                this->_attacks[2] = AttackConfig(attacksField["shoot3"]);
+                this->_attacks[2] = resolver.get(attacksField["shoot3"]);
             } catch (std::exception &e) {
                 ;
             }

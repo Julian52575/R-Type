@@ -10,7 +10,9 @@
 #include <optional>
 
 #include "./AttackConfig.hpp"
+#include "./AttackConfig.hpp"
 #include "./ImageConfig.hpp"
+
 
 namespace RType {
 

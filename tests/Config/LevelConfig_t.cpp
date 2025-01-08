@@ -1,6 +1,7 @@
 //
 #include <gtest/gtest.h>
 #include <regex.h>
+#include <rengine/src/Graphics/SpriteSpecs.hpp>
 #include <vector>
 
 #include "../../src/Config/LevelConfig.hpp"
@@ -120,12 +121,12 @@
 }
 */
 
-static inline RType::Config::ImageConfigData getExpectedImageConfigData(void)
+static inline Rengine::Graphics::SpriteSpecs getExpectedImageConfigData(void)
 {
-    RType::Config::ImageConfigData expectedImage;
+    Rengine::Graphics::SpriteSpecs expectedImage;
 
     expectedImage.texturePath = "assets/images/red.png";
-    expectedImage.originOffset = {1.1f, 2.2f};
+    expectedImage.originOffset = {1, 2};
     expectedImage.textureScale = {3.3f, 4.4f};
     expectedImage.animation.frameRectXY = {5, 6};
     expectedImage.animation.frameRectWidthHeight = {7, 8};
@@ -140,7 +141,7 @@ static inline RType::Config::EntityConfig getExpectedEntityConfig(void)
 
     return config;
 }
-static inline void compareImageConfigData(const RType::Config::ImageConfigData& sp)
+static inline void compareImageConfigData(const Rengine::Graphics::SpriteSpecs& sp)
 {
     auto expectedSprite = getExpectedImageConfigData();
 
