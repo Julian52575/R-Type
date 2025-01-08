@@ -135,6 +135,11 @@ namespace RType {
             public:
                 /**
                 * @fn LevelConfig
+                * @brief Create an empty LevelConfig.
+                */
+                LevelConfig(void) = default;
+                /**
+                * @fn LevelConfig
                 * @param jsonPath The path to a json level configuration.
                 * The image configuration must start with the 'level' field.
                 */

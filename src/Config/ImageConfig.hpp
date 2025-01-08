@@ -54,7 +54,7 @@ namespace RType {
             public:
                 /**
                 * @fn ImageConfig
-                * @brief Do not call this default constructor, it will create an empty ImageConfig.
+                * @brief Create an empty ImageConfig.
                 */
                 ImageConfig(void) = default;
                 /**

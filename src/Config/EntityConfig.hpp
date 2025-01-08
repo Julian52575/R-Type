@@ -99,7 +99,7 @@ namespace RType {
             public:
                 /**
                 * @fn EntityConfig
-                * @brief Do not call this default constructor, it will create an empty EntityConfig.
+                * @brief Create an empty EntityConfig.
                 */
                 EntityConfig(void) = default;
                 /**

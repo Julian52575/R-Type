@@ -9,6 +9,8 @@
 
 #include "./AttackConfig.hpp"
 #include "./AttackConfigResolver.hpp"
+#include "./ImageConfig.hpp"
+#include "./ImageConfigResolver.hpp"
 #include "EntityConfig.hpp"
 
 namespace RType {
@@ -29,19 +31,33 @@ namespace RType {
 
             try {
                 j = nlohmann::json::parse(f);
-                if (j.contains("entity") == false)
+                if (j.contains("entity") == false) {
                     throw EntityConfigExceptionInvalidJsonFile(jsonPath, "No 'entity' field found.");
+                }
                 j = j["entity"];
-                if (j.contains("sprite"))
-                    this->_sprite = ImageConfig(j["sprite"]);
-                if (j.contains("hitbox"))
+                // sprite
+                if (j.contains("sprite")) {
+                    ImageConfigResolverSingletone imageSingletone;
+                    ImageConfigResolver imageResolver = imageSingletone.get();
+
+                    this->_sprite = imageResolver.get(j["sprite"]);
+                }
+                // hitbox
+                if (j.contains("hitbox")) {
                     this->parseHitbox(j["hitbox"]);
-                if (j.contains("stats"))
+                }
+                // stats
+                if (j.contains("stats")) {
                     this->parseStats(j["stats"]);
-                if (j.contains("characteristics"))
+                }
+                // characteristics
+                if (j.contains("characteristics")) {
                     this->parseCharacteristics(j["characteristics"]);
-                if (j.contains("attacks"))
+                }
+                // attacks
+                if (j.contains("attacks")) {
                     this->parseAttacks(j["attacks"]);
+                }
             }
             // Error on parsing
             catch (std::exception &e) {
@@ -106,21 +122,15 @@ namespace RType {
             // enemyDamageOnColision
             try {
                 this->_characteristics.enemyDamageOnColision = charaField["enemyDamageOnColision"];
-            } catch (std::exception& e) {
-                ;
-            }
+            } catch (std::exception& e) {;}
             // damagedOnColision
             try {
                 this->_characteristics.damagedOnColision = charaField["damagedOnColision"];
-            } catch (std::exception& e) {
-                ;
-            }
+            } catch (std::exception& e) {;}
             // persistsOffScreen
             try {
                 this->_characteristics.persistsOffScreen = charaField["persistsOffScreen"];
-            } catch (std::exception& e) {
-                ;
-            }
+            } catch (std::exception& e) {;}
         }
         void EntityConfig::parseAttacks(nlohmann::json& attacksField)
         {
@@ -130,21 +140,15 @@ namespace RType {
             // Shoot1
             try {
                 this->_attacks[0] = resolver.get(attacksField["shoot1"]);
-            } catch (std::exception &e) {
-                ;
-            }
+            } catch (std::exception &e) {;}
             // Shoot2
             try {
                 this->_attacks[1] = resolver.get(attacksField["shoot2"]);
-            } catch (std::exception &e) {
-                ;
-            }
+            } catch (std::exception &e) {;}
             // Shoot1
             try {
                 this->_attacks[2] = resolver.get(attacksField["shoot3"]);
-            } catch (std::exception &e) {
-                ;
-            }
+            } catch (std::exception &e) {;}
         }
     }
 }

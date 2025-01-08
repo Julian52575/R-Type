@@ -12,7 +12,7 @@ TEST(AttackConfigResolver, get)
 
     EXPECT_EQ(std::addressof(conf), std::addressof(conf2));
 }
-TEST(AttackConfigResolverSingletone, singletone)
+TEST(AttackConfigResolverSingletone, get)
 {
     RType::Config::AttackConfigResolverSingletone singletone1;
     RType::Config::AttackConfigResolverSingletone singletone2;

@@ -8,7 +8,10 @@
 #include <vector>
 
 #include "EntityConfig.hpp"
+#include "EntityConfigResolver.hpp"
+#include "ImageConfigResolver.hpp"
 #include "LevelConfig.hpp"
+#include "LevelConfigResolver.hpp"
 
 namespace RType {
 
@@ -45,16 +48,22 @@ namespace RType {
 
         void SceneConfig::parseBackground(nlohmann::json& backgroundField)
         {
+            RType::Config::ImageConfigResolverSingletone imageSingletone;
+            RType::Config::ImageConfigResolver& imageResolver = imageSingletone.get();
+
             for (auto it : backgroundField) {
-                this->backgroundImages.push_back(RType::Config::ImageConfig(it));
+                this->backgroundImages.emplace_back(imageResolver.get(it));
             }
         }
         void SceneConfig::parseEnemies(nlohmann::json& enemiesField)
         {
+            RType::Config::EntityConfigResolverSingletone entitySingletone;
+            RType::Config::EntityConfigResolver& entityResolver = entitySingletone.get();
+
             for (auto it : enemiesField) {
                 RType::Config::SceneEntityConfig config;
 
-                config.entityConfig = RType::Config::EntityConfig(it["json"]);
+                config.entityConfig = entityResolver.get(it["json"]);
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
                 // Boss
