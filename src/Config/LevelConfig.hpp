@@ -110,7 +110,7 @@ namespace RType {
                 /**
                  * @brief The scene's scrollingSpeed.
                 */
-                float scrollingSpeed;
+                float scrollingSpeed = 10;
                 /**
                  * @brief A vector of ImageConfig for the background images.
                 */

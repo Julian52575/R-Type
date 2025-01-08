@@ -76,10 +76,10 @@ TEST(EntityConfig, EntityConfigHitbox)
     auto con = RType::Config::EntityConfig("Config/entity.json");
     const RType::Config::EntityConfigHitbox& hitbox = con.getHitbox();
 
-    ASSERT_EQ(hitbox.size.first, 13);
-    ASSERT_EQ(hitbox.size.second, 14);
-    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.first, 15);
-    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.second, 16);
+    ASSERT_EQ(hitbox.size.x, 13);
+    ASSERT_EQ(hitbox.size.y, 14);
+    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.x, 15);
+    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.y, 16);
 }
 TEST(EntityConfig, EntityConfigStats)
 {

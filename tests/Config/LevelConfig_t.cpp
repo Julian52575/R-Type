@@ -172,10 +172,10 @@ static inline void compareEntityConfig(const RType::Config::EntityConfig& con)
     const RType::Config::EntityConfigHitbox& hitbox = con.getHitbox();
     auto exHitbox = expectedEntity.getHitbox();
 
-    ASSERT_EQ(hitbox.size.first, exHitbox.size.first);
-    ASSERT_EQ(hitbox.size.second, exHitbox.size.second);
-    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.first, exHitbox.offsetFromSpriteOrigin.first);
-    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.second, exHitbox.offsetFromSpriteOrigin.second);
+    ASSERT_EQ(hitbox.size.x, exHitbox.size.x);
+    ASSERT_EQ(hitbox.size.y, exHitbox.size.y);
+    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.x, exHitbox.offsetFromSpriteOrigin.x);
+    ASSERT_EQ(hitbox.offsetFromSpriteOrigin.y, exHitbox.offsetFromSpriteOrigin.y);
     // Sprite
     compareImageConfigData(con.getSprite().getConfig());
     // Characteristics

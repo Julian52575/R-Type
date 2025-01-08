@@ -121,7 +121,7 @@ namespace RType {
 
             private:
                 AttackType _type = AttackType::AttackTypeNA;
-                double _cooldown = 0.0;
+                double _cooldown = 1.0;
                 // Buff + cooldown
                 std::optional<std::vector<RType::Config::BuffConfig>> _buffsVector;
                 // Missile json -> <offset, velocity>

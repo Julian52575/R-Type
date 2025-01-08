@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
+#include <rengine/src/Graphics/Vector.hpp>
 #include <stdexcept>
 #include <utility>
 #include <optional>
@@ -55,16 +56,15 @@ namespace RType {
         * @class EntityConfigStats
         * @brief A structure of the fields specified for the entity's stats.
         */
-#warning Separate X and Y speed
         struct EntityConfigStats {
-            uint16_t hp;
-            uint16_t attack;
-            uint16_t defense;
-            uint16_t maxSpeed;
-            uint16_t minSpeed;
-            float acceleration;
-            uint16_t enemyColisionDamage;
-            uint16_t ownCollisionDamage;
+            uint16_t hp = 100;
+            uint16_t attack = 10;
+            uint16_t defense = 10;
+            uint16_t maxSpeed = 10;
+            uint16_t minSpeed = 1;
+            float acceleration = 0.5;
+            uint16_t enemyColisionDamage = 10;
+            uint16_t ownCollisionDamage = 10;
         };
         /**
         * @addtogroup RType::Config
@@ -84,8 +84,8 @@ namespace RType {
         * @brief A structure of the fields specified for the entity's hitbox.
         */
         struct EntityConfigHitbox {
-            std::pair<uint16_t, uint16_t> size;
-            std::pair<uint16_t, uint16_t> offsetFromSpriteOrigin;
+            Rengine::Graphics::vector2D<uint16_t> size = {25, 25};
+            Rengine::Graphics::vector2D<uint16_t> offsetFromSpriteOrigin = {0, 0};
         };
         /**
         * @addtogroup RType::Config

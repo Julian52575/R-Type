@@ -21,8 +21,13 @@ namespace RType {
 
         void AttackConfig::parseGeneral(nlohmann::json &attackField)
         {
+            if (attackField.contains("type") == false) {
+                throw std::runtime_error("No 'type' field.");
+            }
             // Parse cooldown
-            this->_cooldown = attackField["cooldown"];
+            if (attackField.contains("cooldown") == true) {
+                this->_cooldown = attackField["cooldown"];
+            }
             // Parse type
             std::string type = attackField["type"];
             std::vector<std::pair<std::string, RType::Config::AttackType>> bind = {
@@ -82,22 +87,46 @@ namespace RType {
             }
             nlohmann::json j;
 
+            // Parsing file into j
             try {
                 j = nlohmann::json::parse(f);
-
-                // Parse general fields
-                this->parseGeneral(j["attack"]);
-                j = j["attack"];
-                // Buff type
-                if (this->_type == AttackType::AttackTypeBuffs) {
-                    this->parseBuffs(j["buffs"]);
-                } else if (this->_type == AttackType::AttackTypeMissiles) {  // Shoot type
-                    this->parseMissiles(j["missiles"]);
-                } else {  // Unknow type
-                    throw std::runtime_error("Invalid type.");
-                }
             } catch (std::exception &e) {
                 throw AttackConfigExceptionInvalidJsonFile(jsonPath, e.what());
+            }
+            // No attack field
+            if (j.contains("attack") == false) {
+                throw AttackConfigExceptionInvalidJsonFile(jsonPath, "No 'attack' field.");
+            }
+            j = j["attack"];
+            // Parse general fields
+            try {
+                this->parseGeneral(j);
+            } catch (std::exception& e) {
+                throw AttackConfigExceptionInvalidJsonFile(jsonPath, e.what());
+            }
+            // Buff type
+            if (this->_type == AttackType::AttackTypeBuffs) {
+                // No buffs field
+                if (j.contains("buffs") == false) {
+                    throw AttackConfigExceptionInvalidJsonFile(jsonPath, "No 'buffs' field on 'type' = 'buff'.");
+                }
+                try {
+                    this->parseBuffs(j["buffs"]);
+                } catch (std::exception& e) {
+                    throw AttackConfigExceptionInvalidJsonFile(jsonPath, e.what());
+                }
+            } else if (this->_type == AttackType::AttackTypeMissiles) {  // Shoot type
+                // No missiles field
+                if (j.contains("missiles") == false) {
+                    throw AttackConfigExceptionInvalidJsonFile(jsonPath, "No 'missiles' field on 'type' = 'buff'.");
+                }
+                try {
+                    this->parseMissiles(j["missiles"]);
+                } catch (std::exception& e) {
+                    throw AttackConfigExceptionInvalidJsonFile(jsonPath, e.what());
+                }
+            } else {  // Unknow type
+                throw AttackConfigExceptionInvalidJsonFile(jsonPath, "Unknow 'type'. Should be 'missiles' or 'buffs'.");
             }
         }
         AttackType AttackConfig::getType(void) const noexcept

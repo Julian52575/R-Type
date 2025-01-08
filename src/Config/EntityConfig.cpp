@@ -31,37 +31,36 @@ namespace RType {
 
             try {
                 j = nlohmann::json::parse(f);
-                if (j.contains("entity") == false) {
-                    throw EntityConfigExceptionInvalidJsonFile(jsonPath, "No 'entity' field found.");
-                }
-                j = j["entity"];
-                // sprite
-                if (j.contains("sprite")) {
-                    ImageConfigResolverSingletone imageSingletone;
-                    ImageConfigResolver imageResolver = imageSingletone.get();
-
-                    this->_sprite = imageResolver.get(j["sprite"]);
-                }
-                // hitbox
-                if (j.contains("hitbox")) {
-                    this->parseHitbox(j["hitbox"]);
-                }
-                // stats
-                if (j.contains("stats")) {
-                    this->parseStats(j["stats"]);
-                }
-                // characteristics
-                if (j.contains("characteristics")) {
-                    this->parseCharacteristics(j["characteristics"]);
-                }
-                // attacks
-                if (j.contains("attacks")) {
-                    this->parseAttacks(j["attacks"]);
-                }
-            }
-            // Error on parsing
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 throw EntityConfigExceptionInvalidJsonFile(jsonPath, e.what());
+            }
+
+            if (j.contains("entity") == false) {
+                throw EntityConfigExceptionInvalidJsonFile(jsonPath, "No 'entity' field found.");
+            }
+            j = j["entity"];
+            // sprite
+            if (j.contains("sprite") == true) {
+                ImageConfigResolverSingletone imageSingletone;
+                ImageConfigResolver imageResolver = imageSingletone.get();
+
+                this->_sprite = imageResolver.get(j["sprite"]);
+            }
+            // hitbox
+            if (j.contains("hitbox") == true) {
+                this->parseHitbox(j["hitbox"]);
+            }
+            // stats
+            if (j.contains("stats") == true) {
+                this->parseStats(j["stats"]);
+            }
+            // characteristics
+            if (j.contains("characteristics") == true) {
+                this->parseCharacteristics(j["characteristics"]);
+            }
+            // attacks
+            if (j.contains("attacks") == true) {
+                this->parseAttacks(j["attacks"]);
             }
         }
 
@@ -94,43 +93,75 @@ namespace RType {
 
         void EntityConfig::parseHitbox(nlohmann::json& hitboxField)
         {
-            this->_hitbox.size = {hitboxField["size"]["x"], hitboxField["size"]["y"]};
-            try {
-                this->_hitbox.offsetFromSpriteOrigin = {hitboxField["offset"]["x"], hitboxField["offset"]["y"]};
-            } catch (std::exception &e) {
-                this->_hitbox.offsetFromSpriteOrigin = {0, 0};
+            // size
+            if (hitboxField.contains("size") == true) {
+                nlohmann::json& sizeField = hitboxField["size"];
+
+                // x && y
+                if (sizeField.contains("x") == true) {
+                    this->_hitbox.size.x = sizeField["x"];
+                }
+                if (sizeField.contains("y") == true) {
+                    this->_hitbox.size.y = sizeField["y"];
+                }
+            }
+            if (hitboxField.contains("offset") == true) {
+                nlohmann::json& offsetField = hitboxField["offset"];
+
+                // x && y
+                if (offsetField.contains("x") == true) {
+                    this->_hitbox.offsetFromSpriteOrigin.x = offsetField["x"];
+                }
+                if (offsetField.contains("y") == true) {
+                    this->_hitbox.offsetFromSpriteOrigin.y = offsetField["y"];
+                }
             }
         }
         void EntityConfig::parseStats(nlohmann::json& statsField)
         {
-            try {
+            // hp
+            if (statsField.contains("hp") == true) {
                 this->_stats.hp = statsField["hp"];
+            }
+            // attack
+            if (statsField.contains("attack") == true) {
                 this->_stats.attack = statsField["attack"];
+            }
+            // defense
+            if (statsField.contains("defense") == true) {
                 this->_stats.defense = statsField["defense"];
+            }
+            // minSpeed
+            if (statsField.contains("minSpeed") == true) {
                 this->_stats.minSpeed = statsField["minSpeed"];
+            }
+            // acceleration
+            if (statsField.contains("acceleration") == true) {
                 this->_stats.acceleration = statsField["acceleration"];
+            }
+            // maxSpeed
+            if (statsField.contains("maxSpeed") == true) {
                 this->_stats.maxSpeed = statsField["maxSpeed"];
+            }
+            // enemyColisionDamage
+            if (statsField.contains("enemyColisionDamage") == true) {
                 this->_stats.enemyColisionDamage = statsField["enemyColisionDamage"];
-            } catch (std::exception& e) {
-                std::string msg = e.what();
-
-                throw std::runtime_error("An error occured when parsing 'stats':" + msg);
             }
         }
         void EntityConfig::parseCharacteristics(nlohmann::json& charaField)
         {
             // enemyDamageOnColision
-            try {
+            if (charaField.contains("enemyDamageOnColision") == true) {
                 this->_characteristics.enemyDamageOnColision = charaField["enemyDamageOnColision"];
-            } catch (std::exception& e) {;}
+            }
             // damagedOnColision
-            try {
+            if (charaField.contains("damagedOnColision") == true) {
                 this->_characteristics.damagedOnColision = charaField["damagedOnColision"];
-            } catch (std::exception& e) {;}
+            }
             // persistsOffScreen
-            try {
+            if (charaField.contains("persistsOffScreen") == true) {
                 this->_characteristics.persistsOffScreen = charaField["persistsOffScreen"];
-            } catch (std::exception& e) {;}
+            }
         }
         void EntityConfig::parseAttacks(nlohmann::json& attacksField)
         {
@@ -138,17 +169,17 @@ namespace RType {
             AttackConfigResolver& resolver = singletone.get();
 
             // Shoot1
-            try {
+            if (attacksField.contains("shoot1") == true) {
                 this->_attacks[0] = resolver.get(attacksField["shoot1"]);
-            } catch (std::exception &e) {;}
+            }
             // Shoot2
-            try {
+            if (attacksField.contains("shoot2") == true) {
                 this->_attacks[1] = resolver.get(attacksField["shoot2"]);
-            } catch (std::exception &e) {;}
-            // Shoot1
-            try {
+            }
+            // Shoot3
+            if (attacksField.contains("shoot3") == true) {
                 this->_attacks[2] = resolver.get(attacksField["shoot3"]);
-            } catch (std::exception &e) {;}
+            }
         }
     }  // namespace Config
 }  // namespace RType
