@@ -9,7 +9,7 @@ class intResolver : public Rengine::Resolver::AResolver<long int, std::string> {
         ~intResolver(void) = default;
 
     private:
-        std::string createNewElement(const long int& key)
+        inline std::string createNewElement(const long int& key)
         {
             return std::to_string(key);
         };
