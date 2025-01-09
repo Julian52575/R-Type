@@ -98,19 +98,19 @@ namespace Rengine {
                 * @fn resetDeltatime
                 * @brief Resets the deltatime timer to 0.
                 */
-                virtual void resetDeltatime(void) noexcept;
+                virtual void resetDeltatime(void) noexcept = 0;
                 /**
                 * @fn getDeltaTimeMicroseconds
                 * @return The number of microseconds since the last deltatime reset.
                 * @brief Retrives the microseconds since last deltatime reset.
                 */
-                virtual uint64_t getDeltaTimeMicroseconds(void) noexcept;
+                virtual uint64_t getDeltaTimeMicroseconds(void) noexcept = 0;
                 /**
                 * @fn getDeltaTimeSeconds
                 * @return The number of seconds since the last deltatime reset.
                 * @brief Retrives the seconds since last deltatime reset.
                 */
-                virtual float getDeltaTimeSeconds(void) noexcept;
+                virtual float getDeltaTimeSeconds(void) noexcept = 0;
 
             protected:
                 WindowSpecs _windowSpecs;
