@@ -103,6 +103,7 @@ styleApply:
         {
             this->applyWindowSpecs();
             this->initSfKeyboardBindVector();
+            this->_deltatimeClock.restart();
             this->_clock.restart();
         }
         void SFMLWindow::render(void)
@@ -252,6 +253,18 @@ styleApply:
             return this->_clock.getElapsedTime().asSeconds();
         }
 
+        void SFMLWindow::resetDeltatime(void) noexcept
+        {
+            this->_deltatimeClock.restart();
+        }
+        uint64_t SFMLWindow::getDeltaTimeMicroseconds(void) noexcept
+        {
+            return this->_deltatimeClock.getElapsedTime().asMicroseconds();
+        }
+        float SFMLWindow::getDeltaTimeSeconds(void) noexcept
+        {
+            return this->_deltatimeClock.getElapsedTime().asSeconds();
+        }
 
     }  // namespace Rengine
 }  // namespace Graphics

@@ -94,6 +94,23 @@ namespace Rengine {
                 * @brief Return the number of seconds since creation.
                 */
                 virtual float getElapsedTimeSeconds(void) const noexcept = 0;
+                /**
+                * @fn resetDeltatime
+                * @brief Resets the deltatime timer to 0.
+                */
+                virtual void resetDeltatime(void) noexcept;
+                /**
+                * @fn getDeltaTimeMicroseconds
+                * @return The number of microseconds since the last deltatime reset.
+                * @brief Retrives the microseconds since last deltatime reset.
+                */
+                virtual uint64_t getDeltaTimeMicroseconds(void) noexcept;
+                /**
+                * @fn getDeltaTimeSeconds
+                * @return The number of seconds since the last deltatime reset.
+                * @brief Retrives the seconds since last deltatime reset.
+                */
+                virtual float getDeltaTimeSeconds(void) noexcept;
 
             protected:
                 WindowSpecs _windowSpecs;

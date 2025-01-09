@@ -35,6 +35,9 @@ namespace Rengine {
                 void pollInput(void);
                 uint64_t getElapsedTimeMicroseconds(void) const noexcept;
                 float getElapsedTimeSeconds(void) const noexcept;
+                void resetDeltatime(void) noexcept;
+                uint64_t getDeltaTimeMicroseconds(void) noexcept;
+                float getDeltaTimeSeconds(void) noexcept;
 
             private:
                 void initSfKeyboardBindVector(void);
@@ -42,6 +45,7 @@ namespace Rengine {
                 sf::RenderWindow _renderWindow;
                 sf::Color _backgroundColor;
                 sf::Clock _clock;
+                sf::Clock _deltatimeClock;
                 std::vector<std::pair<sf::Keyboard::Key, UserInput>> _sfKeyboardToUserInputBindVector;
                 /**
                 * @return UserInput The UserInput matching the sf::Event::KeyEvent.
