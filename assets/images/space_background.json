@@ -2,8 +2,8 @@
     "image" : {
         "texturePath" : "assets/images/space_background.png",
         "scale" : {
-            "x" : 0,
-            "y" : 3.6
+            "x" : 2,
+            "y" : 2
          }
     }
 }

@@ -13,9 +13,9 @@
             "hp": 17,
             "attack": 18,
             "defense": 19,
-            "minSpeed": 20,
-            "acceleration": 21.21,
-            "maxSpeed": 22,
+            "minSpeed": 100,
+            "acceleration": 100,
+            "maxSpeed": 100,
             "enemyColisionDamage": 23
         },
         "characteristics": {
