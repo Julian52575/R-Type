@@ -13,19 +13,15 @@
             "hp": 17,
             "attack": 18,
             "defense": 19,
-            "minSpeed": 100,
+            "SpeedY": 15,
             "acceleration": 100,
-            "maxSpeed": 100,
+            "SpeedX": 15,
             "enemyColisionDamage": 23
         },
         "characteristics": {
             "enemyDamageOnColision": true,
             "damagedOnColision": true,
             "persistsOffScreen": false
-        },
-        "attacks": {
-            "shoot1": "Config/buff.json",
-            "shoot2": "Config/missiles.json"
         }
     }
 }

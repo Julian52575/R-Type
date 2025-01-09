@@ -22,10 +22,6 @@
             "enemyDamageOnColision": true,
             "damagedOnColision": true,
             "persistsOffScreen": false
-        },
-        "attacks": {
-            "shoot1": "Config/buff.json",
-            "shoot2": "Config/missiles.json"
         }
     }
 }

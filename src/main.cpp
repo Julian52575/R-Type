@@ -16,6 +16,21 @@
 
 #include <SFML/System/Clock.hpp>
 
+enum Scene {
+    SceneMenu,
+    SceneGame,
+    SceneGameOver
+};
+
+
+inline static void setUpProjectile(Rengine::Entity& projectile, Rengine::Graphics::GraphicManager& graphicManager)
+{
+    RType::Config::EntityConfig config("assets/entities/missile1.json");
+
+    projectile.addComponent<RType::Components::Stats>(config.getStats());
+    projectile.addComponent<RType::Components::Sprite>(graphicManager, config.getSprite().getConfig());
+    projectile.addComponent<RType::Components::Position>(0, 0);
+}
 
 /* Window input to Component Action */
 static void processInputs(std::shared_ptr<Rengine::Graphics::AWindow> &window, Rengine::Entity& player)
@@ -33,7 +48,7 @@ static void processInputs(std::shared_ptr<Rengine::Graphics::AWindow> &window, R
     inputManager.clear();
 }
 
-static void InputSystem(Rengine::Entity& entity,float deltatime)
+static void InputSystem(Rengine::Entity& entity,float deltatime,Rengine::ECS& ecs,RType::SceneManager<Scene>& sceneManager,Rengine::Graphics::GraphicManager& graphicManager)
 {
     auto stats = entity.getComponentNoExcept<RType::Components::Stats>();
     auto pos = entity.getComponentNoExcept<RType::Components::Position>();
@@ -49,15 +64,21 @@ static void InputSystem(Rengine::Entity& entity,float deltatime)
         switch (it.type) {
             // Move
             case RType::Network::EntityActionType::EntityActionTypeMove:
-                newPos.x +=  it.data.moveVelocity.x * deltatime;
-                newPos.y +=  it.data.moveVelocity.y * deltatime;
+                newPos.x +=  it.data.moveVelocity.x * stats->get().getStats().SpeedX * deltatime;
+                newPos.y +=  it.data.moveVelocity.y * stats->get().getStats().SpeedY * deltatime;
                 pos->get().setX(newPos.x);
                 pos->get().setY(newPos.y);
                 break;
             // Shoot1 -> 3
-            case RType::Network::EntityActionType::EntityActionTypeShoot1:
-                std::cout << "Shoot1" << std::endl;
+            case RType::Network::EntityActionType::EntityActionTypeShoot1: {
+                Rengine::Entity& projectile = ecs.addEntity();
+                setUpProjectile(projectile, graphicManager);
+                auto pos_projectile = projectile.getComponentNoExcept<RType::Components::Position>();
+                pos_projectile->get().setX(currentPos.x + 10);
+                pos_projectile->get().setY(currentPos.y);
+                sceneManager.addEntityToScene(SceneGame, projectile);
                 break;
+            }
             case RType::Network::EntityActionType::EntityActionTypeShoot2:
                 std::cout << "Shoot2" << std::endl;
                 break;
@@ -84,6 +105,27 @@ static void renderSpriteSystem(Rengine::Entity& entity)
     spriteComponent->get().renderSprite(pos->get().getVector2D());
 }
 
+static void MovementSystem(Rengine::Entity& entity, float deltaTime)
+{
+    auto stats = entity.getComponentNoExcept<RType::Components::Stats>();
+    auto pos = entity.getComponentNoExcept<RType::Components::Position>();
+    auto actionComponent = entity.getComponentNoExcept<RType::Components::Action>();
+
+
+    if (!stats || !pos || actionComponent) {
+        return;
+    }
+
+    auto currentPos = pos->get().getVector2D();
+    auto newPos = pos->get().getVector2D();
+
+    newPos.x += stats->get().getStats().SpeedX * deltaTime;
+    newPos.y += stats->get().getStats().SpeedY * deltaTime;
+
+    pos->get().setX(newPos.x);
+    pos->get().setY(newPos.y);
+}
+
 /* Set Up */
 inline static void setUpEcs(Rengine::ECS& ecs)
 {
@@ -108,17 +150,9 @@ inline static void setUpBackground(Rengine::Entity& background, Rengine::Graphic
 {
     RType::Config::ImageConfig config("assets/images/space_background.json");
 
-    std::cout << "Background scale: " << config.getConfig().textureScale << std::endl;
-
     background.addComponent<RType::Components::Sprite>(graphicManager, config.getConfig());
     background.addComponent<RType::Components::Position>(0, 0);
 }
-
-enum Scene {
-    SceneMenu,
-    SceneGame,
-    SceneGameOver
-};
 
 int main(void)
 {
@@ -134,14 +168,15 @@ int main(void)
     Rengine::Entity& player = ecs.addEntity();
     setUpPlayer(player, graphicManager);
 
-
     RType::SceneManager<Scene> sceneManager;
 
-    sceneManager.addScene(SceneGame, [&ecs, &sceneManager, &window, &player](float deltaTime) {
+    sceneManager.addScene(SceneGame, [&ecs, &sceneManager, &window, &player, &graphicManager](float deltaTime) {
         auto entities = sceneManager.getCurrentSceneEntities();
         processInputs(window, player);
+        std::vector<Rengine::Entity> entities_to_make = {};
         for (auto& entity : entities) {
-            InputSystem(entity, deltaTime);
+            InputSystem(entity, deltaTime, ecs, sceneManager,graphicManager);
+            MovementSystem(entity, deltaTime);
             renderSpriteSystem(entity);
         }
     });
