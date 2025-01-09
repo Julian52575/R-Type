@@ -159,8 +159,8 @@ namespace Rengine {
             * @fn registerComponent
             * @template Component The type to be registered in the registry.
             * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is already registered.
             * @brief Create a new SparseArray of the templated type and stores it.
+            * If the component is already registered, this function returns a reference to it.
             */
             template <class Component>
             SparseArray<Component>& registerComponent(void)
