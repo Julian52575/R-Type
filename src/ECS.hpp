@@ -103,9 +103,9 @@ namespace Rengine {
             }
             /**
             * @fn removeEntity
-            * @param Entity The entity to remove. Note that using that entity again WILL result in a glitch. :(
+            * @param Entity The entity to remove. Note that using a reference entity again WILL result in a glitch. :(
             * @exception ECSExceptionEntityNotFound The provided entity is not registred in the ECS.
-            * @brief Remove an entity from the ECS.
+            * @brief Remove an entity and its components from the ECS.
             */
             void removeEntity(const Entity& en)
             {
@@ -120,6 +120,24 @@ namespace Rengine {
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
             }
+            /**
+            * @fn removeEntity
+            * @param idx The index of the entity to remove
+            * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
+            * @brief Remove an entity and its components from the ECS.
+            */
+            void removeEntity(Rengine::ECS::size_type idx)
+            {
+                if (idx == static_cast<size_type>(-1)) {
+                    throw ECSExceptionEntityNotFound();
+                }
+                if (this->_currentEntities[idx].has_value() == false) {
+                    throw ECSExceptionEntityNotFound();
+                }
+                this->_currentEntities[idx].value().destroyComponents();
+                this->_currentEntities[idx].reset();
+            }
+
             /**
             * @fn getEntity
             * @param idx The index of the entity to get.

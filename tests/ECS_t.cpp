@@ -22,7 +22,7 @@ TEST(ECS, addGetEntity)
     EXPECT_EQ(e, ecs.getEntity(int(e)));
     EXPECT_THROW(ecs.getEntity(42), Rengine::ECSExceptionEntityNotFound);
 }
-TEST(ECS, removeEntity)
+TEST(ECS, removeEntityReference)
 {
     Rengine::ECS ecs;
     Rengine::Entity& e = ecs.addEntity();
@@ -30,6 +30,16 @@ TEST(ECS, removeEntity)
     EXPECT_EQ(e, ecs.getEntity(int(e)));
     ecs.removeEntity(e);
     EXPECT_THROW(ecs.getEntity(int(e)), Rengine::ECSExceptionEntityNotFound);
+}
+TEST(ECS, removeEntityIndex)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    auto idx = std::size_t(e);
+
+    EXPECT_EQ(e, ecs.getEntity(idx));
+    ecs.removeEntity(idx);
+    EXPECT_THROW(ecs.removeEntity(idx), Rengine::ECSExceptionEntityNotFound);
 }
 TEST(ECS, registerGetComponent)
 {

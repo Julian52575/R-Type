@@ -67,8 +67,28 @@ namespace Rengine {
                 std::shared_ptr<AWindow> _window = nullptr;
 
         };  // class GraphicManager
-            //
-        GraphicManager& getGraphicManagerSingletone(void) noexcept;
+
+        /**
+        * @addtogroup Rengine::Graphics
+        * @namespace Graphics
+        * @class GraphicManagerSingletone
+        * @brief The singletone class for GraphicManager.
+        */
+        class GraphicManagerSingletone {
+            public:
+                GraphicManagerSingletone(void) = default;
+                ~GraphicManagerSingletone(void) = default;
+                /**
+                * @fn getSingletone
+                * @return A static reference to the same GraphicManager object.
+                * @brief Return a reference to the static GraphicManager
+                */
+                static GraphicManager& get(void) noexcept {
+                    static GraphicManager manager;
+
+                    return manager;
+                }
+        };  // class GraphicManagerSingletone
 
     }  // namespace Rengine
 }  // namespace Graphics
