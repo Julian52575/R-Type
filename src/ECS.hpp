@@ -96,6 +96,7 @@ namespace Rengine {
                         continue;
                     }
                     this->_currentEntities[i].emplace(this->_registry, i);
+                    this->_currentEntitiesCount += 1;
                     return this->_currentEntities[i].value();
                 }
                 // Every entity is already used
@@ -119,6 +120,7 @@ namespace Rengine {
                 }
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
+                this->_currentEntitiesCount -= 1;
             }
             /**
             * @fn removeEntity
@@ -136,6 +138,7 @@ namespace Rengine {
                 }
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
+                this->_currentEntitiesCount -= 1;
             }
 
             /**
@@ -318,12 +321,31 @@ namespace Rengine {
                     throw ECSExceptionBadComponentFunctionType();
                 }
             }
+            /**
+            * @fn getEntityLimit
+            * @return size_type The maximimum number of entity.
+            * @brief Return the maximimum number of entity authorized at once.
+            */
+            size_type getEntityLimit(void) const noexcept
+            {
+                return this->_sparseArrayDefaultSize;
+            }
+            /**
+            * @fn getActiveEntityCount
+            * @return size_type The number of active entities.
+            * @brief Return the number of active entities.
+            */
+            size_type getActiveEntitiesCount(void) const noexcept
+            {
+                return this->_currentEntitiesCount;
+            }
 
         private:
             ComponentRegistry _registry;
             #define DEFAULTSPARSEARRAYSIZE 100
             size_type _sparseArrayDefaultSize = DEFAULTSPARSEARRAYSIZE;
             SparseArray<Entity> _currentEntities;
+            size_type _currentEntitiesCount = 0;
             //                      Type    - std::function<void(ECS&, Component&, Entity&)>
             std::unordered_map<std::type_index, std::any> _functionArray;
     };  // class ECS

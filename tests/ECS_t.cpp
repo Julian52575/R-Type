@@ -102,3 +102,23 @@ TEST(ECS, componentFunctionAdditionalParameters)
     ecs.runComponentFunction<int, int&>(count);
     EXPECT_EQ(count, 2 + 2);
 }
+TEST(ECS, getEntityLimit)
+{
+    Rengine::ECS::size_type maxEntities = 42;
+    Rengine::ECS ecs(maxEntities);
+
+    EXPECT_EQ(ecs.getEntityLimit(), maxEntities);
+}
+TEST(ECS, getCurrentEntitiesCount)
+{
+    Rengine::ECS ecs;
+
+    EXPECT_EQ(ecs.getActiveEntitiesCount(), 0);
+    Rengine::Entity& e = ecs.addEntity();
+
+    EXPECT_EQ(ecs.getActiveEntitiesCount(), 1);
+    ecs.addEntity();
+    EXPECT_EQ(ecs.getActiveEntitiesCount(), 2);
+    ecs.removeEntity(e);
+    EXPECT_EQ(ecs.getActiveEntitiesCount(), 1);
+}
