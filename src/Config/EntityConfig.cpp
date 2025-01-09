@@ -131,17 +131,17 @@ namespace RType {
             if (statsField.contains("defense") == true) {
                 this->_stats.defense = statsField["defense"];
             }
-            // minSpeed
-            if (statsField.contains("SpeedY") == true) {
-                this->_stats.SpeedY = statsField["SpeedY"];
+            // speedY
+            if (statsField.contains("speedY") == true) {
+                this->_stats.speedY = statsField["speedY"];
             }
             // acceleration
             if (statsField.contains("acceleration") == true) {
                 this->_stats.acceleration = statsField["acceleration"];
             }
-            // SpeedX
-            if (statsField.contains("SpeedX") == true) {
-                this->_stats.SpeedX = statsField["SpeedX"];
+            // speedX
+            if (statsField.contains("speedX") == true) {
+                this->_stats.speedX = statsField["speedX"];
             }
             // enemyColisionDamage
             if (statsField.contains("enemyColisionDamage") == true) {

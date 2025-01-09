@@ -60,8 +60,8 @@ namespace RType {
             uint16_t hp = 100;
             uint16_t attack = 10;
             uint16_t defense = 10;
-            uint16_t SpeedX = 0;
-            uint16_t SpeedY = 0;
+            uint16_t speedX = 10;
+            uint16_t speedY = 10;
             float acceleration = 0.5;
             uint16_t enemyColisionDamage = 10;
             uint16_t ownCollisionDamage = 10;

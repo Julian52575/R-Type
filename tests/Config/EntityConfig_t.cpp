@@ -22,9 +22,9 @@
             "hp": 17,
             "attack": 18,
             "defense": 19,
-            "minSpeed": 20,
+            "speedY": 20,
             "acceleration": 21.21,
-            "maxSpeed": 22,
+            "speedX": 22,
             "enemyColisionDamage": 23
         },
         "characteristics": {
@@ -89,9 +89,9 @@ TEST(EntityConfig, EntityConfigStats)
     ASSERT_EQ(stats.hp, 17);
     ASSERT_EQ(stats.attack, 18);
     ASSERT_EQ(stats.defense, 19);
-    ASSERT_EQ(stats.minSpeed, 20);
+    ASSERT_EQ(stats.speedY, 20);
     ASSERT_EQ(stats.acceleration, 21.21f);
-    ASSERT_EQ(stats.maxSpeed, 22);
+    ASSERT_EQ(stats.speedX, 22);
     ASSERT_EQ(stats.enemyColisionDamage, 23);
 }
 TEST(EntityConfig, EntityConfigAttack)

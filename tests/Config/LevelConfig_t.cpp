@@ -164,9 +164,9 @@ static inline void compareEntityConfig(const RType::Config::EntityConfig& con)
     ASSERT_EQ(stats.hp, exStats.hp);
     ASSERT_EQ(stats.attack, exStats.attack);
     ASSERT_EQ(stats.defense, exStats.defense);
-    ASSERT_EQ(stats.minSpeed, exStats.minSpeed);
+    ASSERT_EQ(stats.speedY, exStats.speedY);
     ASSERT_EQ(stats.acceleration, exStats.acceleration);
-    ASSERT_EQ(stats.maxSpeed, exStats.maxSpeed);
+    ASSERT_EQ(stats.speedX, exStats.speedX);
     ASSERT_EQ(stats.enemyColisionDamage, exStats.enemyColisionDamage);
     // Hitbox
     const RType::Config::EntityConfigHitbox& hitbox = con.getHitbox();
