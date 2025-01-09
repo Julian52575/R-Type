@@ -211,7 +211,7 @@ namespace Rengine {
             * The ECS will call this function for each Component stored.
             */
             template<class Component>
-            void setComponentFunction(const std::function<void(const Rengine::ECS&, Component&, Rengine::Entity&)> fun)
+            void setComponentFunction(const std::function<void(ECS&, Component&, Entity&)> fun)
             {
                 auto i = std::type_index(typeid(Component));
 
@@ -226,7 +226,7 @@ namespace Rengine {
             * The ECS will call this function for each Component stored.
             */
             template<class Component, class ... Parameters>
-            void setComponentFunction(const std::function<void(const Rengine::ECS&, Component&, Rengine::Entity&, Parameters&&...)>& fun)
+            void setComponentFunction(const std::function<void(ECS&, Component&, Entity&, Parameters&&...)>& fun)
             {
                 auto i = std::type_index(typeid(Component));
 
@@ -238,7 +238,7 @@ namespace Rengine {
             * @brief Run the function, previously set with this->setComponentFunction, on each entity and its component of the templated type.
             */
             template<class Component>
-            void runComponentFunction(void) const
+            void runComponentFunction(void)
             {
                 auto i = std::type_index(typeid(Component));
                 auto it = this->_functionArray.find(i);
@@ -252,7 +252,7 @@ namespace Rengine {
                 // Parse entity list
                 // Call function with each component / entity
                 try {
-                    auto fun = std::any_cast<std::function<void(const ECS&, Component&, Entity&)>>(it->second);
+                    std::function<void(ECS&, Component&, Entity&)> fun = std::any_cast<std::function<void(ECS&, Component&, Entity&)>>(it->second);
 
                     for (auto eit : this->_currentEntities) {
                         // Ignore uninitialised entities
@@ -281,7 +281,7 @@ namespace Rengine {
             * @brief Run the function, previously set with this->setComponentFunction, on each entity and its component of the templated type.
             */
             template<class Component, class ... Parameters>
-            void runComponentFunction(Parameters&& ... params) const
+            void runComponentFunction(Parameters&& ... params)
             {
                 auto i = std::type_index(typeid(Component));
                 auto it = this->_functionArray.find(i);
@@ -295,7 +295,8 @@ namespace Rengine {
                 // Parse entity list
                 // Call function with each component / entity
                 try {
-                    auto fun = std::any_cast<std::function<void(const ECS&, Component&, Entity&, Parameters&&...)>>(it->second);
+                    std::function<void(ECS&, Component&, Entity&, Parameters&&...)> fun =
+                        std::any_cast<std::function<void(ECS&, Component&, Entity&, Parameters&&...)>>(it->second);
 
                     for (auto eit : this->_currentEntities) {
                         // Ignore uninitialised entities
@@ -314,7 +315,7 @@ namespace Rengine {
                     }
                 // Any cast fail.
                 } catch (std::bad_any_cast &e) {
-                    throw std::runtime_error("Rengine::ECS: Type mismatch when retriving Component function.");
+                    throw ECSExceptionBadComponentFunctionType();
                 }
             }
 
@@ -323,7 +324,7 @@ namespace Rengine {
             #define DEFAULTSPARSEARRAYSIZE 100
             size_type _sparseArrayDefaultSize = DEFAULTSPARSEARRAYSIZE;
             SparseArray<Entity> _currentEntities;
-            //                      Type    - std::function<void(const ECS&, Component&, Entity&)>
+            //                      Type    - std::function<void(ECS&, Component&, Entity&)>
             std::unordered_map<std::type_index, std::any> _functionArray;
     };  // class ECS
 }  // namespace Rengine

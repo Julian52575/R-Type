@@ -50,7 +50,7 @@ TEST(ECS, registerGetComponent)
     EXPECT_EQ(std::addressof(sp), std::addressof(sp2));
 }
 static int count = 0;
-void componentFunction(const Rengine::ECS&, int&, Rengine::Entity&)
+void componentFunction(Rengine::ECS&, int&, Rengine::Entity&)
 {
     count += 1;
 }
@@ -68,12 +68,12 @@ TEST(ECS, componentFunction)
     ecs.runComponentFunction<int>();
     EXPECT_EQ(count, 2);
 }
-void componentFunctionWithAdditionalParameters(const Rengine::ECS&, int&, Rengine::Entity&, bool& marker, int& count)
+void componentFunctionWithAdditionalParameters(Rengine::ECS&, int&, Rengine::Entity&, bool& marker, int& count)
 {
     count += 1;
     marker = true;
 }
-void componentFunctionWithLessAditionalParameters(const Rengine::ECS&, int&, Rengine::Entity&, int& count)
+void componentFunctionWithLessAditionalParameters(Rengine::ECS&, int&, Rengine::Entity&, int& count)
 {
     count += 1;
 }
@@ -89,14 +89,14 @@ TEST(ECS, componentFunctionAdditionalParameters)
     e.addComponent<int>(0);
     e2.addComponent<int>(1);
     // Creating a std::function is mandatory for parameter template resolution.
-    std::function<void(const Rengine::ECS&, int&, Rengine::Entity&, bool&, int&)> fun = componentFunctionWithAdditionalParameters;
+    std::function<void(Rengine::ECS&, int&, Rengine::Entity&, bool&, int&)> fun = componentFunctionWithAdditionalParameters;
 
     ecs.setComponentFunction<int, bool&, int&>(fun);
     EXPECT_THROW(ecs.runComponentFunction<int>(), Rengine::ECSExceptionBadComponentFunctionType);
     ecs.runComponentFunction<int, bool&, int&>(marker, count);
     EXPECT_TRUE(marker);
     EXPECT_EQ(count, 2);
-    std::function<void(const Rengine::ECS&, int&, Rengine::Entity&, int&)> funLess = componentFunctionWithLessAditionalParameters;
+    std::function<void(Rengine::ECS&, int&, Rengine::Entity&, int&)> funLess = componentFunctionWithLessAditionalParameters;
 
     ecs.setComponentFunction<int, int&>(funLess);
     ecs.runComponentFunction<int, int&>(count);
