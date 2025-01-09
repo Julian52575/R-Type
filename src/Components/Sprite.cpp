@@ -8,9 +8,7 @@
 #include "Sprite.hpp"
 
 namespace RType {
-
     namespace Components {
-
         Sprite::Sprite(Rengine::Graphics::GraphicManager& graphicManager, const Rengine::Graphics::SpriteSpecs& spriteConfig)
         {
             this->_window = graphicManager.getWindow();
@@ -35,6 +33,5 @@ namespace RType {
         {
             this->_sprite->advanceFrame(frame);
         }
-
-    }  // Components
-}  // RType
+    }  // namespace Components
+}  // namespace RType

@@ -1,10 +1,11 @@
 //
-#ifndef _SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
-#define _SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
-
-#include "AttackConfig.hpp"
+#ifndef SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
+#define SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
 
 #include <rengine/Rengine.hpp>
+#include <string>
+
+#include "AttackConfig.hpp"
 
 namespace RType {
     namespace Config {
@@ -13,7 +14,7 @@ namespace RType {
         * @addtogroup RType::Config
         * @namespace Config
         * @class AttackConfigResolver
-        * @brief Create an attack config from a json path and stores it for future use
+        * @brief Create and store AttackConfig object for faster load.
         */
         class AttackConfigResolver : public Rengine::Resolver::AResolver<std::string, AttackConfig> {
             public:
@@ -30,7 +31,7 @@ namespace RType {
         * @addtogroup RType::Config
         * @namespace Config
         * @class AttackConfigResolverSingletone
-        * @brief A singletone of the AttackConfigResolver
+        * @brief A class holding a singletone instance of AttackConfigResolver
         */
         class AttackConfigResolverSingletone {
             public:
@@ -39,7 +40,7 @@ namespace RType {
 
                 /**
                 * @fn get
-                * @return The same instance of AttackConfigResolver.
+                * @return The singletone instance of AttackConfigResolver.
                 * @brief Get a reference to a static AttackConfigResolver
                 */
                 static AttackConfigResolver& get(void) noexcept {
@@ -51,6 +52,4 @@ namespace RType {
 
     }  // namespace Config
 }  // namespace RType
-
-
-#endif  // _SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_
+#endif  // SRC_CONFIG_ATTACKCONFIGRESOLVER_HPP_

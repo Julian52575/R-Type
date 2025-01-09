@@ -1,21 +1,19 @@
 //
-#ifndef _SRC_COMPONENTS_SPRITE_HPP_
-#define _SRC_COMPONENTS_SPRITE_HPP_
+#ifndef SRC_COMPONENTS_SPRITE_HPP_
+#define SRC_COMPONENTS_SPRITE_HPP_
 #include <cstddef>
 #include <memory>
+#include <string>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
-#include <rengine/src/Graphics/ASprite.hpp>
 
 #include "../Config/EntityConfig.hpp"
 
 namespace RType {
-
     namespace Components {
-
         class SpriteException : public std::exception {
             public:
-                SpriteException(const std::string& msg)
+                explicit SpriteException(const std::string& msg)
                 {
                     this->_msg = "RType::Component::Sprite: " + msg;
                 }
@@ -31,7 +29,7 @@ namespace RType {
         class Sprite {
             public:
                 Sprite(void) = default;
-                Sprite(Rengine::Graphics::GraphicManager& graphicManager, const Rengine::Graphics::SpriteSpecs& spriteConfig);
+                explicit Sprite(Rengine::Graphics::GraphicManager& graphicManager, const Rengine::Graphics::SpriteSpecs& spriteConfig);
                 ~Sprite(void) = default;
                 std::shared_ptr<Rengine::Graphics::ASprite>& getSprite(void) noexcept;
                 void renderSprite(const Rengine::Graphics::vector2D<float> &position);
@@ -41,8 +39,6 @@ namespace RType {
                 std::shared_ptr<Rengine::Graphics::AWindow> _window = nullptr;
                 std::shared_ptr<Rengine::Graphics::ASprite> _sprite = nullptr;
         };
-
-    }  // Components
-}  // RType
-
-#endif
+    }  // namespace Components
+}  // namespace RType
+#endif  // SRC_COMPONENTS_SPRITE_HPP_

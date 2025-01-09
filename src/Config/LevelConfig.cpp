@@ -2,13 +2,18 @@
 #include <exception>
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <nlohmann/json_fwd.hpp>
 #include <stdexcept>
 #include <string>
+#include <typeindex>
 #include <utility>
 #include <vector>
 
 #include "EntityConfig.hpp"
+#include "EntityConfigResolver.hpp"
+#include "ImageConfigResolver.hpp"
 #include "LevelConfig.hpp"
+#include "LevelConfigResolver.hpp"
 
 namespace RType {
 
@@ -16,52 +21,65 @@ namespace RType {
 
         SceneConfig::SceneConfig(nlohmann::json& scene)
         {
-            this->scrollingSpeed = scene["scrollingSpeed"];
+            if (scene.contains("scrollingSpeed") == true) {
+                this->scrollingSpeed = scene["scrollingSpeed"];
+            }
             // Background
-            try {
-                this->parseBackground(scene["background"]);
-            } catch (std::exception& e) {
-                std::string msg = e.what();
-
-                throw std::runtime_error("Error when parsing background: " + msg);
-            }
+            this->parseBackground(scene["background"]);
             // Enemies
-            try {
-                this->parseEnemies(scene["enemies"]);
-            } catch (std::exception& e) {
-                std::string msg = e.what();
-
-                throw std::runtime_error("Error when parsing enemies: " + msg);
-            }
+            this->parseEnemies(scene["enemies"]);
             // EndCondition
-            try {
-                this->parseEndCondition(scene);
-            } catch (std::exception& e) {
-                std::string msg = e.what();
-
-                throw std::runtime_error("Error when parsing end condition: " + msg);
-            }
+            this->parseEndCondition(scene);
         }
 
         void SceneConfig::parseBackground(nlohmann::json& backgroundField)
         {
+            RType::Config::ImageConfigResolverSingletone imageSingletone;
+            RType::Config::ImageConfigResolver& imageResolver = imageSingletone.get();
+
             for (auto it : backgroundField) {
-                this->backgroundImages.push_back(RType::Config::ImageConfig(it));
+                // Not a string ?
+                if (it.type() != nlohmann::json::value_t::string) {
+                    throw std::runtime_error("Not a string.");
+                }
+                try {
+                    this->backgroundImages.emplace_back(imageResolver.get(it));
+                } catch (std::exception& e) {
+                    std::string err = e.what();
+                    std::string msg = err + " on background image '" + (std::string) it + "'.";
+
+                    throw std::runtime_error(msg);
+                }
             }
         }
         void SceneConfig::parseEnemies(nlohmann::json& enemiesField)
         {
+            // Not an array ?
+            if (enemiesField.type() != nlohmann::json::value_t::array) {
+                throw std::runtime_error("'enemies' field is not an array.");
+            }
+            RType::Config::EntityConfigResolverSingletone entitySingletone;
+            RType::Config::EntityConfigResolver& entityResolver = entitySingletone.get();
+
             for (auto it : enemiesField) {
+                if (it.contains("json") == false) {
+                    throw std::runtime_error("No 'json' field in one of 'enemies'.");
+                }
+                if (it.contains("x") == false) {
+                    throw std::runtime_error("No 'x' field in one of 'enemies'.");
+                }
+                if (it.contains("y") == false) {
+                    throw std::runtime_error("No 'y' field in one of 'enemies'.");
+                }
                 RType::Config::SceneEntityConfig config;
 
-                config.entityConfig = RType::Config::EntityConfig(it["json"]);
+                config.entityConfig = entityResolver.get(it["json"]);
+
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
                 // Boss
-                try {
+                if (it.contains("boss") == true) {
                     config.isBoss = it["boss"];
-                } catch (std::exception& e) {
-                    ;  //Ignore boss not found. damn bro that's crazy
                 }
                 this->enemies.push_back(config);
             }
@@ -127,19 +145,39 @@ namespace RType {
 
             try {
                 j = nlohmann::json::parse(f);
-                j = j["level"];
+            } catch (std::exception &e) {
+                throw LevelConfigExceptionInvalidJsonFile(jsonPath, e.what());
+            }
+            // level check
+            if (j.contains("level") == false) {
+                throw LevelConfigExceptionInvalidJsonFile(jsonPath, "No 'level' field.");
+            }
+            j = j["level"];
+            // scenes check
+            if (j.contains("scenes") == false) {
+                throw LevelConfigExceptionInvalidJsonFile(jsonPath, "No 'scenes' field.");
+            }
+            if (j["scenes"].type() != nlohmann::json::value_t::array) {
+                throw LevelConfigExceptionInvalidJsonFile(jsonPath, "'scenes' field is not an array.");
+            }
+            if (j["scenes"].size() == 0) {
+                throw LevelConfigExceptionInvalidJsonFile(jsonPath, "'scenes' field is empty.");
+            }
+            // scenes parsing
+            int count = 0;
+
+            try {
                 for (auto it : j["scenes"]) {
+                    count += 1;
                     SceneConfig config(it);
 
                     this->_scenes.push_back(config);
                 }
-                if (this->_scenes.size() == 0) {
-                    throw std::runtime_error("Error: no scenes.");
-                }
-            }
-            // Error on parsing
-            catch (std::exception &e) {
-                throw LevelConfigExceptionInvalidJsonFile(jsonPath, e.what());
+            } catch (std::exception& e) {
+                std::string err = e.what();
+                std::string msg = "Error on scene " + std::to_string(count) + " : " + err;
+
+                LevelConfigExceptionInvalidJsonFile(jsonPath, msg.c_str());
             }
         }
 
