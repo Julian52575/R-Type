@@ -98,19 +98,19 @@ namespace RType {
                 if (input.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
                     switch (input.data.keyboardSpecial) {
                         // Down arrow
-                        case Rengine::Graphics::UserInputTypeKeyboardSpecialArrowDOWN:
+                        case Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN:
                             moveY = 80;
                             break;
                         // Up arrow
-                        case Rengine::Graphics::UserInputTypeKeyboardSpecialArrowUP:
+                        case Rengine::Graphics::UserInputKeyboardSpecialArrowUP:
                             moveY = -80;
                             break;
                         // Left arrow
-                        case Rengine::Graphics::UserInputTypeKeyboardSpecialArrowLEFT:
+                        case Rengine::Graphics::UserInputKeyboardSpecialArrowLEFT:
                             moveX = -80;
                             break;
                         // Right arrow
-                        case Rengine::Graphics::UserInputTypeKeyboardSpecialArrowRIGHT:
+                        case Rengine::Graphics::UserInputKeyboardSpecialArrowRIGHT:
                             moveX = 80;
                             break;
                         // Error handling
@@ -136,27 +136,27 @@ namespace RType {
                     Network::EntityActionType::EntityActionTypeShoot1
                 },
                 {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialSHIFT},
+                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialSHIFT},
                     Network::EntityActionType::EntityActionTypeShoot2
                 },
                 {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialTAB},
+                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialTAB},
                     Network::EntityActionType::EntityActionTypeShoot3
                 },
                 {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialArrowUP},
+                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowUP},
                     Network::EntityActionType::EntityActionTypeMove
                 },
                 {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialArrowDOWN},
+                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN},
                     Network::EntityActionType::EntityActionTypeMove
                 },
                 {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialArrowLEFT},
+                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowLEFT},
                     Network::EntityActionType::EntityActionTypeMove
                 },
                 {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputTypeKeyboardSpecialArrowRIGHT},
+                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowRIGHT},
                     Network::EntityActionType::EntityActionTypeMove
                 }
             };  // this->_inputNetworkBindVector

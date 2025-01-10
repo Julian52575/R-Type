@@ -57,6 +57,7 @@ namespace RType {
 
     void GameState::loadLevel(const RType::Config::LevelConfig& levelConfig)
     {
+#warning Parse level
         this->createPlayer("assets/entities/playerDefault.json");
     }
 
