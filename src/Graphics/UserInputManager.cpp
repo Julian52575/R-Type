@@ -87,7 +87,7 @@ namespace Rengine {
                     str = "Unknow";
                     break;
             }
-            os << "UserInputType::" << str << std::endl;
+            os << "UserInputType::" << str;
             return os;
         }
 

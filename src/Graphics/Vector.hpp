@@ -24,7 +24,7 @@ namespace Rengine {
         template <class I>
         std::ostream& operator<<(std::ostream& os, const vector2D<I>& vec)
         {
-            os << "{" << vec.x << "x," << vec.y << "y}" << std::endl;
+            os << "{" << vec.x << "x," << vec.y << "y}";
             return os;
         }
         template <class I>
@@ -82,7 +82,7 @@ namespace Rengine {
         template <class I>
         std::ostream& operator<<(std::ostream& os, const vector3D<I>& vec)
         {
-            os << "{" << vec.x << "x," << vec.y << "y," << vec.z << "z}" << std::endl;
+            os << "{" << vec.x << "x," << vec.y << "y," << vec.z << "z}";
             return os;
         }
 
