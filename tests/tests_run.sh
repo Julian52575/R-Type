@@ -48,6 +48,7 @@ runTest "ECS_t.cpp" "ECS"
 runTest "Entity_t.cpp" "Entity"
 runTest "Resolver/AResolver_t.cpp" "Resolver"
 runTest "Graphics/WindowSpecs_t.cpp ../src/Graphics/WindowSpecs.cpp" "WindowSpecs"
+runTest "Graphics/UserInputManager_t.cpp ../src/Graphics/UserInputManager.cpp" "UserInputManager"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})

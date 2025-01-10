@@ -1,5 +1,7 @@
 #include <cstddef>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "UserInputManager.hpp"
@@ -38,6 +40,38 @@ namespace Rengine {
             return this->_inputVector.size();
         }
 
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInput& inputType)
+        {
+            for (auto& it : *this) {
+                if (it == inputType) {
+                    std::reference_wrapper<const UserInput> lol = it;
+                    return it;
+                }
+            }
+            return std::optional<std::reference_wrapper<const UserInput>>();
+        }
+
+        bool operator==(const UserInput& a, const UserInput& b)
+        {
+            if (a.type != b.type) {
+                return false;
+            }
+            switch (a.type) {
+                case (UserInputType::UserInputTypeKeyboardChar):
+                    return a.data.keyboardChar == b.data.keyboardChar;
+
+                case (UserInputType::UserInputTypeKeyboardSpecial):
+                    return a.data.keyboardSpecial == b.data.keyboardSpecial;
+
+                // The other type needs no comparison
+                default:
+                    return true;
+            }
+        }
+        bool operator!=(const UserInput& a, const UserInput& b)
+        {
+            return !(a == b);
+        }
 
         std::ostream& operator<<(std::ostream& os, const UserInputType& inputType)
         {
