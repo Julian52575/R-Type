@@ -58,7 +58,7 @@ namespace Rengine {
             /**
             * @brief The path to the window's icon.
             */
-            std::string iconImagePath;
+            std::string iconImagePath = "";
             /**
             * @brief The size of the icon
             * Default: 0x, 0y

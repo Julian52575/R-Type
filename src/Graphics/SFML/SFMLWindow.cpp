@@ -88,12 +88,16 @@ styleApply:
             // framerateLimit
             this->_renderWindow.setFramerateLimit(this->_windowSpecs.framerateLimit);
             // Icon
+            if (this->_windowSpecs.iconImagePath == "") {
+                goto skipIcon;
+            }
             try {
                 sf::Image icon;
 
                 icon.loadFromFile(this->_windowSpecs.iconImagePath);
                 this->_renderWindow.setIcon(this->_windowSpecs.iconSize.x, this->_windowSpecs.iconSize.y, icon.getPixelsPtr());
             } catch (std::exception& e) {;}
+skipIcon:
             // Options (re)
             this->_renderWindow.setMouseCursorVisible(this->_windowSpecs.options.isCursorVisible);
             this->_renderWindow.setVerticalSyncEnabled(this->_windowSpecs.options.enableVsync);
