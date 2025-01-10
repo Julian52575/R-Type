@@ -41,7 +41,7 @@
 TEST(EntityConfig, EntityConfigSprite)
 {
     auto con = RType::Config::EntityConfig("Config/entity.json");
-    const Rengine::Graphics::SpriteSpecs &sp = con.getSprite().getConfig();
+    const Rengine::Graphics::SpriteSpecs &sp = con.getSprite().getSpecs();
     // Sprite
     Rengine::Graphics::SpriteSpecs expectedSprite;
 

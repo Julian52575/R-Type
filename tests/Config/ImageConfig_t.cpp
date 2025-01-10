@@ -29,7 +29,7 @@
 TEST(ImageConfig, ImageConfig)
 {
     RType::Config::ImageConfig im("Config/image.json");
-    const Rengine::Graphics::SpriteSpecs &sp = im.getConfig();
+    const Rengine::Graphics::SpriteSpecs &sp = im.getSpecs();
     Rengine::Graphics::SpriteSpecs expectedSprite;
 
     expectedSprite.texturePath = "assets/images/red.png";

@@ -177,7 +177,7 @@ static inline void compareEntityConfig(const RType::Config::EntityConfig& con)
     ASSERT_EQ(hitbox.offsetFromSpriteOrigin.x, exHitbox.offsetFromSpriteOrigin.x);
     ASSERT_EQ(hitbox.offsetFromSpriteOrigin.y, exHitbox.offsetFromSpriteOrigin.y);
     // Sprite
-    compareImageConfigData(con.getSprite().getConfig());
+    compareImageConfigData(con.getSprite().getSpecs());
     // Characteristics
     const RType::Config::EntityConfigCharacteristics& chara = con.getCharacteristics();
     auto exChara = expectedEntity.getCharacteristics();
@@ -205,7 +205,7 @@ TEST(LevelConfig, Scenes)
     ASSERT_EQ(scene1.endConditionData.time, 10.10f);
     ASSERT_EQ(scene1.backgroundImages.size(), 1);
     // Background
-    compareImageConfigData(scene1.backgroundImages[0].getConfig());
+    compareImageConfigData(scene1.backgroundImages[0].getSpecs());
     // Enemies
     ASSERT_EQ(scene1.enemies.size(), 2);
     const RType::Config::SceneEntityConfig& scene1Entity1 = scene1.enemies[0];
@@ -228,8 +228,8 @@ TEST(LevelConfig, Scenes)
     ASSERT_EQ(scene2.endCondition, RType::Config::SceneEndCondition::SceneEndConditionBossDefeat);
     ASSERT_EQ(scene2.scrollingSpeed, 30.30f);
     ASSERT_EQ(scene2.backgroundImages.size(), 2);
-    compareImageConfigData(scene2.backgroundImages[0].getConfig());
-    compareImageConfigData(scene2.backgroundImages[1].getConfig());
+    compareImageConfigData(scene2.backgroundImages[0].getSpecs());
+    compareImageConfigData(scene2.backgroundImages[1].getSpecs());
     ASSERT_EQ(scene2.enemies.size(), 3);
     const RType::Config::SceneEntityConfig& scene2Entity1 = scene2.enemies[0];
     const RType::Config::SceneEntityConfig& scene2Entity2 = scene2.enemies[1];
