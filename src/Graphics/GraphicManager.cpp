@@ -1,4 +1,5 @@
 //
+#include <cstddef>
 #include <memory>
 
 #include "GraphicManager.hpp"
@@ -18,8 +19,16 @@
 namespace Rengine {
     namespace Graphics {
 
-        GraphicManager::GraphicManager(const WindowSpecs& windowSpecs)
+        GraphicManager::GraphicManager(void)
         {
+        }
+
+        void GraphicManager::createWindow(const WindowSpecs& windowSpecs)
+        {
+            if (this->_window != nullptr) {
+                this->_window.reset();
+            }
+
             // SFML
         #ifdef RENGINEGRAPHICS_USELIB_SFML
             this->_window =
@@ -34,10 +43,12 @@ namespace Rengine {
         #endif
             throw GraphicManagerException("No graphical library set. Check your rengine build.");
         }
+
         std::shared_ptr<AWindow>& GraphicManager::getWindow(void) noexcept
         {
             return this->_window;
         }
+
         std::shared_ptr<ASprite> GraphicManager::createSprite(const SpriteSpecs& spriteSpecs)
         {
             // SFML

@@ -44,11 +44,16 @@ namespace Rengine {
             public:
                 /**
                 * @fn GraphicManager
-                * @param windowSpecs The specs of the to-be-created window
                 * @brief Create the graphic manager and the window.
                 */
-                GraphicManager(const WindowSpecs& windowSpecs = WindowSpecs());
+                GraphicManager();
                 ~GraphicManager(void) = default;
+                /**
+                * @fn createWindow
+                * @param windowSpecs The specs of the to-be-created window
+                * @brief Create the window following the specs.
+                */
+                void createWindow(const WindowSpecs& windowSpecs = WindowSpecs());
                 /**
                 * @fn getWindow
                 * @brief Return a reference to the window.
