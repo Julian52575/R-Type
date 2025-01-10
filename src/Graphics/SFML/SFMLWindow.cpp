@@ -48,14 +48,14 @@ namespace Rengine {
                 {sf::Keyboard::Num8, {UserInputTypeKeyboardChar, '8'}}, {sf::Keyboard::Numpad8, {UserInputTypeKeyboardChar, '8'}},
                 {sf::Keyboard::Num9, {UserInputTypeKeyboardChar, '9'}}, {sf::Keyboard::Numpad9, {UserInputTypeKeyboardChar, '9'}},
                 // Special
-                {sf::Keyboard::Escape, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialESCAPE}},
-                {sf::Keyboard::Tab, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialTAB}},
-                {sf::Keyboard::LShift, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialSHIFT}},
-                {sf::Keyboard::RShift, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialSHIFT}},
-                {sf::Keyboard::Up, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowUP}},
-                {sf::Keyboard::Down, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowDOWN}},
-                {sf::Keyboard::Left, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowLEFT}},
-                {sf::Keyboard::Right, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowRIGHT}},
+                {sf::Keyboard::Escape, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialESCAPE}},
+                {sf::Keyboard::Tab, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialTAB}},
+                {sf::Keyboard::LShift, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialSHIFT}},
+                {sf::Keyboard::RShift, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialSHIFT}},
+                {sf::Keyboard::Up, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowUP}},
+                {sf::Keyboard::Down, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowDOWN}},
+                {sf::Keyboard::Left, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowLEFT}},
+                {sf::Keyboard::Right, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowRIGHT}},
             };  // this->_sfKeyboardToUserInputBindVector
         }
 
@@ -259,9 +259,26 @@ skipIcon:
         {
             // Iterate over the sfKeyboardBind vector and add an input if match is found
             for (auto& it : this->_sfKeyboardToUserInputBindVector) {
-                if (sf::Keyboard::isKeyPressed(it.first) == true) {
-                    this->_inputManager.addInput(it.second);
+                if (sf::Keyboard::isKeyPressed(it.first) != true) {
+                    continue;
                 }
+                // Check uppercase / lowercase
+                // Check type
+                if (it.second.type == UserInputTypeKeyboardChar) {
+                    // Check letter
+                    if ('A' <= it.second.data.keyboardChar && it.second.data.keyboardChar <= 'Z') {
+                        // Check no shift
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) == false
+                        && sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) == false) {
+                            Rengine::Graphics::UserInput newInput = it.second;
+
+                            newInput.data.keyboardChar += 32;
+                            this->_inputManager.addInput(newInput);
+                            continue;
+                        }
+                    }
+                }
+                this->_inputManager.addInput(it.second);
             }
             return;
         }
