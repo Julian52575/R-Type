@@ -46,6 +46,9 @@ namespace Rengine {
 
         std::shared_ptr<AWindow>& GraphicManager::getWindow(void) noexcept
         {
+            if (this->_window == nullptr) {
+                this->createWindow();
+            }
             return this->_window;
         }
 

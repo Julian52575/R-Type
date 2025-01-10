@@ -57,6 +57,7 @@ namespace Rengine {
                 /**
                 * @fn getWindow
                 * @brief Return a reference to the window.
+                * If the window wasn't created previously, creates it with default settings
                 */
                 std::shared_ptr<AWindow>& getWindow(void) noexcept;
                 /**
