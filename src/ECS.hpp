@@ -31,7 +31,20 @@ namespace Rengine {
     };
     class ECSExceptionNoComponentFunction : public std::exception {
         public:
-            const char *what() const noexcept { return "Rengine::ECS: No component function has been set."; };
+            ECSExceptionNoComponentFunction(const char *componentName)
+            {
+                std::string name = componentName;
+                std::string foot = "'.";
+
+                this->_concat = this->_concat + name + foot;
+            }
+            const char *what() const noexcept
+            {
+                return this->_concat.c_str();
+            };
+
+        private:
+            std::string _concat = "Rengine::ECS: No component function has been set for type '";
     };
     class ECSExceptionBadComponentFunctionType : public std::exception {
         public:
@@ -248,7 +261,7 @@ namespace Rengine {
 
                 // No function ?
                 if (it == this->_functionArray.end()) {
-                    throw ECSExceptionNoComponentFunction();
+                    throw ECSExceptionNoComponentFunction(i.name());
                 }
                 // Try to:
                 // Retrive function
@@ -291,7 +304,7 @@ namespace Rengine {
 
                 // No function ?
                 if (it == this->_functionArray.end()) {
-                    throw ECSExceptionNoComponentFunction();
+                    throw ECSExceptionNoComponentFunction(i.name());
                 }
                 // Try to:
                 // Retrive function
