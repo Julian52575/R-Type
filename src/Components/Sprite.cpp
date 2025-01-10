@@ -1,20 +1,23 @@
 //
 #include <cstddef>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
+#include <rengine/src/Graphics/AWindow.hpp>
+#include <rengine/src/Graphics/GraphicManager.hpp>
 
 #include "../Config/EntityConfig.hpp"
+#include "Position.hpp"
 #include "Sprite.hpp"
 
 namespace RType {
     namespace Components {
-        Sprite::Sprite(Rengine::Graphics::GraphicManager& graphicManager, const Rengine::Graphics::SpriteSpecs& spriteConfig)
+        Sprite::Sprite(const Rengine::Graphics::SpriteSpecs& spriteConfig)
         {
-            this->_window = graphicManager.getWindow();
-            if (this->_window == nullptr) {
-                throw SpriteException("Got nullptr instead of the window.");
-            }
+            Rengine::Graphics::GraphicManager& graphicManager = Rengine::Graphics::GraphicManagerSingletone::get();
+
             this->_sprite = graphicManager.createSprite(spriteConfig);
             if (this->_sprite == nullptr) {
                 throw SpriteException("Got nullptr when trying to create a sprite.");
@@ -27,11 +30,20 @@ namespace RType {
         }
         void Sprite::renderSprite(const Rengine::Graphics::vector2D<float> &position)
         {
-            this->_window->addSpriteToRender(this->_sprite, position);
+            Rengine::Graphics::GraphicManager& graphicManager = Rengine::Graphics::GraphicManagerSingletone::get();
+            std::shared_ptr<Rengine::Graphics::AWindow>& window = graphicManager.getWindow();
+
+            window->addSpriteToRender(this->_sprite, position);
         }
-        void Sprite::advanceFrame(const int16_t frame)
+
+        void Sprite::componentFunction(Rengine::ECS& ecs, Sprite& sprite, Rengine::Entity& entity)
         {
-            this->_sprite->advanceFrame(frame);
+            std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
+
+            if (pos == std::nullopt) {
+                return;
+            }
+            sprite.renderSprite(pos.value().get().getVector2D());
         }
     }  // namespace Components
 }  // namespace RType

@@ -32,7 +32,7 @@ namespace RType {
             j = j["image"];  // Get image general field
             this->parseImage(j);
         }
-        const Rengine::Graphics::SpriteSpecs& ImageConfig::getConfig(void) const noexcept
+        const Rengine::Graphics::SpriteSpecs& ImageConfig::getSpecs(void) const noexcept
         {
             return this->_data;
         }

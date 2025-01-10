@@ -1,8 +1,8 @@
 {
     "title": "R-Type",
     "resolution": {
-        "width": 1920,
-        "height": 1080
+        "width": 920,
+        "height": 380
     },
     "framerateLimit": 60,
     "backgroundColor": {
@@ -16,7 +16,7 @@
         "height": 10
     },
     "options": {
-        "isFullscreen": true,
+        "isFullscreen": false,
         "isResizable": true,
         "isBorderless": false,
         "enableVsync": true,

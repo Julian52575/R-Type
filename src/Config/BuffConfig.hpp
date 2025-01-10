@@ -53,7 +53,7 @@ namespace RType {
                     }
                 }
                 ~BuffConfig(void) = default;
-                RType::Config::BuffType getBuffType(void) const noexcept
+                BuffType getBuffType(void) const noexcept
                 {
                     return this->_buffType;
                 }
@@ -67,7 +67,7 @@ namespace RType {
                 }
 
             private:
-                RType::Config::BuffType _buffType = RType::Config::BuffType::BuffNA;
+                BuffType _buffType = BuffType::BuffNA;
                 double _duration = 0.0;
                 double _value = 0.0;
         };

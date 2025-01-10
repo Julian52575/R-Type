@@ -29,14 +29,13 @@ namespace RType {
         class Sprite {
             public:
                 Sprite(void) = default;
-                explicit Sprite(Rengine::Graphics::GraphicManager& graphicManager, const Rengine::Graphics::SpriteSpecs& spriteConfig);
+                explicit Sprite(const Rengine::Graphics::SpriteSpecs& spriteConfig);
                 ~Sprite(void) = default;
                 std::shared_ptr<Rengine::Graphics::ASprite>& getSprite(void) noexcept;
                 void renderSprite(const Rengine::Graphics::vector2D<float> &position);
-                void advanceFrame(const int16_t frame);
+                static void componentFunction(Rengine::ECS& ecs, Sprite& sprite, Rengine::Entity& entity);
 
             private:
-                std::shared_ptr<Rengine::Graphics::AWindow> _window = nullptr;
                 std::shared_ptr<Rengine::Graphics::ASprite> _sprite = nullptr;
         };
     }  // namespace Components

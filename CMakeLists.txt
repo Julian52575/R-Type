@@ -5,7 +5,9 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(GAME
     ${SRC_FILES}
 )
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCMAKE_COMPILATION_")
+target_compile_features(GAME PUBLIC cxx_std_20)
 
 target_include_directories(GAME PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

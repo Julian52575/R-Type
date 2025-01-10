@@ -19,6 +19,10 @@ namespace RType {
                 {
                     return this->_position;
                 }
+                void set(const Rengine::Graphics::vector2D<float>& pos)
+                {
+                    this->_position = pos;
+                }
                 void setX(float x)
                 {
                     this->_position.x = x;

@@ -1,19 +1,32 @@
 //
 #include <cstddef>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <rengine/src/Graphics/GraphicManager.hpp>
+#include <rengine/src/Graphics/UserInputManager.hpp>
+#include <rengine/src/Graphics/Vector.hpp>
 #include <stdexcept>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <rengine/Rengine.hpp>
 
-
 #include "../Network/EntityAction.hpp"
 #include "Action.hpp"
+#include "Configuration.hpp"
+#include "Position.hpp"
+#include "Sprite.hpp"
+#include "src/Config/AttackBuffTypeEnum.hpp"
+#include "src/Config/AttackConfig.hpp"
+#include "src/Config/EntityConfig.hpp"
+#include "src/Config/EntityConfigResolver.hpp"
 
 namespace RType {
     namespace Components {
 
-        Action::Action(ActionSource source, const std::string& luaScript)
+        Action::Action(std::reference_wrapper<SceneManager> sceneManager, ActionSource source, const std::string& luaScript)
+            : _sceneManager(sceneManager)
         {
             this->_actionSource = source;
             switch (source) {
@@ -30,9 +43,23 @@ namespace RType {
             }  // switch source
             this->_actionVector.reserve(5);
         }
+        void Action::processUserInput(void)
+        {
+            // Check if source is UserInput
+            if (this->_actionSource != ActionSourceUserInput) {
+                throw ActionException("Trying to set user input on lua source.");
+            }
+            Rengine::Graphics::UserInputManager& inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+            Rengine::Graphics::UserInputManager::const_iterator it = inputManager.begin();
+
+            while (it != inputManager.end()) {
+                this->processUserInput(*it);
+                it++;
+            }
+        }
         void Action::processUserInput(const Rengine::Graphics::UserInput& input)
         {
-            // Check if source is lua script
+            // Check if source is UserInput
             if (this->_actionSource != ActionSourceUserInput) {
                 throw ActionException("Trying to set user input on lua source.");
             }
@@ -100,6 +127,7 @@ namespace RType {
             }  // if newAction.type == Network::EntityActionTypeMove
             this->_actionVector.push_back(newAction);
         }
+
         void Action::buildBindVector(void)
         {
             this->_inputNetworkBindVector = {
@@ -168,5 +196,88 @@ namespace RType {
             }
             return {Rengine::Graphics::UserInputTypeNA, {0}};
         }
+
+        void Action::componentFunction(Rengine::ECS& ecs, Action& actionComponent, Rengine::Entity& entity)
+        {
+            std::optional<std::reference_wrapper<Configuration>> entityConfig = entity.getComponentNoExcept<Configuration>();
+            std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
+
+            if (entityConfig.has_value() == false || pos.has_value() == false) {
+                return;
+            }
+            const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
+            Rengine::Graphics::vector2D<float> newPos = currentPos;
+
+            for (auto it : actionComponent) {
+                // Move
+                if (it.type == Network::EntityActionTypeMove) {
+                    actionComponent.handleMove(it, entityConfig.value(), pos.value());
+                }
+                // Shoot1 -> 3
+                if (Network::EntityActionTypeShoot1 <= it.type && it.type <= Network::EntityActionTypeShoot3) {
+                    actionComponent.handleShoot(actionComponent, it, ecs, entity, entityConfig.value());
+                }
+            }  // for it
+            actionComponent.clear();
+        }
+
+        void Action::handleMove(Network::EntityAction& action, Configuration& config, Position& pos)
+        {
+            float deltatime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+            Rengine::Graphics::vector2D<float> newPos = pos.getVector2D();
+
+            newPos.x += action.data.moveVelocity.x * (config.getConfig().getStats().speedX * deltatime);
+            newPos.y += action.data.moveVelocity.y * (config.getConfig().getStats().speedY * deltatime);
+            pos.set(newPos);
+        }
+
+        void Action::handleShoot(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig)
+        {
+            // Get attackId by taking advantage of the fact that the 3 TypeShoot follow each other in the enum
+            uint8_t attackId = 1 + (action.type - Network::EntityActionTypeShoot1);
+            const std::optional<Config::AttackConfig>& attackConfig = entityConfig.getConfig().getAttack(attackId);
+
+            if (attackConfig.has_value() == false) {
+                return;
+            }
+            std::cout << "Shoot " << attackId << std::endl; // debug
+                                                        #warning Debug print in Action.cpp
+            switch (attackConfig->getType()) {
+                // Handle buffs
+                case (Config::AttackType::AttackTypeBuffs):
+                    actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
+                    break;
+                // Handle missiles
+                case (Config::AttackType::AttackTypeMissiles):
+                    actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        inline void Action::handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,
+                        Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
+        {
+            // No projectile when no more entity left
+            if (ecs.getActiveEntitiesCount() >= ecs.getEntityLimit()) {
+                return;
+            }
+            RType::Config::EntityConfigResolver& resolver = RType::Config::EntityConfigResolverSingletone::get();
+            RType::Config::EntityConfig missileConfig("assets/entities/missile1.json");
+            Rengine::Entity& projectile = ecs.addEntity();
+
+            projectile.addComponent<RType::Components::Configuration>(missileConfig);
+            projectile.addComponent<RType::Components::Sprite>(missileConfig.getSprite().getSpecs());
+            projectile.addComponent<RType::Components::Position>(0, 0);
+            this->_sceneManager.get().addEntityToCurrentScene(projectile);
+        }
+
+        inline void Action::handleShootBuff(Network::EntityAction& action, Rengine::ECS& ecs,
+                        Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
+        {
+            std::cout << "Buff not inplemented yet. Update Components::Action" << std::endl;
+        }
+
     }  // namespace Components
 }  // namespace RType

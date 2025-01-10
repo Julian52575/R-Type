@@ -69,7 +69,7 @@ namespace RType {
                 * @return Rengine::Graphics::SpriteSpecs A structure containing the image configuration.
                 * @brief Return the configuration of the image.
                 */
-                const Rengine::Graphics::SpriteSpecs& getConfig(void) const noexcept;
+                const Rengine::Graphics::SpriteSpecs& getSpecs(void) const noexcept;
 
             private:
                 void parseImage(nlohmann::json& imageField);

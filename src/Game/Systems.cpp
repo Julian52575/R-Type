@@ -1,5 +1,5 @@
 #include "Systems.hpp"
-#include "../Components/Liste.hpp"
+/*
 
 Systems::Systems()
 {
@@ -35,8 +35,8 @@ void Systems::InputSystem(Rengine::Entity& entity,float deltatime,Rengine::ECS& 
         switch (it.type) {
             // Move
             case RType::Network::EntityActionType::EntityActionTypeMove:
-                newPos.x +=  it.data.moveVelocity.x * stats->get().getStats().SpeedX * deltatime;
-                newPos.y +=  it.data.moveVelocity.y * stats->get().getStats().SpeedY * deltatime;
+                newPos.x +=  it.data.moveVelocity.x * stats->get().getStats().speedX * deltatime;
+                newPos.y +=  it.data.moveVelocity.y * stats->get().getStats().speedY * deltatime;
                 pos->get().setX(newPos.x);
                 pos->get().setY(newPos.y);
                 break;
@@ -78,8 +78,8 @@ void Systems::MovementSystem(Rengine::Entity& entity,float deltatime)
     auto currentPos = pos->get().getVector2D();
     auto newPos = pos->get().getVector2D();
 
-    newPos.x += stats->get().getStats().SpeedX * deltatime;
-    newPos.y += stats->get().getStats().SpeedY * deltatime;
+    newPos.x += stats->get().getStats().speedX * deltatime;
+    newPos.y += stats->get().getStats().speedY * deltatime;
 
     pos->get().setX(newPos.x);
     pos->get().setY(newPos.y);
@@ -96,3 +96,4 @@ void Systems::renderSpriteSystem(Rengine::Entity& entity)
 
     spriteComponent->get().renderSprite(pos->get().getVector2D());
 }
+*/

@@ -2,6 +2,9 @@
 #ifndef SRC_COMPONENTS_ACTION_HPP_
 #define SRC_COMPONENTS_ACTION_HPP_
 #include <cstddef>
+#include <functional>
+#include <rengine/src/ECS.hpp>
+#include <rengine/src/Entity.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <stdexcept>
 #include <utility>
@@ -11,6 +14,10 @@
 #include <rengine/Rengine.hpp>
 
 #include "../Network/EntityAction.hpp"
+#include "../Game/SceneManager.hpp"
+#include "Position.hpp"
+#include "Configuration.hpp"
+#include "src/Config/AttackConfig.hpp"
 
 namespace RType {
 
@@ -34,7 +41,8 @@ namespace RType {
         enum ActionSource {
             ActionSourceNA,
             ActionSourceLua,
-            ActionSourceUserInput
+            ActionSourceUserInput,
+            ActionSourceServer
         };
 
         class Action {
@@ -43,7 +51,14 @@ namespace RType {
                 using size_type = typename container_t :: size_type;
                 using iterator = typename container_t :: iterator;
                 using const_iterator = typename container_t :: const_iterator;
-                explicit Action(ActionSource source, const std::string& luaScript = "");
+                /**
+                * @fn Action
+                * @param entitySceneManager The scene manager of the scene the entity belong to
+                * @param source The source of the action
+                * @param scriptPath The path to the script to execute if ActionSource == ActionSourceLua
+                * @brief Create an instance of Action Component.
+                */
+                Action(std::reference_wrapper<SceneManager> entitySceneManager, ActionSource source, const std::string& scriptPath = "");
                 ~Action(void) = default;
                 /**
                 * @fn begin
@@ -63,6 +78,12 @@ namespace RType {
                 * @brief Get the number of EntityAction.
                 */
                 size_type size(void) const noexcept;
+                /**
+                * @fn addUserInput
+                * @exception ActionException when ActionSource != ActionSourceUserInput
+                * @brief Parse all input from the UserInputManager and add new EntityActions inside the vector.
+                */
+                void processUserInput(void);
                 /**
                 * @fn addUserInput
                 * @param input The user input to process.
@@ -87,7 +108,19 @@ namespace RType {
                 */
                 const Rengine::Graphics::UserInput getNeededInput(Network::EntityActionType outcome) const;
 
+                /*      Function for ECS        */
+                static void componentFunction(Rengine::ECS& ecs, Action& component, Rengine::Entity& entity);
+                inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
+                inline void handleShoot(Action& actionComponent, Network::EntityAction& action,
+                        Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig);
+                inline void handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,
+                        Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
+                inline void handleShootBuff(Network::EntityAction& action, Rengine::ECS& ecs,
+                        Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
+
             private:
+                std::reference_wrapper<SceneManager> _sceneManager;
+#warning Think more about reference to sceneManager in component Action
                 ActionSource _actionSource;
                 container_t _actionVector;
                 void buildBindVector(void);
