@@ -40,10 +40,20 @@ namespace Rengine {
             return this->_inputVector.size();
         }
 
-        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInput& inputType)
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(UserInputType inputType)
         {
             for (auto& it : *this) {
-                if (it == inputType) {
+                if (it.type == inputType) {
+                    std::reference_wrapper<const UserInput> lol = it;
+                    return it;
+                }
+            }
+            return std::optional<std::reference_wrapper<const UserInput>>();
+        }
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInput& input)
+        {
+            for (auto& it : *this) {
+                if (it == input) {
                     std::reference_wrapper<const UserInput> lol = it;
                     return it;
                 }
@@ -62,6 +72,9 @@ namespace Rengine {
 
                 case (UserInputType::UserInputTypeKeyboardSpecial):
                     return a.data.keyboardSpecial == b.data.keyboardSpecial;
+
+                case (UserInputType::UserInputTypeJoystickButton):
+                    return a.data.joystickButton == b.data.joystickButton;
 
                 // The other type needs no comparison
                 default:

@@ -117,10 +117,18 @@ namespace Rengine {
                 size_type size(void) const noexcept;
                 /**
                 * @fn size
+                * @param input The input (type and data have to be filled) to retrive.
                 * @return An optional wrapper to the last input received who match the provided type
                 * @brief Retrives the last input of the provided type or a nullopt if not input was received.
                 */
-                std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInput& inputType);
+                std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInput& input);
+                /**
+                * @fn size
+                * @param inputType The type to retrive
+                * @return An optional wrapper to the last input received who match the provided type
+                * @brief Retrives the last input of the provided type or a nullopt if not input was received.
+                */
+                std::optional<std::reference_wrapper<const UserInput>> receivedInput(UserInputType inputType);
 
             public:
                 /**
