@@ -141,6 +141,7 @@ skipIcon:
         {
             this->_renderWindow.close();
         }
+
         void SFMLWindow::pollInput(void)
         {
             sf::Event event;
@@ -157,10 +158,14 @@ skipIcon:
                         break;
                     // Key press
                     case sf::Event::KeyPressed:
+                        /*
                         newInput = getUserInputFromSfKeyboard(event.key);
                         if (newInput.type == UserInputType::UserInputTypeNA) {
                             continue;
                         }
+                        */
+                        // Ignored because sf::Event is worthless for keyboard.
+                        // Using this->this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide() instead
                         break;
                     // Mouse click
                     case sf::Event::MouseButtonPressed:
@@ -194,6 +199,8 @@ skipIcon:
                 }  // switch(event.type)
                 this->_inputManager.addInput(newInput);
             }  // while (this->_renderWindow.pollEvent(event)
+            // Keyboard processing
+            this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide();
         }
 
         inline UserInput SFMLWindow::getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
@@ -248,6 +255,17 @@ skipIcon:
             }
             return input;
         }
+        void SFMLWindow::processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void)
+        {
+            // Iterate over the sfKeyboardBind vector and add an input if match is found
+            for (auto& it : this->_sfKeyboardToUserInputBindVector) {
+                if (sf::Keyboard::isKeyPressed(it.first) == true) {
+                    this->_inputManager.addInput(it.second);
+                }
+            }
+            return;
+        }
+
         uint64_t SFMLWindow::getElapsedTimeMicroseconds(void) const noexcept
         {
             return this->_clock.getElapsedTime().asMicroseconds();

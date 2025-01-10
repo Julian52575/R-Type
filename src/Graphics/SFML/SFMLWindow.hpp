@@ -54,6 +54,7 @@ namespace Rengine {
                 */
                 inline UserInput getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
                 inline UserInput processJoystickMove(const sf::Event& event);
+                inline void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
         };
 
     }  // namespace Rengine
