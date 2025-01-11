@@ -1,8 +1,8 @@
 {
     "title": "R-Type",
     "resolution": {
-        "width": 920,
-        "height": 380
+        "width": 1920,
+        "height": 1080
     },
     "framerateLimit": 60,
     "backgroundColor": {

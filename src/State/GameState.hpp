@@ -103,6 +103,8 @@ namespace RType {
             */
             void sendInputToPlayerEntity(void);
 
+            void createBackground(const std::string& jsonPath);
+
         protected:
         #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
             Rengine::ECS::size_type _playerEntityId = RTYPE_NO_PLAYER_ENTITY_ID;
