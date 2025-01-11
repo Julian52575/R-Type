@@ -1,6 +1,7 @@
 //
 #ifndef _SRC_GRAPHICS_IWINDOW_HPP_
 #define _SRC_GRAPHICS_IWINDOW_HPP_
+#include "AText.hpp"
 #include "ASprite.hpp"
 #include "Vector.hpp"
 #include "UserInputManager.hpp"
@@ -49,6 +50,14 @@ namespace Rengine {
                 virtual void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
                     const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true) = 0;
                 /**
+                * @fn addTextToRender
+                * @param text The sprite to render.
+                * @param position The window position to render the text.
+                * @brief Add a text to the render.
+                */
+                virtual void addTextToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                    const Rengine::Graphics::vector2D<float>& position) = 0;
+                /**
                 * @fn render
                 * @brief Render all the sprite added by this->addSpriteToRender.
                 */
@@ -73,6 +82,11 @@ namespace Rengine {
                 {
                     return this->_inputManager;
                 }
+                /**
+                * @fn getSpecs
+                * @return The specs of the window.
+                * @brief Return the specs used to create the window.
+                */
                 const Rengine::Graphics::WindowSpecs& getSpecs(void) const noexcept
                 {
                     return this->_windowSpecs;

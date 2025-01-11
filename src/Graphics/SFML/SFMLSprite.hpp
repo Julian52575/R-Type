@@ -71,4 +71,4 @@ namespace Rengine {
     }  // namespace Rengine
 }  // namespace Graphics
 
-#endif
+#endif  // _SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_

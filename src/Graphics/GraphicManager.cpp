@@ -5,13 +5,15 @@
 #include "GraphicManager.hpp"
 #include "AWindow.hpp"
 
-#ifdef RENGINEGRAPHICS_USELIB_SFML
+#ifdef __RENGINEGRAPHICS_USELIB_SFML
     #include "SFML/SFMLWindow.hpp"
     #include "SFML/SFMLSprite.hpp"
+    #include "SFML/SFMLText.hpp"
+
     #include <SFML/Window/VideoMode.hpp>
 #endif
 
-#ifdef RENGINEGRAPHICS_USELIB_SDL
+#ifdef __RENGINEGRAPHICS_USELIB_SDL
     #warning "SDL not implemented yet."
     #include "./SDL/SDLWindow.hpp"
 #endif
@@ -30,14 +32,14 @@ namespace Rengine {
             }
 
             // SFML
-        #ifdef RENGINEGRAPHICS_USELIB_SFML
+        #ifdef __RENGINEGRAPHICS_USELIB_SFML
             this->_window =
                 std::make_unique<Rengine::Graphics::SFMLWindow>(windowSpecs);
             return;
         #endif
 
             // SDL
-        #ifdef RENGINEGRAPHICS_USELIB_SDL
+        #ifdef __RENGINEGRAPHICS_USELIB_SDL
             this->_window = std::make_shared<Rengine::Graphics::SDLWindow>();
             return;
         #endif
@@ -58,15 +60,34 @@ namespace Rengine {
                 this->createWindow();
             }
             // SFML
-        #ifdef RENGINEGRAPHICS_USELIB_SFML
+        #ifdef __RENGINEGRAPHICS_USELIB_SFML
             return std::make_shared<Rengine::Graphics::SFMLSprite>(spriteSpecs, this->_window->getElapsedTimeMicroseconds());
         #endif
 
             // SDL
-        #ifdef RENGINEGRAPHICS_USELIB_SDL
+        #ifdef __RENGINEGRAPHICS_USELIB_SDL
             ;
         #endif
             throw GraphicManagerException("No graphical library set. Check your rengine build.");
+        }
+
+        std::shared_ptr<AText> GraphicManager::createText(const TextSpecs& textSpecs)
+        {
+        #ifdef __RENGINEGRAPHICS_USELIB_SFML
+            return std::make_shared<Rengine::Graphics::SFMLText>(textSpecs);
+        #endif
+        }
+
+        void GraphicManager::addToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
+                const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
+        {
+            this->_window->addSpriteToRender(sprite, position, updateAnimationFrame);
+        }
+
+        void GraphicManager::addToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                const Rengine::Graphics::vector2D<float>& position)
+        {
+            this->_window->addTextToRender(text, position);
         }
 
     }  // namespace Rengine

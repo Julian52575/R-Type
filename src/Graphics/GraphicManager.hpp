@@ -1,15 +1,16 @@
 //
 #ifndef _SRC_GRAPHICS_GRAPHICMANAGER_HPP_
 #define _SRC_GRAPHICS_GRAPHICMANAGER_HPP_
+#include "TextSpecs.hpp"
 #include <memory>
 
 // SFML Includes if define
-#ifdef RENGINEGRAPHICS_USELIB_SFML
+#ifdef __RENGINEGRAPHICS_USELIB_SFML
     #include "./SFML/SFMLWindow.hpp"
     #include "./SFML/SFMLSprite.hpp"
 #endif
 // SFL Includes if define
-#ifdef RENGINEGRAPHICS_USELIB_SDL
+#ifdef __RENGINEGRAPHICS_USELIB_SDL
     #warning "SDL not implemented yet."
     #include "./SDL/SDLWindow.hpp"
 #endif
@@ -63,12 +64,38 @@ namespace Rengine {
                 /**
                 * @fn createSprite
                 * @param spriteSpecs The specs of the new sprite.
+                * @return std::shared_ptr<ASprite> A pointer to a sprite object renderable by the window.
                 * @brief Create a new sprite following the spriteSpecs,
                 * this sprite is sure to be usable with the window returned by this->getWindow().
                 * Note: this sprite is not stored in the GraphicManager.
                 * Note: If a window wasn't created previously, creates it with default settings
                 */
                 std::shared_ptr<ASprite> createSprite(const SpriteSpecs& spriteSpecs);
+                /**
+                * @fn createText
+                * @param textSpecs The specs of the new text.
+                * @return std::shared_ptr<AText> A pointer to a text object renderable by the window.
+                * @brief Create a new text following the textSpecs,
+                * Note: this text is not stored in the GraphicManager.
+                */
+                std::shared_ptr<AText> createText(const TextSpecs& textSpecs);
+                /**
+                * @fn addToRender
+                * @param sprite The sprite to render.
+                * @param position The window position to render the sprite.
+                * @param updateAnimationFrame Whether or not the window should update the sprite's animation before rendering. True by default.
+                * @brief Add a sprite to the render.
+                */
+                void addToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
+                    const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true);
+                /**
+                * @fn addToRender
+                * @param text The sprite to render.
+                * @param position The window position to render the text.
+                * @brief Add a text to the render.
+                */
+                void addToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                    const Rengine::Graphics::vector2D<float>& position);
 
             private:
                 std::shared_ptr<AWindow> _window = nullptr;

@@ -5,6 +5,8 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
@@ -15,6 +17,7 @@
 #include <memory>
 #include <iostream>
 
+#include "SFMLText.hpp"
 #include "SFMLWindow.hpp"
 #include "SFMLSprite.hpp"
 
@@ -143,9 +146,27 @@ skipIcon:
                 }
             } catch (std::exception& e) {
                 std::string msg = e.what();
+
                 throw WindowException(msg);
             }
         }
+        void SFMLWindow::addTextToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                    const Rengine::Graphics::vector2D<float>& position)
+        {
+            try {
+                sf::Vector2f sfmlPos = {position.x, position.y};
+                SFMLText& sfmlTextWrapper = (SFMLText &) *text;
+                sf::Text& text = sfmlTextWrapper.getText();
+
+                text.setPosition(sfmlPos);
+                this->_renderWindow.draw(text);
+            } catch (std::exception& e) {
+                std::string msg = e.what();
+
+                throw WindowException(msg);
+            }
+        }
+
         bool SFMLWindow::isOpen(void)
         {
             return this->_renderWindow.isOpen();

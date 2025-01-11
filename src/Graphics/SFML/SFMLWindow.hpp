@@ -29,6 +29,8 @@ namespace Rengine {
                 ~SFMLWindow(void) = default;
                 void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
                     const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true);
+                void addTextToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                    const Rengine::Graphics::vector2D<float>& position);
                 void render(void);
                 bool isOpen(void);
                 void close(void);

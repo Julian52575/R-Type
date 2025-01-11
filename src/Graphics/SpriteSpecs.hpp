@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_SPRITESPECS_HPP_
-#define _SRC_GRAPHICS_SPRITESPECS_HPP_
+#ifndef SRC_GRAPHICS_SPRITESPECS_HPP_
+#define SRC_GRAPHICS_SPRITESPECS_HPP_
 #include <cstdint>
 #include <string>
 #include <optional>
@@ -124,4 +124,4 @@ namespace Rengine {
         };  // struct SpriteSpecs
     }  // namespace Graphics
 }  //namespace Rengine
-#endif
+#endif  // SRC_GRAPHICS_SPRITESPECS_HPP_
