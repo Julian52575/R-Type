@@ -237,23 +237,23 @@ namespace RType {
             uint8_t attackId = 1 + (action.type - Network::EntityActionTypeShoot1);
             const std::optional<Config::AttackConfig>& attackConfig = entityConfig.getConfig().getAttack(attackId);
 
-            if (attackConfig.has_value() == false) {
-                return;
-            }
-            std::cout << "Shoot " << attackId << std::endl; // debug
-                                                        #warning Debug print in Action.cpp
-            switch (attackConfig->getType()) {
-                // Handle buffs
-                case (Config::AttackType::AttackTypeBuffs):
-                    actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
-                    break;
-                // Handle missiles
-                case (Config::AttackType::AttackTypeMissiles):
-                    actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
-                    break;
-                default:
-                    return;
-            }
+            // std::cout << "action.type: " << action.type << std::endl;
+            // std::cout << "attackConfigType: " << attackConfig->getType() << std::endl;
+            
+            actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+
+            // switch (attackConfig->getType()) {
+            //     // Handle buffs
+            //     case (Config::AttackType::AttackTypeBuffs):
+            //         actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
+            //         break;
+            //     // Handle missiles
+            //     case (Config::AttackType::AttackTypeMissiles):
+            //         actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+            //         break;
+            //     default:
+            //         return;
+            // }
         }
 
         inline void Action::handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,
@@ -267,9 +267,11 @@ namespace RType {
             RType::Config::EntityConfig missileConfig("assets/entities/missile1.json");
             Rengine::Entity& projectile = ecs.addEntity();
 
+
+            auto pos_player = entity.getComponent<Position>();
             projectile.addComponent<RType::Components::Configuration>(missileConfig);
             projectile.addComponent<RType::Components::Sprite>(missileConfig.getSprite().getSpecs());
-            projectile.addComponent<RType::Components::Position>(0, 0);
+            projectile.addComponent<RType::Components::Position>(pos_player.getVector2D().x, pos_player.getVector2D().y);
             this->_sceneManager.get().addEntityToCurrentScene(projectile);
         }
 

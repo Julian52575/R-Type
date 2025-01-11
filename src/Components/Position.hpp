@@ -12,25 +12,14 @@ namespace RType {
 
         class Position {
             public:
-                Position(void) = default;
-                Position(float x, float y) : _position({x, y}) {}
-                ~Position(void) = default;
-                const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept
-                {
-                    return this->_position;
-                }
-                void set(const Rengine::Graphics::vector2D<float>& pos)
-                {
-                    this->_position = pos;
-                }
-                void setX(float x)
-                {
-                    this->_position.x = x;
-                }
-                void setY(float y)
-                {
-                    this->_position.y = y;
-                }
+                Position(void);
+                Position(float x, float y);
+                ~Position(void);
+                const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept;
+                void set(const Rengine::Graphics::vector2D<float>& pos);
+                void setX(float x);
+                void setY(float y);
+                static void componentFunction(Rengine::ECS& ecs, RType::Components::Position& pos, Rengine::Entity& entity);
 
             private:
                 Rengine::Graphics::vector2D<float> _position = {0, 0};

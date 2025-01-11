@@ -40,6 +40,7 @@ namespace RType {
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Action>(RType::Components::Action::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::Position>(RType::Components::Position::componentFunction);
     }
 
     void GameState::setNextLevelToLoad(const std::string& level)
@@ -58,6 +59,7 @@ namespace RType {
     void GameState::loadLevel(const RType::Config::LevelConfig& levelConfig)
     {
 #warning Parse level
+        this->createBackground("assets/entities/Background.json");
         this->createPlayer("assets/entities/playerDefault.json");
     }
 
@@ -71,21 +73,6 @@ namespace RType {
         }
     }
 
-    void GameState::createPlayer(const std::string& jsonPath)
-    {
-        if (this->_playerEntityId != RTYPE_NO_PLAYER_ENTITY_ID) {
-            this->deletePlayer();
-        }
-        Rengine::Entity& player = this->_ecs.addEntity();
-        Config::EntityConfig enConfig(jsonPath);
-
-        player.addComponent<Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
-        player.addComponent<Components::Configuration>(enConfig);
-        player.addComponent<Components::Position>(0, 0);
-        player.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
-        player.addComponent<Components::Buff>();
-        this->_playerEntityId = Rengine::Entity::size_type(player);
-    }
 
     void GameState::deletePlayer(void)
     {
@@ -139,6 +126,7 @@ namespace RType {
     State playFunction(GameState& gameState)
     {
         gameState.sendInputToPlayerEntity();
+        gameState._ecs.runComponentFunction<RType::Components::Position>();
         gameState._ecs.runComponentFunction<Components::Action>();
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();
         return State::StateGame;
@@ -150,10 +138,35 @@ namespace RType {
         std::function<void(GameState&)> funScene1(loadLevelFunction);
 
         this->_sceneManager.setSceneFunction<void, GameState&>(GameScenes::GameScenesLoadLevel, funScene1);
-        // Play scene
+        // Play scene   
         std::function<State(GameState&)> funScene2(playFunction);
 
         this->_sceneManager.setSceneFunction<State, GameState&>(GameScenes::GameScenesPlay, funScene2);
+    }
+
+    void GameState::createPlayer(const std::string& jsonPath)
+    {
+        if (this->_playerEntityId != RTYPE_NO_PLAYER_ENTITY_ID) {
+            this->deletePlayer();
+        }
+        Rengine::Entity& player = this->_ecs.addEntity();
+        Config::EntityConfig enConfig(jsonPath);
+
+        player.addComponent<Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
+        player.addComponent<Components::Configuration>(enConfig);
+        player.addComponent<Components::Position>(0, 0);
+        player.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
+        player.addComponent<Components::Buff>();
+        this->_playerEntityId = Rengine::Entity::size_type(player);
+    }
+
+    void GameState::createBackground(const std::string& jsonPath)
+    {
+        Rengine::Entity& background = this->_ecs.addEntity();
+        Config::EntityConfig enConfig(jsonPath);
+
+        background.addComponent<Components::Position>(0, 0);
+        background.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
     }
 
 }  // namespace RType
