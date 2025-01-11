@@ -13,10 +13,7 @@
 #include <rengine/Rengine.hpp>
 
 #include "../Network/EntityAction.hpp"
-#include "Action.hpp"
-#include "Configuration.hpp"
-#include "Position.hpp"
-#include "Sprite.hpp"
+#include "Components.hpp"
 #include "src/Config/AttackBuffTypeEnum.hpp"
 #include "src/Config/AttackConfig.hpp"
 #include "src/Config/EntityConfig.hpp"
@@ -268,22 +265,20 @@ namespace RType {
             if (ecs.getActiveEntitiesCount() >= ecs.getEntityLimit()) {
                 return;
             }
-
-            RType::Config::AttackConfig attack("assets/attacks/defaultShoot1.json");
-
             // Can't shoot if cooldown not reached
-            if (this->_currentTimeShoot1 < attack.getCooldown())
+            if (this->_currentTimeShoot1 < attackConfig->getCooldown())
                 return;
             
             this->_currentTimeShoot1 = 0.0f;
-            RType::Config::EntityConfig missileConfig(attack.getMissiles()[0].getJsonPath());
+            RType::Config::EntityConfig missileConfig(attackConfig->getMissiles()[0].getJsonPath());
 
             Rengine::Entity& projectile = ecs.addEntity();
             projectile.addComponent<RType::Components::Configuration>(missileConfig);
             projectile.addComponent<RType::Components::Sprite>(missileConfig.getSprite().getSpecs());
+            projectile.addComponent<RType::Components::Hitbox>(missileConfig.getHitbox());
 
             auto pos_player = entity.getComponent<Position>();
-            projectile.addComponent<RType::Components::Position>(pos_player.getVector2D().x + attack.getMissiles()[0].getOffset().first, pos_player.getVector2D().y + attack.getMissiles()[0].getOffset().second);
+            projectile.addComponent<RType::Components::Position>(pos_player.getVector2D().x + attackConfig->getMissiles()[0].getOffset().first, pos_player.getVector2D().y + attackConfig->getMissiles()[0].getOffset().second);
             this->_sceneManager.get().addEntityToCurrentScene(projectile);
         }
 

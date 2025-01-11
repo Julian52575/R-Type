@@ -129,6 +129,8 @@ namespace RType {
                 float _currentTimeShoot1 = 0;
                 float _currentTimeShoot2 = 0;
                 float _currentTimeShoot3 = 0;
+
+                
         };  // class Action
     }  // namespace Components
 }  // namespace RType
