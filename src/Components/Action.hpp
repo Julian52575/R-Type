@@ -125,6 +125,10 @@ namespace RType {
                 container_t _actionVector;
                 void buildBindVector(void);
                 std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> _inputNetworkBindVector;
+
+                float _currentTimeShoot1 = 0;
+                float _currentTimeShoot2 = 0;
+                float _currentTimeShoot3 = 0;
         };  // class Action
     }  // namespace Components
 }  // namespace RType

@@ -205,6 +205,12 @@ namespace RType {
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
+
+            actionComponent._currentTimeShoot1 += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+            actionComponent._currentTimeShoot2 += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+            actionComponent._currentTimeShoot3 += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+
+
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
@@ -263,15 +269,22 @@ namespace RType {
             if (ecs.getActiveEntitiesCount() >= ecs.getEntityLimit()) {
                 return;
             }
-            RType::Config::EntityConfigResolver& resolver = RType::Config::EntityConfigResolverSingletone::get();
-            RType::Config::EntityConfig missileConfig("assets/entities/missile1.json");
+
+            RType::Config::AttackConfig attack("assets/attacks/defaultShoot1.json");
+
+            // Can't shoot if cooldown not reached
+            if (this->_currentTimeShoot1 < attack.getCooldown())
+                return;
+            
+            this->_currentTimeShoot1 = 0.0f;
+            RType::Config::EntityConfig missileConfig(attack.getMissiles()[0].getJsonPath());
+
             Rengine::Entity& projectile = ecs.addEntity();
-
-
-            auto pos_player = entity.getComponent<Position>();
             projectile.addComponent<RType::Components::Configuration>(missileConfig);
             projectile.addComponent<RType::Components::Sprite>(missileConfig.getSprite().getSpecs());
-            projectile.addComponent<RType::Components::Position>(pos_player.getVector2D().x, pos_player.getVector2D().y);
+
+            auto pos_player = entity.getComponent<Position>();
+            projectile.addComponent<RType::Components::Position>(pos_player.getVector2D().x + attack.getMissiles()[0].getOffset().first, pos_player.getVector2D().y + attack.getMissiles()[0].getOffset().second);
             this->_sceneManager.get().addEntityToCurrentScene(projectile);
         }
 

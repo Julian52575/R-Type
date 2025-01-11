@@ -4,7 +4,7 @@
         "cooldown": 0.5,
         "missiles": [
             {
-                "json": "entities/missiles1.json",
+                "json": "assets/entities/missile1.json",
                 "offset": {
                     "x": 10, "y": 12
                 },
