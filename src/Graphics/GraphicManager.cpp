@@ -2,8 +2,13 @@
 #include <cstddef>
 #include <memory>
 
+#include "ASound.hpp"
 #include "GraphicManager.hpp"
 #include "AWindow.hpp"
+#include "SFML/SFMLSound.hpp"
+#include "SpriteSpecs.hpp"
+#include "TextSpecs.hpp"
+#include "SoundSpecs.hpp"
 
 #ifdef __RENGINEGRAPHICS_USELIB_SFML
     #include "SFML/SFMLWindow.hpp"
@@ -75,6 +80,13 @@ namespace Rengine {
         {
         #ifdef __RENGINEGRAPHICS_USELIB_SFML
             return std::make_shared<Rengine::Graphics::SFMLText>(textSpecs);
+        #endif
+        }
+
+        std::shared_ptr<ASound> GraphicManager::createSound(const SoundSpecs& musicSpecs)
+        {
+        #ifdef __RENGINEGRAPHICS_USELIB_SFML
+            return std::make_shared<Rengine::Graphics::SFMLSound>(musicSpecs);
         #endif
         }
 

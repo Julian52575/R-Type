@@ -1,14 +1,15 @@
 //
 #ifndef _SRC_GRAPHICS_IWINDOW_HPP_
 #define _SRC_GRAPHICS_IWINDOW_HPP_
+
+#include <cstdint>
+#include <memory>
+
 #include "AText.hpp"
 #include "ASprite.hpp"
 #include "Vector.hpp"
 #include "UserInputManager.hpp"
 #include "WindowSpecs.hpp"
-
-#include <cstdint>
-#include <memory>
 
 namespace Rengine {
     namespace Graphics {

@@ -1,13 +1,13 @@
 //
 #ifndef _SRC_GRAPHICS_GRAPHICMANAGER_HPP_
 #define _SRC_GRAPHICS_GRAPHICMANAGER_HPP_
-#include "TextSpecs.hpp"
 #include <memory>
 
 // SFML Includes if define
 #ifdef __RENGINEGRAPHICS_USELIB_SFML
     #include "./SFML/SFMLWindow.hpp"
     #include "./SFML/SFMLSprite.hpp"
+    #include "./SFML/SFMLSound.hpp"
 #endif
 // SFL Includes if define
 #ifdef __RENGINEGRAPHICS_USELIB_SDL
@@ -15,11 +15,14 @@
     #include "./SDL/SDLWindow.hpp"
 #endif
 
+#include "Vector.hpp"
 #include "AWindow.hpp"
 #include "ASprite.hpp"
-#include "Vector.hpp"
+#include "ASound.hpp"
 #include "SpriteSpecs.hpp"
 #include "WindowSpecs.hpp"
+#include "SoundSpecs.hpp"
+#include "TextSpecs.hpp"
 
 namespace Rengine {
     namespace Graphics {
@@ -79,6 +82,14 @@ namespace Rengine {
                 * Note: this text is not stored in the GraphicManager.
                 */
                 std::shared_ptr<AText> createText(const TextSpecs& textSpecs);
+                /**
+                * @fn createSound
+                * @param soundSpecs The specs of the new sound / music.
+                * @return std::shared_ptr<ASound> A pointer to a sound object.
+                * @brief Create a new sound / music following the soundSpecs,
+                * Note: this sound is not stored in the GraphicManager.
+                */
+                std::shared_ptr<ASound> createSound(const SoundSpecs& soundSpecs);
                 /**
                 * @fn addToRender
                 * @param sprite The sprite to render.

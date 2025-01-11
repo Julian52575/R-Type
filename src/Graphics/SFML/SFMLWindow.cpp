@@ -1,4 +1,5 @@
 //
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Image.hpp>
@@ -17,6 +18,10 @@
 #include <memory>
 #include <iostream>
 
+#include "../ASound.hpp"
+#include "../AText.hpp"
+#include "../ASprite.hpp"
+#include "SFMLSound.hpp"
 #include "SFMLText.hpp"
 #include "SFMLWindow.hpp"
 #include "SFMLSprite.hpp"
@@ -54,6 +59,7 @@ namespace Rengine {
                 // Special
                 {sf::Keyboard::Escape, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialESCAPE}},
                 {sf::Keyboard::Tab, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialTAB}},
+                {sf::Keyboard::Enter, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialENTER}},
                 {sf::Keyboard::LShift, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialSHIFT}},
                 {sf::Keyboard::RShift, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialSHIFT}},
                 {sf::Keyboard::Up, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowUP}},

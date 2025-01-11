@@ -40,6 +40,7 @@ namespace Rengine {
             UserInputKeyboardSpecialNA,
             UserInputKeyboardSpecialESCAPE,
             UserInputKeyboardSpecialSPACE,
+            UserInputKeyboardSpecialENTER,
             UserInputKeyboardSpecialTAB,
             UserInputKeyboardSpecialSHIFT,
             UserInputKeyboardSpecialArrowUP,
@@ -69,7 +70,7 @@ namespace Rengine {
         * @addtogroup Rengine::Graphics
         * @namespace Graphics
         * @class UserInput
-        * @brief A structure containing the data for a user input.
+        * @brief A structure containing both the type and the data for a user input.
         */
         struct UserInput {
             UserInputType type = UserInputTypeNA;

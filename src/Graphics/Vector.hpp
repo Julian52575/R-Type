@@ -38,6 +38,11 @@ namespace Rengine {
             }
             return true;
         }
+        template <class I>
+        bool operator!=(const vector2D<I>& a, const vector2D<I>& b)
+        {
+            return !(a == b);
+        }
 
         /**
         * @addtogroup Rengine::Graphics
@@ -69,6 +74,11 @@ namespace Rengine {
             return true;
         }
         template <class I>
+        bool operator!=(const vector3D<I>& a, const vector3D<I>& b)
+        {
+            return !(a == b);
+        }
+        template <class I>
         bool operator==(const vector3D<I>& a, const vector2D<I>& b)
         {
             if (a.x != b.x) {
@@ -79,6 +89,12 @@ namespace Rengine {
             }
             return true;
         }
+        template <class I>
+        bool operator!=(const vector3D<I>& a, const vector2D<I>& b)
+        {
+            return !(a == b);
+        }
+
         template <class I>
         std::ostream& operator<<(std::ostream& os, const vector3D<I>& vec)
         {

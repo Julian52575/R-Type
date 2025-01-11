@@ -27,7 +27,6 @@ namespace Rengine {
         * The 'animation' field can be configured to match the spritesheet.
         */
         struct SpriteSpecs {
-
             /**
             * @brief A union containing the data for all shapes.
             */

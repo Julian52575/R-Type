@@ -10,6 +10,7 @@
 #include <optional>
 #include <memory>
 
+#include "../ASprite.hpp"
 #include "../AWindow.hpp"
 #include "SFMLSprite.hpp"
 
