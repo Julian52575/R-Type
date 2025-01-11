@@ -22,6 +22,11 @@
             "enemyDamageOnColision": true,
             "damagedOnColision": true,
             "persistsOffScreen": false
+        },
+        "attacks": {
+            "shoot1": "assets/attacks/defaultShoot1.json",
+            "shoot2": "assets/attacks/defaultShoot2.json",
+            "shoot3": "assets/attacks/defaultShoot3.json"
         }
     }
 }

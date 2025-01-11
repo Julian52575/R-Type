@@ -1,10 +1,11 @@
 //
 #ifndef SRC_NETWORK_ENTITYACTION_HPP_
 #define SRC_NETWORK_ENTITYACTION_HPP_
+#include <iostream>
+#include <iterator>
 #include <rengine/src/Graphics/Vector.hpp>
 
 namespace RType {
-
     namespace Network {
 
         enum EntityActionType {
@@ -26,6 +27,9 @@ namespace RType {
             EntityActionType type = (EntityActionType) 0xff;
             EntityActionData data = {0};
         };  // struct EntityAction
+
+        std::ostream& operator<<(std::ostream& os, const EntityAction& action);
+        std::ostream& operator<<(std::ostream& os, const EntityActionType& actionType);
 
     }  // namespace Network
 }  // namespace RType
