@@ -52,6 +52,8 @@ runTest "Config/ImageConfig_t.cpp ../src/Config/ImageConfig.cpp" "ImageConfigRes
 runTest "Config/EntityConfigResolver_t.cpp ../src/Config/EntityConfig.cpp ../src/Config/AttackConfig.cpp ../src/Config/ImageConfig.cpp" "EntityConfigResolver"
 runTest "Config/LevelConfigResolver_t.cpp ../src/Config/*.cpp" "LevelConfigResolver"
 
+runTest "Components/Relationship_t.cpp ../src/Components/Relationship.cpp" "Relationship"
+
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
 if [ "$FAILURE_LIST" != "" ] ; then
