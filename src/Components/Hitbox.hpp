@@ -27,7 +27,7 @@ namespace RType {
                 if (pos == std::nullopt)
                     return;
 
-                for (int i = 0; i < hitboxs.size() && i < positions.size(); i++){
+                for (int i = entity + 1; i < hitboxs.size() && i < positions.size(); i++){
                     if (hitboxs[i].has_value() == false || positions[i].has_value() == false)
                         continue;
                     RType::Components::Hitbox& otherHitbox = hitboxs[i].value();
