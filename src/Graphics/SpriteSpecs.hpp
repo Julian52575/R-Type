@@ -10,6 +10,9 @@
 namespace Rengine {
     namespace Graphics {
 
+        /**
+        * @brief The type of sprite supported by the Rengine.
+        */
         enum SpriteType {
             SpriteTypeNA,
             SpriteTypeSprite,
@@ -25,9 +28,12 @@ namespace Rengine {
         */
         struct SpriteSpecs {
 
+            /**
+            * @brief A union containing the data for all shapes.
+            */
             union ShapeSpecifics {
                 float circleRadius;
-                Rengine::Graphics::vector2D<float> rectangleSize;
+                Rengine::Graphics::vector2D<float> rectangleSize = {192, 108};
             };
             /**
             * @brief This structure manages the data for the Circle and Rectangle sprite.
@@ -37,7 +43,7 @@ namespace Rengine {
                 * @brief The shape-specific data like circleRadius and rectangleSize.
                 * Default: 1
                 */
-                ShapeSpecifics specifics = {1};
+                ShapeSpecifics specifics;
                 /**
                 * @brief The size of the shape's outline.
                 * Default: 1

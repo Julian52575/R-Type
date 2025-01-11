@@ -42,7 +42,7 @@ namespace Rengine {
                     };
                     public:
                         /**
-                         * @ brief Apply the shape-specific data here.
+                         * @ brief The shape-specific data is applied here.
                         */
                         SFMLSpriteUnion(const SpriteSpecs& spriteSpecs);
                         ~SFMLSpriteUnion();
