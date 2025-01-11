@@ -1,6 +1,8 @@
 //
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window.hpp>
@@ -18,7 +20,6 @@
 
 namespace Rengine {
     namespace Graphics {
-
 
         void SFMLWindow::initSfKeyboardBindVector(void)
         {
@@ -122,12 +123,24 @@ skipIcon:
                 if (updateAnimationFrame == true && sprite->hasAnimation() == true) {
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
                 }
-                Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) *sprite;
-                sf::Sprite& sfSprite = sfmlSprite.getSfSprite();
-                sf::Vector2f posVector = {position.x, position.y};
+                Rengine::Graphics::SFMLSprite& sfmlSpriteWrapper = (SFMLSprite&) *sprite;
+                auto type = sfmlSpriteWrapper.getSpriteSpecs().type;
 
-                sfSprite.setPosition(posVector);
-                this->_renderWindow.draw(sfSprite);
+                sfmlSpriteWrapper.setPosition({position.x, position.y});
+                // Check SpriteSpecs.type to display the right shape
+                if (type == SpriteType::SpriteTypeSprite) {
+                    sf::Sprite *sprite = sfmlSpriteWrapper.getSfSprite();
+
+                    this->_renderWindow.draw(*sprite);
+                } else if (type == SpriteType::SpriteTypeCircle) {
+                    sf::CircleShape *circle = sfmlSpriteWrapper.getCircle();
+
+                    this->_renderWindow.draw(*circle);
+                } else if (type == SpriteType::SpriteTypeRectangle) {
+                    sf::RectangleShape* rectangle = sfmlSpriteWrapper.getRectangle();
+
+                    this->_renderWindow.draw(*rectangle);
+                }
             } catch (std::exception& e) {
                 std::string msg = e.what();
                 throw WindowException(msg);

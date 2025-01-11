@@ -9,6 +9,13 @@
 
 namespace Rengine {
     namespace Graphics {
+
+        enum SpriteType {
+            SpriteTypeNA,
+            SpriteTypeSprite,
+            SpriteTypeRectangle,
+            SpriteTypeCircle
+        };
         /**
         * @addtogroup Rengine::Graphics
         * @namespace Graphics
@@ -17,10 +24,52 @@ namespace Rengine {
         * The 'animation' field can be configured to match the spritesheet.
         */
         struct SpriteSpecs {
+
+            union ShapeSpecifics {
+                float circleRadius;
+                Rengine::Graphics::vector2D<float> rectangleSize;
+            };
             /**
-            * @brief The path to the spritesheet to apply to the sprite.
+            * @brief This structure manages the data for the Circle and Rectangle sprite.
+            */
+            struct ShapeData {
+                /**
+                * @brief The shape-specific data like circleRadius and rectangleSize.
+                * Default: 1
+                */
+                ShapeSpecifics specifics = {1};
+                /**
+                * @brief The size of the shape's outline.
+                * Default: 1
+                */
+                float outlineThickness = 1;
+                /**
+                * @brief The shape's outline color.
+                * Default: White {255, 255, 255}
+                */
+                Rengine::Graphics::vector3D<uint8_t> outlineColor = {255, 255, 255};
+            };
+            /**
+            * @brief The type of sprite.
+            * Default: simple sprite
+            */
+            SpriteType type = SpriteTypeSprite;
+            /**
+            * @brief The data for the Circle and Rectangle sprite. Ignored when constructing a simple sprite.
+            */
+            ShapeData shapeData;
+            /**
+            * @brief The path to the spritesheet to apply to the sprite. Leave empty for no texture.
             */
             std::string texturePath;
+            /**
+            * @brief The sprite's color.
+            * x = Red
+            * y = Blue
+            * z = Green
+            * Default: White (255, 255, 255)
+            */
+            Rengine::Graphics::vector3D<uint8_t> color = {255, 255, 255};
             /**
             * @brief The offset of the sprite's origin (starting from the top left).
             * Default: 0x, 0y.
@@ -53,7 +102,7 @@ namespace Rengine {
                 * @brief The number of frame in the spritesheet.
                 * Default: 0
                 */
-                uint16_t frameCount = 0;
+                uint16_t frameCount = 1;
                 /**
                 * @brief The duration in seconds of each sprite.
                 * Default: 0.8 (seconds).

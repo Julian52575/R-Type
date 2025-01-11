@@ -1,6 +1,9 @@
 //
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <exception>
@@ -12,19 +15,28 @@
 namespace Rengine {
     namespace Graphics {
 
-            SFMLSprite::SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTickMicroseconds) : ASprite(spriteSpecs, creationTickMicroseconds)
+            SFMLSprite::SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTickMicroseconds)
+                : ASprite(spriteSpecs, creationTickMicroseconds), _renderObject(spriteSpecs)
             {
-                try {
-                    this->_texture.loadFromFile(this->_spriteSpecs.texturePath);
-                    this->_sprite.setTexture(this->_texture);
-                } catch (std::exception& e) {
-                    std::string msg = e.what();
-                    throw SpriteException(msg);
-                }
                 // setSpriteSpecs
                 this->_spriteSpecs = spriteSpecs;
+                // Load texture if set
+                if (this->_spriteSpecs.texturePath != "") {
+                    try {
+                        this->_texture.loadFromFile(this->_spriteSpecs.texturePath);
+                        this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
+                    } catch (std::exception& e) {
+                        std::string msg = e.what();
+
+                        throw SpriteException(msg);
+                    }
+                }
+                // Color
+                this->_renderObject.setColor(this->_spriteSpecs.type,
+                        {this->_spriteSpecs.color.x, this->_spriteSpecs.color.y, this->_spriteSpecs.color.x} );
                 // scale
-                this->_sprite.setScale({this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y});
+                this->_renderObject.setScale(this->_spriteSpecs.type,
+                        {this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y});
                 // animation
                 if (this->_spriteSpecs.animation.has_value() == true) {
                     sf::IntRect rect;
@@ -33,7 +45,7 @@ namespace Rengine {
                     rect.top = this->_spriteSpecs.animation->frameRectXY.y;
                     rect.width = this->_spriteSpecs.animation->frameRectWidthHeight.x;
                     rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
-                    this->_sprite.setTextureRect(rect);
+                    this->_renderObject.setTextureRect(this->_spriteSpecs.type, rect);
                 }
             }
 
@@ -67,14 +79,24 @@ namespace Rengine {
                 this->_currentFrame = frameCount % this->_spriteSpecs.animation->frameCount;
                 this->applyCurrentFrameTexture();
             }
-            sf::Sprite& SFMLSprite::getSfSprite(void) noexcept
+            void SFMLSprite::setPosition(const sf::Vector2f& pos)
             {
-                return this->_sprite;
+                this->_renderObject.setPosition(this->_spriteSpecs.type, pos);
             }
-            const sf::Sprite& SFMLSprite::getSfSprite(void) const noexcept
+
+            sf::Sprite* SFMLSprite::getSfSprite(void) noexcept
             {
-                return this->_sprite;
+                return this->_renderObject.getSprite();
             }
+            sf::CircleShape* SFMLSprite::getCircle(void) noexcept
+            {
+                return this->_renderObject.getCircle();
+            }
+            sf::RectangleShape* SFMLSprite::getRectangle(void) noexcept
+            {
+                return this->_renderObject.getRectangle();
+            }
+
             void SFMLSprite::applyCurrentFrameTexture(void)
             {
                 if (this->_spriteSpecs.animation.has_value() == false) {
@@ -86,7 +108,169 @@ namespace Rengine {
                 rect.top = this->_spriteSpecs.animation->frameRectXY.y + (this->_spriteSpecs.animation->frameDisplacement.y * this->_currentFrame);
                 rect.width = this->_spriteSpecs.animation->frameRectWidthHeight.x;
                 rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
-                this->_sprite.setTextureRect(rect);
+                this->_renderObject.setTextureRect(this->_spriteSpecs.type, rect);
+            }
+
+            SFMLSprite::SFMLSpriteUnion::SFMLSpriteUnion(const SpriteSpecs& specs)
+            {
+                switch (specs.type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite = new sf::Sprite();
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle = new sf::CircleShape();
+                        this->circle->setRadius(specs.shapeData.specifics.circleRadius);
+                        this->circle->setOutlineColor(
+                                {specs.shapeData.outlineColor.x,
+                                specs.shapeData.outlineColor.y,
+                                specs.shapeData.outlineColor.z}
+                        );
+                        this->circle->setOutlineThickness(specs.shapeData.outlineThickness);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle = new sf::RectangleShape();
+                        this->rectangle->setSize(
+                                {specs.shapeData.specifics.rectangleSize.x,
+                                specs.shapeData.specifics.rectangleSize.y}
+                        );
+                        this->rectangle->setOutlineColor(
+                                {specs.shapeData.outlineColor.x,
+                                specs.shapeData.outlineColor.y,
+                                specs.shapeData.outlineColor.z}
+                        );
+                        this->rectangle->setOutlineThickness(specs.shapeData.outlineThickness);
+                        break;
+
+                    default:
+                        throw SFMLSprite::SFMLSpriteUnion::SpriteTypeException();
+                }
+            }
+            SFMLSprite::SFMLSpriteUnion::~SFMLSpriteUnion()
+            {
+                // Hoping this works for all shape
+                delete this->sprite;
+            }
+            void SFMLSprite::SFMLSpriteUnion::setTexture(SpriteType type, const sf::Texture& texture)
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->setTexture(texture);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setTexture(&texture);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setTexture(&texture);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            void SFMLSprite::SFMLSpriteUnion::setScale(SpriteType type, const sf::Vector2f& scale)
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->setScale(scale);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setScale(scale);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setScale(scale);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            void SFMLSprite::SFMLSpriteUnion::setTextureRect(SpriteType type, const sf::IntRect& rect)
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->setTextureRect(rect);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setTextureRect(rect);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setTextureRect(rect);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            void SFMLSprite::SFMLSpriteUnion::setColor(SpriteType type, const sf::Color& color)
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->setColor(color);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setFillColor(color);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setFillColor(color);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            void SFMLSprite::SFMLSpriteUnion::setPosition(SpriteType type, const sf::Vector2f& pos)
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->setPosition(pos);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setPosition(pos);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setPosition(pos);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            sf::Sprite* SFMLSprite::SFMLSpriteUnion::getSprite(void)
+            {
+                return this->sprite;
+            }
+            const sf::Sprite* SFMLSprite::SFMLSpriteUnion::getSprite(void) const
+            {
+                return this->sprite;
+            }
+            sf::CircleShape* SFMLSprite::SFMLSpriteUnion::getCircle(void)
+            {
+                return this->circle;
+            }
+            const sf::CircleShape* SFMLSprite::SFMLSpriteUnion::getCircle(void) const
+            {
+                return this->circle;
+            }
+            sf::RectangleShape* SFMLSprite::SFMLSpriteUnion::getRectangle(void)
+            {
+                return this->rectangle;
+            }
+            const sf::RectangleShape* SFMLSprite::SFMLSpriteUnion::getRectangle(void) const
+            {
+                return this->rectangle;
             }
 
     }  // namespace Rengine

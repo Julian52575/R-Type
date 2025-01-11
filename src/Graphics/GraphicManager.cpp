@@ -54,6 +54,9 @@ namespace Rengine {
 
         std::shared_ptr<ASprite> GraphicManager::createSprite(const SpriteSpecs& spriteSpecs)
         {
+            if (this->_window == nullptr) {
+                this->createWindow();
+            }
             // SFML
         #ifdef RENGINEGRAPHICS_USELIB_SFML
             return std::make_shared<Rengine::Graphics::SFMLSprite>(spriteSpecs, this->_window->getElapsedTimeMicroseconds());

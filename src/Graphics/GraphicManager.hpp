@@ -66,6 +66,7 @@ namespace Rengine {
                 * @brief Create a new sprite following the spriteSpecs,
                 * this sprite is sure to be usable with the window returned by this->getWindow().
                 * Note: this sprite is not stored in the GraphicManager.
+                * Note: If a window wasn't created previously, creates it with default settings
                 */
                 std::shared_ptr<ASprite> createSprite(const SpriteSpecs& spriteSpecs);
 
