@@ -243,23 +243,22 @@ namespace RType {
             uint8_t attackId = 1 + (action.type - Network::EntityActionTypeShoot1);
             const std::optional<Config::AttackConfig>& attackConfig = entityConfig.getConfig().getAttack(attackId);
 
-            // std::cout << "action.type: " << action.type << std::endl;
-            // std::cout << "attackConfigType: " << attackConfig->getType() << std::endl;
-            
-            actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+            if (attackConfig.has_value() == false) {
+                return;
+            }
 
-            // switch (attackConfig->getType()) {
-            //     // Handle buffs
-            //     case (Config::AttackType::AttackTypeBuffs):
-            //         actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
-            //         break;
-            //     // Handle missiles
-            //     case (Config::AttackType::AttackTypeMissiles):
-            //         actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
-            //         break;
-            //     default:
-            //         return;
-            // }
+            switch (attackConfig->getType()) {
+                // Handle buffs
+                case (Config::AttackType::AttackTypeBuffs):
+                    actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
+                    break;
+                // Handle missiles
+                case (Config::AttackType::AttackTypeMissiles):
+                    actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+                    break;
+                default:
+                    return;
+            }
         }
 
         inline void Action::handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,

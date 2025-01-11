@@ -15,7 +15,7 @@
             "defense": 19,
             "acceleration": 21.21,
             "speedY": 0,
-            "speedX": 200,
+            "speedX": 500,
             "enemyColisionDamage": 23
         },
         "characteristics": {

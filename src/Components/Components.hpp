@@ -7,5 +7,6 @@
 #include "Sprite.hpp"
 #include "Configuration.hpp"
 #include "Buff.hpp"
+#include "Hitbox.hpp"
 
 #endif  // SRC_COMPONENTS_COMPONENTS_HPP_

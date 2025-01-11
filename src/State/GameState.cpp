@@ -11,11 +11,7 @@
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Rng.hpp>
 
-#include "src/Components/Buff.hpp"
-#include "src/Components/Configuration.hpp"
-#include "src/Components/Action.hpp"
-#include "src/Components/Position.hpp"
-#include "src/Components/Sprite.hpp"
+#include "src/Components/Components.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "State.hpp"
 #include "GameState.hpp"
@@ -37,10 +33,13 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Position>();
         this->_ecs.registerComponent<RType::Components::Sprite>();
         this->_ecs.registerComponent<Components::Buff>();
+        this->_ecs.registerComponent<RType::Components::Hitbox>();
+
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Action>(RType::Components::Action::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Position>(RType::Components::Position::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
     }
 
     void GameState::setNextLevelToLoad(const std::string& level)
@@ -126,9 +125,11 @@ namespace RType {
     State playFunction(GameState& gameState)
     {
         gameState.sendInputToPlayerEntity();
-        gameState._ecs.runComponentFunction<RType::Components::Position>();
-        gameState._ecs.runComponentFunction<Components::Action>();
-        gameState._ecs.runComponentFunction<RType::Components::Sprite>();
+        gameState._ecs.runComponentFunction<RType::Components::Position>(); // move entity
+        gameState._ecs.runComponentFunction<RType::Components::Action>(); //handle action player
+        gameState._ecs.runComponentFunction<RType::Components::Hitbox>(); // handle collision
+
+        gameState._ecs.runComponentFunction<RType::Components::Sprite>(); // render sprite
         return State::StateGame;
     }
 
@@ -157,7 +158,9 @@ namespace RType {
         player.addComponent<Components::Position>(0, 0);
         player.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
         player.addComponent<Components::Buff>();
+        player.addComponent<Components::Hitbox>(enConfig.getHitbox());
         this->_playerEntityId = Rengine::Entity::size_type(player);
+
     }
 
     void GameState::createBackground(const std::string& jsonPath)
