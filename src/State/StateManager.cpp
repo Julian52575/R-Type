@@ -13,9 +13,22 @@ namespace RType {
         this->_game.registerComponents();
     }
 
-    void StateManager::setState(State state)
+    void StateManager::setState(State newState)
     {
-        this->_currentState = state;
+        switch (newState) {
+            // Going to lobby
+            case State::StateLobby:
+                // From menu
+                if (this->_currentState == State::StateMenu) {
+                    // Pass the lobby info
+                    this->_lobby.setLobbyInfo(this->_menu.getLobbyInfo());
+                }
+
+            // Nothing to do for other change
+            default:
+                break;
+        }
+        this->_currentState = newState;
     }
 
     void StateManager::run(void)

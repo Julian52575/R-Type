@@ -1,5 +1,6 @@
 //
 #ifndef SRC_STATE_LOBBYSTATE_HPP_
+#define SRC_STATE_LOBBYSTATE_HPP_
 
 #include <rengine/Rengine.hpp>
 
@@ -12,7 +13,13 @@ namespace RType {
 
     enum LobbyScenes {
         LobbyScenesNA,
-        LobbyScenesPlaceholder
+        LobbyScenesPlaceholder,
+        LobbyScenesEliott
+    };
+
+    struct LobbyInfo {
+        std::string serverIp = "0.0.0.0";
+        uint16_t port = 4242;
     };
 
     class LobbyState : public AState {
@@ -36,10 +43,18 @@ namespace RType {
             {
                 return StateLobby;
             }
+            /*
+            * @fn setLobbyInfo
+            * @param lobbyInfo The data of the lobby.
+            * @brief Set the lobbyInfo from the menu by the StateManager.
+            */
+            void setLobbyInfo(const LobbyInfo& lobbyInfo) noexcept
+            {
+                this->_lobbyInfo = lobbyInfo;
+            }
 
         private:
-            std::string _serverIp;
-            uint16_t _port;
+            LobbyInfo _lobbyInfo;
     };
 
 }  // namespace RType

@@ -6,6 +6,7 @@
 
 #include "AState.hpp"
 #include "State.hpp"
+#include "LobbyState.hpp"
 
 namespace RType {
 
@@ -38,6 +39,13 @@ namespace RType {
                 // WIP
                 return StateMenu;
             }
+            const LobbyInfo& getLobbyInfo(void) const noexcept
+            {
+                return this->_lobbyInfo;
+            }
+
+        private:
+            LobbyInfo _lobbyInfo;
     };
 
 }  // namespace RType
