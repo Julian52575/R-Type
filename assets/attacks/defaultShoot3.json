@@ -8,27 +8,23 @@
                 "offset": {
                     "x": 10, "y": 12
                 },
-                "velocity": {
-                    "x": 15, "y": 0
-                }
+                "controlType": "script",
+                "scriptPath": "assets/scripts/black.lua"
             },
             {
                 "json": "assets/entities/missile1.json",
                 "offset": {
                     "x": 10, "y": 12
                 },
-                "velocity": {
-                    "x": 15, "y": 5
-                }
+                "controlType": "userInput"
             },
             {
                 "json": "assets/entities/missile1.json",
                 "offset": {
                     "x": 10, "y": 12
                 },
-                "velocity": {
-                    "x": 15, "y": -5
-                }
+                "controlType": "script",
+                "scriptPath": "assets/scripts/black.lua"
             }
         ]
     }

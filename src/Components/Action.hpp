@@ -40,9 +40,43 @@ namespace RType {
 
         enum ActionSource {
             ActionSourceNA,
-            ActionSourceLua,
+            ActionSourceScript,
             ActionSourceUserInput,
             ActionSourceServer
+        };
+
+        /**
+        * @brief The player input and the equivalent EntityAction
+        */
+        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerInputBindVector = {
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardChar, ' '},
+                Network::EntityActionType::EntityActionTypeShoot1
+            },
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialSHIFT},
+                Network::EntityActionType::EntityActionTypeShoot2
+            },
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialTAB},
+                Network::EntityActionType::EntityActionTypeShoot3
+            },
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowUP},
+                Network::EntityActionType::EntityActionTypeMove
+            },
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN},
+                Network::EntityActionType::EntityActionTypeMove
+            },
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowLEFT},
+                Network::EntityActionType::EntityActionTypeMove
+            },
+            {
+                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowRIGHT},
+                Network::EntityActionType::EntityActionTypeMove
+            }
         };
 
         class Action {
@@ -79,18 +113,10 @@ namespace RType {
                 */
                 size_type size(void) const noexcept;
                 /**
-                * @fn addUserInput
-                * @exception ActionException when ActionSource != ActionSourceUserInput
-                * @brief Parse all input from the UserInputManager and add new EntityActions inside the vector.
+                * @fn processInput
+                * @brief Process the inputs from the ActionSource
                 */
-                void processUserInput(void);
-                /**
-                * @fn addUserInput
-                * @param input The user input to process.
-                * @exception ActionException when ActionSource != ActionSourceUserInput
-                * @brief Process the input and add a new EntityAction inside the vector.
-                */
-                void processUserInput(const Rengine::Graphics::UserInput& input);
+                friend void processInput(Action& actionComponent) noexcept;
                 /**
                 * @fn changeInput
                 * @param resultingAction The EntityActionType to happen when newInput is processed.
@@ -98,7 +124,7 @@ namespace RType {
                 * @exception ActionException when ActionSource != ActionSourceUserInput
                 * @brief Change the needed input for the outcome action.
                 */
-                void changeInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction);
+                void changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction);
                 /**
                 * @fn getNeededInput
                 * @param outcome The EntityActionType to analyse.
@@ -106,7 +132,7 @@ namespace RType {
                 * UserInput.type == UserInputTypeNA when no match was found.
                 * @brief Get the UserInput needed to trigger an EntityActionType
                 */
-                const Rengine::Graphics::UserInput getNeededInput(Network::EntityActionType outcome) const;
+                const Rengine::Graphics::UserInput getPlayerNeededInput(Network::EntityActionType outcome) const;
 
                 /*      Function for ECS        */
                 /**
@@ -121,17 +147,31 @@ namespace RType {
                 inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
                 inline void handleShoot(Action& actionComponent, Network::EntityAction& action,
                         Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig);
-                inline void handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,
+                friend inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
                 inline void handleShootBuff(Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
 
             private:
+                /**
+                * @fn addUserInput
+                * @exception ActionException when ActionSource != ActionSourceUserInput
+                * @brief Parse all input from the UserInputManager and add new EntityActions inside the vector.
+                */
+                void processUserInput(void);
+                /**
+                * @fn addUserInput
+                * @param input The user input to process.
+                * @exception ActionException when ActionSource != ActionSourceUserInput
+                * @brief Process the input and add a new EntityAction inside the vector.
+                */
+                void processUserInput(const Rengine::Graphics::UserInput& input);
+
+            private:
                 std::reference_wrapper<SceneManager> _sceneManager;
                 ActionSource _actionSource;
+                std::optional<std::string> _scriptPath;
                 container_t _actionVector;
-                void buildBindVector(void);
-                std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> _inputNetworkBindVector;
                 float _shootDeltatimes[3] = {0.0f};
         };  // class Action
     }  // namespace Components

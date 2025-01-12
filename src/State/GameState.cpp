@@ -96,25 +96,6 @@ namespace RType {
         }
     }
 
-    void GameState::sendInputToPlayerEntity(void)
-    {
-        if (this->_playerEntityId == RTYPE_NO_PLAYER_ENTITY_ID) {
-            return;
-        }
-        try {
-            Rengine::Entity& playerEntity = this->_ecs.getEntity(this->_playerEntityId);
-            RType::Components::Action& actionComponent = playerEntity.getComponent<RType::Components::Action>();
-
-            actionComponent.processUserInput();
-        } catch (Rengine::EntityExceptionComponentNotLinked& e) {
-            // No Action component
-            return;
-        } catch (Rengine::ECSExceptionEntityNotFound& e) {
-            // No entity at this->_playerEntityId
-            return;
-        }
-    }
-
     void loadLevelFunction(GameState& gameState)
     {
         // Simulate server by getting random level config
@@ -134,12 +115,10 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
-        gameState.sendInputToPlayerEntity();
-        gameState._ecs.runComponentFunction<RType::Components::Position>(); // move entity
-        gameState._ecs.runComponentFunction<RType::Components::Action>(); //handle action player
-        gameState._ecs.runComponentFunction<RType::Components::Hitbox>(); // handle collision
-
-        gameState._ecs.runComponentFunction<RType::Components::Sprite>(); // render sprite
+        gameState._ecs.runComponentFunction<RType::Components::Position>();  // move entity
+        gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
+        gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
+        gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
         return State::StateGame;
     }
 

@@ -97,11 +97,6 @@ namespace RType {
             * @brief Deletes the player entity.
             */
             void deletePlayer(void);
-            /*
-            * @fn sendInputToPlayerEntity
-            * @brief Sends the input from the window to the player entity.
-            */
-            void sendInputToPlayerEntity(void);
 
             void createBackground(const std::string& jsonPath);
 

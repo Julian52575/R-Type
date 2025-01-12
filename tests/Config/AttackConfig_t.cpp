@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../../src/Config/AttackConfig.hpp"
+
 #define _BUFFJSONPATH_ "Config/buff.json"
 /* The buff.json for reference, if different then trouble
     "attack": {
@@ -35,7 +36,6 @@
                 "duration": 1.5
             }]}}
 */
-
 static inline const RType::Config::BuffConfig& getConfigFromType(RType::Config::BuffType type, const std::vector<RType::Config::BuffConfig>& vector)
 {
     for (auto i = 0; i < vector.size(); i++) {
@@ -74,7 +74,8 @@ TEST(AttackConfig, BuffConfig)
     EXPECT_EQ(defense.getValue(), 1.5);
     EXPECT_EQ(defense.getDuration(), 1.5);
 }
-/* Missile json be like
+/* missile.json be like
+ {
     "attack": {
         "type": "missiles",
         "cooldown": 3.0,
@@ -84,6 +85,7 @@ TEST(AttackConfig, BuffConfig)
                 "offset": {
                     "x": 1.1, "y": 1.2
                 },
+                "controlType": "velocity",
                 "velocity": {
                     "x": 1.3, "y": 1.4
                 }
@@ -93,20 +95,20 @@ TEST(AttackConfig, BuffConfig)
                 "offset": {
                     "x": 2.1, "y": 2.2
                 },
-                "velocity": {
-                    "x": 2.3, "y": 2.4
-                }
+                "controlType": "script",
+                "scriptPath": "Config/script.lua"
             },
             {
                 "json": "missileDown.json",
                 "offset": {
                     "x": -3.1, "y": -3.2
                 },
-                "velocity": {
-                    "x": -3.3, "y": -3.4
-                }
-                }}}}}}
-
+                "timeLimit": 3.3,
+                "controlType": "userInput"
+            }
+        ]
+    }
+}
 */
 #define _MISSILEJSONPATH_ "Config/missiles.json"
 const RType::Config::MissileConfig& getMissilesConfigFromJsonPath(const std::string& jsonPath,
@@ -134,18 +136,23 @@ TEST(AttackConfig, MissilesConfig)
     auto& missile = getMissilesConfigFromJsonPath("missile.json", vector);
     std::pair<double, double> missileOffset = {1.1, 1.2};
     std::pair<double, double> missileVelocity = {1.3, 1.4};
+
+    EXPECT_EQ(missile.getControlType(), RType::Config::MissileControlType::MissileControlTypeVelocity);
     EXPECT_EQ(missile.getOffset(), missileOffset);
     EXPECT_EQ(missile.getVelocity(), missileVelocity);
 
     auto& missileUp = getMissilesConfigFromJsonPath("missileUp.json", vector);
     std::pair<double, double> missileUpOffset = {2.1, 2.2};
-    std::pair<double, double> missileUpVelocity = {2.3, 2.4};
+
+    EXPECT_EQ(missileUp.getControlType(), RType::Config::MissileControlTypeScript);
     EXPECT_EQ(missileUp.getOffset(), missileUpOffset);
-    EXPECT_EQ(missileUp.getVelocity(), missileUpVelocity);
+    EXPECT_EQ(missileUp.getScriptPath(), "Config/script.lua");
+    EXPECT_EQ(missileUp.getTimeLimitSeconds(), 0.0f);
 
     auto& missileDown = getMissilesConfigFromJsonPath("missileDown.json", vector);
     std::pair<double, double> missileDownOffset = {-3.1, -3.2};
-    std::pair<double, double> missileDownVelocity = {-3.3, -3.4};
+
+    EXPECT_EQ(missileDown.getControlType(), RType::Config::MissileControlTypeUserInput);
     EXPECT_EQ(missileDown.getOffset(), missileDownOffset);
-    EXPECT_EQ(missileDown.getVelocity(), missileDownVelocity);
+    EXPECT_EQ(missileDown.getTimeLimitSeconds(), 3.3f);
 }

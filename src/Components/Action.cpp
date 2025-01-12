@@ -28,21 +28,21 @@
 #include "src/Config/EntityConfig.hpp"
 #include "src/Config/EntityConfigResolver.hpp"
 #include "src/Config/MissileConfig.hpp"
+#include "src/Game/SceneManager.hpp"
 
 namespace RType {
     namespace Components {
 
-        Action::Action(std::reference_wrapper<SceneManager> sceneManager, ActionSource source, const std::string& luaScript)
+        Action::Action(std::reference_wrapper<SceneManager> sceneManager, ActionSource source, const std::string& scriptPath)
             : _sceneManager(sceneManager)
         {
             this->_actionSource = source;
             switch (source) {
-                case ActionSourceLua:
-                    std::cout << "RType::Component::Action: Warning: Lua not inplemented." << luaScript << std::endl;
+                case ActionSourceScript:
+                    std::cout << "RType::Component::Action: Warning: Script not inplemented." << scriptPath << std::endl;
                     break;
 
                 case ActionSourceUserInput:
-                    this->buildBindVector();
                     break;
 
                 default:
@@ -50,11 +50,31 @@ namespace RType {
             }  // switch source
             this->_actionVector.reserve(5);
         }
+
+        void processInput(Action& actionComponent) noexcept
+        {
+            switch (actionComponent._actionSource) {
+                // scripts WIP
+                case ActionSource::ActionSourceScript:
+                    return;
+
+                case ActionSource::ActionSourceUserInput:
+                    actionComponent.processUserInput();
+                    break;
+
+                case ActionSource::ActionSourceServer:
+                    return;
+
+                default:
+                    return;
+            }
+        }
+
         void Action::processUserInput(void)
         {
             // Check if source is UserInput
             if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Trying to set user input on lua source.");
+                throw ActionException("Trying to set user input on non user source.");
             }
             Rengine::Graphics::UserInputManager& inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
             Rengine::Graphics::UserInputManager::const_iterator it = inputManager.begin();
@@ -68,14 +88,14 @@ namespace RType {
         {
             // Check if source is UserInput
             if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Trying to set user input on lua source.");
+                throw ActionException("Trying to set user input on non user source.");
             }
             Network::EntityAction newAction;
 
             // Parse input vector
-            auto it = this->_inputNetworkBindVector.begin();
+            auto it = PlayerInputBindVector.begin();
 
-            while (it != this->_inputNetworkBindVector.end()) {
+            while (it != PlayerInputBindVector.end()) {
                 bool dataComparaison = false;
 
                 if (it->first.type == input.type) {
@@ -93,7 +113,7 @@ namespace RType {
                 it++;
             }  // while it != end
             // No match
-            if (it == this->_inputNetworkBindVector.end()) {
+            if (it == PlayerInputBindVector.end()) {
                 return;
             }
 
@@ -135,39 +155,6 @@ namespace RType {
             this->_actionVector.push_back(newAction);
         }
 
-        void Action::buildBindVector(void)
-        {
-            this->_inputNetworkBindVector = {
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardChar, ' '},
-                    Network::EntityActionType::EntityActionTypeShoot1
-                },
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialSHIFT},
-                    Network::EntityActionType::EntityActionTypeShoot2
-                },
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialTAB},
-                    Network::EntityActionType::EntityActionTypeShoot3
-                },
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowUP},
-                    Network::EntityActionType::EntityActionTypeMove
-                },
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN},
-                    Network::EntityActionType::EntityActionTypeMove
-                },
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowLEFT},
-                    Network::EntityActionType::EntityActionTypeMove
-                },
-                {
-                    {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialArrowRIGHT},
-                    Network::EntityActionType::EntityActionTypeMove
-                }
-            };  // this->_inputNetworkBindVector
-        }
         Action::const_iterator Action::begin(void) const
         {
             return this->_actionVector.begin();
@@ -184,18 +171,21 @@ namespace RType {
         {
             return this->_actionVector.size();
         }
-        void Action::changeInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction)
+        void Action::changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction)
         {
             // Check if source is lua script
             if (this->_actionSource != ActionSourceUserInput) {
                 throw ActionException("Trying to set user input on lua source.");
             }
         }
-        const Rengine::Graphics::UserInput Action::getNeededInput(Network::EntityActionType act) const
+        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act) const
         {
-            auto it = this->_inputNetworkBindVector.begin();
+            if (this->_actionSource != ActionSourceUserInput) {
+                throw ActionException("Accessing player input on non user source.");
+            }
+            auto it = PlayerInputBindVector.begin();
 
-            while (it != this->_inputNetworkBindVector.end()) {
+            while (it != PlayerInputBindVector.end()) {
                 if (it->second == act) {
                     return it->first;
                 }
@@ -213,6 +203,7 @@ namespace RType {
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
+            processInput(actionComponent);
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
@@ -269,7 +260,7 @@ namespace RType {
                         break;
                     // Handle missiles
                     case (Config::AttackType::AttackTypeMissiles):
-                        actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+                        handleShootMissile(actionComponent, action, ecs, entity, entityConfig, attackConfig);
                         break;
                     default:
                         break;
@@ -279,7 +270,7 @@ namespace RType {
             }
         }
 
-        inline void Action::handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,
+        inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
         {
             // Not enough entity left for attack : skip it
@@ -305,7 +296,20 @@ namespace RType {
                 RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
 
                 relationship.addParent(uint64_t(entity));
-                this->_sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
+                switch (it.getControlType()) {
+                    case (Config::MissileControlTypeUserInput):
+                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);
+                        break;
+
+                    case (Config::MissileControlTypeScript):
+                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
+                        break;
+
+                    // No action component needed for velocity and invalid value
+                    default:
+                        break;
+                } // switch controlType
+                actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }
 

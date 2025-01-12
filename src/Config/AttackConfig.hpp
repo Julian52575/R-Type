@@ -54,8 +54,6 @@ namespace RType {
             std::string _concat;
         };
 
-        class EntityConfig;
-
         /**
         * @addtogroup RType::Config
         * @namespace Config
