@@ -27,6 +27,9 @@ namespace RType {
             // Parse cooldown
             if (attackField.contains("cooldown") == true) {
                 this->_cooldown = attackField["cooldown"];
+                if (this->_cooldown == 0.0f) {
+                    this->_cooldown = 0.1f;
+                }
             }
             // Parse type
             std::string type = attackField["type"];

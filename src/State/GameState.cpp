@@ -69,7 +69,7 @@ namespace RType {
     {
 #warning Parse level
         this->createBackground("assets/entities/Background.json");
-        this->createPlayer("assets/entities/playerDefault.json");
+        this->createPlayer("assets/entities/skeletonDragon.json");
     }
 
     State GameState::run(void)

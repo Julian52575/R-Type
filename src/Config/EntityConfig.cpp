@@ -146,6 +146,8 @@ namespace RType {
             // enemyColisionDamage
             if (statsField.contains("enemyColisionDamage") == true) {
                 this->_stats.enemyColisionDamage = statsField["enemyColisionDamage"];
+            } else {
+                this->_stats.enemyColisionDamage = this->_stats.attack;
             }
         }
         void EntityConfig::parseCharacteristics(nlohmann::json& charaField)

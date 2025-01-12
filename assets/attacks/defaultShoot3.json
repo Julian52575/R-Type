@@ -12,19 +12,21 @@
                 "scriptPath": "assets/scripts/black.lua"
             },
             {
-                "json": "assets/entities/missile1.json",
+                "json": "assets/entities/skeletonDragon.json",
                 "offset": {
-                    "x": 10, "y": 12
+                    "x": 0, "y": 200
                 },
                 "controlType": "userInput"
             },
             {
-                "json": "assets/entities/missile1.json",
+                "json": "assets/entities/smallFireBall.json",
                 "offset": {
-                    "x": 10, "y": 12
+                    "x": 10, "y": 0
                 },
-                "controlType": "script",
-                "scriptPath": "assets/scripts/black.lua"
+                "controlType": "velocity",
+                "velocity": {
+                    "x": 1, "y": 0
+                }
             }
         ]
     }
