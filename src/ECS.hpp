@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <utility>
+#include <typeindex>
 
 #include "ComponentRegistry.hpp"
 #include "Entity.hpp"
@@ -49,6 +50,17 @@ namespace Rengine {
     class ECSExceptionBadComponentFunctionType : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: The component function and the provided template have different type definition."; };
+    };
+    class ECSException : public std::exception {
+        public:
+            ECSException(const std::string& msg) : _msg("Rengine::ECS: " + msg) {};
+            const char *what() const noexcept
+            {
+                return this->_msg.c_str();
+            };
+
+        private:
+            std::string _msg;
     };
     /**
      * @addtogroup Rengine

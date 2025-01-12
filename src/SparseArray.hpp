@@ -4,21 +4,35 @@
 // File description:
 //
 */
-
 #ifndef SRC_SPARSEARRAY_HPP_
 #define SRC_SPARSEARRAY_HPP_
+
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+#include <typeinfo>
 #include <vector>
 #include <utility>
 #include <iterator>
 #include <iostream>
 #include <optional>
+#include <typeindex>
 
 namespace Rengine {
+
+    class SparseArrayException : public std::exception {
+        public:
+            SparseArrayException(const std::string& msg) : _msg("Rengine::SparseArray: " + msg) {};
+            const char *what() const noexcept
+            {
+                return this->_msg.c_str();
+            };
+
+        private:
+            std::string _msg;
+    };
 
     /**
      * @addtogroup Rengine
@@ -98,23 +112,33 @@ namespace Rengine {
             }
             /**
             * @fn operator[]
+            * @exception SparseArrayException idx is greater than the SparseArray size.
             * @brief Return a reference to the object stored at position idx.
             */
             reference_type operator[](size_t idx)
             {
                 if (idx >= this->_data.size()) {
-                    throw std::out_of_range("Index out of range");
+                    auto i = std::type_index(typeid(Component));
+                    std::string msg = "Trying to access an index out of range. SparseArray type is: ";
+                    std::string con = i.name();
+
+                    throw SparseArrayException(msg + con);
                 }
                 return this->_data[idx];
             }
             /**
             * @fn operator[]
+            * @exception SparseArrayException idx is greater than the SparseArray size.
             * @brief Return a const reference to the object stored at position idx.
             */
             const_reference_type operator[](size_t idx) const
             {
                 if (idx >= this->_data.size()) {
-                    throw std::out_of_range("Index out of range");
+                    auto i = std::type_index(typeid(Component));
+                    std::string msg = "Trying to access an index out of range. SparseArray type is: ";
+                    std::string con = i.name();
+
+                    throw SparseArrayException(msg + con);
                 }
                 return this->_data[idx];
             }
