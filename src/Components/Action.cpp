@@ -154,6 +154,10 @@ namespace RType {
             }  // if newAction.type == Network::EntityActionTypeMove
             this->_actionVector.push_back(newAction);
         }
+        void Action::processAction(const Network::EntityAction& rfcAction) noexcept
+        {
+            this->_actionVector.push_back(rfcAction);
+        }
 
         Action::const_iterator Action::begin(void) const
         {

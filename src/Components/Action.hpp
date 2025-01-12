@@ -118,6 +118,12 @@ namespace RType {
                 */
                 friend void processInput(Action& actionComponent) noexcept;
                 /**
+                * @fn processAction
+                * @brief Process an input from the received paquet.
+                */
+                void processAction(const Network::EntityAction& rfcAction) noexcept;
+
+                /**
                 * @fn changeInput
                 * @param resultingAction The EntityActionType to happen when newInput is processed.
                 * @param outcome newInput The new input to trigger resultingAction
