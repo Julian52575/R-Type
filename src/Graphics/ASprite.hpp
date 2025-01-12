@@ -62,6 +62,13 @@ namespace Rengine {
                 * @brief Get whether or not this sprite has animations.
                 */
                 bool hasAnimation(void) const noexcept;
+                /**
+                * @fn flip
+                * @param rotation The rotation in degree.
+                * @brief Flip the sprite horizontally.
+                */
+                virtual void rotate(float rotation) noexcept = 0;
+
 
             protected:
                 Rengine::Graphics::SpriteSpecs _spriteSpecs;

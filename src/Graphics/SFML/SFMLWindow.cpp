@@ -212,7 +212,7 @@ skipIcon:
                         if (event.mouseButton.button == sf::Mouse::Button::Right) {
                             newInput.type = UserInputTypeMouseRightClick;
                         } else {
-                            newInput.type = UserInputTypeMouseRightClick;
+                            newInput.type = UserInputTypeMouseLeftClick;
                         }
                         newInput.data.mousePosition.x = event.mouseButton.x;
                         newInput.data.mousePosition.y = event.mouseButton.y;

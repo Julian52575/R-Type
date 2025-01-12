@@ -96,6 +96,10 @@ namespace Rengine {
             {
                 return this->_renderObject.getRectangle();
             }
+            void SFMLSprite::rotate(float rotation) noexcept
+            {
+                this->_renderObject.rotate(this->_spriteSpecs.type, rotation);
+            }
 
             void SFMLSprite::applyCurrentFrameTexture(void)
             {
@@ -241,6 +245,25 @@ namespace Rengine {
 
                     case (SpriteType::SpriteTypeRectangle):
                         this->rectangle->setPosition(pos);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            void SFMLSprite::SFMLSpriteUnion::rotate(SpriteType type, float rotation) noexcept
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->rotate(rotation);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setRotation(rotation);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setRotation(rotation);
                         break;
 
                     default:
