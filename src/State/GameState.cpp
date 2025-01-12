@@ -11,11 +11,20 @@
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Rng.hpp>
 
-#include "src/Components/Components.hpp"
-#include "src/Config/LevelConfigResolver.hpp"
+
 #include "State.hpp"
 #include "GameState.hpp"
 #include "AState.hpp"
+
+
+#include "src/Config/LevelConfigResolver.hpp"
+#include "src/Components/Buff.hpp"
+#include "src/Components/Sprite.hpp"
+#include "src/Components/Position.hpp"
+#include "src/Components/Action.hpp"
+#include "src/Components/Components.hpp"
+#include "src/Components/Hitbox.hpp"
+#include "src/Components/Relationship.hpp"
 
 namespace RType {
 
@@ -34,6 +43,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Sprite>();
         this->_ecs.registerComponent<Components::Buff>();
         this->_ecs.registerComponent<RType::Components::Hitbox>();
+        this->_ecs.registerComponent<RType::Components::Relationship>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -139,7 +149,7 @@ namespace RType {
         std::function<void(GameState&)> funScene1(loadLevelFunction);
 
         this->_sceneManager.setSceneFunction<void, GameState&>(GameScenes::GameScenesLoadLevel, funScene1);
-        // Play scene   
+        // Play scene
         std::function<State(GameState&)> funScene2(playFunction);
 
         this->_sceneManager.setSceneFunction<State, GameState&>(GameScenes::GameScenesPlay, funScene2);
@@ -159,8 +169,9 @@ namespace RType {
         player.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
         player.addComponent<Components::Buff>();
         player.addComponent<Components::Hitbox>(enConfig.getHitbox());
-        this->_playerEntityId = Rengine::Entity::size_type(player);
+        Components::Relationship& relationship = player.addComponent<Components::Relationship>();
 
+        this->_playerEntityId = Rengine::Entity::size_type(player);
     }
 
     void GameState::createBackground(const std::string& jsonPath)

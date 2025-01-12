@@ -15,6 +15,7 @@ namespace RType {
                 Position(void);
                 Position(float x, float y);
                 ~Position(void);
+                const Rengine::Graphics::vector2D<float>& getVector2D(void) const noexcept;
                 const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept;
                 void set(const Rengine::Graphics::vector2D<float>& pos);
                 void setX(float x);

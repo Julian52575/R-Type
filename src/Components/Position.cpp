@@ -33,6 +33,10 @@ namespace RType {
         {
             return this->_position;
         }
+        const Rengine::Graphics::vector2D<float>& Position::getVector2D(void) const noexcept
+        {
+            return this->_position;
+        }
 
         void Position::set(const Rengine::Graphics::vector2D<float>& pos)
         {

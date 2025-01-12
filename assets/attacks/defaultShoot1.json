@@ -6,10 +6,10 @@
             {
                 "json": "assets/entities/missile1.json",
                 "offset": {
-                    "x": 10, "y": 12
+                    "x": 0, "y": 0
                 },
                 "velocity": {
-                    "x": 10, "y": 0
+                    "x": 0.01, "y": 0
                 }
             }
         ]

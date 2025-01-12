@@ -1,6 +1,6 @@
 //
-#ifndef SRC_COMPONENTS_BUFF_HPP_
-#define SRC_COMPONENTS_BUFF_HPP_
+#ifndef SRC_COMPONENTS_RELATIONSHIP_HPP_
+#define SRC_COMPONENTS_RELATIONSHIP_HPP_
 
 #include <cstdint>
 #include <vector>
@@ -21,7 +21,7 @@ namespace RType {
                 * @param group The group this entity belong to. Binary and allows you to add multiple group in a single digit.
                 * @brief Create the relationship component.
                 */
-                Relationship(uint64_t group);
+                Relationship(uint64_t group = 0);
                 ~Relationship(void) = default;
                 /**
                 * @fn addParent
@@ -72,4 +72,4 @@ namespace RType {
         };
     }  // namespace Components
 }  // namespace RType
-#endif  // SRC_COMPONENTS_BUFF_HPP_
+#endif  // SRC_COMPONENTS_RELATIONSHIP_HPP_

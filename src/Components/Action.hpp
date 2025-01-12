@@ -109,7 +109,15 @@ namespace RType {
                 const Rengine::Graphics::UserInput getNeededInput(Network::EntityActionType outcome) const;
 
                 /*      Function for ECS        */
+                /**
+                * @fn componentFunction
+                * @param ECS A reference to the ecs in use.
+                * @param component A reference to an Action component
+                * @param entity A reference to the entity who own the component.
+                * @brief Process the list of Network::Action registered in this component.
+                */
                 static void componentFunction(Rengine::ECS& ecs, Action& component, Rengine::Entity& entity);
+                friend void updateDeltatimes(Action& component) noexcept;
                 inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
                 inline void handleShoot(Action& actionComponent, Network::EntityAction& action,
                         Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig);
@@ -120,17 +128,11 @@ namespace RType {
 
             private:
                 std::reference_wrapper<SceneManager> _sceneManager;
-#warning Think more about reference to sceneManager in component Action
                 ActionSource _actionSource;
                 container_t _actionVector;
                 void buildBindVector(void);
                 std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> _inputNetworkBindVector;
-
-                float _currentTimeShoot1 = 0;
-                float _currentTimeShoot2 = 0;
-                float _currentTimeShoot3 = 0;
-
-                
+                float _shootDeltatimes[3] = {0.0f};
         };  // class Action
     }  // namespace Components
 }  // namespace RType

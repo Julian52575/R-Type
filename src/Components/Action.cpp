@@ -1,8 +1,10 @@
 //
 #include <cstddef>
+#include <exception>
 #include <functional>
 #include <memory>
 #include <optional>
+#include <rengine/src/ECS.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Graphics/Vector.hpp>
@@ -14,10 +16,18 @@
 
 #include "../Network/EntityAction.hpp"
 #include "Components.hpp"
+#include "src/Components/Action.hpp"
+#include "src/Components/Buff.hpp"
+#include "src/Components/Configuration.hpp"
+#include "src/Components/Hitbox.hpp"
+#include "src/Components/Position.hpp"
+#include "src/Components/Relationship.hpp"
+#include "src/Components/Sprite.hpp"
 #include "src/Config/AttackBuffTypeEnum.hpp"
 #include "src/Config/AttackConfig.hpp"
 #include "src/Config/EntityConfig.hpp"
 #include "src/Config/EntityConfigResolver.hpp"
+#include "src/Config/MissileConfig.hpp"
 
 namespace RType {
     namespace Components {
@@ -196,18 +206,13 @@ namespace RType {
 
         void Action::componentFunction(Rengine::ECS& ecs, Action& actionComponent, Rengine::Entity& entity)
         {
+            updateDeltatimes(actionComponent);
             std::optional<std::reference_wrapper<Configuration>> entityConfig = entity.getComponentNoExcept<Configuration>();
             std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
 
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
-
-            actionComponent._currentTimeShoot1 += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
-            actionComponent._currentTimeShoot2 += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
-            actionComponent._currentTimeShoot3 += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
-
-
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
@@ -222,6 +227,13 @@ namespace RType {
                 }
             }  // for it
             actionComponent.clear();
+        }
+
+        void updateDeltatimes(Action& component) noexcept
+        {
+            for (uint8_t i = 0; i < 3; i++) {
+                component._shootDeltatimes[i] += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+            }
         }
 
         void Action::handleMove(Network::EntityAction& action, Configuration& config, Position& pos)
@@ -240,46 +252,61 @@ namespace RType {
             uint8_t attackId = 1 + (action.type - Network::EntityActionTypeShoot1);
             const std::optional<Config::AttackConfig>& attackConfig = entityConfig.getConfig().getAttack(attackId);
 
+            // No attack : no action
             if (attackConfig.has_value() == false) {
                 return;
             }
-
-            switch (attackConfig->getType()) {
-                // Handle buffs
-                case (Config::AttackType::AttackTypeBuffs):
-                    actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
-                    break;
-                // Handle missiles
-                case (Config::AttackType::AttackTypeMissiles):
-                    actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
-                    break;
-                default:
-                    return;
+            // Cooldown not reached : no shoot
+            if (this->_shootDeltatimes[attackId - 1] < attackConfig->getCooldown()) {
+                return;
+            }
+            this->_shootDeltatimes[attackId - 1] = 0.0f;
+            try {
+                switch (attackConfig->getType()) {
+                    // Handle buffs
+                    case (Config::AttackType::AttackTypeBuffs):
+                        actionComponent.handleShootBuff(action, ecs, entity, entityConfig, attackConfig);
+                        break;
+                    // Handle missiles
+                    case (Config::AttackType::AttackTypeMissiles):
+                        actionComponent.handleShootMissile(action, ecs, entity, entityConfig, attackConfig);
+                        break;
+                    default:
+                        break;
+                }
+            } catch (std::exception& e) {
+                std::cout << "Warning: Got error '" << e.what() << "' on entity shoot'" << std::endl;
             }
         }
 
         inline void Action::handleShootMissile(Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
         {
-            // No projectile when no more entity left
-            if (ecs.getActiveEntitiesCount() >= ecs.getEntityLimit()) {
+            // Not enough entity left for attack : skip it
+            if (attackConfig->getMissiles().size() > ecs.getEntityLimit() - ecs.getActiveEntitiesCount()) {
                 return;
             }
-            // Can't shoot if cooldown not reached
-            if (this->_currentTimeShoot1 < attackConfig->getCooldown())
-                return;
-            
-            this->_currentTimeShoot1 = 0.0f;
-            RType::Config::EntityConfig missileConfig(attackConfig->getMissiles()[0].getJsonPath());
+            Config::EntityConfigResolver singletone = Config::EntityConfigResolverSingletone::get();
+            const Position& hostPosition = entity.getComponent<Position>();
 
-            Rengine::Entity& projectile = ecs.addEntity();
-            projectile.addComponent<RType::Components::Configuration>(missileConfig);
-            projectile.addComponent<RType::Components::Sprite>(missileConfig.getSprite().getSpecs());
-            projectile.addComponent<RType::Components::Hitbox>(missileConfig.getHitbox());
+            for (const Config::MissileConfig& it : attackConfig->getMissiles()) {
+                const RType::Config::EntityConfig& missileConfig = singletone.get(it.getJsonPath());
+                Rengine::Entity& projectile = ecs.addEntity();
 
-            auto pos_player = entity.getComponent<Position>();
-            projectile.addComponent<RType::Components::Position>(pos_player.getVector2D().x + attackConfig->getMissiles()[0].getOffset().first, pos_player.getVector2D().y + attackConfig->getMissiles()[0].getOffset().second);
-            this->_sceneManager.get().addEntityToCurrentScene(projectile);
+                // set Component
+                projectile.addComponent<Position>(
+                        hostPosition.getVector2D().x + it.getOffset().first,
+                        hostPosition.getVector2D().y + it.getOffset().second
+                );
+                projectile.addComponent<Hitbox>(missileConfig.getHitbox());
+                projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
+                projectile.addComponent<Configuration>(missileConfig);
+                projectile.addComponent<Buff>();
+                RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
+
+                relationship.addParent(uint64_t(entity));
+                this->_sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
+            } // for it
         }
 
         inline void Action::handleShootBuff(Network::EntityAction& action, Rengine::ECS& ecs,

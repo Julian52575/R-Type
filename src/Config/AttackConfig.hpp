@@ -18,7 +18,7 @@ namespace RType {
         class AttackConfigExceptionWrongTypeAccess : public std::exception {
         public:
             const char *what() const noexcept {
-                return "RType::Config::AttackConfig Trying to access wrong type vector.";
+                return "RType::Config::AttackConfig Trying to access wrong type vector. Ie: buffs on AttackTypeMissiles.";
             };
         };
         class AttackConfigExceptionFileError : public std::exception {
@@ -53,6 +53,9 @@ namespace RType {
         private:
             std::string _concat;
         };
+
+        class EntityConfig;
+
         /**
         * @addtogroup RType::Config
         * @namespace Config
