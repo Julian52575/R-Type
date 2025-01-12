@@ -100,6 +100,17 @@ namespace Rengine {
             {
                 this->_renderObject.rotate(this->_spriteSpecs.type, rotation);
             }
+            void SFMLSprite::flip(void) noexcept
+            {
+                // getScale never returns a negative value
+                sf::Vector2f vec = this->_renderObject.getScale(this->_spriteSpecs.type);
+
+                if (this->_flipped == false) {
+                    vec.x *= -1;
+                }
+                this->_renderObject.setScale(this->_spriteSpecs.type, vec);
+                this->_flipped = !this->_flipped;
+            }
 
             void SFMLSprite::applyCurrentFrameTexture(void)
             {
@@ -193,6 +204,26 @@ namespace Rengine {
                     default:
                         break;
                 }
+            }
+            sf::Vector2f SFMLSprite::SFMLSpriteUnion::getScale(SpriteType type) noexcept
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->getScale();
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->getScale();
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->getScale();
+                        break;
+
+                    default:
+                        break;
+                }
+                return {1, 1};
             }
             void SFMLSprite::SFMLSpriteUnion::setTextureRect(SpriteType type, const sf::IntRect& rect)
             {

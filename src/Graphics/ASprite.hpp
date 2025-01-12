@@ -65,9 +65,14 @@ namespace Rengine {
                 /**
                 * @fn flip
                 * @param rotation The rotation in degree.
-                * @brief Flip the sprite horizontally.
+                * @brief Rotate the sprite by rotation degree.
                 */
                 virtual void rotate(float rotation) noexcept = 0;
+                /**
+                * @fn flip
+                * @brief Flip the sprite horizontally.
+                */
+                virtual void flip(void) noexcept = 0;
 
 
             protected:

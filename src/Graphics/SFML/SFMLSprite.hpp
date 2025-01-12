@@ -34,6 +34,7 @@ namespace Rengine {
                 sf::CircleShape* getCircle(void) noexcept;
                 sf::RectangleShape* getRectangle(void) noexcept;
                 void rotate(float rotation) noexcept;
+                void flip(void) noexcept;
 
             private:
                 union SFMLSpriteUnion {
@@ -49,6 +50,7 @@ namespace Rengine {
                         ~SFMLSpriteUnion();
                         void setTexture(SpriteType type, const sf::Texture& texture);
                         void setScale(SpriteType type, const sf::Vector2f& scale);
+                        sf::Vector2f getScale(SpriteType type) noexcept;
                         void setTextureRect(SpriteType type, const sf::IntRect& rect);
                         void setColor(SpriteType type, const sf::Color& color);
                         void setPosition(SpriteType type, const sf::Vector2f& pos);
@@ -69,6 +71,7 @@ namespace Rengine {
                 void applyCurrentFrameTexture(void);
                 SFMLSpriteUnion _renderObject;
                 sf::Texture _texture;
+                bool _flipped = false;
         };  // class SFMLSprite
     }  // namespace Rengine
 }  // namespace Graphics

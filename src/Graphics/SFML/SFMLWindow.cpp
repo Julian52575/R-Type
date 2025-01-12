@@ -206,7 +206,7 @@ skipIcon:
                         */
                         // Ignored because sf::Event is worthless for keyboard.
                         // Using this->this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide() instead
-                        break;
+                        continue;
                     // Mouse click
                     case sf::Event::MouseButtonPressed:
                         if (event.mouseButton.button == sf::Mouse::Button::Right) {
