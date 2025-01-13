@@ -1,20 +1,9 @@
-//  Release header
-//
-#ifndef SRC_RENGINE_HPP__
-#define SRC_RENGINE_HPP__
+#ifndef _RENGINE_HPP_
+#define _RENGINE_HPP_
 
-#include "src/Sparse_Array.hpp"
-#include "src/Registry.hpp"
+#include "src/ECS.hpp"
+#include "src/Rng.hpp"
 
-// System
-#include "src/System/Liste.hpp"
+#include "src/Resolver/AResolver.hpp"
 
-// Core
-#include "src/Core/Rengine.hpp"
-
-// Entities
-#include "src/Entities/Entity/Entity.hpp"
-#include "src/Entities/EntityManager/Manager.hpp"
-#include "src/Entities/Maker/EntityMaker.hpp"
-
-#endif
+#endif  // _RENGINE_HPP_
