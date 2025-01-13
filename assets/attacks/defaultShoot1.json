@@ -1,0 +1,18 @@
+{
+    "attack": {
+        "type": "missiles",
+        "cooldown": 0.0,
+        "missiles": [
+            {
+                "json": "assets/entities/missile1.json",
+                "offset": {
+                    "x": 0, "y": 0
+                },
+                "controlType": "velocity",
+                "velocity": {
+                    "x": 0.01, "y": 0
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "attack": {
+        "type": "buff",
+        "cooldown": 1.5,
+        "buffs": [
+            {
+                "type": "attack",
+                "value": 1.5,
+                "duration": 3.0
+            },
+            {
+                "type": "speed",
+                "value": 2.0,
+                "duration": 1.0
+            },
+            {
+                "type": "hpHeal",
+                "value": 100
+            },
+            {
+                "type": "hpHealTime",
+                "value": 5,
+                "duration": 1.5
+            },
+            {
+                "type": "defense",
+                "value": 1.5,
+                "duration": 1.5
+            }
+        ]
+    }
+}
