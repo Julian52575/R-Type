@@ -9,6 +9,8 @@
 #include "src/State/State.hpp"
 #include "src/State/StateManager.hpp"
 
+#include "src/Config/LevelConfig.hpp"
+
 #define RTYPE_ECS_ENTITY_LIMIT 2500
 
 static void parseInputCloseWindow(void)

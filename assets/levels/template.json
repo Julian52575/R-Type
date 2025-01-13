@@ -9,13 +9,13 @@
                 "enemies": [
                     {
                         "json": "assets/entities/template.json",
-                        "x": 2000,
+                        "x": 1000,
                         "y": 540
                     },
                     {
                         "json": "assets/entities/template.json",
-                        "x": 2150,
-                        "y": 1000
+                        "x": 1250,
+                        "y": 800
                     }
                 ],
                 "endCondition": "time",
@@ -30,17 +30,17 @@
                 "enemies": [
                     {
                         "json": "assets/entities/template.json",
-                        "x": 2300,
+                        "x": 1000,
                         "y": 540
                     },
                     {
                         "json": "assets/entities/template.json",
-                        "x": 2600,
+                        "x": 450,
                         "y": 1000
                     },
                     {
                         "json": "assets/entities/template.json",
-                        "x": 2900,
+                        "x": 900,
                         "y": 100,
                         "boss": true
                     }

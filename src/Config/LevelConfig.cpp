@@ -25,7 +25,8 @@ namespace RType {
                 this->scrollingSpeed = scene["scrollingSpeed"];
             }
             // Background
-            this->parseBackground(scene["background"]);
+            // std::cout << "parseBackground" << std::endl;
+            // this->parseBackground(scene["background"]);
             // Enemies
             this->parseEnemies(scene["enemies"]);
             // EndCondition
@@ -42,8 +43,9 @@ namespace RType {
                 if (it.type() != nlohmann::json::value_t::string) {
                     throw std::runtime_error("Not a string.");
                 }
+                std::cout << it << std::endl;
                 try {
-                    this->backgroundImages.emplace_back(imageResolver.get(it));
+                    this->backgroundImages.push_back(imageResolver.get(it));
                 } catch (std::exception& e) {
                     std::string err = e.what();
                     std::string msg = err + " on background image '" + (std::string) it + "'.";
@@ -72,9 +74,12 @@ namespace RType {
                     throw std::runtime_error("No 'y' field in one of 'enemies'.");
                 }
                 RType::Config::SceneEntityConfig config;
+                
+                std::string json = it["json"];
+                config.path = json;
+                // config.entityConfig = entityResolver.get(json);
 
-                config.entityConfig = entityResolver.get(it["json"]);
-
+                config.isBoss = false;
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
                 // Boss

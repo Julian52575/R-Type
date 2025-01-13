@@ -12,6 +12,8 @@
 #include "AState.hpp"
 #include "src/State/State.hpp"
 
+#include "src/Game/LevelManager.hpp"
+
 namespace RType {
 
     /**
@@ -84,6 +86,8 @@ namespace RType {
             */
             friend State playFunction(GameState& gameState);
 
+            LevelManager _levelManager;
+
         /*      Player management       */
         private:
             /*
@@ -97,8 +101,11 @@ namespace RType {
             * @brief Deletes the player entity.
             */
             void deletePlayer(void);
+            void createEnemy(const std::string& jsonPath, const Rengine::Graphics::vector2D<int>& pos);
 
             void createBackground(const std::string& jsonPath);
+
+
 
         protected:
         #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
