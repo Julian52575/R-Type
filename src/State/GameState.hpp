@@ -105,6 +105,8 @@ namespace RType {
 
             void createBackground(const std::string& jsonPath);
 
+            void alertPlayer(void);
+
 
 
         protected:

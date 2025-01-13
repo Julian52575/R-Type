@@ -209,4 +209,35 @@ namespace RType {
 
     }
 
+    void GameState::alertPlayer(void)
+    {
+        Rengine::Entity& playerEntity = this->_ecs.getEntity(this->_playerEntityId);
+        RType::Components::Position& playerPos = playerEntity.getComponent<RType::Components::Position>();
+        Rengine::SparseArray<RType::Components::Position>& spPosition = this->_ecs.getComponents<RType::Components::Position>();
+        Rengine::SparseArray<RType::Components::Relationship>& spRelationship = this->_ecs.getComponents<RType::Components::Relationship>();
+
+        for (Rengine::ECS::size_type index = 0; index < this->_ecs.getEntityLimit(); index++) {
+            if (index == this->_playerEntityId) {
+                continue;
+            }
+            if (spRelationship[index].has_value() == false) {
+                continue;
+            }
+            if (spRelationship[index]->isParented(uint64_t(this->_playerEntityId))) {
+                continue;
+            }
+            if (spPosition[index].has_value() == false) {
+                continue;
+            }
+            Rengine::Graphics::vector2D<float> pos = spPosition[index]->getVector2D();
+            float distance = sqrt(pow(playerPos.getVector2D().x - pos.x, 2) + pow(playerPos.getVector2D().y - pos.y, 2));
+
+            if (distance > 200) {
+                continue;
+            }
+            std::cout << "Alert between " << int(this->_playerEntityId) << " and " << index << std::endl;
+            #warning Debug print
+        }
+    }
+
 }  // namespace RType
