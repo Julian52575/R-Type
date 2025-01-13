@@ -5,6 +5,7 @@
 #define SRC_ECS_HPP_
 
 #include <cstddef>
+#include <exception>
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -203,32 +204,32 @@ namespace Rengine {
             * @fn getComponents
             * @template Component The type you want to retrive from the registry.
             * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is not registered.
+            * @exception ECSExceptionComponentNotRegistred The component was not previously registred.
             * @brief Retrive the Rengine::SparseArray associated with the templated type.
             */
             template <class Component>
             SparseArray<Component>& getComponents(void)
             {
                 try {
-                    return this->_registry.registerComponent<Component>();
-                } catch (ComponentRegistryExceptionAlreadyRegistred& e) {
                     return this->_registry.getComponents<Component>();
+                } catch (ComponentRegistryExceptionNotRegistred) {
+                    throw ECSExceptionComponentNotRegistred();
                 }
             }
             /**
             * @fn getComponents
             * @template Component The type you want to retrive from the registry.
+            * @exception ECSExceptionComponentNotRegistred The component was not previously registred.
             * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is not registered.
             * @brief Retrive the Rengine::SparseArray associated with the templated type.
             */
             template <class Component>
             SparseArray<Component>& getComponents(void) const
             {
                 try {
-                    return this->_registry.registerComponent<Component>();
-                } catch (ComponentRegistryExceptionNotRegistred& e) {
                     return this->_registry.getComponents<Component>();
+                } catch (ComponentRegistryExceptionNotRegistred) {
+                    throw ECSExceptionComponentNotRegistred();
                 }
             }
             /**
@@ -363,6 +364,29 @@ namespace Rengine {
             size_type getActiveEntitiesCount(void) const noexcept
             {
                 return this->_currentEntitiesCount;
+            }
+            /**
+            * @fn clearEntities
+            * @brief Delete all the active entities.
+            * THIS WILL INVALIDATE ALL THE REFERENCES TO THE ENTITIES.
+            */
+            void clearEntities(void)
+            {
+                for (auto it : this->_currentEntities) {
+                    if (it.has_value() == false) {
+                        continue;
+                    }
+                    this->removeEntity(*it);
+                }
+            }
+            /**
+            * @fn clearComponents
+            * @brief Delete all the component's SparseArray.
+            * THIS WILL INVALIDATE ALL THE REFERENCES TO THE ENTITIES.
+            */
+            void clearComponents(void)
+            {
+                this->_registry.clear();
             }
 
         private:

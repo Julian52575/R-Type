@@ -52,6 +52,7 @@ static int entityTmp = 0;
 void byeByeComponents(Rengine::Entity& e)
 {
     entityTmp = int(e);
+    e.removeComponent<int>();
 }
 TEST(Entity, destroyComponents)
 {
@@ -78,6 +79,8 @@ TEST(Entity, destroyComponentsWithUserProvidedFunction)
     e.destroyComponents();
     EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionNotActive);
     EXPECT_EQ(entityTmp, int(e));
+    // Ensure component at index int(entity) was destroyed
+    EXPECT_FALSE(ecs.getComponents<int>()[int(e)].has_value());
 }
 TEST(Entity, setGetflag)
 {

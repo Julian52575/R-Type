@@ -48,6 +48,7 @@ TEST(ECS, registerGetComponent)
     Rengine::SparseArray<int> &sp = ecs.registerComponent<int>();
     Rengine::SparseArray<int> &sp2 = ecs.getComponents<int>();
     EXPECT_EQ(std::addressof(sp), std::addressof(sp2));
+    EXPECT_THROW(ecs.getComponents<float>(), Rengine::ECSExceptionComponentNotRegistred);
 }
 static int count = 0;
 void componentFunction(Rengine::ECS&, int&, Rengine::Entity&)
@@ -121,4 +122,28 @@ TEST(ECS, getCurrentEntitiesCount)
     EXPECT_EQ(ecs.getActiveEntitiesCount(), 2);
     ecs.removeEntity(e);
     EXPECT_EQ(ecs.getActiveEntitiesCount(), 1);
+}
+TEST(ECS, clearEntities)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e0 = ecs.addEntity();
+    Rengine::Entity& e1 = ecs.addEntity();
+
+    ecs.clearEntities();
+    // References are broken now
+    EXPECT_EQ(ecs.getActiveEntitiesCount(), 0);
+    EXPECT_THROW(ecs.getEntity(int(e0)), Rengine::ECSExceptionEntityNotFound);
+    Rengine::Entity& e0Reborn = ecs.addEntity();
+
+    EXPECT_EQ(int(e0Reborn), int(e0));
+}
+TEST(ECS, clearComponents)
+{
+    Rengine::ECS ecs;
+
+    ecs.registerComponent<int>();
+    ecs.registerComponent<float>();
+    ecs.clearComponents();
+    EXPECT_THROW(ecs.getComponents<int>(), Rengine::ECSExceptionComponentNotRegistred);
+    EXPECT_THROW(ecs.getComponents<float>(), Rengine::ECSExceptionComponentNotRegistred);
 }
