@@ -3,7 +3,7 @@ RED='\033[0;31m'
 GRN='\033[0;32m'
 NC='\033[0m' # No Color
 CXX="g++"
-CXXFLAGS+="-std=c++17 -isystem /usr/local/include -pthread -lgtest -lgtest_main"
+CXXFLAGS+="-std=c++20 -isystem /usr/local/include -pthread -lgtest -lgtest_main"
 FAILURE_LIST=""
 ##
 # @param $1 The file to compile
