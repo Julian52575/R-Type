@@ -77,16 +77,13 @@ namespace RType {
 
             void makeButton(void){
                 // WIP
-                // Rengine::Entity& player = this->_ecs.addEntity();
-                // Config::EntityConfig enConfig("assets/entities/skeletonDragon.json");
+                Rengine::Graphics::TextSpecs specs;
 
-                // player.addComponent<Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
-                // player.addComponent<Components::Configuration>(enConfig);
-                // player.addComponent<Components::Position>(0, 0);
-                // player.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
-                // player.addComponent<Components::Buff>();
-                // player.addComponent<Components::Hitbox>(enConfig.getHitbox());
-                // Components::Relationship& relationship = player.addComponent<Components::Relationship>();
+                specs.color = {0, 0, 255};
+                specs.message = "";
+                specs.fontPath = "assets/fonts/arial.ttf";
+
+                this->_buttonTexts.push_back(Rengine::Graphics::GraphicManagerSingletone::get().createText(specs));
 
                 //menu 1
                 //champ de texte -> ip du serveur
@@ -105,6 +102,7 @@ namespace RType {
         private:
             LobbyInfo _lobbyInfo;
             RType::RTypeMenuScenes _currentScene = RType::RTypeMenuScenes::RTypeMenuScenesNA;
+            std::vector<std::shared_ptr<Rengine::Graphics::AText>> _buttonTexts;
     };
 
 }  // namespace RType
