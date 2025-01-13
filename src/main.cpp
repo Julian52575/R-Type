@@ -20,6 +20,7 @@ static void parseInputCloseWindow(void)
     for (auto& it : inputManager) {
         if (it.type == Rengine::Graphics::UserInputTypeWindowClosed) {
             window->close();
+            return;
         }
     }
 }

@@ -19,3 +19,7 @@ _CPack_Packages/
 venvconan/
 *.out
 *.log
+_CPack_Packages/
+*.deb
+*.so
+*.dll
