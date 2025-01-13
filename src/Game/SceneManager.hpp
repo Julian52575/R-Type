@@ -71,7 +71,7 @@ namespace RType {
             void addEntityToScene(scene_type scene, Rengine::Entity::size_type entityId)
             {
                 // Create the sceneData if not created previously
-                if (this->_scenesData.contains(scene) == false) {
+                if (this->_scenesData.find(scene) == this->_scenesData.end()) {
                     this->_scenesData[scene] = {{0}, {0}};
                 }
                 // Check if entity is already listed
@@ -92,7 +92,7 @@ namespace RType {
             void setScene(scene_type scene)
             {
                 // No scene
-                if (this->_scenesData.contains(scene) == false) {
+                if (this->_scenesData.find(scene) == this->_scenesData.end()) {
                     throw SceneManagerExceptionSceneNotFound();
                 }
                 this->_currentScene = scene;
@@ -116,7 +116,7 @@ namespace RType {
             const std::vector<Rengine::ECS::size_type>& getEntities(scene_type scene)
             {
                 // No scene
-                if (this->_scenesData.contains(scene) == false) {
+                if (this->_scenesData.find(scene) == this->_scenesData.end()) {
                     throw SceneManagerExceptionSceneNotFound();
                 }
                 return this->_scenesData[scene]._sceneEntities;
