@@ -55,6 +55,8 @@ if [[ $(cat /etc/*-release) == *"Fedora"* ]]; then
     sudo dnf install gtest-devel -y
 fi
 
+sudo apt install nlohmann-json3-dev
+
 # Test suite
 runTest "SparseArray_t.cpp" "SparseArray"
 runTest "ComponentRegistry_t.cpp" "ComponentRegistry"
