@@ -38,4 +38,5 @@ sudo ./.installHeader.sh
 if [ $RIGHT == False ]; then
     echo "WARNING: Cannot install /usr/lib/$LIB."
     echo "Move $LIB into /usr/lib yourself."
+    exit 84
 fi
