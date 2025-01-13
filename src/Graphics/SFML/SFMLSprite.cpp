@@ -102,11 +102,10 @@ namespace Rengine {
             }
             void SFMLSprite::flip(void) noexcept
             {
-                // getScale never returns a negative value
-                sf::Vector2f vec = this->_renderObject.getScale(this->_spriteSpecs.type);
+                sf::Vector2f vec = {this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y};
 
                 if (this->_flipped == false) {
-                    vec.x *= -1;
+                    vec.x = this->_spriteSpecs.textureScale.x * -1;
                 }
                 this->_renderObject.setScale(this->_spriteSpecs.type, vec);
                 this->_flipped = !this->_flipped;
