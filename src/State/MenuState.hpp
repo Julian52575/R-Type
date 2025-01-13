@@ -64,9 +64,15 @@ namespace RType {
             {
                 // WIP
                 if (this->_currentScene == RTypeMenuScenes::RTypeMenuScenesButtonDisplay) {
-                    // Display button
-                    this->_ecs.runComponentFunction<RType::Components::Position>();
-                    this->_ecs.runComponentFunction<RType::Components::Sprite>();
+
+                    this->_time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+                    this->inputTextbox(this->_buttonTexts[this->idx_selected]);
+
+                    Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_backgroundSprites[0], {0, static_cast<float>(this->idx_selected * 50 + 25)});
+                    Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_buttonTexts[0], {0, 0});
+                    Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_buttonTexts[1], {0, 50});
+
+
                 }
                 return StateMenu;
             }
@@ -75,15 +81,58 @@ namespace RType {
                 return this->_lobbyInfo;
             }
 
+            void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
+            {
+                if (this->_time < 0.08)
+                    return;
+                this->_time = 0;
+
+                Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+                std::string currentText = textBox->getText();
+
+                for (auto it : inputManager) {
+                    if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial && it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialTAB) {
+                        this->idx_selected = (this->idx_selected + 1) % this->_buttonTexts.size();
+                        continue;
+                    }
+
+                    if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial && it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialBACKSPACE) {
+                        if (currentText.size() > 0) {
+                            currentText.pop_back();
+                        }
+                        continue;
+                    }
+                    if (it.type != Rengine::Graphics::UserInputTypeKeyboardChar)
+                        continue;
+                    currentText += it.data.keyboardChar;
+                }
+                textBox->setText(currentText);
+            }
+
             void makeButton(void){
                 // WIP
                 Rengine::Graphics::TextSpecs specs;
 
                 specs.color = {0, 0, 255};
-                specs.message = "";
+                specs.message = "addresse ip : ";
                 specs.fontPath = "assets/fonts/arial.ttf";
-
                 this->_buttonTexts.push_back(Rengine::Graphics::GraphicManagerSingletone::get().createText(specs));
+
+                specs.color = {255, 0, 0};
+                specs.message = "port :";
+                this->_buttonTexts.push_back(Rengine::Graphics::GraphicManagerSingletone::get().createText(specs));
+
+
+                Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
+                Rengine::Graphics::SpriteSpecs spriteSpecs;
+
+                spriteSpecs.type = Rengine::Graphics::SpriteTypeRectangle;
+
+                spriteSpecs.color = {0, 0, 0};
+                spriteSpecs.shapeData.outlineColor = {255, 0, 255};
+                spriteSpecs.shapeData.outlineThickness = 5;
+                spriteSpecs.shapeData.specifics.rectangleSize = {200, 50};
+                this->_backgroundSprites.push_back(manager.createSprite(spriteSpecs));
 
                 //menu 1
                 //champ de texte -> ip du serveur
@@ -103,6 +152,9 @@ namespace RType {
             LobbyInfo _lobbyInfo;
             RType::RTypeMenuScenes _currentScene = RType::RTypeMenuScenes::RTypeMenuScenesNA;
             std::vector<std::shared_ptr<Rengine::Graphics::AText>> _buttonTexts;
+            std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
+            float _time = 0;
+            int idx_selected = 0;
     };
 
 }  // namespace RType
