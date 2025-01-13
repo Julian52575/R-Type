@@ -2,6 +2,10 @@
 cmake_minimum_required(VERSION 3.20)
 project(R-Engine)
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp)
+file(GLOB_RECURSE GRAPHICS_FILES src/*.cpp src/*.hpp)
+
+# Exclude src/Graphics directory from SRC_FILES
+list(FILTER SRC_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/Graphics/.*")
 list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp) #removing main
 message(STATUS "Removed ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp from compilation")
 message(STATUS "Compiling ${SRC_FILES}...")
@@ -30,14 +34,24 @@ find_package(Lua REQUIRED)
 
 # Define the target
 add_library(rengine SHARED ${SRC_FILES})
+set_target_properties(rengine PROPERTIES LINKER_LANGUAGE CXX)
+
+add_library(rengine_graphics_sfml SHARED ${GRAPHICS_FILES})
+set_target_properties(rengine_graphics_sfml PROPERTIES LINKER_LANGUAGE CXX)
 
 # Link libs
 target_link_libraries(rengine PUBLIC
     asio::asio
+    nlohmann_json::nlohmann_json
+    lua::lua
+)
+
+target_link_libraries(rengine_graphics_sfml PUBLIC
     sfml-system
     sfml-window
     sfml-graphics
     sfml-audio
+    asio::asio
     nlohmann_json::nlohmann_json
     lua::lua
 )
@@ -45,6 +59,12 @@ target_link_libraries(rengine PUBLIC
 # Include headers
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
 target_include_directories(rengine PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${asio_INCLUDE_DIR}
+    $<TARGET_PROPERTY:nlohmann_json::nlohmann_json,INTERFACE_INCLUDE_DIRECTORIES>
+)
+
+target_include_directories(rengine_graphics_sfml PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${SFML_INCLUDE_DIR}
     ${asio_INCLUDE_DIR}
