@@ -36,6 +36,7 @@ namespace Rengine {
             /**
             * @fn int
             * @return The index of the component linked to the entity in the SparseArrays.
+            * Note: This operator works even if the entity is not active.
             */
             operator int(void) const noexcept
             {
@@ -221,10 +222,8 @@ namespace Rengine {
             /**
             * @fn destroyComponents
             * @exception EntityExceptionNotActive This entity has been previously destroyed.
-            * @brief Call the destroy function set beforehand by this->setDestroyFunction to remove all linked Component.
-            * The entity itself is not destroyed but is considered as such, using it will result in a EntityExceptionNotActive.
-            * Note: If this->setDestroyFunction has not been called previously,
-            * this function will only set the entity as not active.
+            * @brief Unactive the entity and call the destroy function set beforehand by this->setDestroyFunction to remove all linked Component.
+            * Using this entity again will result in a EntityExceptionNotActive.
             */
             void destroyComponents(void)
             {
