@@ -1,0 +1,27 @@
+{
+    "entity": {
+        "sprite": "assets/images/smallFireBall.json",
+        "hitbox": {
+            "size": {
+                "x": 71, "y": 26
+            },
+            "offset": {
+                "x": 22, "y": 60
+            }
+        },
+        "stats": {
+            "hp": 1,
+            "attack": 5,
+            "defense": 1,
+            "speedY": 4,
+            "speedX": 200,
+            "acceleration": 100,
+            "enemyColisionDamage": 5
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        }
+    }
+}
