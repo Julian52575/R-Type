@@ -14,6 +14,11 @@ CMakeUserPresets.json
 librengine.so
 rtype
 rengine/
+*.deb
+_CPack_Packages/
+venvconan/
+*.out
+*.log
 _CPack_Packages/
 *.deb
 *.so

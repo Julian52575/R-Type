@@ -1,3 +1,4 @@
+/*
 #include "../include/Command/SendToClient.hpp"
 
 /**
@@ -27,3 +28,4 @@ bool sendEntityInfo(Entity &entity, Server &server) {
     server.getServer().SendAll(msg);
     return true;
 }
+*/

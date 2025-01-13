@@ -1,3 +1,4 @@
+/*
 #include "include/server.hpp"
 #include "include/Command/Connexion.hpp"
 #include "include/Command/SendToClient.hpp"
@@ -242,3 +243,4 @@ void Server::run() {
         }
     }
 }
+*/

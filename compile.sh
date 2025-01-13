@@ -1,6 +1,15 @@
 #!/bin/bash
 BIN_NAME="rtype"
 
+if ! dpkg -s python3-venv > /dev/null 2>&1; then
+    echo "python3-venv is not installed. Installing..."
+    sudo apt-get install python3-venv
+fi
+
+python3 -m venv venvconan
+source venvconan/bin/activate
+pip3 install conan
+
 conan install . --output-folder=build --build=missing
 cmake -B build -DCMAKE_TOOLCHAIN_FILE="build/conan_toolchain.cmake" -DCMAKE_BUILD_TYPE=RELEASE
 if cmake --build build;then
@@ -11,3 +20,6 @@ else
     echo "Build failed. Do you have librengine.so in your path ? /usr/lib"
     exit 84
 fi
+
+deactivate
+rm -rf venvconan

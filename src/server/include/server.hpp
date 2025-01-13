@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineNetwork.hpp>
@@ -203,3 +204,4 @@ public:
  * @return The path as a string.
  */
 std::string find_entity_path(uint16_t id);
+*/

@@ -1,0 +1,27 @@
+{
+   "image":{
+      "texturePath":"assets/images/red.png",
+      "origin":{
+         "x":1,
+         "y":2
+      },
+      "scale":{
+         "x":3.3,
+         "y":4.4
+      },
+      "animations":{
+         "frameRect":{
+            "x":5,
+            "y":6,
+            "width":7,
+            "height":8
+         },
+         "frameCount":9,
+         "frameDuration":10.10,
+         "frameDisplacement": {
+            "x":11,
+            "y":12
+         }
+      }
+   }
+}

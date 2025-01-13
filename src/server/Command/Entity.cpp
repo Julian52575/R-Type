@@ -1,3 +1,4 @@
+/*
 #include "../include/Command/Entity.hpp"
 
 /**
@@ -53,3 +54,4 @@ bool handleGlobalEntity(Message<Communication::TypeDetail> &msg, User &user, Ser
     }
     return true;
 }
+*/

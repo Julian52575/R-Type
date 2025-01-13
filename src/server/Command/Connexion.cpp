@@ -1,3 +1,5 @@
+/*
+
 #include "../include/Command/Connexion.hpp"
 
 /**
@@ -117,3 +119,4 @@ bool handleGlobalConnexion(Message<Communication::TypeDetail> &msg, User &user, 
             return false;
     }
 }
+*/
