@@ -41,6 +41,19 @@ if [ $(basename $(pwd)) != "tests" ]; then
     exit 84
 fi
 
+if [ ! -d "logs" ]; then
+    mkdir logs
+fi
+
+if [[ $(cat /etc/*-release) == *"Ubuntu"* ]]; then
+    sudo apt update
+    sudo apt install libgtest-dev -y
+fi
+
+if [[ $(cat /etc/*-release) == *"Fedora"* ]]; then
+    sudo dnf install gtest-devel -y
+fi
+
 # Test suite
 runTest "SparseArray_t.cpp" "SparseArray"
 runTest "ComponentRegistry_t.cpp" "ComponentRegistry"
