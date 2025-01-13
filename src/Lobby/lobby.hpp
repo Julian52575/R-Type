@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/game.hpp"
+#include "../Game/game.hpp"
 
 class Lobby {
     public:
