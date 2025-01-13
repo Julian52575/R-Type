@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdint>
+#include <cstring>
 #include <ostream>
 #include <stdexcept>
 #include <type_traits>
@@ -74,7 +75,7 @@ struct Message {
         msg.body.resize(msg.body.size() + sizeof(DataType));
 
         std::memcpy(msg.body.data() + i, &data, sizeof(DataType));
-        msg.header.size = msg.size();
+        msg.header.size = msg.body.size();
         return msg;
     }
 

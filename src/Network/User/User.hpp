@@ -25,12 +25,11 @@ inline bool operator==(const User &lhs, const User &rhs) {
 
 // Définition du hash pour User
 namespace std {
-    template <>
-    struct hash<User> {
-        std::size_t operator()(const User &user) const {
-            // Combine le hash de l'adresse IP et du port
-            return std::hash<std::string>()(user.endpoint.address().to_string()) ^
-                   std::hash<unsigned short>()(user.endpoint.port());
-        }
-    };
+template <>
+struct hash<User> {
+    std::size_t operator()(const User &user) const {
+        return std::hash<std::string>()(user.endpoint.address().to_string()) ^
+               std::hash<int64_t>()(user.endpoint.port());
+    }
+};
 }
