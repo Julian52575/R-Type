@@ -59,17 +59,35 @@ namespace RType {
 
     void GameState::loadLevel(const std::string& jsonPath)
     {
-        RType::Config::LevelConfigResolver& resolver = RType::Config::LevelConfigResolverSingletone::get();
-        RType::Config::LevelConfig& config = resolver.get(jsonPath);
+        // RType::Config::LevelConfigResolver& resolver = RType::Config::LevelConfigResolverSingletone::get();
+        // RType::Config::LevelConfig& config = resolver.get(jsonPath);
 
-        this->loadLevel(config);
+        // this->loadLevel(config);
+        this->_levelManager.loadLevel(jsonPath);
+
+        this->createBackground("assets/entities/Background.json");
+        this->createPlayer("assets/entities/skeletonDragon.json");
+
+        std::vector<RType::Config::SceneEntityConfig> enemies = this->_levelManager.getCurrentSceneEnemies();
+        for (int i = 0; i < enemies.size(); i++) {
+            this->createEnemy(enemies[i].path, {enemies[i].xSpawn, enemies[i].ySpawn});
+        }
+        
     }
 
     void GameState::loadLevel(const RType::Config::LevelConfig& levelConfig)
     {
-#warning Parse level
-        this->createBackground("assets/entities/Background.json");
-        this->createPlayer("assets/entities/skeletonDragon.json");
+        // #warning Parse level
+        // std::vector<RType::Config::SceneConfig> scenes = levelConfig.getScenes();
+        
+        // this->_currentSceneConfig = scenes[this->_currentSceneIndex];
+
+        // this->createBackground("assets/entities/Background.json");
+        // this->createPlayer("assets/entities/skeletonDragon.json");
+
+        // for (int i = 0; i < _currentSceneConfig.enemies.size(); i++) {
+        //     this->createEnemy(_currentSceneConfig.enemies[i].path, {_currentSceneConfig.enemies[i].xSpawn, _currentSceneConfig.enemies[i].ySpawn});
+        // }
     }
 
     State GameState::run(void)
@@ -115,6 +133,21 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
+        gameState._levelManager.update(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());
+        if (gameState._levelManager.SceneEndCondition()){
+            if (!gameState._levelManager.nextScene()){
+                gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
+                return State::StateGame;
+            }
+
+            //detruire les entités courantes
+            std::vector<RType::Config::SceneEntityConfig> enemies = gameState._levelManager.getCurrentSceneEnemies();
+            for (int i = 0; i < enemies.size(); i++) {
+                gameState.createEnemy(enemies[i].path, {enemies[i].xSpawn, enemies[i].ySpawn});
+            }
+
+        }
+
         gameState._ecs.runComponentFunction<RType::Components::Position>();  // move entity
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
@@ -160,6 +193,51 @@ namespace RType {
 
         background.addComponent<Components::Position>(0, 0);
         background.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
+    }
+
+    void GameState::createEnemy(const std::string& jsonPath, const Rengine::Graphics::vector2D<int>& pos)
+    {
+        Rengine::Entity& enemy = this->_ecs.addEntity();
+        Config::EntityConfig enConfig(jsonPath);
+
+        enemy.addComponent<Components::Position>(pos.x, pos.y);
+        enemy.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
+        enemy.addComponent<Components::Hitbox>(enConfig.getHitbox());
+        enemy.addComponent<Components::Configuration>(enConfig);
+
+        Components::Relationship& relationship = enemy.addComponent<Components::Relationship>();
+
+    }
+
+    void GameState::alertPlayer(void)
+    {
+        Rengine::Entity& playerEntity = this->_ecs.getEntity(this->_playerEntityId);
+        RType::Components::Position& playerPos = playerEntity.getComponent<RType::Components::Position>();
+        Rengine::SparseArray<RType::Components::Position>& spPosition = this->_ecs.getComponents<RType::Components::Position>();
+        Rengine::SparseArray<RType::Components::Relationship>& spRelationship = this->_ecs.getComponents<RType::Components::Relationship>();
+
+        for (Rengine::ECS::size_type index = 0; index < this->_ecs.getEntityLimit(); index++) {
+            if (index == this->_playerEntityId) {
+                continue;
+            }
+            if (spRelationship[index].has_value() == false) {
+                continue;
+            }
+            if (spRelationship[index]->isParented(uint64_t(this->_playerEntityId))) {
+                continue;
+            }
+            if (spPosition[index].has_value() == false) {
+                continue;
+            }
+            Rengine::Graphics::vector2D<float> pos = spPosition[index]->getVector2D();
+            float distance = sqrt(pow(playerPos.getVector2D().x - pos.x, 2) + pow(playerPos.getVector2D().y - pos.y, 2));
+
+            if (distance > 200) {
+                continue;
+            }
+            std::cout << "Alert between " << int(this->_playerEntityId) << " and " << index << std::endl;
+            #warning Debug print
+        }
     }
 
 }  // namespace RType

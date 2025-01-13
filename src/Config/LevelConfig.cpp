@@ -28,6 +28,7 @@ namespace RType {
                 this->scrollingSpeed = 10.0f;
             }
             // Background
+            // std::cout << "parseBackground" << std::endl;
             this->parseBackground(scene["background"]);
             // Enemies
             this->parseEnemies(scene["enemies"]);
@@ -48,7 +49,7 @@ namespace RType {
                     std::string jsonPath = it;
                     const ImageConfig& currentImageConfig = imageResolver.get(jsonPath);
 
-                    this->backgroundImages.emplace_back(currentImageConfig);
+                    this->backgroundImages.push_back(currentImageConfig);
                 } catch (std::exception& e) {
                     std::string err = e.what();
                     std::string msg = err + " on background image '" + (std::string) it + "'.";
@@ -77,10 +78,10 @@ namespace RType {
                     throw std::runtime_error("No 'y' field in one of 'enemies'.");
                 }
                 RType::Config::SceneEntityConfig config;
-                std::string jsonPath = it["json"];
-                const RType::Config::EntityConfig& entityConfigRef = entityResolver.get(jsonPath);
 
-                config.entityConfig = std::move(entityConfigRef);
+                std::string json = it["json"];
+                config.path = json;
+                config.entityConfig = entityResolver.get(json);  // Disabled for unknow error
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
                 // Boss
