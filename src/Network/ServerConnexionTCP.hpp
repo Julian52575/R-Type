@@ -34,19 +34,18 @@ Connexion<T>::Connexion(asio::ip::tcp::socket&& socket) : clientSocket(std::move
 
 template <typename T>
 Connexion<T>::~Connexion() {
-    if (clientSocket.is_open()) {
-        clientSocket.close();
-    }
 }
 
 template <typename T>
 class ServerTCP : public AConnexion {
     private:
         std::string _serverName;
+        bool _needDeleteList;
         asio::ip::tcp::acceptor _acceptor;
         tsqueue<std::pair<std::shared_ptr<Connexion<T>>, Message<T>>> _incomingMessages;
         std::vector<std::shared_ptr<Connexion<T>>> _clients;
         std::vector<std::shared_ptr<Connexion<T>>> _disconnectedClients;
+        bool _eraseClientFromList(std::shared_ptr<Connexion<T>> client);
 
         void acceptConnexion();
         void readHeader(std::shared_ptr<Connexion<T>> const &client);
@@ -54,6 +53,7 @@ class ServerTCP : public AConnexion {
 
     public:
         ServerTCP(uint16_t port, std::string serverName);
+        ServerTCP(uint16_t port, std::string serverName, bool needDeleteList);
         std::string getIp() { return _acceptor.local_endpoint().address().to_string(); }
         uint16_t getPort() { return _acceptor.local_endpoint().port(); }
         ~ServerTCP();
@@ -69,9 +69,34 @@ class ServerTCP : public AConnexion {
 template <typename T>
 ServerTCP<T>::ServerTCP(uint16_t port, std::string serverName) : _acceptor(this->getContext(), asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)) {
     _serverName = serverName;
+    _needDeleteList = true;
     acceptConnexion();
     this->start();
     std::cout << "[" << _serverName << " - TCP] Server started on: " << _acceptor.local_endpoint() << std::endl;
+}
+
+template <typename T>
+ServerTCP<T>::ServerTCP(uint16_t port, std::string serverName, bool needDeleteList) : _acceptor(this->getContext(), asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)) {
+    _serverName = serverName;
+    _needDeleteList = needDeleteList;
+    acceptConnexion();
+    this->start();
+    std::cout << "[" << _serverName << " - TCP] Server started on: " << _acceptor.local_endpoint() << std::endl;
+}
+
+template <typename T>
+bool ServerTCP<T>::_eraseClientFromList(std::shared_ptr<Connexion<T>> client) {
+    auto it = std::find(_clients.begin(), _clients.end(), client);
+    if (it != _clients.end()) {
+        _clients.erase(it);
+        if (_needDeleteList) {
+            if (std::find(_disconnectedClients.begin(), _disconnectedClients.end(), client) == _disconnectedClients.end()) {
+                _disconnectedClients.push_back(client);
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 template <typename T>
@@ -95,13 +120,18 @@ void ServerTCP<T>::readHeader(std::shared_ptr<Connexion<T>> const &client) {
                     std::cout << "[" << this->getServerName() << " - TCP] Client disconnected: " << client->getSocket().remote_endpoint() << std::endl;
                     if (client->getSocket().is_open())
                         client->getSocket().close();
-                    _disconnectedClients.push_back(client);
+                    _eraseClientFromList(client);
                     return;
                 } else if (ec == asio::error::bad_descriptor) {
                     std::cerr << "[" << this->getServerName() << " - TCP] Client disconnected: " << client->getSocket().remote_endpoint() << std::endl;
                     if (client->getSocket().is_open())
                         client->getSocket().close();
-                    _disconnectedClients.push_back(client);
+                    _eraseClientFromList(client);
+                    return;
+                } else if (ec == asio::error::operation_aborted) {
+                    if (!client->getSocket().is_open())
+                        client->getSocket().close();
+                    _eraseClientFromList(client);
                     return;
                 } else {
                     std::cerr << "[" << this->getServerName() << " - TCP] Error reading header: " << ec.message() << std::endl;
@@ -178,10 +208,11 @@ bool ServerTCP<T>::SendAll(Message<T> &msg) {
         }
     }
     if (hasDisconnectedClient) {
-        _clients.erase(std::remove_if(_clients.begin(), _clients.end(),
-            [](std::shared_ptr<Connexion<T>> client) {
-                return !client->getSocket().is_open();
-            }), _clients.end());
+        for (std::shared_ptr<Connexion<T>> client : _clients) {
+            if (!client->getSocket().is_open()) {
+                _eraseClientFromList(client);
+            }
+        }
     }
     return true;
 }
@@ -201,10 +232,11 @@ bool ServerTCP<T>::SendAll(Message<T> &msg, std::shared_ptr<Connexion<T>> except
     }
 
     if (hasDisconnectedClient) {
-        _clients.erase(std::remove_if(_clients.begin(), _clients.end(),
-            [](std::shared_ptr<Connexion<T>> client) {
-                return !client->getSocket().is_open();
-            }), _clients.end());
+        for (std::shared_ptr<Connexion<T>> client : _clients) {
+            if (!client->getSocket().is_open()) {
+                _eraseClientFromList(client);
+            }
+        }
     }
 
     return true;

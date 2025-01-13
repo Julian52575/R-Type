@@ -55,9 +55,9 @@ class AConnexion {
         }
 
         ~AConnexion() {
+            _context.stop();
             if (_thread.joinable()) {
                 _thread.join();
             }
-            _context.stop();
         }
 };
