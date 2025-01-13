@@ -43,6 +43,8 @@ namespace Rengine {
             UserInputKeyboardSpecialENTER,
             UserInputKeyboardSpecialTAB,
             UserInputKeyboardSpecialSHIFT,
+            UserInputKeyboardSpecialDELETE,
+            UserInputKeyboardSpecialBACKSPACE,
             UserInputKeyboardSpecialArrowUP,
             UserInputKeyboardSpecialArrowDOWN,
             UserInputKeyboardSpecialArrowLEFT,
