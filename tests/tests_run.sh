@@ -26,10 +26,11 @@ function runTest () {
     echo "$CXX $1 $CXXFLAGS -o $OUTPUTFILE" > $LOGFILE
     if ! $CXX $1 $CXXFLAGS -o $OUTPUTFILE 2>> $LOGFILE ; then
         echo "Error: Cannot compile '$TESTNAME'. See '$LOGFILE'."
+        FAILURE_LIST="$FAILURE_LIST""$TESTNAME"
         return 84
     fi
     if ! ./$OUTPUTFILE 1>> $LOGFILE 2>> $LOGFILE; then
-        FAILURE_LIST="$FAILURE_LIST""$TESTNAME "
+        FAILURE_LIST="$FAILURE_LIST""$TESTNAME"
     else
         echo -e "$GRN$TESTNAME: Success.$NC"
 
@@ -70,6 +71,7 @@ if [ "$FAILURE_LIST" != "" ] ; then
     for failure in "${FAILURE_LIST[@]}"
     do
         echo -e "$RED$failure: Failure.$NC"
+        cat "logs/$failure.log"
     done
     exit 84
 else
