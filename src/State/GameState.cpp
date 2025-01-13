@@ -59,18 +59,26 @@ namespace RType {
 
     void GameState::loadLevel(const std::string& jsonPath)
     {
-        // RType::Config::LevelConfigResolver& resolver = RType::Config::LevelConfigResolverSingletone::get();
-        // RType::Config::LevelConfig& config = resolver.get(jsonPath);
-
-        // this->loadLevel(config);
         this->_levelManager.loadLevel(jsonPath);
 
-        this->createBackground("assets/entities/Background.json");
         this->createPlayer("assets/entities/skeletonDragon.json");
+        std::vector<RType::Config::ImageConfig> backgroundImages = this->_levelManager.getCurrentSceneBackgroundImages();
+        for (int i = 0; i < backgroundImages.size(); i++) {
+            auto sprite = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(backgroundImages[i].getSpecs());
+            this->_backgroundSprites.push_back(sprite);           
+        }
+
 
         std::vector<RType::Config::SceneEntityConfig> enemies = this->_levelManager.getCurrentSceneEnemies();
         for (int i = 0; i < enemies.size(); i++) {
-            this->createEnemy(enemies[i].path, {enemies[i].xSpawn, enemies[i].ySpawn});
+            Rengine::Entity& enemy = this->_ecs.addEntity();
+            enemies[i].entityConfig;
+            enemy.addComponent<Components::Position>(enemies[i].xSpawn, enemies[i].ySpawn);
+            enemy.addComponent<Components::Sprite>(enemies[i].entityConfig.getSprite().getSpecs());
+            enemy.addComponent<Components::Hitbox>(enemies[i].entityConfig.getHitbox());
+            enemy.addComponent<Components::Configuration>(enemies[i].entityConfig);
+
+            Components::Relationship& relationship = enemy.addComponent<Components::Relationship>();
         }
         
     }
@@ -144,6 +152,7 @@ namespace RType {
             std::vector<RType::Config::SceneEntityConfig> enemies = gameState._levelManager.getCurrentSceneEnemies();
             for (int i = 0; i < enemies.size(); i++) {
                 gameState.createEnemy(enemies[i].path, {enemies[i].xSpawn, enemies[i].ySpawn});
+                enemies[i].entityConfig;
             }
 
         }
@@ -151,7 +160,10 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::Position>();  // move entity
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
+        for (int i = 0; i < gameState._backgroundSprites.size(); i++)
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(gameState._backgroundSprites[i], {0, 0});
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
+
         return State::StateGame;
     }
 

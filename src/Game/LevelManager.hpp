@@ -58,6 +58,10 @@ class LevelManager
         std::vector<RType::Config::SceneEntityConfig>& getCurrentSceneEnemies(){
             return this->_current_scene.enemies;
         };
+        
+        std::vector<RType::Config::ImageConfig>& getCurrentSceneBackgroundImages(){
+            return this->_current_scene.backgroundImages;
+        };
 
 
     private:

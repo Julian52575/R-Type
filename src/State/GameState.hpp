@@ -107,6 +107,8 @@ namespace RType {
 
             void alertPlayer(void);
 
+            std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
+
 
 
         protected:
