@@ -14,6 +14,7 @@
 #include "ImageConfigResolver.hpp"
 #include "LevelConfig.hpp"
 #include "LevelConfigResolver.hpp"
+#include "src/Config/ImageConfig.hpp"
 
 namespace RType {
 
@@ -23,6 +24,8 @@ namespace RType {
         {
             if (scene.contains("scrollingSpeed") == true) {
                 this->scrollingSpeed = scene["scrollingSpeed"];
+            } else {
+                this->scrollingSpeed = 10.0f;
             }
             // Background
             this->parseBackground(scene["background"]);
@@ -34,16 +37,18 @@ namespace RType {
 
         void SceneConfig::parseBackground(nlohmann::json& backgroundField)
         {
-            RType::Config::ImageConfigResolverSingletone imageSingletone;
-            RType::Config::ImageConfigResolver& imageResolver = imageSingletone.get();
+            RType::Config::ImageConfigResolver& imageResolver = RType::Config::ImageConfigResolverSingletone::get();
 
             for (auto it : backgroundField) {
                 // Not a string ?
                 if (it.type() != nlohmann::json::value_t::string) {
-                    throw std::runtime_error("Not a string.");
+                    throw std::runtime_error("Background value is not a string.");
                 }
                 try {
-                    this->backgroundImages.emplace_back(imageResolver.get(it));
+                    std::string jsonPath = it;
+                    const ImageConfig& currentImageConfig = imageResolver.get(jsonPath);
+
+                    this->backgroundImages.emplace_back(currentImageConfig);
                 } catch (std::exception& e) {
                     std::string err = e.what();
                     std::string msg = err + " on background image '" + (std::string) it + "'.";
@@ -72,9 +77,10 @@ namespace RType {
                     throw std::runtime_error("No 'y' field in one of 'enemies'.");
                 }
                 RType::Config::SceneEntityConfig config;
+                std::string jsonPath = it["json"];
+                const RType::Config::EntityConfig& entityConfigRef = entityResolver.get(jsonPath);
 
-                config.entityConfig = entityResolver.get(it["json"]);
-
+                config.entityConfig = std::move(entityConfigRef);
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
                 // Boss
@@ -114,8 +120,11 @@ namespace RType {
 
                 case SceneEndConditionBossDefeat:
                     // check Boss enemy
-                    for (auto it : this->enemies) {
-                        if (it.isBoss == true) {
+                    if (this->enemies.size() == 0) {
+                        throw LevelConfigExceptionConfigurationError("No 'enemy' in scene of 'endCondition' = 'bossDefeat'.");
+                    }
+                    for (auto sceneIt : this->enemies) {
+                        if (sceneIt.isBoss == true) {
                             bossCount += 1;
                             if (bossCount >= 2) {
                                 throw LevelConfigExceptionConfigurationError("More than 1 enemy marked as 'boss'.");
@@ -169,9 +178,8 @@ namespace RType {
             try {
                 for (auto it : j["scenes"]) {
                     count += 1;
-                    SceneConfig config(it);
-
-                    this->_scenes.push_back(config);
+                    SceneConfig currentScene = SceneConfig(it);
+                    this->_scenes.push_back(currentScene);
                 }
             } catch (std::exception& e) {
                 std::string err = e.what();

@@ -20,6 +20,10 @@ namespace RType {
 
         EntityConfig::EntityConfig(const std::string& jsonPath)
         {
+            this->parseJson(jsonPath);
+        }
+        void EntityConfig::parseJson(const std::string& jsonPath)
+        {
             std::ifstream f;
 
             try {

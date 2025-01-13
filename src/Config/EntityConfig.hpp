@@ -107,6 +107,12 @@ namespace RType {
                 * The entity configuration must start with the 'entity' field.
                 */
                 explicit EntityConfig(const std::string& jsonPath);
+                /**
+                * @fn parseJson
+                * @param jsonPath The path to a json entity configuration.
+                * The entity configuration must start with the 'entity' field.
+                */
+                void parseJson(const std::string& jsonPath);
                 ~EntityConfig(void) = default;
                 /**
                 * @fn getStats
