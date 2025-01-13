@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ rengineGraphicsTest.cpp -lrengine -o test
+g++ rengineGraphicsTest.cpp --std=c++20 -lrengine -lrengine_graphics_sfml -o test
