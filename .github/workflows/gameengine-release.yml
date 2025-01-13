@@ -26,7 +26,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install GameEngine
-        run: ./install.sh
+        run: sudo ./install.sh
 
   pushToRepo:
     depends-on: [unit_tests, build]
