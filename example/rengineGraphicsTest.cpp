@@ -148,6 +148,30 @@ static void inputFlipSprite(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
     }
 }
 
+static std::shared_ptr<Rengine::Graphics::AText> initTextBox(void)
+{
+    Rengine::Graphics::TextSpecs specs;
+
+    specs.color = {0, 0, 255};
+    specs.message = "";
+    specs.fontPath = "arial_narrow_7.ttf";
+    return Rengine::Graphics::GraphicManagerSingletone::get().createText(specs);
+}
+
+static void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
+{
+    Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+    std::string currentText = textBox->getText();
+
+    for (auto it : inputManager) {
+        if (it.type != Rengine::Graphics::UserInputTypeKeyboardChar) {
+            continue;
+        }
+        currentText += it.data.keyboardChar;
+    }
+    textBox->setText(currentText);
+}
+
 int main(void)
 {
     Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
@@ -158,6 +182,7 @@ int main(void)
     auto text = initText();
     auto fancyText = initFancyText();
     auto music = initMusic();
+    auto textBox = initTextBox();
 
     music->play();
     specs.resolution = {800, 800};
@@ -169,12 +194,14 @@ int main(void)
         controlSound(music);
         input();
         inputFlipSprite(sprite);
+        inputTextbox(textBox);
         manager.getWindow()->getInputManager().clear();
         manager.addToRender(circle, {0, 0});
         manager.addToRender(sprite, {300, 300});
         manager.addToRender(rectangle, {600, 600});
         manager.addToRender(text, {100, 0});
         manager.addToRender(fancyText, {100, 100});
+        manager.addToRender(textBox, {0, 500});
         manager.getWindow()->render();
     }
 }

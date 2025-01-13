@@ -22,11 +22,14 @@ namespace Rengine {
             public:
                 SFMLText(const TextSpecs& specs);
                 ~SFMLText() = default;
-                sf::Text& getText(void) noexcept;
+                sf::Text& getSfText(void) noexcept;
+                void setText(const std::string& text);
+                const std::string& getText(void) const noexcept;
 
             private:
                 void applyStyle(uint8_t style);
-                sf::Text _text;
+                std::string _text;
+                sf::Text _sfText;
                 sf::Font _font;
         };
     }  // namespace Rengine

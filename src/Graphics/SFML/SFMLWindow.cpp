@@ -162,7 +162,7 @@ skipIcon:
             try {
                 sf::Vector2f sfmlPos = {position.x, position.y};
                 SFMLText& sfmlTextWrapper = (SFMLText &) *text;
-                sf::Text& text = sfmlTextWrapper.getText();
+                sf::Text& text = sfmlTextWrapper.getSfText();
 
                 text.setPosition(sfmlPos);
                 this->_renderWindow.draw(text);
