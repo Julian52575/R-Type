@@ -1,4 +1,5 @@
 //
+#include <climits>
 #include <exception>
 #include <filesystem>
 #include <functional>
@@ -17,6 +18,7 @@
 #include "AState.hpp"
 
 
+#include "src/Components/Clickable.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Sprite.hpp"
@@ -44,12 +46,14 @@ namespace RType {
         this->_ecs.registerComponent<Components::Buff>();
         this->_ecs.registerComponent<RType::Components::Hitbox>();
         this->_ecs.registerComponent<RType::Components::Relationship>();
+        this->_ecs.registerComponent<RType::Components::Clickable>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Action>(RType::Components::Action::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Position>(RType::Components::Position::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::Clickable>(RType::Components::Clickable::componentFunction);
     }
 
     void GameState::setNextLevelToLoad(const std::string& level)
@@ -72,14 +76,14 @@ namespace RType {
         for (int i = 0; i < enemies.size(); i++) {
             this->createEnemy(enemies[i].path, {enemies[i].xSpawn, enemies[i].ySpawn});
         }
-        
+
     }
 
     void GameState::loadLevel(const RType::Config::LevelConfig& levelConfig)
     {
         // #warning Parse level
         // std::vector<RType::Config::SceneConfig> scenes = levelConfig.getScenes();
-        
+
         // this->_currentSceneConfig = scenes[this->_currentSceneIndex];
 
         // this->createBackground("assets/entities/Background.json");
@@ -152,6 +156,7 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
+        gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
         return State::StateGame;
     }
 
@@ -175,12 +180,13 @@ namespace RType {
         Rengine::Entity& player = this->_ecs.addEntity();
         Config::EntityConfig enConfig(jsonPath);
 
-        player.addComponent<Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
-        player.addComponent<Components::Configuration>(enConfig);
-        player.addComponent<Components::Position>(0, 0);
-        player.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
-        player.addComponent<Components::Buff>();
-        player.addComponent<Components::Hitbox>(enConfig.getHitbox());
+        player.addComponent<RType::Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
+        player.addComponent<RType::Components::Configuration>(enConfig);
+        player.addComponent<RType::Components::Position>(0, 0);
+        player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
+        player.addComponent<RType::Components::Buff>();
+        player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
+        player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
         Components::Relationship& relationship = player.addComponent<Components::Relationship>();
 
         this->_playerEntityId = Rengine::Entity::size_type(player);
