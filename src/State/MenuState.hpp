@@ -66,7 +66,6 @@ namespace RType {
         private:
             LobbyInfo _lobbyInfo;
             RType::RTypeMenuScenes _currentScene = RType::RTypeMenuScenes::RTypeMenuScenesButtonDisplay;
-            float _time = 0;
             MenuStateButtons _currentIndex = MenuStateButtonsIp;
             // A vector of text, first is the name, second is the input
             // Can be access by using MenuStateButtons

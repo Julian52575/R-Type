@@ -41,7 +41,6 @@ namespace RType {
 
 #warning Use sceneManger better
                 if (this->_currentScene == RTypeMenuScenes::RTypeMenuScenesButtonDisplay) {
-                    this->_time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
                     this->handleInput();
                     // _cursor
                     Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_cursor, {50, yDiff * (int) (this->_currentIndex + 1) + 15 });
@@ -76,10 +75,6 @@ namespace RType {
 
             void MenuState::handleInput(void)
             {
-                if (this->_time < 0.10f) {
-                    return;
-                }
-                this->_time = 0;
                 Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
                 std::string currentTextCopy = this->_buttonVector[this->_currentIndex % MenuStateButtonsMax].second->getText();
                 bool textUpdate = false;
@@ -87,11 +82,11 @@ namespace RType {
                 std::optional<std::reference_wrapper<const Rengine::Graphics::UserInput>> spInput = inputManager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecial);
 
                 for (auto it : inputManager) {
-                    if (it.type == Rengine::Graphics::UserInputTypeKeyboardChar) {
+                    if (it.type == Rengine::Graphics::UserInputTypeKeyboardCharPressed) {
                         currentTextCopy += it.data.keyboardChar;
                         textUpdate = true;
                     }
-                    if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+                    if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                         switch (it.data.keyboardSpecial) {
                             case Rengine::Graphics::UserInputKeyboardSpecialBACKSPACE:
                                 if (currentTextCopy.size() > 0) {
