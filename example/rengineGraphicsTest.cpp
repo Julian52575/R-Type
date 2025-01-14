@@ -35,6 +35,7 @@ static std::shared_ptr<Rengine::Graphics::ASprite> initCircle(void)
     //specs.shapeData.specifics.circleRadius = 150;
     specs.color = {255, 100, 100};
     specs.shapeData.outlineColor = {255, 0, 0};
+    specs.opacity = 0;
     return manager.createSprite(specs);
 }
 

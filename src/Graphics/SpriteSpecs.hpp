@@ -76,6 +76,12 @@ namespace Rengine {
             */
             Rengine::Graphics::vector3D<uint8_t> color = {255, 255, 255};
             /**
+            * @brief The transparency value of the sprite.
+            * 0 = fully transparent
+            * Default: fully visible (255)
+            */
+            uint8_t opacity = 255;
+            /**
             * @brief The offset of the sprite's origin (starting from the top left).
             * Default: 0x, 0y.
             */

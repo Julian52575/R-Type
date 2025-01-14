@@ -33,7 +33,8 @@ namespace Rengine {
                 }
                 // Color
                 this->_renderObject.setColor(this->_spriteSpecs.type,
-                        {this->_spriteSpecs.color.x, this->_spriteSpecs.color.y, this->_spriteSpecs.color.x} );
+                        {this->_spriteSpecs.color.x, this->_spriteSpecs.color.y, this->_spriteSpecs.color.x,
+                        this->_spriteSpecs.opacity} );
                 // scale
                 this->_renderObject.setScale(this->_spriteSpecs.type,
                         {this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y});
