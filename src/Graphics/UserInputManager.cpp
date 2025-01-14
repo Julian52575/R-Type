@@ -40,15 +40,11 @@ namespace Rengine {
             return this->_inputVector.size();
         }
 
-        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(UserInputType inputType)
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInputType inputType, const UserInputData inputData)
         {
-            for (auto& it : *this) {
-                if (it.type == inputType) {
-                    std::reference_wrapper<const UserInput> lol = it;
-                    return it;
-                }
-            }
-            return std::optional<std::reference_wrapper<const UserInput>>();
+            UserInput tmp = {inputType, inputData};
+
+            return this->receivedInput(tmp);
         }
         std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInput& input)
         {

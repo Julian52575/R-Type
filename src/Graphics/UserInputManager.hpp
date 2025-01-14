@@ -121,19 +121,20 @@ namespace Rengine {
                 */
                 size_type size(void) const noexcept;
                 /**
-                * @fn size
+                * @fn receivedInput
                 * @param input The input (type and data have to be filled) to retrive.
                 * @return An optional wrapper to the last input received who match the provided type
                 * @brief Retrives the last input of the provided type or a nullopt if not input was received.
                 */
                 std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInput& input);
                 /**
-                * @fn size
+                * @fn receivedInput
                 * @param inputType The type to retrive
+                * @param inputData If applicate to the inputType, the data to match (ie: data.char = 'c' or data.keyboardSpecial = KeyboardSpecialENTER)
                 * @return An optional wrapper to the last input received who match the provided type
                 * @brief Retrives the last input of the provided type or a nullopt if not input was received.
                 */
-                std::optional<std::reference_wrapper<const UserInput>> receivedInput(UserInputType inputType);
+                std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInputType inputType, const UserInputData inputData = {0});
 
             public:
                 /**
