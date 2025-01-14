@@ -3,9 +3,11 @@
 #define _SRC_GRAPHICS_INPUTMANAGER_HPP_
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <optional>
 
 #include "Vector.hpp"
 
@@ -34,15 +36,19 @@ namespace Rengine {
         };
         std::ostream& operator<<(std::ostream& os, const UserInputType& inputType);
 
-        enum InputTypeKeyboardSpecial {
-            UserInputTypeKeyboardSpecialNA,
-            UserInputTypeKeyboardSpecialESCAPE,
-            UserInputTypeKeyboardSpecialTAB,
-            UserInputTypeKeyboardSpecialSHIFT,
-            UserInputTypeKeyboardSpecialArrowUP,
-            UserInputTypeKeyboardSpecialArrowDOWN,
-            UserInputTypeKeyboardSpecialArrowLEFT,
-            UserInputTypeKeyboardSpecialArrowRIGHT
+        enum UserInputKeyboardSpecial {
+            UserInputKeyboardSpecialNA,
+            UserInputKeyboardSpecialESCAPE,
+            UserInputKeyboardSpecialSPACE,
+            UserInputKeyboardSpecialENTER,
+            UserInputKeyboardSpecialTAB,
+            UserInputKeyboardSpecialSHIFT,
+            UserInputKeyboardSpecialDELETE,
+            UserInputKeyboardSpecialBACKSPACE,
+            UserInputKeyboardSpecialArrowUP,
+            UserInputKeyboardSpecialArrowDOWN,
+            UserInputKeyboardSpecialArrowLEFT,
+            UserInputKeyboardSpecialArrowRIGHT
         };
 
         /**
@@ -53,7 +59,7 @@ namespace Rengine {
         */
         union UserInputData {
             char keyboardChar;
-            enum InputTypeKeyboardSpecial keyboardSpecial;
+            enum UserInputKeyboardSpecial keyboardSpecial;
             Rengine::Graphics::vector2D<float> mousePosition;
             /**
             * @brief the position of the joystick from -100 to +100
@@ -61,16 +67,19 @@ namespace Rengine {
             Rengine::Graphics::vector2D<float> joystickPosition;
             unsigned int joystickButton;
         };
+
         /**
         * @addtogroup Rengine::Graphics
         * @namespace Graphics
         * @class UserInput
-        * @brief A structure containing the data for a user input.
+        * @brief A structure containing both the type and the data for a user input.
         */
         struct UserInput {
             UserInputType type = UserInputTypeNA;
             UserInputData data = {0};
         };
+        bool operator==(const UserInput& a, const UserInput& b);
+        bool operator!=(const UserInput& a, const UserInput& b);
         std::ostream& operator<<(std::ostream& os, const UserInput& input);
 
         /**
@@ -109,7 +118,20 @@ namespace Rengine {
                 * @brief Get the number of input.
                 */
                 size_type size(void) const noexcept;
-
+                /**
+                * @fn size
+                * @param input The input (type and data have to be filled) to retrive.
+                * @return An optional wrapper to the last input received who match the provided type
+                * @brief Retrives the last input of the provided type or a nullopt if not input was received.
+                */
+                std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInput& input);
+                /**
+                * @fn size
+                * @param inputType The type to retrive
+                * @return An optional wrapper to the last input received who match the provided type
+                * @brief Retrives the last input of the provided type or a nullopt if not input was received.
+                */
+                std::optional<std::reference_wrapper<const UserInput>> receivedInput(UserInputType inputType);
 
             public:
                 /**

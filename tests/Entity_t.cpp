@@ -1,3 +1,4 @@
+#include <functional>
 #include <gtest/gtest.h>
 #include <memory>
 #include "../src/ECS.hpp"
@@ -51,6 +52,7 @@ static int entityTmp = 0;
 void byeByeComponents(Rengine::Entity& e)
 {
     entityTmp = int(e);
+    e.removeComponent<int>();
 }
 TEST(Entity, destroyComponents)
 {
@@ -77,6 +79,8 @@ TEST(Entity, destroyComponentsWithUserProvidedFunction)
     e.destroyComponents();
     EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionNotActive);
     EXPECT_EQ(entityTmp, int(e));
+    // Ensure component at index int(entity) was destroyed
+    EXPECT_FALSE(ecs.getComponents<int>()[int(e)].has_value());
 }
 TEST(Entity, setGetflag)
 {
@@ -86,4 +90,16 @@ TEST(Entity, setGetflag)
 
     e.setFlag(flag);
     EXPECT_EQ(e.getFlag(), flag);
+}
+TEST(Entity, getComponentNoExcept)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+
+    ecs.registerComponent<int>();
+    int& comp = e.addComponent<int>(0);
+    std::optional<std::reference_wrapper<int>> comp2 = e.getComponentNoExcept<int>();
+
+    EXPECT_TRUE(comp2.has_value());
+    EXPECT_EQ(std::addressof(comp), std::addressof(comp2.value().get()));
 }

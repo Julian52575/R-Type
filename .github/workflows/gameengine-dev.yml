@@ -1,0 +1,26 @@
+name: GameEngine Dev Github Actions
+
+on:
+  push:
+    branches:
+      - game_engine-dev
+  pull_request:
+    branches:
+      - game_engine-dev
+
+jobs:
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Exec unit tests
+        run: cd tests && ./tests_run.sh
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install GameEngine
+        run: sudo ./install.sh

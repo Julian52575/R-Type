@@ -10,6 +10,7 @@
 #include <optional>
 #include <memory>
 
+#include "../ASprite.hpp"
 #include "../AWindow.hpp"
 #include "SFMLSprite.hpp"
 
@@ -29,12 +30,17 @@ namespace Rengine {
                 ~SFMLWindow(void) = default;
                 void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
                     const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true);
+                void addTextToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                    const Rengine::Graphics::vector2D<float>& position);
                 void render(void);
                 bool isOpen(void);
                 void close(void);
                 void pollInput(void);
                 uint64_t getElapsedTimeMicroseconds(void) const noexcept;
                 float getElapsedTimeSeconds(void) const noexcept;
+                void resetDeltatime(void) noexcept;
+                uint64_t getDeltaTimeMicroseconds(void) noexcept;
+                float getDeltaTimeSeconds(void) noexcept;
 
             private:
                 void initSfKeyboardBindVector(void);
@@ -42,6 +48,7 @@ namespace Rengine {
                 sf::RenderWindow _renderWindow;
                 sf::Color _backgroundColor;
                 sf::Clock _clock;
+                sf::Clock _deltatimeClock;
                 std::vector<std::pair<sf::Keyboard::Key, UserInput>> _sfKeyboardToUserInputBindVector;
                 /**
                 * @return UserInput The UserInput matching the sf::Event::KeyEvent.
@@ -50,6 +57,7 @@ namespace Rengine {
                 */
                 inline UserInput getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
                 inline UserInput processJoystickMove(const sf::Event& event);
+                inline void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
         };
 
     }  // namespace Rengine

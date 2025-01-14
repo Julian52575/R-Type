@@ -1,5 +1,7 @@
 #include <cstddef>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "UserInputManager.hpp"
@@ -38,6 +40,51 @@ namespace Rengine {
             return this->_inputVector.size();
         }
 
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(UserInputType inputType)
+        {
+            for (auto& it : *this) {
+                if (it.type == inputType) {
+                    std::reference_wrapper<const UserInput> lol = it;
+                    return it;
+                }
+            }
+            return std::optional<std::reference_wrapper<const UserInput>>();
+        }
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInput& input)
+        {
+            for (auto& it : *this) {
+                if (it == input) {
+                    std::reference_wrapper<const UserInput> lol = it;
+                    return it;
+                }
+            }
+            return std::optional<std::reference_wrapper<const UserInput>>();
+        }
+
+        bool operator==(const UserInput& a, const UserInput& b)
+        {
+            if (a.type != b.type) {
+                return false;
+            }
+            switch (a.type) {
+                case (UserInputType::UserInputTypeKeyboardChar):
+                    return a.data.keyboardChar == b.data.keyboardChar;
+
+                case (UserInputType::UserInputTypeKeyboardSpecial):
+                    return a.data.keyboardSpecial == b.data.keyboardSpecial;
+
+                case (UserInputType::UserInputTypeJoystickButton):
+                    return a.data.joystickButton == b.data.joystickButton;
+
+                // The other type needs no comparison
+                default:
+                    return true;
+            }
+        }
+        bool operator!=(const UserInput& a, const UserInput& b)
+        {
+            return !(a == b);
+        }
 
         std::ostream& operator<<(std::ostream& os, const UserInputType& inputType)
         {
@@ -87,7 +134,7 @@ namespace Rengine {
                     str = "Unknow";
                     break;
             }
-            os << "UserInputType::" << str << std::endl;
+            os << "UserInputType::" << str;
             return os;
         }
 

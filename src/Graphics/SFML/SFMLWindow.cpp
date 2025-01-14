@@ -1,8 +1,13 @@
 //
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
@@ -13,12 +18,16 @@
 #include <memory>
 #include <iostream>
 
+#include "../ASound.hpp"
+#include "../AText.hpp"
+#include "../ASprite.hpp"
+#include "SFMLSound.hpp"
+#include "SFMLText.hpp"
 #include "SFMLWindow.hpp"
 #include "SFMLSprite.hpp"
 
 namespace Rengine {
     namespace Graphics {
-
 
         void SFMLWindow::initSfKeyboardBindVector(void)
         {
@@ -37,6 +46,11 @@ namespace Rengine {
                 {sf::Keyboard::W, {UserInputTypeKeyboardChar, 'W'}}, {sf::Keyboard::X, {UserInputTypeKeyboardChar, 'X'}},
                 {sf::Keyboard::Y, {UserInputTypeKeyboardChar, 'Y'}}, {sf::Keyboard::Z, {UserInputTypeKeyboardChar, 'Z'}},
                 {sf::Keyboard::Space, {UserInputTypeKeyboardChar, ' '}},
+                {sf::Keyboard::Period, {UserInputTypeKeyboardChar, '.'}},
+                {sf::Keyboard::Add, {UserInputTypeKeyboardChar, '+'}},
+                {sf::Keyboard::Subtract, {UserInputTypeKeyboardChar, '-'}},
+                {sf::Keyboard::Multiply, {UserInputTypeKeyboardChar, '*'}},
+                {sf::Keyboard::Divide, {UserInputTypeKeyboardChar, '/'}},
                 {sf::Keyboard::Num0, {UserInputTypeKeyboardChar, '0'}}, {sf::Keyboard::Numpad0, {UserInputTypeKeyboardChar, '0'}},
                 {sf::Keyboard::Num1, {UserInputTypeKeyboardChar, '1'}}, {sf::Keyboard::Numpad1, {UserInputTypeKeyboardChar, '1'}},
                 {sf::Keyboard::Num2, {UserInputTypeKeyboardChar, '2'}}, {sf::Keyboard::Numpad2, {UserInputTypeKeyboardChar, '2'}},
@@ -48,14 +62,17 @@ namespace Rengine {
                 {sf::Keyboard::Num8, {UserInputTypeKeyboardChar, '8'}}, {sf::Keyboard::Numpad8, {UserInputTypeKeyboardChar, '8'}},
                 {sf::Keyboard::Num9, {UserInputTypeKeyboardChar, '9'}}, {sf::Keyboard::Numpad9, {UserInputTypeKeyboardChar, '9'}},
                 // Special
-                {sf::Keyboard::Escape, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialESCAPE}},
-                {sf::Keyboard::Tab, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialTAB}},
-                {sf::Keyboard::LShift, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialSHIFT}},
-                {sf::Keyboard::RShift, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialSHIFT}},
-                {sf::Keyboard::Up, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowUP}},
-                {sf::Keyboard::Down, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowDOWN}},
-                {sf::Keyboard::Left, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowLEFT}},
-                {sf::Keyboard::Right, {UserInputTypeKeyboardSpecial, UserInputTypeKeyboardSpecialArrowRIGHT}},
+                {sf::Keyboard::Escape, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialESCAPE}},
+                {sf::Keyboard::Tab, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialTAB}},
+                {sf::Keyboard::Enter, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialENTER}},
+                {sf::Keyboard::LShift, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialSHIFT}},
+                {sf::Keyboard::RShift, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialSHIFT}},
+                {sf::Keyboard::Delete, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialDELETE}},
+                {sf::Keyboard::Backspace, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialBACKSPACE}},
+                {sf::Keyboard::Up, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowUP}},
+                {sf::Keyboard::Down, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowDOWN}},
+                {sf::Keyboard::Left, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowLEFT}},
+                {sf::Keyboard::Right, {UserInputTypeKeyboardSpecial, UserInputKeyboardSpecialArrowRIGHT}},
             };  // this->_sfKeyboardToUserInputBindVector
         }
 
@@ -88,12 +105,16 @@ styleApply:
             // framerateLimit
             this->_renderWindow.setFramerateLimit(this->_windowSpecs.framerateLimit);
             // Icon
+            if (this->_windowSpecs.iconImagePath == "") {
+                goto skipIcon;
+            }
             try {
                 sf::Image icon;
 
                 icon.loadFromFile(this->_windowSpecs.iconImagePath);
                 this->_renderWindow.setIcon(this->_windowSpecs.iconSize.x, this->_windowSpecs.iconSize.y, icon.getPixelsPtr());
             } catch (std::exception& e) {;}
+skipIcon:
             // Options (re)
             this->_renderWindow.setMouseCursorVisible(this->_windowSpecs.options.isCursorVisible);
             this->_renderWindow.setVerticalSyncEnabled(this->_windowSpecs.options.enableVsync);
@@ -103,31 +124,62 @@ styleApply:
         {
             this->applyWindowSpecs();
             this->initSfKeyboardBindVector();
+            this->_deltatimeClock.restart();
             this->_clock.restart();
         }
         void SFMLWindow::render(void)
         {
             this->_renderWindow.display();
-            this->_renderWindow.clear();
+            this->_renderWindow.clear(this->_backgroundColor);
         }
         void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
             const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
         {
             try {
-                if (updateAnimationFrame == true) {
+                if (updateAnimationFrame == true && sprite->hasAnimation() == true) {
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
                 }
-                Rengine::Graphics::SFMLSprite& sfmlSprite = (SFMLSprite&) *sprite;
-                sf::Sprite& sfSprite = sfmlSprite.getSfSprite();
-                sf::Vector2f posVector = {position.x, position.y};
+                Rengine::Graphics::SFMLSprite& sfmlSpriteWrapper = (SFMLSprite&) *sprite;
+                auto type = sfmlSpriteWrapper.getSpriteSpecs().type;
 
-                sfSprite.setPosition(posVector);
-                this->_renderWindow.draw(sfSprite);
+                sfmlSpriteWrapper.setPosition({position.x, position.y});
+                // Check SpriteSpecs.type to display the right shape
+                if (type == SpriteType::SpriteTypeSprite) {
+                    sf::Sprite *sprite = sfmlSpriteWrapper.getSfSprite();
+
+                    this->_renderWindow.draw(*sprite);
+                } else if (type == SpriteType::SpriteTypeCircle) {
+                    sf::CircleShape *circle = sfmlSpriteWrapper.getCircle();
+
+                    this->_renderWindow.draw(*circle);
+                } else if (type == SpriteType::SpriteTypeRectangle) {
+                    sf::RectangleShape* rectangle = sfmlSpriteWrapper.getRectangle();
+
+                    this->_renderWindow.draw(*rectangle);
+                }
             } catch (std::exception& e) {
                 std::string msg = e.what();
+
                 throw WindowException(msg);
             }
         }
+        void SFMLWindow::addTextToRender(const std::shared_ptr<Rengine::Graphics::AText>& text,
+                    const Rengine::Graphics::vector2D<float>& position)
+        {
+            try {
+                sf::Vector2f sfmlPos = {position.x, position.y};
+                SFMLText& sfmlTextWrapper = (SFMLText &) *text;
+                sf::Text& text = sfmlTextWrapper.getSfText();
+
+                text.setPosition(sfmlPos);
+                this->_renderWindow.draw(text);
+            } catch (std::exception& e) {
+                std::string msg = e.what();
+
+                throw WindowException(msg);
+            }
+        }
+
         bool SFMLWindow::isOpen(void)
         {
             return this->_renderWindow.isOpen();
@@ -136,6 +188,7 @@ styleApply:
         {
             this->_renderWindow.close();
         }
+
         void SFMLWindow::pollInput(void)
         {
             sf::Event event;
@@ -152,17 +205,21 @@ styleApply:
                         break;
                     // Key press
                     case sf::Event::KeyPressed:
+                        /*
                         newInput = getUserInputFromSfKeyboard(event.key);
                         if (newInput.type == UserInputType::UserInputTypeNA) {
                             continue;
                         }
-                        break;
+                        */
+                        // Ignored because sf::Event is worthless for keyboard.
+                        // Using this->this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide() instead
+                        continue;
                     // Mouse click
                     case sf::Event::MouseButtonPressed:
                         if (event.mouseButton.button == sf::Mouse::Button::Right) {
                             newInput.type = UserInputTypeMouseRightClick;
                         } else {
-                            newInput.type = UserInputTypeMouseRightClick;
+                            newInput.type = UserInputTypeMouseLeftClick;
                         }
                         newInput.data.mousePosition.x = event.mouseButton.x;
                         newInput.data.mousePosition.y = event.mouseButton.y;
@@ -189,6 +246,8 @@ styleApply:
                 }  // switch(event.type)
                 this->_inputManager.addInput(newInput);
             }  // while (this->_renderWindow.pollEvent(event)
+            // Keyboard processing
+            this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide();
         }
 
         inline UserInput SFMLWindow::getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
@@ -243,6 +302,34 @@ styleApply:
             }
             return input;
         }
+        void SFMLWindow::processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void)
+        {
+            // Iterate over the sfKeyboardBind vector and add an input if match is found
+            for (auto& it : this->_sfKeyboardToUserInputBindVector) {
+                if (sf::Keyboard::isKeyPressed(it.first) != true) {
+                    continue;
+                }
+                // Check uppercase / lowercase
+                // Check type
+                if (it.second.type == UserInputTypeKeyboardChar) {
+                    // Check letter
+                    if ('A' <= it.second.data.keyboardChar && it.second.data.keyboardChar <= 'Z') {
+                        // Check no shift
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) == false
+                        && sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) == false) {
+                            Rengine::Graphics::UserInput newInput = it.second;
+
+                            newInput.data.keyboardChar += 32;
+                            this->_inputManager.addInput(newInput);
+                            continue;
+                        }
+                    }
+                }
+                this->_inputManager.addInput(it.second);
+            }
+            return;
+        }
+
         uint64_t SFMLWindow::getElapsedTimeMicroseconds(void) const noexcept
         {
             return this->_clock.getElapsedTime().asMicroseconds();
@@ -252,6 +339,18 @@ styleApply:
             return this->_clock.getElapsedTime().asSeconds();
         }
 
+        void SFMLWindow::resetDeltatime(void) noexcept
+        {
+            this->_deltatimeClock.restart();
+        }
+        uint64_t SFMLWindow::getDeltaTimeMicroseconds(void) noexcept
+        {
+            return this->_deltatimeClock.getElapsedTime().asMicroseconds();
+        }
+        float SFMLWindow::getDeltaTimeSeconds(void) noexcept
+        {
+            return this->_deltatimeClock.getElapsedTime().asSeconds();
+        }
 
     }  // namespace Rengine
 }  // namespace Graphics
