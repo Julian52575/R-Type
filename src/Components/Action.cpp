@@ -23,6 +23,7 @@
 #include "src/Components/Position.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Sprite.hpp"
+#include "src/Components/HitBoxViewer.hpp"
 #include "src/Config/AttackBuffTypeEnum.hpp"
 #include "src/Config/AttackConfig.hpp"
 #include "src/Config/EntityConfig.hpp"
@@ -49,6 +50,10 @@ namespace RType {
                     throw std::runtime_error("RType::Component::Action: Unknow ActionSource.");
             }  // switch source
             this->_actionVector.reserve(5);
+
+            this->_shootDeltatimes[0] = 10000.0f;
+            this->_shootDeltatimes[1] = 10000.0f;
+            this->_shootDeltatimes[2] = 10000.0f;
         }
 
         void processInput(Action& actionComponent) noexcept
@@ -227,7 +232,8 @@ namespace RType {
         void updateDeltatimes(Action& component) noexcept
         {
             for (uint8_t i = 0; i < 3; i++) {
-                component._shootDeltatimes[i] += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+                if (component._shootDeltatimes[i] < 10000.0f)
+                    component._shootDeltatimes[i] += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
             }
         }
 
@@ -298,6 +304,8 @@ namespace RType {
                 projectile.addComponent<Configuration>(missileConfig);
                 projectile.addComponent<Buff>();
                 RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
+
+                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
 
                 relationship.addParent(uint64_t(entity));
                 switch (it.getControlType()) {

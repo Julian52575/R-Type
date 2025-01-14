@@ -3,10 +3,10 @@
         "sprite": "assets/images/skeletonDragon.json",
         "hitbox": {
             "size": {
-                "x": 71, "y": 50
+                "x": 80, "y": 40
             },
             "offset": {
-                "x": 40, "y": 120
+                "x": 40, "y": 140
             }
         },
         "stats": {
