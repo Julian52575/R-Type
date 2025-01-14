@@ -1,0 +1,52 @@
+{
+    "level": {
+        "scenes": [
+            {
+                "background": [
+                    "assets/images/space_background.json"
+                ],
+                "scrollingSpeed": 15.15,
+                "enemies": [
+                    {
+                        "json": "assets/entities/skeletonDragon.json",
+                        "x": 1500,
+                        "y": 540
+                    },
+                    {
+                        "json": "assets/entities/skeletonDragon.json",
+                        "x": 900,
+                        "y": 300
+                    }
+                ],
+                "endCondition": "time",
+                "endConditionTime": 10.0
+            },
+            {
+                "background": [
+                    "assets/images/space_background.json",
+                    "assets/images/space_background.json"
+                ],
+                "scrollingSpeed": 30.30,
+                "enemies": [
+                    {
+                        "json": "assets/entities/skeletonDragon.json",
+                        "x": 1000,
+                        "y": 540
+                    },
+                    {
+                        "json": "assets/entities/skeletonDragon.json",
+                        "x": 700,
+                        "y": 500
+                    },
+                    {
+                        "json": "assets/entities/skeletonDragon.json",
+                        "x": 450,
+                        "y": 100,
+                        "boss": true
+                    }
+                ],
+                "endCondition": "bossDefeat"
+            }
+        ]
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "entity": {
+        "sprite": "assets/images/skeletonDragon.json",
+        "hitbox": {
+            "size": {
+                "x": 71, "y": 50
+            },
+            "offset": {
+                "x": 40, "y": 120
+            }
+        },
+        "stats": {
+            "hp": 17,
+            "attack": 18,
+            "defense": 19,
+            "speedY": 4,
+            "speedX": 4,
+            "acceleration": 100,
+            "enemyColisionDamage": 23
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        },
+        "attacks": {
+            "shoot1": "assets/attacks/fireBallSpam.json",
+            "shoot2": "assets/attacks/bigFireBall.json"
+        }
+    }
+}

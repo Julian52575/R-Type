@@ -5,7 +5,9 @@ file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(GAME
     ${SRC_FILES}
 )
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCMAKE_COMPILATION_")
+target_compile_features(GAME PUBLIC cxx_std_20)
 
 target_include_directories(GAME PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -14,6 +16,8 @@ target_include_directories(GAME PRIVATE
 
 find_library(R-ENGINE
     NAMES rengine REQUIRED)
+find_library(R-ENGINE-GRAPHICS
+    NAMES rengine_graphics_sfml REQUIRED)
 set(SFML_STATIC_LIBRARIES FALSE)
 find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio)
 find_package(ASIO REQUIRED)
@@ -22,6 +26,7 @@ find_package(nlohmann_json REQUIRED)
 
 target_link_libraries(GAME PUBLIC
     rengine
+    rengine_graphics_sfml
     asio::asio
     sfml-system 
     sfml-window
