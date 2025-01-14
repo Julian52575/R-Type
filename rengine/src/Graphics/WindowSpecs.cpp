@@ -72,9 +72,21 @@ namespace Rengine {
             } catch (std::exception& e) {;}
             // backgroundColor
             try {
+                // Red
                 this->backgroundColor.x = j["backgroundColor"]["r"];
+                if (this->backgroundColor.x > 255) {
+                    this->backgroundColor.x = 255;
+                }
+                // Blue
                 this->backgroundColor.y = j["backgroundColor"]["g"];
+                if (this->backgroundColor.y > 255) {
+                    this->backgroundColor.y = 255;
+                }
+                // Green
                 this->backgroundColor.z = j["backgroundColor"]["b"];
+                if (this->backgroundColor.z > 255) {
+                    this->backgroundColor.z = 255;
+                }
             } catch (std::exception& e) {;}
             // iconImagePath
             try {

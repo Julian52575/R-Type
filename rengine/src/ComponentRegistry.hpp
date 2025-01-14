@@ -5,8 +5,8 @@
 //
 //
 
-#ifndef SRC_ComponentRegistry_HPP_
-#define SRC_ComponentRegistry_HPP_
+#ifndef SRC_COMPONENTREGISTRY_HPP_
+#define SRC_COMPONENTREGISTRY_HPP_
 #include <exception>
 #include <stdexcept>
 #include <type_traits>
@@ -40,9 +40,9 @@ namespace Rengine {
             /**
             * @fn registerComponent
             * @template Component The type to be registered in the registry.
-            * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is already registered.
+            * @return SparseArray<Component>& A reference to the Rengine::SparseArray of your templated class.
             * @brief Create a new SparseArray of the templated type and stores it.
+            * If Component has already been registred, this function returns the previously created SparseArray.
             */
             template <class Component>
             SparseArray<Component>& registerComponent(void)
@@ -50,19 +50,18 @@ namespace Rengine {
                 auto i = std::type_index(typeid(Component));
                 auto it = this->_componentsArrays.find(i);
 
-                if (it != this->_componentsArrays.end()) {
-                    throw ComponentRegistryExceptionAlreadyRegistred();
+                if (it == this->_componentsArrays.end()) {
+                    this->_componentsArrays[i] = std::move(SparseArray<Component>());
                 }
-                this->_componentsArrays[i] = SparseArray<Component>();
                 return std::any_cast<SparseArray<Component>&>(this->_componentsArrays[i]);
             }
             /**
             * @fn registerComponent
             * @template Component The type to be registered in the registry.
-            * @param size The default number of element in the SparseArray.
-            * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is already registered.
+            * @param size The number of element in the SparseArray.
+            * @return SparseArray<Component>& A reference to the Rengine::SparseArray of your templated class.
             * @brief Create a new SparseArray of the templated type and stores it.
+            * If Component has already been registred, this function returns the previously created SparseArray.
             */
             template <class Component>
             SparseArray<Component>& registerComponent(size_type size)
@@ -70,22 +69,16 @@ namespace Rengine {
                 auto i = std::type_index(typeid(Component));
                 auto it = this->_componentsArrays.find(i);
 
-                if (it != this->_componentsArrays.end()) {
-                    throw ComponentRegistryExceptionAlreadyRegistred();
+                if (it == this->_componentsArrays.end()) {
+                    this->_componentsArrays[i] = std::move(SparseArray<Component>(size));
                 }
-                SparseArray<Component> sp = SparseArray<Component>();
-
-                if (sp.size() < size) {
-                    sp.addSize(size - sp.size());
-                }
-                this->_componentsArrays[i] = std::move(sp);
                 return std::any_cast<SparseArray<Component>&>(this->_componentsArrays[i]);
             }
             /**
             * @fn getComponents
             * @template Component The type you want to retrive from the registry.
             * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is not registered.
+            * @exception ComponentRegistryExceptionNotRegistred Exception raised when Component is not registered.
             * @brief Retrive the Rengine::SparseArray associated with the templated type.
             */
             template <class Component>
@@ -103,7 +96,7 @@ namespace Rengine {
             * @fn getComponents
             * @template Component The type you want to retrive from the registry.
             * @return SparseArray<Component>& A Rengine::SparseArray of your templated class.
-            * @exception std::runtime_error Exception raised when Component is not registered.
+            * @exception ComponentRegistryExceptionNotRegistred Exception raised when Component is not registered.
             * @brief Retrive the Rengine::SparseArray associated with the templated type.
             */
             template <class Component>
@@ -117,6 +110,43 @@ namespace Rengine {
                 }
                 return std::any_cast<SparseArray<Component>&>(it->second);
             }
+            /**
+            * @fn removeComponent
+            * @template Component The type you want to remove.
+            * @exception ComponentRegistryExceptionNotRegistred Exception raised when Component is not registered.
+            * @brief Remove the SparseArray of the templated component.
+            * THIS WILL INVALIDATE ALL REFERENCE TO THE COMPONENT
+            */
+            template <class Component>
+            void removeComponent(void)
+            {
+                auto i = std::type_index(typeid(Component));
+
+                return this->removeComponent(i);
+            }
+            /**
+            * @fn removeComponent
+            * @param typeIndex The std::type_index of the component
+            * @exception ComponentRegistryExceptionNotRegistred Exception raised when Component is not registered.
+            * @brief Remove the SparseArray of the templated component.
+            * THIS WILL INVALIDATE ALL REFERENCE TO THE COMPONENT
+            */
+            void removeComponent(std::type_index typeIndex)
+            {
+                if (this->_componentsArrays.contains(typeIndex) == false) {
+                    throw ComponentRegistryExceptionNotRegistred();
+                }
+                this->_componentsArrays.erase(typeIndex);
+            }
+            /**
+            * @fn clear
+            * @brief Delete all the components SparseArray.
+            * THIS WILL INVALIDATE ALL THE REFERENCES TO THE ENTITIES.
+            */
+            void clear(void)
+            {
+                this->_componentsArrays.clear();
+            }
 
         private:
             //                      Type    -   SparseArray<Type>
@@ -125,4 +155,4 @@ namespace Rengine {
 
 }  // namespace Rengine
 
-#endif  // SRC_ComponentRegistry_HPP_
+#endif  // SRC_COMPONENTREGISTRY_HPP_
