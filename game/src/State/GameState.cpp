@@ -133,7 +133,7 @@ namespace RType {
         uint64_t idx = 0;
 
         for (auto file : std::filesystem::directory_iterator("assets/levels/")) {
-            configVector.push_back(file.path());
+            configVector.push_back(file.path().string());
         }
         if (configVector.size() == 0) {
             return;
@@ -253,7 +253,7 @@ namespace RType {
                 continue;
             }
             std::cout << "Alert between " << int(this->_playerEntityId) << " and " << index << std::endl;
-            #warning Debug print
+            // #warning Debug print
         }
     }
 

@@ -14,10 +14,9 @@ add_executable(release
 )
 
 # Set dependencies
-# find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics)
+# find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio)
 # find_package(ASIO REQUIRED)
 # find_package(LUA REQUIRED)
-# find_package(Lua REQUIRED)
 # find_package(nlohmann_json REQUIRED)
 
 target_link_libraries(release PRIVATE
@@ -39,12 +38,22 @@ target_include_directories(release PUBLIC
     $<TARGET_PROPERTY:nlohmann_json::nlohmann_json,INTERFACE_INCLUDE_DIRECTORIES>
     ".."
     ${nlohmann_json_INCLUDE_DIRS}
+    ${SFML_INCLUDE_DIR}
+    ${asio_INCLUDE_DIR}
 )
 
 # Set compile flags
-target_compile_options(release PRIVATE
-    "-DCMAKE_COMPILATION_"
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(release PRIVATE
+        "-DCMAKE_COMPILATION_"
+        "-D__RENGINEGRAPHICS_USELIB_SFML"  # Add the flag for g++
+    )
+else()
+    target_compile_options(release PRIVATE
+        "-DCMAKE_COMPILATION_"
+        "-D__RENGINEGRAPHICS_USELIB_SFML"  # Add the flag for other compilers as well
 )
+endif()
 
 if (WIN32)
     install(TARGETS release DESTINATION bin)

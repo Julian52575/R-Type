@@ -56,7 +56,7 @@ namespace RType {
                     continue;
                 }
                 std::cout << "Colision between " << int(entity) << " and " << index << std::endl;
-                #warning Debug print
+                // #warning Debug print
             } // for index
         }
     }  // namespace Components

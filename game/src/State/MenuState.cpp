@@ -51,7 +51,7 @@ namespace RType {
                 float count = 1;
                 float yDiff = 100;
 
-#warning Use sceneManger better
+// #warning Use sceneManger better
                 if (this->_currentScene == RTypeMenuScenes::RTypeMenuScenesButtonDisplay) {
                     this->_time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
                     this->handleInput();
@@ -72,7 +72,7 @@ namespace RType {
                     } catch (std::exception& e) {
                         std::cout << "Exception '" << e.what() << "' when converting port input to int. Staying on menu." << std::endl;
                         this->_currentScene = RTypeMenuScenesButtonDisplay;
-                        #warning Use sceneManger better 2
+                        // #warning Use sceneManger better 2
                         return StateMenu;
                     }
                     this->_backgroundMusic->reset();
@@ -117,7 +117,7 @@ namespace RType {
 
                             case Rengine::Graphics::UserInputKeyboardSpecialENTER:
                                 this->_currentScene = RTypeMenuScenesLoadLobbyInfoAndExit;
-                                #warning Use SceneManager better 3
+                                // #warning Use SceneManager better 3
                                 break;
 
                             default:

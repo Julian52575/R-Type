@@ -11,7 +11,7 @@
 #endif
 // SFL Includes if define
 #ifdef __RENGINEGRAPHICS_USELIB_SDL
-    #warning "SDL not implemented yet."
+    // #warning "SDL not implemented yet."
     #include "./SDL/SDLWindow.hpp"
 #endif
 
