@@ -76,5 +76,10 @@ namespace RType {
             return this->_parentVector.size() == 0;
         }
 
+        const std::vector<uint64_t>& Relationship::getParents(void) const noexcept
+        {
+            return this->_parentVector;
+        }
+
     }  // namespace Components
 }  // namespace RType
