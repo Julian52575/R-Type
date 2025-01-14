@@ -2,6 +2,7 @@
 #define _RENGINE_HPP_
 
 #include "src/ECS.hpp"
+#include "src/Rng.hpp"
 
 #include "src/Resolver/AResolver.hpp"
 

@@ -9,3 +9,4 @@ style_error.log
 *.so
 doxygen/
 *.log
+example/test

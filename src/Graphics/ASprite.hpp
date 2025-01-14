@@ -56,6 +56,24 @@ namespace Rengine {
                 * @brief Advance the sprite's animation depending on the current time.
                 */
                 virtual void advanceFrameFromTime(uint64_t currentTimeMicroseconds) = 0;
+                /**
+                * @fn hasAnimation
+                * @return True is the sprite has animation data, false otherwise
+                * @brief Get whether or not this sprite has animations.
+                */
+                bool hasAnimation(void) const noexcept;
+                /**
+                * @fn flip
+                * @param rotation The rotation in degree.
+                * @brief Rotate the sprite by rotation degree.
+                */
+                virtual void rotate(float rotation) noexcept = 0;
+                /**
+                * @fn flip
+                * @brief Flip the sprite horizontally.
+                */
+                virtual void flip(void) noexcept = 0;
+
 
             protected:
                 Rengine::Graphics::SpriteSpecs _spriteSpecs;

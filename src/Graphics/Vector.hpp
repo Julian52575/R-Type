@@ -24,7 +24,7 @@ namespace Rengine {
         template <class I>
         std::ostream& operator<<(std::ostream& os, const vector2D<I>& vec)
         {
-            os << "{" << vec.x << "x," << vec.y << "y}" << std::endl;
+            os << "{" << vec.x << "x," << vec.y << "y}";
             return os;
         }
         template <class I>
@@ -37,6 +37,11 @@ namespace Rengine {
                 return false;
             }
             return true;
+        }
+        template <class I>
+        bool operator!=(const vector2D<I>& a, const vector2D<I>& b)
+        {
+            return !(a == b);
         }
 
         /**
@@ -69,6 +74,11 @@ namespace Rengine {
             return true;
         }
         template <class I>
+        bool operator!=(const vector3D<I>& a, const vector3D<I>& b)
+        {
+            return !(a == b);
+        }
+        template <class I>
         bool operator==(const vector3D<I>& a, const vector2D<I>& b)
         {
             if (a.x != b.x) {
@@ -80,9 +90,15 @@ namespace Rengine {
             return true;
         }
         template <class I>
+        bool operator!=(const vector3D<I>& a, const vector2D<I>& b)
+        {
+            return !(a == b);
+        }
+
+        template <class I>
         std::ostream& operator<<(std::ostream& os, const vector3D<I>& vec)
         {
-            os << "{" << vec.x << "x," << vec.y << "y," << vec.z << "}" << std::endl;
+            os << "{" << vec.x << "x," << vec.y << "y," << vec.z << "z}";
             return os;
         }
 
