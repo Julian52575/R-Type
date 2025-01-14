@@ -123,6 +123,9 @@ namespace Rengine {
                     }
                     this->_currentEntities[i].emplace(this->_registry, i);
                     this->_currentEntitiesCount += 1;
+                    if (i > this->_maxEntityId) {
+                        this->_maxEntityId = i;
+                    }
                     return this->_currentEntities[i].value();
                 }
                 // Every entity is already used
@@ -147,6 +150,7 @@ namespace Rengine {
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
                 this->_currentEntitiesCount -= 1;
+                this->updateMaxEntityId();
             }
             /**
             * @fn removeEntity
@@ -165,6 +169,7 @@ namespace Rengine {
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
                 this->_currentEntitiesCount -= 1;
+                this->updateMaxEntityId();
             }
 
             /**
@@ -283,15 +288,15 @@ namespace Rengine {
                 try {
                     std::function<void(ECS&, Component&, Entity&)> fun = std::any_cast<std::function<void(ECS&, Component&, Entity&)>>(it->second);
 
-                    for (auto eit : this->_currentEntities) {
+                    for (size_type i = 0; i <= this->_maxEntityId; i++) {
                         // Ignore uninitialised entities
-                        if (eit.has_value() == false) {
+                        if (this->_currentEntities[i].has_value() == false) {
                             continue;
                         }
                         try {
-                            Component& con = eit->getComponent<Component>();
+                            Component& con = this->_currentEntities[i]->getComponent<Component>();
 
-                            fun(*this, con, *eit);
+                            fun(*this, con, this->_currentEntities[i].value());
                         }
                         // Ignore entities that do not have this Component
                         catch (EntityExceptionComponentNotLinked& e) {
@@ -390,10 +395,35 @@ namespace Rengine {
             }
 
         private:
+            /**
+            * @fn updateMaxEntityId
+            * @brief Update this->_maxEntityId with the maximimum id in this->_currentEntities.
+            * Searchs from 0 to (this->_maxEntityId - 1)
+            */
+            inline void updateMaxEntityId(void) noexcept
+            {
+                size_type maxDifferent = 0;
+
+                for (size_type i = 0; i < this->_maxEntityId; i++) {
+                    // no value : skip
+                    if (this->_currentEntities[i].has_value() == false) {
+                        continue;
+                    }
+                    if (i < maxDifferent) {
+                        continue;
+                    }
+                    maxDifferent = i;
+                }
+                this->_maxEntityId = maxDifferent;
+            }
+
+
+        private:
             ComponentRegistry _registry;
             #define DEFAULTSPARSEARRAYSIZE 100
             size_type _sparseArrayDefaultSize = DEFAULTSPARSEARRAYSIZE;
             SparseArray<Entity> _currentEntities;
+            size_type _maxEntityId = 0;
             size_type _currentEntitiesCount = 0;
             //                      Type    - std::function<void(ECS&, Component&, Entity&)>
             std::unordered_map<std::type_index, std::any> _functionArray;
