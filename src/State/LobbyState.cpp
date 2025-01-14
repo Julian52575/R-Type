@@ -42,7 +42,6 @@ namespace RType {
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].playerCount, {pos_x + 250.0f, pos_y});
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].time, {pos_x + 450.0f, pos_y});
         }
-
         return State::StateLobby;
     }
 

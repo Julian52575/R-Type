@@ -27,18 +27,6 @@ namespace RType {
         }
         void MenuState::registerComponents(void)
         {
-                this->_ecs.registerComponent<RType::Components::Configuration>();
-                this->_ecs.registerComponent<RType::Components::Action>();
-                this->_ecs.registerComponent<RType::Components::Position>();
-                this->_ecs.registerComponent<RType::Components::Sprite>();
-                this->_ecs.registerComponent<Components::Buff>();
-                this->_ecs.registerComponent<RType::Components::Hitbox>();
-                this->_ecs.registerComponent<RType::Components::Relationship>();
-
-                this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
-                this->_ecs.setComponentFunction<RType::Components::Action>(RType::Components::Action::componentFunction);
-                this->_ecs.setComponentFunction<RType::Components::Position>(RType::Components::Position::componentFunction);
-                this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
         }
             /*
             * @fn run
@@ -179,17 +167,5 @@ namespace RType {
                 spriteSpecs.shapeData.outlineThickness = 5;
                 spriteSpecs.shapeData.specifics.rectangleSize = {300, 50};
                 this->_cursor = manager.createSprite(spriteSpecs);
-                //menu 1
-                //champ de texte -> ip du serveur
-                //champ de texte -> port du serveur
-
-                //bouton -> connexion au serveur
-
-
-                //menu 2 //lobby
-                //liste (déroulante) -> liste des parties(nom de la game, nombre de joueurs, nombre de places,depuis quand la partie est ouverte)
-                //bouton -> rejoindre la partie
-
-                //bouton create game -> créer une partie (en bas de la page)
             }
 }  // namespace RType
