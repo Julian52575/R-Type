@@ -10,8 +10,9 @@ namespace RType {
 
             spriteSpecs.type = Rengine::Graphics::SpriteTypeRectangle;
             spriteSpecs.color = {0, 0, 0};
+            spriteSpecs.opacity = 0;
             spriteSpecs.shapeData.outlineColor = {255, 0, 0};
-            spriteSpecs.shapeData.outlineThickness = 5;
+            spriteSpecs.shapeData.outlineThickness = 2;
             spriteSpecs.shapeData.specifics.rectangleSize = {width, height};
             this->_hitboxSprite = manager.createSprite(spriteSpecs);
         }

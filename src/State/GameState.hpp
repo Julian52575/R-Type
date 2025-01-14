@@ -107,6 +107,8 @@ namespace RType {
             void loadCurrentScene();
             std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
 
+            std::vector<Rengine::Entity> _current_enemies = {};
+
 
 
         protected:
