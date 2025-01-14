@@ -69,8 +69,12 @@ namespace Rengine {
             switch (a.type) {
                 case (UserInputType::UserInputTypeKeyboardChar):
                     return a.data.keyboardChar == b.data.keyboardChar;
+                case (UserInputType::UserInputTypeKeyboardCharPressed):
+                    return a.data.keyboardChar == b.data.keyboardChar;
 
                 case (UserInputType::UserInputTypeKeyboardSpecial):
+                    return a.data.keyboardSpecial == b.data.keyboardSpecial;
+                case (UserInputType::UserInputTypeKeyboardSpecialPressed):
                     return a.data.keyboardSpecial == b.data.keyboardSpecial;
 
                 case (UserInputType::UserInputTypeJoystickButton):
@@ -97,8 +101,14 @@ namespace Rengine {
                 case UserInputTypeKeyboardChar:
                     str = "UserInputTypeKeyboardChar";
                     break;
+                case UserInputTypeKeyboardCharPressed:
+                    str = "UserInputTypeKeyboardCharPressed";
+                    break;
                 case UserInputTypeKeyboardSpecial:
                     str = "UserInputTypeKeyboardSpecial";
+                    break;
+                case UserInputTypeKeyboardSpecialPressed:
+                    str = "UserInputTypeKeyboardSpecialPressed";
                     break;
                 case UserInputTypeMouseLeftClick:
                     str = "UserInputTypeMouseLeftClick";

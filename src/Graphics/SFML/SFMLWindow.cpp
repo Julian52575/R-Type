@@ -204,16 +204,13 @@ skipIcon:
                         newInput.type = UserInputType::UserInputTypeWindowClosed;
                         break;
                     // Key press
+                    // For CharPressed / SpecialPressed
                     case sf::Event::KeyPressed:
-                        /*
-                        newInput = getUserInputFromSfKeyboard(event.key);
+                        newInput = getPressedUserInputFromSfKeyboard(event.key);
                         if (newInput.type == UserInputType::UserInputTypeNA) {
                             continue;
                         }
-                        */
-                        // Ignored because sf::Event is worthless for keyboard.
-                        // Using this->this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide() instead
-                        continue;
+                        break;
                     // Mouse click
                     case sf::Event::MouseButtonPressed:
                         if (event.mouseButton.button == sf::Mouse::Button::Right) {
@@ -250,7 +247,7 @@ skipIcon:
             this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide();
         }
 
-        inline UserInput SFMLWindow::getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
+        inline UserInput SFMLWindow::getPressedUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
         {
             UserInput result;
 
@@ -265,6 +262,12 @@ skipIcon:
                 if (key.shift == false) {
                     result.data.keyboardChar += 32;
                 }
+            }
+            // Convert base to Pressed
+            if (result.type == UserInputTypeKeyboardChar) {
+                result.type = UserInputTypeKeyboardCharPressed;
+            } else {
+                result.type = UserInputTypeKeyboardSpecialPressed;
             }
             return result;
         }

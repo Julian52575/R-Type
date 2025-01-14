@@ -17,9 +17,12 @@ static void input(void)
 {
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
-    if (manager.receivedInput(Rengine::Graphics::UserInputTypeWindowClosed)) {
-        Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
-        std::cout << "Close" << std::endl;
+    for (auto it : manager) {
+        std::cout << it << std::endl;
+        if (it.type == Rengine::Graphics::UserInputTypeWindowClosed) {
+            Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
+            std::cout << "Close" << std::endl;
+        }
     }
 }
 
@@ -164,7 +167,7 @@ static void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
     std::string currentText = textBox->getText();
 
     for (auto it : inputManager) {
-        if (it.type != Rengine::Graphics::UserInputTypeKeyboardChar) {
+        if (it.type != Rengine::Graphics::UserInputTypeKeyboardChar && it.type != Rengine::Graphics::UserInputTypeKeyboardCharPressed) {
             continue;
         }
         currentText += it.data.keyboardChar;

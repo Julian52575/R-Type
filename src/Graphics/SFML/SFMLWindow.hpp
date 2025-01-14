@@ -55,7 +55,7 @@ namespace Rengine {
                 * @brief Get a UserInput from a sf::Keyboard
                 * Note: UserInput.UserInputType == UserInputTypeNA if no match
                 */
-                inline UserInput getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
+                inline UserInput getPressedUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
                 inline UserInput processJoystickMove(const sf::Event& event);
                 inline void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
         };

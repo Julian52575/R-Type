@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(R-Engine)
 file(GLOB_RECURSE SRC_FILES src/*.cpp src/*.hpp)
-file(GLOB_RECURSE GRAPHICS_FILES src/*.cpp src/*.hpp)
+file(GLOB_RECURSE GRAPHICS_FILES src/Graphics/*.cpp src/Graphics/*.hpp)
 file(GLOB_RECURSE SERVER_FILES src/Network/*.cpp src/Network/*.hpp)
 
 # Exclude src/Graphics directory from SRC_FILES
@@ -11,7 +11,9 @@ list(FILTER SRC_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/Network/.*"
 list(FILTER GRAPHICS_FILES EXCLUDE REGEX "${CMAKE_CURRENT_SOURCE_DIR}/src/Network/.*")
 list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp) #removing main
 message(STATUS "Removed ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp from compilation")
-message(STATUS "Compiling ${SRC_FILES}...")
+message(STATUS "Compiling rengine: ${SRC_FILES}...")
+message(STATUS "Compiling rengine_graphics_sfml: ${GRAPHICS_FILES}")
+message(STATUS "Compiling rengine_network: ${SERVER_FILES}")
 
 set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)

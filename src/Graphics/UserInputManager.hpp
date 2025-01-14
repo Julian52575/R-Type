@@ -22,7 +22,9 @@ namespace Rengine {
         enum UserInputType {
             UserInputTypeNA,
             UserInputTypeKeyboardChar,
+            UserInputTypeKeyboardCharPressed,
             UserInputTypeKeyboardSpecial,
+            UserInputTypeKeyboardSpecialPressed,
             UserInputTypeMouseLeftClick,
             UserInputTypeMouseRightClick,
             UserInputTypeJoystickConnected,
