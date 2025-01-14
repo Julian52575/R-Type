@@ -49,7 +49,7 @@ namespace RType {
                 break;
 
             case State::StateNA:
-                break;
+                return;
         }  // switch GameState
         this->setState(request);
     }
