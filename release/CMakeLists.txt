@@ -14,11 +14,12 @@ add_executable(release
 )
 
 # Set dependencies
-find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics)
-find_package(ASIO REQUIRED)
-find_package(LUA REQUIRED)
-find_package(Lua REQUIRED)
-find_package(nlohmann_json REQUIRED)
+# find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics)
+# find_package(ASIO REQUIRED)
+# find_package(LUA REQUIRED)
+# find_package(Lua REQUIRED)
+# find_package(nlohmann_json REQUIRED)
+
 target_link_libraries(release PRIVATE
     asio::asio
     sfml-system
@@ -37,6 +38,7 @@ target_include_directories(release PUBLIC
     "../game/"
     $<TARGET_PROPERTY:nlohmann_json::nlohmann_json,INTERFACE_INCLUDE_DIRECTORIES>
     ".."
+    ${nlohmann_json_INCLUDE_DIRS}
 )
 
 # Set compile flags

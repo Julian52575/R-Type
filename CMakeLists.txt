@@ -8,13 +8,14 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_BINARY_DIR}/conan_toolchain.cmake" CACHE FILEP
 
 # g++ flag
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Dependencies
 find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics)
 find_package(ASIO REQUIRED)
 find_package(LUA REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 # Call release/CMakeLists.txt to build a binary
 add_subdirectory(release)
