@@ -3,6 +3,7 @@
 #include <exception>
 #include <filesystem>
 #include <functional>
+#include <optional>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/ECS.hpp>
@@ -19,6 +20,7 @@
 
 
 #include "src/Components/Clickable.hpp"
+#include "src/Components/Metadata.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Sprite.hpp"
@@ -31,7 +33,8 @@
 
 namespace RType {
 
-    GameState::GameState(Rengine::ECS& ecs) : AState(ecs)
+    GameState::GameState(Rengine::ECS& ecs)
+        : AState(ecs), _levelManager(ecs)
     {
         this->initScenes();
         this->_sceneManager.setScene(GameScenes::GameScenesLoadLevel);
@@ -49,6 +52,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Relationship>();
         this->_ecs.registerComponent<RType::Components::Clickable>();
         this->_ecs.registerComponent<RType::Components::HitboxViewer>();
+        this->_ecs.registerComponent<RType::Components::Metadata>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -68,32 +72,50 @@ namespace RType {
     {
         this->_levelManager.loadLevel(jsonPath);
         this->createPlayer("assets/entities/skeletonDragon.json");
-        this->loadCurrentScene();
+        this->loadCurrentLevelScene();
     }
 
-    void GameState::loadCurrentScene()
+    void GameState::loadCurrentLevelScene()
     {
-        std::vector<RType::Config::ImageConfig> backgroundImages = this->_levelManager.getCurrentSceneBackgroundImages();
-        for (int i = 0; i < backgroundImages.size(); i++) {
-            auto sprite = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(backgroundImages[i].getSpecs());
+        // background
+        std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> backgroundImages
+            = this->_levelManager.getCurrentSceneBackgroundImages();
+        // enemies
+        std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> enemies
+            = this->_levelManager.getCurrentSceneEnemies();
+        uint64_t i = 0;
+
+        if (backgroundImages.has_value() == false) {
+            goto enemyLoading;
+        }
+        for (i = 0; i < backgroundImages->get().size(); i++) {
+            auto sprite = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(backgroundImages->get()[i].getSpecs());
             this->_backgroundSprites.push_back(sprite);
         }
 
-        std::vector<RType::Config::SceneEntityConfig> enemies = this->_levelManager.getCurrentSceneEnemies();
-        for (int i = 0; i < enemies.size(); i++) {
-            Rengine::Entity& enemy = this->_ecs.addEntity();
-            enemies[i].entityConfig;
-            enemy.addComponent<Components::Position>(enemies[i].xSpawn, enemies[i].ySpawn);
-            enemy.addComponent<Components::Sprite>(enemies[i].entityConfig.getSprite().getSpecs());
-            enemy.addComponent<Components::Hitbox>(enemies[i].entityConfig.getHitbox());
-            enemy.addComponent<Components::Configuration>(enemies[i].entityConfig);
-            enemy.addComponent<Components::HitboxViewer>(enemies[i].entityConfig.getHitbox().size.x, enemies[i].entityConfig.getHitbox().size.y);
-
-            Components::Relationship& relationship = enemy.addComponent<Components::Relationship>();
-
-            this->_current_enemies.push_back(enemy);
-
+enemyLoading:
+        if (enemies.has_value() == false) {
+            goto skipEnemyLoading;
         }
+        this->_currentEnemies.clear();
+        for (i = 0; i < enemies->get().size(); i++) {
+            Rengine::Entity& currentEnemy = this->_ecs.addEntity();
+
+            currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
+            currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
+            currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
+            currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
+            currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
+            currentEnemy.addComponent<RType::Components::Relationship>();
+            RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
+
+            if (enemies->get()[i].isBoss == true) {
+                meta.add(Components::Metadata::MetadataListBoss);
+            }
+            this->_currentEnemies.push_back(Rengine::Entity::size_type(currentEnemy));
+        }
+skipEnemyLoading:
+        return;
     }
 
     State GameState::run(void)
@@ -139,25 +161,29 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
-        gameState._levelManager.update(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());
-        if (gameState._levelManager.SceneEndCondition()){
+        gameState._levelManager.updateDeltatime(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());
+        if (gameState._levelManager.isCurrentSceneOver()) {
             if (!gameState._levelManager.nextScene()){
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
                 return State::StateGame;
             }
-            //detruire les entités courantes
-            for (int i = 0; i < gameState._current_enemies.size(); i++) {
-                gameState._ecs.removeEntity(gameState._current_enemies[i]);
+            // detruire les entités courantes survivantes
+            for (uint64_t i = 0; i < gameState._currentEnemies.size(); i++) {
+                try {
+                    gameState._ecs.removeEntity(gameState._currentEnemies[i]);
+                } catch (std::exception& e) {
+                    std::cerr << "Exception " << e.what() << "when removing entity " << gameState._currentEnemies[i] << std::endl;
+                }
             }
-            gameState._current_enemies.clear();
-            gameState.loadCurrentScene();
+            gameState.loadCurrentLevelScene();
         }
 
         gameState._ecs.runComponentFunction<RType::Components::Position>();  // move entity
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
-        for (int i = 0; i < gameState._backgroundSprites.size(); i++)
+        for (int i = 0; i < gameState._backgroundSprites.size(); i++) {
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(gameState._backgroundSprites[i], {0, 0});
+        }
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component

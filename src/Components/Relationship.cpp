@@ -71,5 +71,10 @@ namespace RType {
             return true;
         }
 
+        bool Relationship::isOrphan(void) const noexcept
+        {
+            return this->_parentVector.size() == 0;
+        }
+
     }  // namespace Components
 }  // namespace RType

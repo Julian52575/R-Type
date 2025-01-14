@@ -6,6 +6,7 @@
 #include <optional>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
+#include <rengine/src/Entity.hpp>
 
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
@@ -86,8 +87,6 @@ namespace RType {
             */
             friend State playFunction(GameState& gameState);
 
-            LevelManager _levelManager;
-
         /*      Player management       */
         private:
             /*
@@ -104,16 +103,16 @@ namespace RType {
 
             void alertPlayer(void);
 
-            void loadCurrentScene();
+            void loadCurrentLevelScene();
+
             std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
 
-            std::vector<Rengine::Entity> _current_enemies = {};
-
-
+            std::vector<Rengine::Entity::size_type> _currentEnemies;
 
         protected:
-        #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
+            #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
             Rengine::ECS::size_type _playerEntityId = RTYPE_NO_PLAYER_ENTITY_ID;
+            LevelManager _levelManager;
 
         // Graphics
         protected:

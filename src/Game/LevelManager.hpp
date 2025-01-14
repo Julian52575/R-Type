@@ -1,73 +1,83 @@
-#pragma once
+//
+#ifndef SRC_GAME_LEVELMANAGER_HPP_
+#define SRC_GAME_LEVELMANAGER_HPP_
 
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 
-class LevelManager
-{
-    public:
-        LevelManager(){};
-        ~LevelManager(){};
+namespace RType {
+    /**
+    * @addtogroup RType
+    * @namespace RType
+    * @class LevelManager
+    * @brief Manage levels
+    */
+    class LevelManager
+    {
+        public:
+            LevelManager(Rengine::ECS& ecs);
+            ~LevelManager(void) = default;
+            /**
+            * @fn loadLevel
+            * @brief Load a level from its path
+            */
+            bool loadLevel(const std::string& jsonPath);
+            /**
+            * @fn loadLevel
+            * @param idx The index of the scene to be loaded
+            * @return True if the loading was succesful, false otherwise
+            * @brief Load the scene at index.
+            */
+            bool loadScene(uint8_t idx);
+            /**
+            * @fn updateDeltatime
+            * @brief Update the deltatime
+            */
+            void updateDeltatime(float deltaTime);
+            /**
+            * @fn isCurrentSceneOver
+            * @return True if the current scene is over, false otherwise
+            * @brief Check if the current scene is over.
+            */
+            bool isCurrentSceneOver(void);
+            /**
+            * @fn nextScene
+            * @return True if the loading was succesful, false otherwise
+            * @brief Load the next scene.
+            */
+            bool nextScene(void);
+            /**
+            * @fn previousScene
+            * @return True if the loading was succesful, false otherwise
+            * @brief Load the previous scene.
+            */
+            bool previousScene(void);
+            /**
+            * @fn resetCurrentScene
+            * @return True if the loading was succesful, false otherwise
+            * @brief Reload the current scene
+            */
+            bool resetCurrentScene(void);
+            /**
+            * @fn getCurrentSceneEnemies
+            * @return std::optional<const std::vector<RType::Config::SceneEntityConfig>> A vector of SceneEntityConfig
+            * @brief Get the current scene's enemies.
+            */
+            std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> getCurrentSceneEnemies(void);
+            /**
+            * @fn getCurrentSceneBackgroundImages
+            * @return std::optional<const std::vector<RType::Config::ImageConfig>> A vector of ImageConfig
+            * @brief Get the current scene's background images.
+            */
+            std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> getCurrentSceneBackgroundImages(void);
 
-        void loadLevel(const std::string& jsonPath){
-            RType::Config::LevelConfigResolver& resolver = RType::Config::LevelConfigResolverSingletone::get();
-            this->_config = resolver.get(jsonPath);
-            this->_scenes = this->_config.getScenes();
-            loadScene(0);
-        };
+        private:
+            Rengine::ECS& _ecs;
+            std::optional<std::reference_wrapper<const RType::Config::LevelConfig>> _levelConfig;
+            std::optional<Rengine::Entity::size_type> _bossId;
+            uint8_t _currentSceneIndex = 0;
+            float _time = 0;
+    };
 
-        bool loadScene(int num){
-            if (num >= _scenes.size() || num < 0){
-                return false;
-            }
-            this->_current_scene_index = num;
-            this->_current_scene = _scenes[num];
-            this->_time = 0;
-            return true;
-        };
-
-        void update(float deltaTime){
-            this->_time += deltaTime;
-        };
-
-        bool SceneEndCondition(){
-            if (this->_current_scene.endCondition == RType::Config::SceneEndCondition::SceneEndConditionTime){
-                if (_time >= this->_current_scene.endConditionData.time){
-                    return true;
-                }
-            }
-
-            if (this->_current_scene.endCondition == RType::Config::SceneEndCondition::SceneEndConditionBossDefeat){
-            }
-
-            return false;
-        };
-
-        bool nextScene(){
-            return loadScene(this->_current_scene_index + 1);
-        };
-
-        bool previousScene(){
-            return loadScene(this->_current_scene_index - 1);
-        };
-
-        bool rebootScene(){
-            return loadScene(this->_current_scene_index);
-        };
-
-        std::vector<RType::Config::SceneEntityConfig>& getCurrentSceneEnemies(){
-            return this->_current_scene.enemies;
-        };
-        
-        std::vector<RType::Config::ImageConfig>& getCurrentSceneBackgroundImages(){
-            return this->_current_scene.backgroundImages;
-        };
-
-
-    private:
-        RType::Config::LevelConfig _config;
-        std::vector<RType::Config::SceneConfig> _scenes;
-        int _current_scene_index = 0;
-        RType::Config::SceneConfig _current_scene;
-        float _time = 0;
-};
+}  // namespace RType
+#endif  // SRC_GAME_LEVELMANAGER_HPP_
