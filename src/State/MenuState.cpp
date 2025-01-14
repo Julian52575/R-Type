@@ -76,6 +76,7 @@ namespace RType {
                         return StateMenu;
                     }
                     this->_backgroundMusic->reset();
+                    this->_currentScene = RTypeMenuScenes::RTypeMenuScenesButtonDisplay;
                     return StateLobby;
                 }
                 return StateMenu;

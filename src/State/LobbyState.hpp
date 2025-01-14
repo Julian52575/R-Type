@@ -3,18 +3,18 @@
 #define SRC_STATE_LOBBYSTATE_HPP_
 
 #include <rengine/Rengine.hpp>
+#include <rengine/RengineNetworkClient.hpp>
 
 #include "AState.hpp"
 #include "GameState.hpp"
 #include "src/State/State.hpp"
-
+#include "src/Network/EntityAction.hpp"
 
 namespace RType {
 
     enum LobbyScenes {
-        LobbyScenesNA,
-        LobbyScenesPlaceholder,
-        LobbyScenesEliott
+        LobbySceneInitConnexion,
+        LobbySceneRun
     };
 
     struct LobbyInfo {
@@ -25,41 +25,36 @@ namespace RType {
 
     class LobbyState : public AState {
         public:
-            LobbyState(Rengine::ECS& ecs) : AState(ecs)
-            {
-            }
+            LobbyState(Rengine::ECS& ecs);
             ~LobbyState(void) = default;
             /*
             * @fn registerComponents
             * @brief Registers the neccessary component to the ECS.
             */
-            void registerComponents(void)
-            {
-                // WIP
-            }
+            void registerComponents(void);
+            friend State initLobbyConnexion(LobbyState &LobbyState);
+
+            friend State runLevel(LobbyState &LobbyState);
+
+            void initScenes(void);
+
             /*
             * @fn run
             * @return State The requested next state of the game.
             * @brief Run the program in it's current state.
             */
-            State run(void)
-            {
-                std::cout << "Running lobby with ip = " << this->_lobbyInfo.serverIp << ". port = " << this->_lobbyInfo.port << ". playerJson = " << this->_lobbyInfo.playerJson << std::endl;
-                std::cout << "Exit lobby and running game..." << std::endl;
-                return StateGame;
-            }
+            State run(void);
+
             /*
             * @fn setLobbyInfo
             * @param lobbyInfo The data of the lobby.
             * @brief Set the lobbyInfo from the menu by the StateManager.
             */
-            void setLobbyInfo(const LobbyInfo& lobbyInfo) noexcept
-            {
-                this->_lobbyInfo = lobbyInfo;
-            }
+            void setLobbyInfo(const LobbyInfo& lobbyInfo) noexcept;
 
         private:
             LobbyInfo _lobbyInfo;
+            std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _client;
     };
 
 }  // namespace RType

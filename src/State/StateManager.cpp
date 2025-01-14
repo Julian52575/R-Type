@@ -23,6 +23,7 @@ namespace RType {
                     // Pass the lobby info
                     this->_lobby.setLobbyInfo(this->_menu.getLobbyInfo());
                 }
+                break;
 
             // Nothing to do for other change
             default:
