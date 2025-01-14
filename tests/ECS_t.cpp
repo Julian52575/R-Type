@@ -147,3 +147,16 @@ TEST(ECS, clearComponents)
     EXPECT_THROW(ecs.getComponents<int>(), Rengine::ECSExceptionComponentNotRegistred);
     EXPECT_THROW(ecs.getComponents<float>(), Rengine::ECSExceptionComponentNotRegistred);
 }
+TEST(ECS, isEntityActive)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e0 = ecs.addEntity();
+    Rengine::Entity& e1 = ecs.addEntity();
+
+    EXPECT_TRUE(ecs.isEntityActive(Rengine::ECS::size_type(e0)));
+    EXPECT_TRUE(ecs.isEntityActive(Rengine::ECS::size_type(e1)));
+    e0.destroyComponents();
+    EXPECT_FALSE(ecs.isEntityActive(Rengine::ECS::size_type(e0)));
+    e1.destroyComponents();
+    EXPECT_FALSE(ecs.isEntityActive(Rengine::ECS::size_type(e1)));
+}

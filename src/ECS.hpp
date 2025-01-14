@@ -393,6 +393,18 @@ namespace Rengine {
             {
                 this->_registry.clear();
             }
+            /**
+            * @fn isEntityActive
+            * @brief check if the entity index is active.
+            */
+            bool isEntityActive(size_type idx)
+            {
+                if (this->_currentEntities[idx].has_value() == false) {
+                    return false;
+                }
+                return this->_currentEntities[idx]->isActive();
+            }
+
 
         private:
             /**
