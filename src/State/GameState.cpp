@@ -90,6 +90,9 @@ namespace RType {
             enemy.addComponent<Components::HitboxViewer>(enemies[i].entityConfig.getHitbox().size.x, enemies[i].entityConfig.getHitbox().size.y);
 
             Components::Relationship& relationship = enemy.addComponent<Components::Relationship>();
+
+            this->_current_enemies.push_back(enemy);
+
         }
     }
 
@@ -143,6 +146,10 @@ namespace RType {
                 return State::StateGame;
             }
             //detruire les entités courantes
+            for (int i = 0; i < gameState._current_enemies.size(); i++) {
+                gameState._ecs.removeEntity(gameState._current_enemies[i]);
+            }
+            gameState._current_enemies.clear();
             gameState.loadCurrentScene();
         }
 
