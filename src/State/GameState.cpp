@@ -27,6 +27,7 @@
 #include "src/Components/Components.hpp"
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
+#include "src/Components/HitBoxViewer.hpp"
 
 namespace RType {
 
@@ -47,6 +48,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Hitbox>();
         this->_ecs.registerComponent<RType::Components::Relationship>();
         this->_ecs.registerComponent<RType::Components::Clickable>();
+        this->_ecs.registerComponent<RType::Components::HitboxViewer>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -54,6 +56,7 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::Position>(RType::Components::Position::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Clickable>(RType::Components::Clickable::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::HitboxViewer>(RType::Components::HitboxViewer::componentFunction);
     }
 
     void GameState::setNextLevelToLoad(const std::string& level)
@@ -64,14 +67,17 @@ namespace RType {
     void GameState::loadLevel(const std::string& jsonPath)
     {
         this->_levelManager.loadLevel(jsonPath);
-
         this->createPlayer("assets/entities/skeletonDragon.json");
+        this->loadCurrentScene();
+    }
+
+    void GameState::loadCurrentScene()
+    {
         std::vector<RType::Config::ImageConfig> backgroundImages = this->_levelManager.getCurrentSceneBackgroundImages();
         for (int i = 0; i < backgroundImages.size(); i++) {
             auto sprite = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(backgroundImages[i].getSpecs());
             this->_backgroundSprites.push_back(sprite);
         }
-
 
         std::vector<RType::Config::SceneEntityConfig> enemies = this->_levelManager.getCurrentSceneEnemies();
         for (int i = 0; i < enemies.size(); i++) {
@@ -81,25 +87,10 @@ namespace RType {
             enemy.addComponent<Components::Sprite>(enemies[i].entityConfig.getSprite().getSpecs());
             enemy.addComponent<Components::Hitbox>(enemies[i].entityConfig.getHitbox());
             enemy.addComponent<Components::Configuration>(enemies[i].entityConfig);
+            enemy.addComponent<Components::HitboxViewer>(enemies[i].entityConfig.getHitbox().size.x, enemies[i].entityConfig.getHitbox().size.y);
 
             Components::Relationship& relationship = enemy.addComponent<Components::Relationship>();
         }
-
-    }
-
-    void GameState::loadLevel(const RType::Config::LevelConfig& levelConfig)
-    {
-        // #warning Parse level
-        // std::vector<RType::Config::SceneConfig> scenes = levelConfig.getScenes();
-
-        // this->_currentSceneConfig = scenes[this->_currentSceneIndex];
-
-        // this->createBackground("assets/entities/Background.json");
-        // this->createPlayer("assets/entities/skeletonDragon.json");
-
-        // for (int i = 0; i < _currentSceneConfig.enemies.size(); i++) {
-        //     this->createEnemy(_currentSceneConfig.enemies[i].path, {_currentSceneConfig.enemies[i].xSpawn, _currentSceneConfig.enemies[i].ySpawn});
-        // }
     }
 
     State GameState::run(void)
@@ -151,14 +142,8 @@ namespace RType {
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
                 return State::StateGame;
             }
-
             //detruire les entités courantes
-            std::vector<RType::Config::SceneEntityConfig> enemies = gameState._levelManager.getCurrentSceneEnemies();
-            for (int i = 0; i < enemies.size(); i++) {
-                gameState.createEnemy(enemies[i].path, {enemies[i].xSpawn, enemies[i].ySpawn});
-                enemies[i].entityConfig;
-            }
-
+            gameState.loadCurrentScene();
         }
 
         gameState._ecs.runComponentFunction<RType::Components::Position>();  // move entity
@@ -167,6 +152,7 @@ namespace RType {
         for (int i = 0; i < gameState._backgroundSprites.size(); i++)
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(gameState._backgroundSprites[i], {0, 0});
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
+        gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
         return State::StateGame;
     }
@@ -200,30 +186,9 @@ namespace RType {
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
         Components::Relationship& relationship = player.addComponent<Components::Relationship>();
 
+        player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
+
         this->_playerEntityId = Rengine::Entity::size_type(player);
-    }
-
-    void GameState::createBackground(const std::string& jsonPath)
-    {
-        Rengine::Entity& background = this->_ecs.addEntity();
-        Config::EntityConfig enConfig(jsonPath);
-
-        background.addComponent<Components::Position>(0, 0);
-        background.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
-    }
-
-    void GameState::createEnemy(const std::string& jsonPath, const Rengine::Graphics::vector2D<int>& pos)
-    {
-        Rengine::Entity& enemy = this->_ecs.addEntity();
-        Config::EntityConfig enConfig(jsonPath);
-
-        enemy.addComponent<Components::Position>(pos.x, pos.y);
-        enemy.addComponent<Components::Sprite>(enConfig.getSprite().getSpecs());
-        enemy.addComponent<Components::Hitbox>(enConfig.getHitbox());
-        enemy.addComponent<Components::Configuration>(enConfig);
-
-        Components::Relationship& relationship = enemy.addComponent<Components::Relationship>();
-
     }
 
     void GameState::alertPlayer(void)

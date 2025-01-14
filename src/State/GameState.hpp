@@ -101,12 +101,10 @@ namespace RType {
             * @brief Deletes the player entity.
             */
             void deletePlayer(void);
-            void createEnemy(const std::string& jsonPath, const Rengine::Graphics::vector2D<int>& pos);
-
-            void createBackground(const std::string& jsonPath);
 
             void alertPlayer(void);
 
+            void loadCurrentScene();
             std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
 
 
