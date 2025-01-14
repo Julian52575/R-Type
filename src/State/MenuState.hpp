@@ -14,7 +14,6 @@
 #include "State.hpp"
 #include "LobbyState.hpp"
 
-
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Sprite.hpp"
@@ -60,12 +59,31 @@ namespace RType {
             const LobbyInfo& getLobbyInfo(void) const noexcept;
 
         private:
-            void handleInput(void);
-            void makeButtons(void);
+            /**
+            * @brief init the scenes
+            */
+            void initScenes(void);
+            /**
+            * @brief Handle the window input
+            */
+            void buttonDisplayHandleInput(void);
+            /**
+            * @brief init the buttons
+            */
+            void buttonDisplayInitButtons(void);
+            /**
+            * @brief Main function for scene buttonDisplay
+            */
+            friend State buttonDisplay(MenuState& menu);
+
+        private:
+            /**
+            * @brief Main function for scene loadLobbyInfoAndExit
+            */
+            friend State loadLobbyInfoAndExit(MenuState& menu);
 
         private:
             LobbyInfo _lobbyInfo;
-            RType::RTypeMenuScenes _currentScene = RType::RTypeMenuScenes::RTypeMenuScenesButtonDisplay;
             MenuStateButtons _currentIndex = MenuStateButtonsIp;
             // A vector of text, first is the name, second is the input
             // Can be access by using MenuStateButtons

@@ -13,7 +13,7 @@
 namespace RType {
     class SceneManagerExceptionSceneNotFound : public std::exception {
         public:
-            const char *what() const noexcept { return "RType::SceneManager: Scene not found."; };
+            const char *what() const noexcept { return "RType::SceneManager: Scene function not found."; };
     };
     class SceneManagerExceptionNoCurrentScene : public std::exception {
         public:

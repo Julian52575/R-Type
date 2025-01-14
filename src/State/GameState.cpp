@@ -154,6 +154,11 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
+
+        if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
+        .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
+            return State::StateMenu;
+        }
         return State::StateGame;
     }
 
