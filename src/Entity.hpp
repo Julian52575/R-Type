@@ -14,10 +14,6 @@ namespace Rengine {
         public:
             const char *what() const noexcept { return "Rengine::Entity: Component is not linked to this entity."; };
     };
-    class EntityExceptionNotActive : public std::exception {
-        public:
-            const char *what() const noexcept { return "Rengine::Entity: Trying to use a previously destroyed entity."; };
-    };
     /**
      * @addtogroup Rengine
      * @namespace Rengine
@@ -54,10 +50,6 @@ namespace Rengine {
             template <class Component, class ... Params>
             Component& addComponent(Params &&... args)
             {
-                // Previously destroyed entity.
-                if (this->_active == false) {
-                    throw EntityExceptionNotActive();
-                }
                 // Try to retrive the SparseArray and emplaceAt
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
@@ -80,10 +72,6 @@ namespace Rengine {
             template <class Component>
             void removeComponent(void)
             {
-                // Previously destroyed entity.
-                if (this->_active == false) {
-                    throw EntityExceptionNotActive();
-                }
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
 
@@ -103,16 +91,9 @@ namespace Rengine {
             template <class Component>
             void removeComponentNoExcept(void) noexcept
             {
-                if (this->_active == false) {
-                    return;
-                }
                 try {
-                    SparseArray<Component>& sp = this->_registry.getComponents<Component>();
-
-                    sp.erase(this->_id);
-                }
-                // Component not registred ?
-                catch (ComponentRegistryExceptionNotRegistred &e) {
+                    this->removeComponent<Component>();
+                } catch (std::exception& e) {
                     return;
                 }
             }
@@ -127,22 +108,17 @@ namespace Rengine {
             template <class Component>
             Component& getComponent(void)
             {
-                // Previously destroyed entity.
-                if (this->_active == false) {
-                    throw EntityExceptionNotActive();
-                }
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
                     // Out of bound index
-                    if (sp.size() < this->_id) {
+                    if (sp.size() <= this->_id) {
                         throw EntityExceptionComponentNotLinked();
                     }
-                    std::optional<Component>& con = sp[this->_id];
                     // No component for this entity
-                    if (con.has_value() == false) {
+                    if (sp[this->_id].has_value() == false) {
                         throw EntityExceptionComponentNotLinked();
                     }
-                    return con.value();
+                    return sp[this->_id].value();
                 }
                 // Component not registred in the registry
                 catch (ComponentRegistryExceptionNotRegistred& e) {
@@ -158,13 +134,10 @@ namespace Rengine {
             template <class Component>
             std::optional<std::reference_wrapper<Component>> getComponentNoExcept(void) noexcept
             {
-                if (this->_active == false) {
-                    return std::nullopt;
-                }
                 try {
                     SparseArray<Component>& sp = this->_registry.getComponents<Component>();
                     // Out of bound index
-                    if (sp.size() < this->_id) {
+                    if (sp.size() <= this->_id) {
                         return std::nullopt;
                     }
                     std::optional<Component>& con = sp[this->_id];
@@ -188,10 +161,6 @@ namespace Rengine {
             */
             void setFlag(uint64_t flag)
             {
-                // Previously destroyed entity.
-                if (this->_active == false) {
-                    throw EntityExceptionNotActive();
-                }
                 this->_flag = flag;
             }
             /**
@@ -213,34 +182,17 @@ namespace Rengine {
             */
             void setComponentsDestroyFunction(const std::function<void(Rengine::Entity &)> fun)
             {
-                // Previously destroyed entity.
-                if (this->_active == false) {
-                    throw EntityExceptionNotActive();
-                }
                 this->_destroyFunction = fun;
             }
             /**
             * @fn destroyComponents
             * @exception EntityExceptionNotActive This entity has been previously destroyed.
-            * @brief Unactive the entity and call the destroy function set beforehand by this->setDestroyFunction to remove all linked Component.
-            * Using this entity again will result in a EntityExceptionNotActive.
+            * @brief Call the destroy function set beforehand by this->setDestroyFunction to remove all linked Component.
+            * This entity is still active.
             */
             void destroyComponents(void)
             {
-                // Previously destroyed entity.
-                if (this->_active == false) {
-                    throw EntityExceptionNotActive();
-                }
                 this->_destroyFunction(*this);
-                this->_active = false;
-            }
-            /**
-            * @fn isActive
-            * @brief Return true if the Entity has not been destroyed by this->destroy.
-            */
-            bool isActive(void) const noexcept
-            {
-                return this->_active;
             }
 
         private:
@@ -248,7 +200,6 @@ namespace Rengine {
             ComponentRegistry& _registry;
             uint64_t _flag = 0;
             std::function<void(Rengine::Entity &)> _destroyFunction = _RENGINEENTITYDESTROYNOOP_;
-            bool _active = true;
 
     };  // class Entity
 
