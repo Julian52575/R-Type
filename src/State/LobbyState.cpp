@@ -1,4 +1,6 @@
 #include "src/State/LobbyState.hpp"
+#include <rengine/src/Graphics/GraphicManager.hpp>
+#include <rengine/src/Graphics/UserInputManager.hpp>
 
 namespace RType {
     LobbyState::LobbyState(Rengine::ECS& ecs) : AState(ecs)
@@ -25,7 +27,7 @@ namespace RType {
     }
 
     State runLevel(LobbyState &LobbyState) {
-        //mettre le for en com pour disable le server
+        // mettre le for en com pour disable le server
         // for (std::optional<Message<Network::Communication::TypeDetail>> msg = LobbyState._client->Receive(); msg; msg = LobbyState._client->Receive()) {
         //     std::cout << "Message received: " << msg->header.size << std::endl;
         // }
@@ -41,6 +43,12 @@ namespace RType {
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].name, {pos_x, pos_y});
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].playerCount, {pos_x + 250.0f, pos_y});
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].time, {pos_x + 450.0f, pos_y});
+            // Check enter to start game, might show a compilation error on some IDE, compiles anyways.
+            if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
+            .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialENTER}
+                )) {
+                return State::StateGame;
+            }
         }
         return State::StateLobby;
     }
