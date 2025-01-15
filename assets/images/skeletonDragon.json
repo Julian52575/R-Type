@@ -2,8 +2,8 @@
     "image":{
         "texturePath":"assets/images/skeletonDragon.png",
         "origin":{
-            "x":80,
-            "y":160
+            "x": 80,
+            "y": 40
         },
         "scale":{
             "x":1,

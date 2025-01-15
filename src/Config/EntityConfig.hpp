@@ -85,7 +85,7 @@ namespace RType {
         */
         struct EntityConfigHitbox {
             Rengine::Graphics::vector2D<uint16_t> size = {25, 25};
-            Rengine::Graphics::vector2D<uint16_t> offsetFromSpriteOrigin = {0, 0};
+            Rengine::Graphics::vector2D<float> offsetFromSpriteOrigin = {0, 0};
         };
         /**
         * @addtogroup RType::Config

@@ -124,7 +124,7 @@ namespace RType {
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
                 std::cout << "Level finished !" << std::endl;
                 return State::StateMenu;
-            }            
+            }
         }
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
@@ -140,6 +140,13 @@ namespace RType {
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
             return State::StateMenu;
+        }
+        if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
+        .receivedInput(Rengine::Graphics::UserInputTypeMouseLeftClick)) {
+            auto& player = gameState._ecs.getEntity(gameState._playerEntityId);
+            auto& sp = player.getComponent<Components::Sprite>();
+
+            sp.getSprite()->flip();
         }
         return State::StateGame;
     }
@@ -163,11 +170,11 @@ namespace RType {
         }
         Rengine::Entity& player = this->_ecs.addEntity();
         Config::EntityConfig enConfig(jsonPath);
+        RType::Components::Sprite& sp = player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
         player.addComponent<RType::Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
         player.addComponent<RType::Components::Configuration>(enConfig);
         player.addComponent<RType::Components::Position>(0, 0);
-        player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
         player.addComponent<RType::Components::Buff>();
         player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
@@ -187,7 +194,7 @@ namespace RType {
                 en.removeComponent<RType::Components::Relationship>();
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::Metadata>();
-                en.removeComponent<RType::Components::HealthViewer>();  
+                en.removeComponent<RType::Components::HealthViewer>();
             }
         );
         this->_playerEntityId = Rengine::Entity::size_type(player);
