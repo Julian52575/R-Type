@@ -1,6 +1,7 @@
 #include "HealthViewer.hpp"
 #include "src/Components/Position.hpp"
 #include "src/Components/Configuration.hpp"
+#include "src/Components/Life.hpp"
 
 
 namespace RType{
@@ -24,12 +25,20 @@ namespace RType{
         }
 
         void HealthViewer::componentFunction(Rengine::ECS& ecs, RType::Components::HealthViewer& health_view, Rengine::Entity& entity){
+
             std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
             std::optional<std::reference_wrapper<Configuration>> config = entity.getComponentNoExcept<Configuration>();
+            std::optional<std::reference_wrapper<Life>> life = entity.getComponentNoExcept<Life>();
 
-            if (!pos || !config) {
+            if (!pos || !config || !life) {
                 return;
             }
+
+            float percent = (float(life->get().getHp()) / float(life->get().getMaxHp()));
+            Rengine::Graphics::vector2D<float> size = {100 * percent, 10};
+
+            // health_view._greenBarSprite->setShapeData({size, {0, 0}, {0, 0, 0}});
+
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._redBarSprite,pos->get().getVector2D());
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._greenBarSprite,pos->get().getVector2D());
         }

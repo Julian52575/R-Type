@@ -2,6 +2,8 @@
 #include "Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Configuration.hpp"
+#include "src/Components/Life.hpp"
+
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/SparseArray.hpp>
 
@@ -23,6 +25,8 @@ namespace RType {
             Rengine::SparseArray<RType::Components::Hitbox>& hitboxs = ecs.getComponents<RType::Components::Hitbox>();
             Rengine::SparseArray<RType::Components::Position>& positions = ecs.getComponents<RType::Components::Position>();
             Rengine::SparseArray<RType::Components::Relationship>& relationships = ecs.getComponents<RType::Components::Relationship>();
+            Rengine::SparseArray<RType::Components::Life>& lifes = ecs.getComponents<RType::Components::Life>();
+
             std::optional<std::reference_wrapper<Position>> posWrapper = entity.getComponentNoExcept<Position>();
 
             // Entity has no position
@@ -66,7 +70,12 @@ namespace RType {
                 hitbox._lastCheckSeconds = currentTime;
                 std::cout << "Colision between " << Rengine::ECS::size_type(entity) << " and " << index << std::endl;
 
-                ecs.removeEntity(ecs.getEntity(index));
+                //check si l'entité à une vie et si c'est le cas elle take damage
+                if (lifes[index].has_value() == true) {
+                    lifes[index]->takeDamage(1);// penser à mettre les degats de entity
+                }
+
+                // ecs.removeEntity(ecs.getEntity(index));
                 return;  // Only one collision per frame
                 
                 #warning Debug print

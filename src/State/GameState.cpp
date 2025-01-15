@@ -32,6 +32,7 @@
 #include "src/Components/HitboxViewer.hpp"
 #include "src/Components/HealthViewer.hpp"
 #include "src/Components/Chrono.hpp"
+#include "src/Components/Life.hpp"
 
 
 namespace RType {
@@ -59,6 +60,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Velocity>();
         this->_ecs.registerComponent<RType::Components::HealthViewer>();
         this->_ecs.registerComponent<RType::Components::Chrono>();
+        this->_ecs.registerComponent<RType::Components::Life>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -69,6 +71,7 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::HitboxViewer>(RType::Components::HitboxViewer::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::HealthViewer>(RType::Components::HealthViewer::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Chrono>(RType::Components::Chrono::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::Life>(RType::Components::Life::componentFunction);
     }
 
     void GameState::loadLevel(const std::string& jsonPath)
@@ -126,16 +129,23 @@ namespace RType {
                 return State::StateMenu;
             }            
         }
+        //partie movement
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
 
+        //partie collision
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
+        
+        //partie game rule
+        gameState._ecs.runComponentFunction<RType::Components::Life>();  // handle life
         gameState._ecs.runComponentFunction<RType::Components::Chrono>();  // handle chrono
 
+        //partie render
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
         gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
-        gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
+        gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitbox
+
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
@@ -174,7 +184,9 @@ namespace RType {
         player.addComponent<Components::Relationship>();
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::Metadata>();
+        player.addComponent<RType::Components::Life>(enConfig.getStats().hp);
         player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
+
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::Action>();
@@ -187,7 +199,8 @@ namespace RType {
                 en.removeComponent<RType::Components::Relationship>();
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::Metadata>();
-                en.removeComponent<RType::Components::HealthViewer>();  
+                en.removeComponent<RType::Components::HealthViewer>();
+                en.removeComponent<RType::Components::Life>();
             }
         );
         this->_playerEntityId = Rengine::Entity::size_type(player);

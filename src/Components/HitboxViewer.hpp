@@ -14,7 +14,6 @@ namespace RType {
             public:
                 HitboxViewer(float width, float height);
                 ~HitboxViewer(void);
-                const Config::EntityConfigHitbox& getSpecs(void) const noexcept;
 
                 static void componentFunction(Rengine::ECS& ecs, RType::Components::HitboxViewer& hitbox, Rengine::Entity& entity);
 
