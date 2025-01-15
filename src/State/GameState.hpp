@@ -57,21 +57,9 @@ namespace RType {
             /*
             * @fn loadLevel
             * @param std::string The path to a level json
-            * @brief Set the next level to be loaded
-            */
-            void setNextLevelToLoad(const std::string& level);
-            /*
-            * @fn loadLevel
-            * @param std::string The path to a level json
             * @brief Load a level.
             */
             void loadLevel(const std::string& jsonPath);
-            /*
-            * @fn loadLevel
-            * @param RType::Config::LevelConfig A reference to a level config
-            * @brief Load a level.
-            */
-            void loadLevel(const RType::Config::LevelConfig& levelConfig);
 
         public:
             /*
@@ -79,7 +67,7 @@ namespace RType {
             * @param GameState A reference to this GameState class.
             * @brief Load a level and change the scene to play
             */
-            friend void loadLevelFunction(GameState& gameState);
+            friend State loadLevelFunction(GameState& gameState);
             /*
             * @fn playFunction
             * @param GameState A reference to this GameState class.
@@ -102,12 +90,6 @@ namespace RType {
             void deletePlayer(void);
 
             void alertPlayer(void);
-
-            void loadCurrentLevelScene();
-
-            std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
-
-            std::vector<Rengine::Entity::size_type> _currentEnemies;
 
         protected:
             #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1

@@ -1,6 +1,7 @@
 //
 #include "Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
+#include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/SparseArray.hpp>
 
 namespace RType {
@@ -52,10 +53,17 @@ namespace RType {
 
                 // Comparison from https://stackoverflow.com/questions/65924292/most-efficient-way-to-compare-all-collision-boxes
                 if (!((ownHitboxStartX <= hitboxEndX && ownHitboxEndX >= hitboxStartX) &&
-                (ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY))) {
+                !(ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY))) {
                     continue;
                 }
-                std::cout << "Colision between " << int(entity) << " and " << index << std::endl;
+                float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
+                float timeCooldown = 1.5;
+
+                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                    return;
+                }
+                hitbox._lastCheckSeconds = currentTime;
+                std::cout << "Colision between " << Rengine::ECS::size_type(entity) << " and " << index << std::endl;
                 #warning Debug print
             } // for index
         }

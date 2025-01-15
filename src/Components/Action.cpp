@@ -23,7 +23,8 @@
 #include "src/Components/Position.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Sprite.hpp"
-#include "src/Components/HitBoxViewer.hpp"
+#include "src/Components/HitboxViewer.hpp"
+#include "src/Components/Velocity.hpp"
 #include "src/Config/AttackBuffTypeEnum.hpp"
 #include "src/Config/AttackConfig.hpp"
 #include "src/Config/EntityConfig.hpp"
@@ -293,20 +294,19 @@ namespace RType {
             for (const Config::MissileConfig& it : attackConfig->getMissiles()) {
                 const RType::Config::EntityConfig& missileConfig = singletone.get(it.getJsonPath());
                 Rengine::Entity& projectile = ecs.addEntity();
+                RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
 
-                // set Component
+                // set Components
+                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
                 projectile.addComponent<Position>(
                         hostPosition.getVector2D().x + it.getOffset().first,
                         hostPosition.getVector2D().y + it.getOffset().second
                 );
                 projectile.addComponent<Hitbox>(missileConfig.getHitbox());
+                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
                 projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
                 projectile.addComponent<Configuration>(missileConfig);
                 projectile.addComponent<Buff>();
-                RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
-
-                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
-
                 relationship.addParent(uint64_t(entity));
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
@@ -317,10 +317,18 @@ namespace RType {
                         projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
                         break;
 
-                    // No action component needed for velocity and invalid value
+                    case (Config::MissileControlTypeVelocity):
+                        std::cout << "Adding velocity." << std::endl;
+#warning debug
+                        projectile.addComponent<Velocity>(it.getVelocity().first, it.getVelocity().second);
+                        break;
+
+                    // No action component needed for invalid value
                     default:
                         break;
                 } // switch controlType
+                std::cout << "Created entity " << Rengine::ECS::size_type(projectile) << std::endl;
+#warning debug
                 actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }

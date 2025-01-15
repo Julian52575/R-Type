@@ -26,7 +26,7 @@ namespace RType {
             * @fn loadLevel
             * @param idx The index of the scene to be loaded
             * @return True if the loading was succesful, false otherwise
-            * @brief Load the scene at index.
+            * @brief Load the scene at index. Updates the ECS with the enemies and the backgrounds.
             */
             bool loadScene(uint8_t idx);
             /**
@@ -43,19 +43,19 @@ namespace RType {
             /**
             * @fn nextScene
             * @return True if the loading was succesful, false otherwise
-            * @brief Load the next scene.
+            * @brief Load the next scene. Updates the ECS.
             */
             bool nextScene(void);
             /**
             * @fn previousScene
             * @return True if the loading was succesful, false otherwise
-            * @brief Load the previous scene.
+            * @brief Load the previous scene. Updates the ECS.
             */
             bool previousScene(void);
             /**
             * @fn resetCurrentScene
             * @return True if the loading was succesful, false otherwise
-            * @brief Reload the current scene
+            * @brief Reload the current scene.
             */
             bool resetCurrentScene(void);
             /**
@@ -72,11 +72,17 @@ namespace RType {
             std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> getCurrentSceneBackgroundImages(void);
 
         private:
+            void completeClear(void);
+            void clearCurrentScene(void);
+
+        private:
             Rengine::ECS& _ecs;
+            float _time = 0;
+            uint8_t _currentSceneIndex = 0;
             std::optional<std::reference_wrapper<const RType::Config::LevelConfig>> _levelConfig;
             std::optional<Rengine::Entity::size_type> _bossId;
-            uint8_t _currentSceneIndex = 0;
-            float _time = 0;
+            std::vector<Rengine::Entity::size_type> _currentSceneBackgroundEntities;
+            std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
     };
 
 }  // namespace RType

@@ -40,7 +40,8 @@ namespace RType {
         {
             std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
 
-            if (pos == std::nullopt) {
+            if (pos.has_value() == false) {
+                std::cout << "[Sprite] Entity " << int(entity) << "has no position component" << std::endl;
                 return;
             }
             sprite.renderSprite(pos.value().get().getVector2D());

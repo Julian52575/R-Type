@@ -3,9 +3,23 @@
 #include <functional>
 #include <optional>
 #include <rengine/src/ECS.hpp>
+#include <rengine/RengineGraphics.hpp>
+#include <rengine/src/Entity.hpp>
 
 #include "LevelManager.hpp"
 #include "src/Config/LevelConfig.hpp"
+#include "src/Config/LevelConfigResolver.hpp"
+#include "src/Components/Clickable.hpp"
+#include "src/Components/Metadata.hpp"
+#include "src/Components/Buff.hpp"
+#include "src/Components/Sprite.hpp"
+#include "src/Components/Position.hpp"
+#include "src/Components/Action.hpp"
+#include "src/Components/Components.hpp"
+#include "src/Components/Hitbox.hpp"
+#include "src/Components/Relationship.hpp"
+#include "src/Components/HitboxViewer.hpp"
+
 namespace RType {
 
     LevelManager::LevelManager(Rengine::ECS& ecs)
@@ -26,6 +40,7 @@ namespace RType {
 
     bool LevelManager::loadScene(uint8_t index)
     {
+        this->clearCurrentScene();
         if (this->_levelConfig.has_value() == false) {
             return false;
         }
@@ -34,6 +49,69 @@ namespace RType {
         }
         this->_currentSceneIndex = index;
         this->_time = 0;
+
+       // background
+        std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> backgroundImages
+            = this->getCurrentSceneBackgroundImages();
+        // enemies
+        std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> enemies
+            = this->getCurrentSceneEnemies();
+        uint64_t i = 0;
+
+        // No background : skip background
+        if (backgroundImages.has_value() == false) {
+            goto enemyLoading;
+        }
+        // No entity left : skip background
+        if ((this->_ecs.getEntityLimit() - this->_ecs.getActiveEntitiesCount()) < backgroundImages->get().size()) {
+            goto enemyLoading;
+        }
+        for (i = 0; i < backgroundImages->get().size(); i++) {
+            Rengine::Entity& bgEntity = this->_ecs.addEntity();
+
+            bgEntity.addComponent<RType::Components::Position>(0, 0);
+            bgEntity.addComponent<RType::Components::Sprite>(backgroundImages->get()[i].getSpecs());
+            bgEntity.setComponentsDestroyFunction(
+                [](Rengine::Entity& en) {
+                    en.removeComponent<RType::Components::Position>();
+                    en.removeComponent<RType::Components::Sprite>();
+                }
+            );
+            this->_currentSceneBackgroundEntities.push_back(Rengine::ECS::size_type(bgEntity));
+        }
+
+enemyLoading:
+        if (enemies.has_value() == false) {
+            goto loadSceneReturn;
+        }
+        for (i = 0; i < enemies->get().size(); i++) {
+            Rengine::Entity& currentEnemy = this->_ecs.addEntity();
+
+            currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
+            currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
+            currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
+            currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
+            currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
+            currentEnemy.addComponent<RType::Components::Relationship>();
+            RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
+
+            if (enemies->get()[i].isBoss == true) {
+                meta.add(RType::Components::Metadata::MetadataListBoss);
+            }
+            currentEnemy.setComponentsDestroyFunction(
+                [](Rengine::Entity& en) {
+                    en.removeComponent<RType::Components::Position>();
+                    en.removeComponent<RType::Components::Sprite>();
+                    en.removeComponent<RType::Components::Hitbox>();
+                    en.removeComponent<RType::Components::Configuration>();
+                    en.removeComponent<RType::Components::HitboxViewer>();
+                    en.removeComponent<RType::Components::Relationship>();
+                    en.removeComponent<RType::Components::Metadata>();
+                }
+            );
+            this->_currentSceneEnemies.push_back(Rengine::Entity::size_type(currentEnemy));
+        }
+loadSceneReturn:
         return true;
     }
 
@@ -94,6 +172,29 @@ namespace RType {
             return std::nullopt;
         }
         return this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].backgroundImages;
+    }
+
+    void LevelManager::completeClear(void)
+    {
+        this->clearCurrentScene();
+        this->_levelConfig = std::nullopt;
+    }
+
+    void LevelManager::clearCurrentScene(void)
+    {
+        this->_currentSceneBackgroundEntities.clear();
+        this->_bossId = std::nullopt;
+        this->_time = 0;
+        for (auto bgIt : this->_currentSceneBackgroundEntities) {
+            try {
+                this->_ecs.removeEntity(bgIt);
+            } catch (std::exception& e) {;}
+        }
+        for (auto enIt : this->_currentSceneEnemies) {
+            try {
+                this->_ecs.removeEntity(enIt);
+            } catch (std::exception& e) {;}
+        }
     }
 
 }  // namespace RType

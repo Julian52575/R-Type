@@ -7,7 +7,6 @@
 #include <rengine/src/Graphics/Vector.hpp>
 
 namespace RType {
-
     namespace Components {
 
         class Position {
@@ -17,10 +16,11 @@ namespace RType {
                 ~Position(void);
                 const Rengine::Graphics::vector2D<float>& getVector2D(void) const noexcept;
                 const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept;
+                float getX(void) const noexcept;
+                float getY(void) const noexcept;
                 void set(const Rengine::Graphics::vector2D<float>& pos);
                 void setX(float x);
                 void setY(float y);
-                static void componentFunction(Rengine::ECS& ecs, RType::Components::Position& pos, Rengine::Entity& entity);
 
             private:
                 Rengine::Graphics::vector2D<float> _position = {0, 0};
