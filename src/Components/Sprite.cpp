@@ -44,7 +44,22 @@ namespace RType {
                 std::cout << "[Sprite] Entity " << int(entity) << "has no position component" << std::endl;
                 return;
             }
+
+
             sprite.renderSprite(pos.value().get().getVector2D());
+            Rengine::Graphics::TextSpecs specs;
+            specs.style = Rengine::Graphics::TextStyle::TextStyleBold;
+            specs.color = {0, 0, 255};
+            specs.fontPath = "assets/fonts/arial.ttf";
+            specs.message = std::to_string(int(entity));
+            std::shared_ptr<Rengine::Graphics::AText> text = Rengine::Graphics::GraphicManagerSingletone::get().createText(specs);
+
+            Rengine::Graphics::vector2D<float> posText = pos.value().get().getVector2D();
+            posText.y -= 20;
+
+            Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->addTextToRender(text, posText);
+
+
         }
     }  // namespace Components
 }  // namespace RType

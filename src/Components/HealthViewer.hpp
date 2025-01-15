@@ -1,10 +1,9 @@
 #pragma once
 
 #include "src/Config/EntityConfig.hpp"
-#include "src/Components/Position.hpp"
-#include "src/Components/Relationship.hpp"
 #include <rengine/src/ECS.hpp>
 #include <rengine/src/SparseArray.hpp>
+#include <rengine/src/Graphics/GraphicManager.hpp>
 
 
 namespace RType {
@@ -12,13 +11,17 @@ namespace RType {
 
         class HealthViewer {
             public:
-                HealthViewer(void) = default;
+                HealthViewer(uint16_t maxhp);
                 ~HealthViewer(void) = default;
                 const Config::EntityConfigHitbox& getSpecs(void) const noexcept;
 
                 static void componentFunction(Rengine::ECS& ecs, RType::Components::HealthViewer& health_view, Rengine::Entity& entity);
 
             private:
+                uint16_t _maxhp;
+                std::shared_ptr<Rengine::Graphics::ASprite> _redBarSprite;
+                std::shared_ptr<Rengine::Graphics::ASprite> _greenBarSprite;
+
         };  // class HealthViewer
     }  // namespace Components
 }  // namespace RType

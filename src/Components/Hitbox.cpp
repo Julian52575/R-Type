@@ -1,6 +1,7 @@
 //
 #include "Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
+#include "src/Components/Configuration.hpp"
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/SparseArray.hpp>
 
@@ -29,10 +30,10 @@ namespace RType {
                 return;
             }
             // This entity data
-            uint16_t ownHitboxStartY = posWrapper->get().getVector2D().y + hitbox.getSpecs().offsetFromSpriteOrigin.y;
-            uint16_t ownHitboxEndY = ownHitboxStartY + hitbox.getSpecs().size.y;
-            uint16_t ownHitboxStartX = posWrapper->get().getVector2D().x + hitbox.getSpecs().offsetFromSpriteOrigin.x;
-            uint16_t ownHitboxEndX = ownHitboxStartX + hitbox.getSpecs().size.x;
+            float ownHitboxStartY = posWrapper->get().getVector2D().y + hitbox.getSpecs().offsetFromSpriteOrigin.y;
+            float ownHitboxEndY = ownHitboxStartY + hitbox.getSpecs().size.y;
+            float ownHitboxStartX = posWrapper->get().getVector2D().x + hitbox.getSpecs().offsetFromSpriteOrigin.x;
+            float ownHitboxEndX = ownHitboxStartX + hitbox.getSpecs().size.x;
 
             // Parse hitboxs and positions from the current entity to avoid double checks.
             // Assumes hitboxs and positions have the default size defined in the ecs.
@@ -46,22 +47,22 @@ namespace RType {
                     continue;
                 }
                 // Current entity data
-                uint16_t hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;
-                uint16_t hitboxEndY = hitboxStartY + hitboxs[index]->getSpecs().size.y;
-                uint16_t hitboxStartX = positions[index]->getVector2D().x + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.x;
-                uint16_t hitboxEndX = hitboxStartX + hitboxs[index]->getSpecs().size.x;
+                float hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;
+                float hitboxEndY = hitboxStartY + hitboxs[index]->getSpecs().size.y;
+                float hitboxStartX = positions[index]->getVector2D().x + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.x;
+                float hitboxEndX = hitboxStartX + hitboxs[index]->getSpecs().size.x;
 
                 // Comparison from https://stackoverflow.com/questions/65924292/most-efficient-way-to-compare-all-collision-boxes
-                if (!((ownHitboxStartX <= hitboxEndX && ownHitboxEndX >= hitboxStartX) &&
-                !(ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY))) {
+                if (!(ownHitboxStartX <= hitboxEndX && ownHitboxEndX >= hitboxStartX &&
+                    ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY)) {
                     continue;
                 }
                 float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
                 float timeCooldown = 1.5;
 
-                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                    return;
-                }
+                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                //     return;
+                // }
                 hitbox._lastCheckSeconds = currentTime;
                 std::cout << "Colision between " << Rengine::ECS::size_type(entity) << " and " << index << std::endl;
                 #warning Debug print

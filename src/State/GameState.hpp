@@ -90,7 +90,6 @@ namespace RType {
             void deletePlayer(void);
 
             void alertPlayer(void);
-            void loadCurrentScene(void);
 
         protected:
             #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
@@ -105,8 +104,6 @@ namespace RType {
         private:
             std::string _levelToLoad = "";
             void initScenes(void);
-            std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
-            std::vector<Rengine::Entity> _current_enemies;
 
     };
 }  // namespace RType

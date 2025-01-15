@@ -318,8 +318,6 @@ namespace RType {
                         break;
 
                     case (Config::MissileControlTypeVelocity):
-                        std::cout << "Adding velocity." << std::endl;
-#warning debug
                         projectile.addComponent<Velocity>(it.getVelocity().first, it.getVelocity().second);
                         break;
 
@@ -327,8 +325,6 @@ namespace RType {
                     default:
                         break;
                 } // switch controlType
-                std::cout << "Created entity " << Rengine::ECS::size_type(projectile) << std::endl;
-#warning debug
                 actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }
