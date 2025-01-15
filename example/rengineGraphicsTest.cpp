@@ -58,14 +58,15 @@ static std::shared_ptr<Rengine::Graphics::ASprite> initSprite(void)
 
     specs.texturePath = "marioSheet.png";
     specs.type = Rengine::Graphics::SpriteTypeSprite;
-    specs.originOffset.x = 50;
-    specs.originOffset.y = 50;
     specs.textureScale = {5, 5};
     specs.animation = Rengine::Graphics::SpriteSpecs::SpriteAnimationSpecs();
-    specs.animation->frameCount = 7;
-    specs.animation->frameDisplacement = {15, 0};
-    specs.animation->frameDuration = 0.08;
-    specs.animation->frameRectWidthHeight = {25, 23};
+    specs.animation->frameCount = 4;
+    specs.animation->frameDisplacement = {17, 0};
+    specs.animation->frameDuration = 0.15;
+    specs.animation->frameRectWidthHeight = {14, 26};
+    specs.originOffset = {
+        (float) (specs.animation->frameRectWidthHeight.x / 2), (float) (specs.animation->frameRectWidthHeight.y / 2)
+    };
     specs.animation->frameRectXY = {5, 0};
     return manager.createSprite(specs);
 }

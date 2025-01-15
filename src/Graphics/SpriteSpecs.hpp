@@ -85,7 +85,7 @@ namespace Rengine {
             * @brief The offset of the sprite's origin (starting from the top left).
             * Default: 0x, 0y.
             */
-            Rengine::Graphics::vector2D<int16_t> originOffset = {0, 0};
+            Rengine::Graphics::vector2D<float> originOffset = {0, 0};
             /**
             * @brief The scaling to apply to the texture.
             * Default: 1x, 1y.

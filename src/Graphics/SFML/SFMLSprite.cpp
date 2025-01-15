@@ -48,6 +48,11 @@ namespace Rengine {
                     rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
                     this->_renderObject.setTextureRect(this->_spriteSpecs.type, rect);
                 }
+                // origin
+                this->_renderObject.setOrigin(this->_spriteSpecs.type,
+                    {(float) this->_spriteSpecs.originOffset.x,
+                    (float) this->_spriteSpecs.originOffset.y}
+                );
             }
 
             void SFMLSprite::advanceFrame(int16_t frameCount)
@@ -276,6 +281,25 @@ namespace Rengine {
 
                     case (SpriteType::SpriteTypeRectangle):
                         this->rectangle->setPosition(pos);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            void SFMLSprite::SFMLSpriteUnion::setOrigin(SpriteType type, const sf::Vector2f& origin)
+            {
+                switch (type) {
+                    case (SpriteType::SpriteTypeSprite):
+                        this->sprite->setOrigin(origin);
+                        break;
+
+                    case (SpriteType::SpriteTypeCircle):
+                        this->circle->setOrigin(origin);
+                        break;
+
+                    case (SpriteType::SpriteTypeRectangle):
+                        this->rectangle->setOrigin(origin);
                         break;
 
                     default:

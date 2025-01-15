@@ -54,6 +54,7 @@ namespace Rengine {
                         void setTextureRect(SpriteType type, const sf::IntRect& rect);
                         void setColor(SpriteType type, const sf::Color& color);
                         void setPosition(SpriteType type, const sf::Vector2f& pos);
+                        void setOrigin(SpriteType type, const sf::Vector2f& origin);
                         void rotate(SpriteType type, float rotation) noexcept;
                         sf::Sprite* getSprite(void);
                         const sf::Sprite* getSprite(void) const;
