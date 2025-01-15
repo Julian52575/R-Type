@@ -116,7 +116,7 @@ namespace RType {
                 * @fn processInput
                 * @brief Process the inputs from the ActionSource
                 */
-                friend void processInput(Action& actionComponent) noexcept;
+                void updateFromSource(void) noexcept;
                 /**
                 * @fn processAction
                 * @brief Process an input from the received paquet.

@@ -57,15 +57,15 @@ namespace RType {
             this->_shootDeltatimes[2] = 10000.0f;
         }
 
-        void processInput(Action& actionComponent) noexcept
+        void Action::updateFromSource(void) noexcept
         {
-            switch (actionComponent._actionSource) {
+            switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
                     return;
 
                 case ActionSource::ActionSourceUserInput:
-                    actionComponent.processUserInput();
+                    this->processUserInput();
                     break;
 
                 case ActionSource::ActionSourceServer:
@@ -213,7 +213,7 @@ namespace RType {
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
-            processInput(actionComponent);
+            actionComponent.updateFromSource();
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
