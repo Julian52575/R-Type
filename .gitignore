@@ -10,3 +10,4 @@ style_error.log
 doxygen/
 *.log
 example/test
+venvconan/
