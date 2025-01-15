@@ -27,10 +27,9 @@ namespace RType{
         void HealthViewer::componentFunction(Rengine::ECS& ecs, RType::Components::HealthViewer& health_view, Rengine::Entity& entity){
 
             std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
-            std::optional<std::reference_wrapper<Configuration>> config = entity.getComponentNoExcept<Configuration>();
             std::optional<std::reference_wrapper<Life>> life = entity.getComponentNoExcept<Life>();
 
-            if (!pos || !config || !life) {
+            if (!pos || !life) {
                 return;
             }
 
