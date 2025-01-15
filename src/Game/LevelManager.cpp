@@ -95,7 +95,7 @@ enemyLoading:
             currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
             currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
 
-            // currentEnemy.getComponent<RType::Components::Sprite>().getSprite().get()->flip();
+            currentEnemy.getComponent<RType::Components::Sprite>().getSprite().get()->flip();
 
             currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
             currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
