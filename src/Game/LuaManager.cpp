@@ -1,5 +1,5 @@
 #include <bits/types/struct_tm.h>
-#include <lua5.4/lua.h>
+#include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
 #include <utility>
 #include <iostream>
 #include <vector>
