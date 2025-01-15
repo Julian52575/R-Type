@@ -54,6 +54,8 @@ runTest "Config/LevelConfigResolver_t.cpp ../src/Config/*.cpp" "LevelConfigResol
 
 runTest "Components/Relationship_t.cpp ../src/Components/Relationship.cpp" "Relationship"
 
+runTest "Game/LuaManager_t.cpp ../src/Components/LuaManager.cpp" "LuaManager"
+
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
 if [ "$FAILURE_LIST" != "" ] ; then
