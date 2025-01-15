@@ -16,6 +16,12 @@
 
 #include "../Network/EntityAction.hpp"
 #include "Components.hpp"
+#include "src/Game/SceneManager.hpp"
+#include "src/Config/AttackBuffTypeEnum.hpp"
+#include "src/Config/AttackConfig.hpp"
+#include "src/Config/EntityConfig.hpp"
+#include "src/Config/EntityConfigResolver.hpp"
+#include "src/Config/MissileConfig.hpp"
 #include "src/Components/Action.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Configuration.hpp"
@@ -25,12 +31,7 @@
 #include "src/Components/Sprite.hpp"
 #include "src/Components/HitboxViewer.hpp"
 #include "src/Components/Velocity.hpp"
-#include "src/Config/AttackBuffTypeEnum.hpp"
-#include "src/Config/AttackConfig.hpp"
-#include "src/Config/EntityConfig.hpp"
-#include "src/Config/EntityConfigResolver.hpp"
-#include "src/Config/MissileConfig.hpp"
-#include "src/Game/SceneManager.hpp"
+#include "src/Components/Chrono.hpp"
 
 namespace RType {
     namespace Components {
@@ -307,6 +308,11 @@ namespace RType {
                 projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
                 projectile.addComponent<Configuration>(missileConfig);
                 projectile.addComponent<Buff>();
+
+                projectile.addComponent<Chrono>([&ecs, &projectile]() {
+                    ecs.removeEntity(projectile);
+                }, 7.0f);
+
                 relationship.addParent(uint64_t(entity));
 
                 projectile.setComponentsDestroyFunction(
@@ -319,6 +325,7 @@ namespace RType {
                         en.removeComponent<Configuration>();
                         en.removeComponent<Buff>();
                         en.removeComponent<Relationship>();
+                        en.removeComponent<Chrono>();
                     }
                 );
 

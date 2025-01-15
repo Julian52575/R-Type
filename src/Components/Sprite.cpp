@@ -22,6 +22,17 @@ namespace RType {
             if (this->_sprite == nullptr) {
                 throw SpriteException("Got nullptr when trying to create a sprite.");
             }
+
+            Rengine::Graphics::TextSpecs specs;
+            specs.style = Rengine::Graphics::TextStyle::TextStyleBold;
+            specs.color = {0, 0, 255};
+            specs.fontPath = "assets/fonts/arial.ttf";
+            // specs.message = std::to_string(int(entity));
+
+            this->id_text = Rengine::Graphics::GraphicManagerSingletone::get().createText(specs);
+
+
+
         }
 
         std::shared_ptr<Rengine::Graphics::ASprite>& Sprite::getSprite(void) noexcept
@@ -44,20 +55,14 @@ namespace RType {
                 std::cout << "[Sprite] Entity " << int(entity) << "has no position component" << std::endl;
                 return;
             }
-
-
+            
+            sprite.id_text.get()->setText(std::to_string(int(entity)));
             sprite.renderSprite(pos.value().get().getVector2D());
-            Rengine::Graphics::TextSpecs specs;
-            specs.style = Rengine::Graphics::TextStyle::TextStyleBold;
-            specs.color = {0, 0, 255};
-            specs.fontPath = "assets/fonts/arial.ttf";
-            specs.message = std::to_string(int(entity));
-            std::shared_ptr<Rengine::Graphics::AText> text = Rengine::Graphics::GraphicManagerSingletone::get().createText(specs);
-
+            
             Rengine::Graphics::vector2D<float> posText = pos.value().get().getVector2D();
             posText.y -= 20;
+            Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->addTextToRender(sprite.id_text, posText);
 
-            Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->addTextToRender(text, posText);
 
 
         }

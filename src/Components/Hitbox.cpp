@@ -60,9 +60,9 @@ namespace RType {
                 float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
                 float timeCooldown = 1.5;
 
-                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                //     return;
-                // }
+                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                    return;
+                }
                 hitbox._lastCheckSeconds = currentTime;
                 std::cout << "Colision between " << Rengine::ECS::size_type(entity) << " and " << index << std::endl;
 

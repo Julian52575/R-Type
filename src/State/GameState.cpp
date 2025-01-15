@@ -31,6 +31,7 @@
 #include "src/Components/Relationship.hpp"
 #include "src/Components/HitboxViewer.hpp"
 #include "src/Components/HealthViewer.hpp"
+#include "src/Components/Chrono.hpp"
 
 
 namespace RType {
@@ -57,6 +58,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Metadata>();
         this->_ecs.registerComponent<RType::Components::Velocity>();
         this->_ecs.registerComponent<RType::Components::HealthViewer>();
+        this->_ecs.registerComponent<RType::Components::Chrono>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -66,6 +68,7 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::Clickable>(RType::Components::Clickable::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::HitboxViewer>(RType::Components::HitboxViewer::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::HealthViewer>(RType::Components::HealthViewer::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::Chrono>(RType::Components::Chrono::componentFunction);
     }
 
     void GameState::loadLevel(const std::string& jsonPath)
@@ -128,9 +131,10 @@ namespace RType {
 
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
+        gameState._ecs.runComponentFunction<RType::Components::Chrono>();  // handle chrono
+
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
         gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
-
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
