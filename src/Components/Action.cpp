@@ -308,6 +308,20 @@ namespace RType {
                 projectile.addComponent<Configuration>(missileConfig);
                 projectile.addComponent<Buff>();
                 relationship.addParent(uint64_t(entity));
+
+                projectile.setComponentsDestroyFunction(
+                    [](Rengine::Entity& en) {
+                        en.removeComponent<HitboxViewer>();
+                        en.removeComponent<Position>();
+                        en.removeComponent<Hitbox>();
+                        en.removeComponent<HitboxViewer>();
+                        en.removeComponent<Sprite>();
+                        en.removeComponent<Configuration>();
+                        en.removeComponent<Buff>();
+                        en.removeComponent<Relationship>();
+                    }
+                );
+
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
                         projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);

@@ -113,29 +113,6 @@ namespace RType {
         return State::StateGame;
     }
 
-    void destroyEntity(Rengine::ECS& ecs, Rengine::Entity& entity)
-    {
-        if (entity.getComponentNoExcept<RType::Components::Position>() != std::nullopt)
-            entity.removeComponent<RType::Components::Position>();
-
-        if (entity.getComponentNoExcept<RType::Components::Action>() != std::nullopt)
-            entity.removeComponent<RType::Components::Action>();
-
-        if (entity.getComponentNoExcept<RType::Components::Sprite>() != std::nullopt)
-            entity.removeComponent<RType::Components::Sprite>();
-        
-        if (entity.getComponentNoExcept<RType::Components::Hitbox>() != std::nullopt)
-            entity.removeComponent<RType::Components::Hitbox>();
-
-        if (entity.getComponentNoExcept<RType::Components::Clickable>() != std::nullopt)
-            entity.removeComponent<RType::Components::Clickable>();
-        
-        if (entity.getComponentNoExcept<RType::Components::HitboxViewer>() != std::nullopt)
-            entity.removeComponent<RType::Components::HitboxViewer>();
-
-        ecs.removeEntity(entity);
-    }
-
     State playFunction(GameState& gameState)
     {
         gameState._levelManager.updateDeltatime(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());

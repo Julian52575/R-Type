@@ -65,6 +65,10 @@ namespace RType {
                 // }
                 hitbox._lastCheckSeconds = currentTime;
                 std::cout << "Colision between " << Rengine::ECS::size_type(entity) << " and " << index << std::endl;
+
+                ecs.removeEntity(ecs.getEntity(index));
+                return;  // Only one collision per frame
+                
                 #warning Debug print
             } // for index
         }
