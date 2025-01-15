@@ -139,16 +139,7 @@ namespace Rengine {
             {
                 size_type idx = this->_currentEntities.getIndex(en);
 
-                if (idx == static_cast<size_type>(-1)) {
-                    throw ECSExceptionEntityNotFound();
-                }
-                if (this->_currentEntities[idx].has_value() == false) {
-                    throw ECSExceptionEntityNotFound();
-                }
-                this->_currentEntities[idx].value().destroyComponents();
-                this->_currentEntities[idx].reset();
-                this->_currentEntitiesCount -= 1;
-                this->updateMaxEntityId();
+                this->removeEntity(idx);
             }
             /**
             * @fn removeEntity
@@ -167,7 +158,9 @@ namespace Rengine {
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
                 this->_currentEntitiesCount -= 1;
-                this->updateMaxEntityId();
+                if (idx >= this->_maxEntityId) {
+                    this->updateMaxEntityId();
+                }
             }
 
             /**
