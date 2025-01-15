@@ -63,6 +63,7 @@ namespace Rengine {
                         const sf::CircleShape* getCircle(void) const;
                         sf::RectangleShape* getRectangle(void);
                         const sf::RectangleShape* getRectangle(void) const;
+                        void updateSpriteSpecs(const SpriteSpecs& specs);
 
                     private:
                         // Using pointer to make the union work

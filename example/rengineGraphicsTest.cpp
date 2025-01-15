@@ -161,6 +161,7 @@ static void inputChangeColor(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
         auto specs = sprite->getSpriteSpecs();
 
         specs.color.x += 25;
+        specs.shapeData.specifics.rectangleSize.y -= 1;
         sprite->updateSpriteSpecs(specs);
         std::cout << "Sprite red = " << int(specs.color.x) << std::endl;
     }
