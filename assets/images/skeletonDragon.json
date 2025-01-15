@@ -3,7 +3,7 @@
         "texturePath":"assets/images/skeletonDragon.png",
         "origin":{
             "x": 80,
-            "y": 40
+            "y": 160
         },
         "scale":{
             "x":1,
@@ -12,7 +12,7 @@
         "animations": {
             "frameRect": {
                 "x": 0,
-                "y": 31,
+                "y": 0,
                 "width": 160,
                 "height": 287
             },
