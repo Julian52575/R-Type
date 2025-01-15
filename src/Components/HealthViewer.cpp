@@ -41,7 +41,7 @@ namespace RType{
             health_view._greenBarSprite.get()->updateSpriteSpecs(spriteSpecs);
             
             Rengine::Graphics::vector2D<float> pos_with_offset = {pos->get().getVector2D().x - 50, pos->get().getVector2D().y - 50};
-            // Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._redBarSprite,pos_with_offset);
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._redBarSprite,pos_with_offset);
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._greenBarSprite,pos_with_offset);
         }
 
