@@ -18,8 +18,11 @@ namespace Rengine {
             SFMLSprite::SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTickMicroseconds)
                 : ASprite(spriteSpecs, creationTickMicroseconds), _renderObject(spriteSpecs)
             {
-                // setSpriteSpecs
-                this->_spriteSpecs = spriteSpecs;
+                this->applySpecs(spriteSpecs);
+            }
+            void SFMLSprite::applySpecs(const SpriteSpecs& specs)
+            {
+                this->_spriteSpecs = specs;
                 // Load texture if set
                 if (this->_spriteSpecs.texturePath != "") {
                     try {
@@ -129,6 +132,11 @@ namespace Rengine {
                 rect.width = this->_spriteSpecs.animation->frameRectWidthHeight.x;
                 rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
                 this->_renderObject.setTextureRect(this->_spriteSpecs.type, rect);
+            }
+
+            void SFMLSprite::updateSpriteSpecs(const SpriteSpecs& newSpecs)
+            {
+                this->applySpecs(newSpecs);
             }
 
             SFMLSprite::SFMLSpriteUnion::SFMLSpriteUnion(const SpriteSpecs& specs)

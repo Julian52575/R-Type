@@ -35,6 +35,7 @@ namespace Rengine {
                 sf::RectangleShape* getRectangle(void) noexcept;
                 void rotate(float rotation) noexcept;
                 void flip(void) noexcept;
+                void updateSpriteSpecs(const SpriteSpecs& newSpecs);
 
             private:
                 union SFMLSpriteUnion {
@@ -69,6 +70,7 @@ namespace Rengine {
                         sf::RectangleShape* rectangle;
                         sf::CircleShape* circle;
                 };
+                void applySpecs(const SpriteSpecs& specs);
                 void applyCurrentFrameTexture(void);
                 SFMLSpriteUnion _renderObject;
                 sf::Texture _texture;

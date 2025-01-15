@@ -153,6 +153,19 @@ static void inputFlipSprite(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
     }
 }
 
+static void inputChangeColor(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
+{
+    Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+
+    if (manager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialArrowUP})) {
+        auto specs = sprite->getSpriteSpecs();
+
+        specs.color.x += 25;
+        sprite->updateSpriteSpecs(specs);
+        std::cout << "Sprite red = " << int(specs.color.x) << std::endl;
+    }
+}
+
 static std::shared_ptr<Rengine::Graphics::AText> initTextBox(void)
 {
     Rengine::Graphics::TextSpecs specs;
@@ -200,7 +213,7 @@ int main(void)
         input();
         inputFlipSprite(sprite);
         inputTextbox(textBox);
-        manager.getWindow()->getInputManager().clear();
+        inputChangeColor(rectangle);
         manager.addToRender(circle, {0, 0});
         manager.addToRender(sprite, {300, 300});
         manager.addToRender(rectangle, {600, 600});
@@ -208,5 +221,6 @@ int main(void)
         manager.addToRender(fancyText, {100, 100});
         manager.addToRender(textBox, {0, 500});
         manager.getWindow()->render();
+        manager.getWindow()->getInputManager().clear();
     }
 }
