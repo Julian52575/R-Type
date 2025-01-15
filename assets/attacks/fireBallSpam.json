@@ -1,7 +1,7 @@
 {
     "attack": {
         "type": "missiles",
-        "cooldown": 0.05,
+        "cooldown": 0.3,
         "missiles": [
             {
                 "json": "assets/entities/smallFireBall.json",

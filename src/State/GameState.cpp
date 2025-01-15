@@ -16,10 +16,11 @@
 #include "State.hpp"
 #include "GameState.hpp"
 #include "AState.hpp"
+#include "src/Config/LevelConfigResolver.hpp"
+
+#include "src/Components/Clickable.hpp"
 #include "src/Components/Configuration.hpp"
 #include "src/Components/Velocity.hpp"
-#include "src/Config/LevelConfigResolver.hpp"
-#include "src/Components/Clickable.hpp"
 #include "src/Components/Metadata.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Sprite.hpp"
@@ -29,6 +30,8 @@
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/HitboxViewer.hpp"
+#include "src/Components/HealthViewer.hpp"
+
 
 namespace RType {
 
@@ -53,6 +56,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::HitboxViewer>();
         this->_ecs.registerComponent<RType::Components::Metadata>();
         this->_ecs.registerComponent<RType::Components::Velocity>();
+        this->_ecs.registerComponent<RType::Components::HealthViewer>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -61,6 +65,7 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Clickable>(RType::Components::Clickable::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::HitboxViewer>(RType::Components::HitboxViewer::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::HealthViewer>(RType::Components::HealthViewer::componentFunction);
     }
 
     void GameState::loadLevel(const std::string& jsonPath)
@@ -176,13 +181,17 @@ namespace RType {
             gameState.loadCurrentScene();
         }
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
+        gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
+
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
+        gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
+        
         for (int i = 0; i < gameState._backgroundSprites.size(); i++)
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(gameState._backgroundSprites[i], {0, 0});
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
+        gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
+
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
-        gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
-        gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
@@ -221,6 +230,7 @@ namespace RType {
         player.addComponent<Components::Relationship>();
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::Metadata>();
+        player.addComponent<RType::Components::HealthViewer>();
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::Action>();
@@ -233,6 +243,7 @@ namespace RType {
                 en.removeComponent<RType::Components::Relationship>();
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::Metadata>();
+                en.removeComponent<RType::Components::HealthViewer>();  
             }
         );
         this->_playerEntityId = Rengine::Entity::size_type(player);
