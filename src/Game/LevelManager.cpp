@@ -90,8 +90,6 @@ enemyLoading:
         for (i = 0; i < enemies->get().size(); i++) {
             Rengine::Entity& currentEnemy = this->_ecs.addEntity();
 
-
-
             currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
             currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
 
@@ -109,9 +107,11 @@ enemyLoading:
 
             if (enemies->get()[i].isBoss == true) {
                 meta.add(RType::Components::Metadata::MetadataListBoss);
+                this->_bossId = Rengine::Entity::size_type(currentEnemy);
             }
+
             currentEnemy.setComponentsDestroyFunction(
-                [](Rengine::Entity& en) {
+                [this](Rengine::Entity& en) {
                     en.removeComponent<RType::Components::Position>();
                     en.removeComponent<RType::Components::Sprite>();
                     en.removeComponent<RType::Components::Hitbox>();
@@ -121,6 +121,11 @@ enemyLoading:
                     en.removeComponent<RType::Components::Metadata>();
                     en.removeComponent<RType::Components::Life>();
                     en.removeComponent<RType::Components::HealthViewer>();
+
+                    if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
+                        this->_bossId = std::nullopt;
+                    }
+                    
                 }
             );
             this->_currentSceneEnemies.push_back(Rengine::Entity::size_type(currentEnemy));
@@ -146,8 +151,12 @@ loadSceneReturn:
                 if (this->_time >= this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].endConditionData.time) {
                     return true;
                 }
+                break;
 
             case (Config::SceneEndConditionBossDefeat):
+                if (this->_bossId.has_value() == false) {
+                    return true;
+                }
                 break;
 
             // Invalid end condition : return true and hope for reload

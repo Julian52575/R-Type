@@ -28,6 +28,7 @@ namespace RType {
             Rengine::SparseArray<RType::Components::Life>& lifes = ecs.getComponents<RType::Components::Life>();
 
             std::optional<std::reference_wrapper<Position>> posWrapper = entity.getComponentNoExcept<Position>();
+            std::optional<std::reference_wrapper<Life>> lifeWrapper = entity.getComponentNoExcept<Life>();
 
             // Entity has no position
             if (posWrapper == std::nullopt) {
@@ -50,6 +51,7 @@ namespace RType {
                 if (relationships[index].has_value() == true && relationships[index]->isParented(uint64_t(entity))) {
                     continue;
                 }
+
                 // Current entity data
                 float hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;
                 float hitboxEndY = hitboxStartY + hitboxs[index]->getSpecs().size.y;
@@ -68,14 +70,14 @@ namespace RType {
                     return;
                 }
                 hitbox._lastCheckSeconds = currentTime;
-
                 //check si l'entité à une vie et si c'est le cas elle take damage
                 if (lifes[index].has_value() == true) {
                     lifes[index]->takeDamage(1);// penser à mettre les degats de entity
                 }
+                if (lifeWrapper.has_value() == true) {
+                    lifeWrapper->get().takeDamage(1);
+                }
 
-                // ecs.removeEntity(ecs.getEntity(index));
-                return;  // Only one collision per frame
             } // for index
         }
     }  // namespace Components
