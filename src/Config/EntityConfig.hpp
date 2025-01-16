@@ -150,8 +150,16 @@ namespace RType {
                 * @brief Returns the data for the entity's attack.
                 */
                 const std::optional<AttackConfig>& getAttack(uint8_t id) const noexcept;
+                /**
+                * @fn getJsonPath
+                * @return std::string The path to the json used to create this entity.
+                * @brief Returns the path to the json used to create this entity.
+                */
+                const std::string& getJsonPath(void) const noexcept;
+
 
             private:
+                std::string _jsonPath = "";
                 ImageConfig _sprite;
                 EntityConfigStats _stats;
                 EntityConfigCharacteristics _characteristics;

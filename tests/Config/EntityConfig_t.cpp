@@ -112,6 +112,12 @@ TEST(EntityConfig, EntityConfigAttack)
     //shoot3
     ASSERT_FALSE(shoot3.has_value());
 }
+TEST(EntityConfig, EntityConfig)
+{
+    auto con = RType::Config::EntityConfig("Config/entity.json");
+
+    ASSERT_EQ(con.getJsonPath(), "Config/entity.json");
+}
 
 
 /* buff.json
