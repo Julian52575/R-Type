@@ -114,7 +114,7 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
-        gameState._levelManager.updateDeltatime(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());
+        gameState._levelManager.updateDeltatime();
         if (gameState._levelManager.isCurrentSceneOver()) {
             if (!gameState._levelManager.nextScene()) {
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);

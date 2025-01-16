@@ -134,9 +134,9 @@ loadSceneReturn:
         return true;
     }
 
-    void LevelManager::updateDeltatime(float deltaTime)
+    void LevelManager::updateDeltatime(void)
     {
-        this->_time += deltaTime;
+        this->_time += Rengine::Clock::getElapsedTime();
     }
 
     bool LevelManager::isCurrentSceneOver(void)

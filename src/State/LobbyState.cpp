@@ -31,7 +31,7 @@ namespace RType {
         // for (std::optional<Message<Network::Communication::TypeDetail>> msg = LobbyState._client->Receive(); msg; msg = LobbyState._client->Receive()) {
         //     std::cout << "Message received: " << msg->header.size << std::endl;
         // }
-        LobbyState._time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+        LobbyState._time += Rengine::Clock::getElapsedTime();
         LobbyState.handleInput();
         for (size_t i = LobbyState._begin; i < LobbyState._displayGameInfos.size() && i < LobbyState._begin + 5; i++) {
             float pos_y = 100.0f + 70.0f * static_cast<float>(i - LobbyState._begin);
