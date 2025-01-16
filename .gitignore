@@ -11,3 +11,4 @@ doxygen/
 *.log
 example/test
 venvconan/
+test
