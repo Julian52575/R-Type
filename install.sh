@@ -10,33 +10,22 @@ if ! test -x $LIB; then
     ./compile.sh
 fi
 
-echo "Installing lib..."
+echo "Installing libraries..."
 if ! sudo mv $LIB /usr/lib --verbose; then
     RIGHT=False
-
-else
-    echo "$LIB has been installed !"
 fi
 
 if ! sudo mv $LIB_GRAPHIC /usr/lib --verbose ; then
     RIGHT=False
-
-else
-    echo "$LIB_GRAPHIC has been installed !"
 fi
 
 if ! sudo mv $LIB_SERVER /usr/lib --verbose; then
     RIGHT=False
-
-else
-    echo "$LIB_SERVER has been installed !"
 fi
 
-
-echo "Installing dev header..."
+echo "Installing dev headers..."
 sudo ./.installHeader.sh
 if [ $RIGHT == False ]; then
-    echo "WARNING: Cannot install /usr/lib/$LIB."
-    echo "Move $LIB into /usr/lib yourself."
+    echo "ERROR: Cannot install /usr/lib/$LIB."
     exit 84
 fi

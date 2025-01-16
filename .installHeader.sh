@@ -2,11 +2,11 @@
 # 
 HPP_LIST=$(find . -name "*.hpp" -not -path "./lol/*.hpp" -not -path "./build/*.hpp" -not -path "./rengine/*.hpp" | tr " " "\n")
 HPP_LIST=(${HPP_LIST// /\n})
-TPP_LIST=$(find . -name "*.tpp" -not -path "./lol/*.tpp" -not -path "./build/*.tpp" -not -path "./rengine/*.tpp" | tr " " "\n")
+#TPP_LIST=$(find . -name "*.tpp" -not -path "./lol/*.tpp" -not -path "./build/*.tpp" -not -path "./rengine/*.tpp" | tr " " "\n")
 # if array len is superior to one, sanitarize it
-if (( ${#TPP_LIST[@]} > 1 )); then
-    TPP_LIST=($TPP_LIST// /\n})
-fi
+#if (( ${#TPP_LIST[@]} > 1 )); then
+#    TPP_LIST=($TPP_LIST// /\n})
+#fi
 
 INSTALL_PARENT_DIR=/usr/include
 INSTALL_DIR="$INSTALL_PARENT_DIR/rengine"
@@ -30,10 +30,10 @@ do
     mkdir -p "$INSTALL_DIR/$(dirname $header)"
     cp -a $header "$INSTALL_DIR/$header"
 done
-for header in "${TPP_LIST[@]}"
-do
-    mkdir -p "$INSTALL_DIR/$(dirname $header)"
-    cp -a $header "$INSTALL_DIR/$header"
-done
+#for header in "${TPP_LIST[@]}"
+#do
+#    mkdir -p "$INSTALL_DIR/$(dirname $header)"
+#    cp -a $header "$INSTALL_DIR/$header"
+#done
 
 echo "Installed dev headers in $INSTALL_DIR !"

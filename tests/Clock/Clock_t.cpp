@@ -28,5 +28,6 @@ TEST(Clock, getElapsedTime)
     for (int i = 0; i < 8; i++) {
         // best I can do is check if deltatime is supertior to the sleep time
         EXPECT_GT(tab[i], 0.5f);
+        EXPECT_LE(tab[i], 1.0f);
     }
 }
