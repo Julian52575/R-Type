@@ -284,19 +284,20 @@ namespace RType {
         }
 
         inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
-                        Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
+                        Rengine::Entity& host, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
         {
             // Not enough entity left for attack : skip it
             if (attackConfig->getMissiles().size() > ecs.getEntityLimit() - ecs.getActiveEntitiesCount()) {
                 return;
             }
             Config::EntityConfigResolver singletone = Config::EntityConfigResolverSingletone::get();
-            const Position& hostPosition = entity.getComponent<Position>();
+            const Position& hostPosition = host.getComponent<Position>();
+            Relationship hostRelationship = host.getComponent<Relationship>();
 
             for (const Config::MissileConfig& it : attackConfig->getMissiles()) {
                 const RType::Config::EntityConfig& missileConfig = singletone.get(it.getJsonPath());
                 Rengine::Entity& projectile = ecs.addEntity();
-                RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
+                RType::Components::Relationship& proRelationship = projectile.addComponent<RType::Components::Relationship>();
 
                 // set Components
                 projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
@@ -314,19 +315,27 @@ namespace RType {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
 
-                relationship.addParent(uint64_t(entity));
+                proRelationship.addParent(uint64_t(host));
+                hostRelationship.addChild(uint64_t(projectile));
 
                 projectile.setComponentsDestroyFunction(
-                    [](Rengine::Entity& en) {
-                        en.removeComponent<HitboxViewer>();
-                        en.removeComponent<Position>();
-                        en.removeComponent<Hitbox>();
-                        en.removeComponent<HitboxViewer>();
-                        en.removeComponent<Sprite>();
-                        en.removeComponent<Configuration>();
-                        en.removeComponent<Buff>();
-                        en.removeComponent<Relationship>();
-                        en.removeComponent<Chrono>();
+                    [&host](Rengine::Entity& en) {
+                        auto hostRelationship = host.getComponentNoExcept<Relationship>();
+
+                        // Remove child projectile on destruction
+                        if (hostRelationship.has_value() == true) {
+                            hostRelationship.value().get().removeChild(uint64_t(en));
+                        }
+                        en.removeComponentNoExcept<HitboxViewer>();
+                        en.removeComponentNoExcept<Position>();
+                        en.removeComponentNoExcept<Hitbox>();
+                        en.removeComponentNoExcept<Sprite>();
+                        en.removeComponentNoExcept<Configuration>();
+                        en.removeComponentNoExcept<Buff>();
+                        en.removeComponentNoExcept<Relationship>();
+                        en.removeComponentNoExcept<Chrono>();
+                        en.removeComponentNoExcept<Action>();
+                        en.removeComponentNoExcept<Velocity>();
                     }
                 );
 

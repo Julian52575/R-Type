@@ -29,6 +29,10 @@ namespace RType {
             default:
                 break;
         }
+        // Clear ECS when leaving game
+        if (this->_currentState == State::StateGame && newState != State::StateGame) {
+            this->_ecs.clearEntities();
+        }
         this->_currentState = newState;
     }
 

@@ -48,7 +48,7 @@ namespace RType {
                     continue;
                 }
                 // Check parenty: child cannot damage parents
-                if (relationships[index].has_value() == true && relationships[index]->isParented(uint64_t(entity))) {
+                if (relationships[index].has_value() == true && relationships[index]->isRelated(uint64_t(entity))) {
                     continue;
                 }
 

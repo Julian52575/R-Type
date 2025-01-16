@@ -142,6 +142,7 @@ namespace RType {
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
+            gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
             return State::StateMenu;
         }
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
@@ -220,7 +221,7 @@ namespace RType {
             if (spRelationship[index].has_value() == false) {
                 continue;
             }
-            if (spRelationship[index]->isParented(uint64_t(this->_playerEntityId))) {
+            if (spRelationship[index]->isRelated(uint64_t(this->_playerEntityId))) {
                 continue;
             }
             if (spPosition[index].has_value() == false) {
