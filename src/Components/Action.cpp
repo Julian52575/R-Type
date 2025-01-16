@@ -6,6 +6,7 @@
 #include <optional>
 #include <rengine/src/Clock/Clock.hpp>
 #include <rengine/src/ECS.hpp>
+#include <rengine/src/Entity.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Graphics/Vector.hpp>
@@ -15,6 +16,7 @@
 #include <iostream>
 #include <rengine/Rengine.hpp>
 
+#include "src/Game/EntityMaker.hpp"
 #include "../Network/EntityAction.hpp"
 #include "Components.hpp"
 #include "src/Game/SceneManager.hpp"
@@ -294,30 +296,25 @@ namespace RType {
             }
             Config::EntityConfigResolver singletone = Config::EntityConfigResolverSingletone::get();
             const Position& hostPosition = host.getComponent<Position>();
-            Relationship hostRelationship = host.getComponent<Relationship>();
+            Relationship& hostRelationship = host.getComponent<Relationship>();
 
             for (const Config::MissileConfig& it : attackConfig->getMissiles()) {
-                const RType::Config::EntityConfig& missileConfig = singletone.get(it.getJsonPath());
-                Rengine::Entity& projectile = ecs.addEntity();
-                RType::Components::Relationship& proRelationship = projectile.addComponent<RType::Components::Relationship>();
+                RType::Config::EntityConfig currentMissileEntityConfig;
+                Rengine::Entity& projectile = RType::EntityMaker::make(ecs, it.getJsonPath(), hostRelationship.getGroup(), &currentMissileEntityConfig);
+                RType::Components::Relationship& proRelationship = projectile.getComponent<RType::Components::Relationship>();
 
                 // set Components
-                projectile.addComponent<Position>(
-                        hostPosition.getVector2D().x + it.getOffset().first,
-                        hostPosition.getVector2D().y + it.getOffset().second
+                projectile.getComponent<Position>().set(
+                        {hostPosition.getVector2D().x + (float) it.getOffset().first,
+                        hostPosition.getVector2D().y + (float) it.getOffset().second}
                 );
-                projectile.addComponent<Hitbox>(missileConfig.getHitbox());
-                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
-                projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
-                projectile.addComponent<Configuration>(missileConfig);
-                projectile.addComponent<Buff>();
-                projectile.addComponent<Life>(missileConfig.getStats().hp);
+                projectile.addComponent<Sprite>(currentMissileEntityConfig.getSprite().getSpecs());
+                projectile.addComponent<HitboxViewer>(currentMissileEntityConfig.getHitbox().size.x, currentMissileEntityConfig.getHitbox().size.y);
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
                 hostRelationship.addChild(uint64_t(projectile));
                 proRelationship.addParent(uint64_t(host));
-                proRelationship.setGroup(hostRelationship.getGroup());
                 bool hasAction = false;
                 bool hasVelocity = false;
                 switch (it.getControlType()) {
@@ -341,21 +338,15 @@ namespace RType {
                         break;
                 } // switch controlType
                 projectile.setComponentsDestroyFunction(
-                    [&host, &hasVelocity, &hasAction](Rengine::Entity& en) {
+                    [&host, hasVelocity, hasAction](Rengine::Entity& en) {
                         auto hostRelationship = host.getComponentNoExcept<Relationship>();
 
                         // Remove child projectile on destruction
                         if (hostRelationship.has_value() == true) {
                             hostRelationship.value().get().removeChild(uint64_t(en));
                         }
-                        en.removeComponent<Relationship>();
-                        en.removeComponent<Position>();
-                        en.removeComponent<Hitbox>();
-                        en.removeComponent<HitboxViewer>();
                         en.removeComponent<Sprite>();
-                        en.removeComponent<Configuration>();
-                        en.removeComponent<Buff>();
-                        en.removeComponent<Life>();
+                        en.removeComponent<HitboxViewer>();
                         en.removeComponent<Chrono>();
                         if (hasAction) {
                             en.removeComponent<Action>();

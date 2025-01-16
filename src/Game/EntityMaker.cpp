@@ -26,10 +26,10 @@
 
 namespace RType {
 
-        Rengine::Entity& EntityMaker::make(Rengine::ECS& ecs, const std::string& json, uint64_t group, RType::Config::EntityConfig* configPtr)
+
+        Rengine::Entity& EntityMaker::make(Rengine::ECS& ecs, const RType::Config::EntityConfig& enConfig, uint64_t group)
         {
             Rengine::Entity& entity = ecs.addEntity();
-            const Config::EntityConfig& enConfig = Config::EntityConfigResolverSingletone::get().get(json);
 
             entity.addComponent<RType::Components::Configuration>(enConfig);
             entity.addComponent<RType::Components::Position>(0, 0);
@@ -51,10 +51,17 @@ namespace RType {
                     en.removeComponentNoExcept<RType::Components::Relationship>();
                 }
             );
+            return entity;
+        }
+
+        Rengine::Entity& EntityMaker::make(Rengine::ECS& ecs, const std::string& json, uint64_t group, RType::Config::EntityConfig* configPtr)
+        {
+            const Config::EntityConfig& enConfig = Config::EntityConfigResolverSingletone::get().get(json);
+
             if (configPtr != nullptr) {
                 *configPtr = enConfig;
             }
-            return entity;
+            return EntityMaker::make(ecs, enConfig, group);
         }
 
         Rengine::Entity& EntityMaker::make(Rengine::ECS& ecs, uint64_t configurationId, uint64_t group, RType::Config::EntityConfig* configPtr)
