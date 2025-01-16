@@ -13,14 +13,14 @@ namespace RType{
             Rengine::Graphics::SpriteSpecs spriteSpecs;
 
             spriteSpecs.type = Rengine::Graphics::SpriteTypeRectangle;
-            spriteSpecs.color = {0, 0, 0};
-            spriteSpecs.opacity = 0;
-            spriteSpecs.shapeData.outlineColor = {255, 0, 0};
+            spriteSpecs.color = {255, 0, 0};
+            spriteSpecs.shapeData.outlineColor = {255, 255, 255};
             spriteSpecs.shapeData.outlineThickness = 2;
             spriteSpecs.shapeData.specifics.rectangleSize = {100, 10};
             this->_redBarSprite = manager.createSprite(spriteSpecs);
 
-            spriteSpecs.shapeData.outlineColor = {0, 255, 0};
+            spriteSpecs.color = {0, 255, 0};
+            spriteSpecs.shapeData.specifics.rectangleSize = {100, 10};
             this->_greenBarSprite = manager.createSprite(spriteSpecs);
         }
 
@@ -36,10 +36,13 @@ namespace RType{
             float percent = (float(life->get().getHp()) / float(life->get().getMaxHp()));
             Rengine::Graphics::vector2D<float> size = {100 * percent, 10};
 
-            // health_view._greenBarSprite->setShapeData({size, {0, 0}, {0, 0, 0}});
-
-            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._redBarSprite,pos->get().getVector2D());
-            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._greenBarSprite,pos->get().getVector2D());
+            Rengine::Graphics::SpriteSpecs spriteSpecs = health_view._greenBarSprite.get()->getSpriteSpecs();
+            spriteSpecs.shapeData.specifics.rectangleSize = size;
+            health_view._greenBarSprite.get()->updateSpriteSpecs(spriteSpecs);
+            
+            Rengine::Graphics::vector2D<float> pos_with_offset = {pos->get().getVector2D().x - 50, pos->get().getVector2D().y - 50};
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._redBarSprite,pos_with_offset);
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(health_view._greenBarSprite,pos_with_offset);
         }
 
     }
