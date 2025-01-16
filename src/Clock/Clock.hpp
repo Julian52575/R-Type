@@ -28,6 +28,9 @@ namespace Rengine {
     }  // namespace Clock
 }  // namespace Rengine
 
-// Yes, include tpp for templated function + unaccesible static variable
-#include "Clock.tpp"
+// Compile once only for lib
+#ifdef __RENGINE_COMPILING_LIB
+    // Yes, include tpp for templated function + unaccesible static variable
+    #include "Clock.tpp"
+#endif
 #endif  // SRC_CLOCK_HPP_

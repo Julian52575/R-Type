@@ -1,4 +1,6 @@
 //
+#ifndef SRC_CLOCK_CLOCK_TPP_
+#define SRC_CLOCK_CLOCK_TPP_
 #include <cstdint>
 #include <cstdlib>
 #include <ctime>
@@ -33,3 +35,4 @@ namespace Rengine {
 
     }  // namespace Clock
 }  // namespace Rengine
+#endif  // SRC_CLOCK_CLOCK_TPP_
