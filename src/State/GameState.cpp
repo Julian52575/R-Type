@@ -163,13 +163,13 @@ namespace RType {
     }
 
     State InitNetwork(GameState& gameState) {
-        try {
-            gameState._clientTCP = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.TCPPort);
-            gameState._clientUDP = std::make_unique<ClientUDP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.UDPPort);
-        } catch (const std::exception& e) {
-            std::cerr << "Error" << e.what() << std::endl;
-            return State::StateLobby;
-        }
+        // try {
+        //     gameState._clientTCP = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.TCPPort);
+        //     gameState._clientUDP = std::make_unique<ClientUDP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.UDPPort);
+        // } catch (const std::exception& e) {
+        //     std::cerr << "Error" << e.what() << std::endl;
+        //     return State::StateLobby;
+        // }
         gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
         return State::StateGame;
     }

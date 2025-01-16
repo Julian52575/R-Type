@@ -45,6 +45,7 @@ namespace RType {
             this->_actionSource = source;
             switch (source) {
                 case ActionSourceScript:
+                    //load le script lua -> stocker l'id renvoyer par le lua -> appeler la fonction lua grace a l'id et au path
                     std::cout << "RType::Component::Action: Warning: Script not inplemented." << scriptPath << std::endl;
                     break;
 
@@ -66,7 +67,6 @@ namespace RType {
             switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
-                    std::cout << "RType::Component::Action: Warning: Script not inplemented." << std::endl;
                     return;
 
                 case ActionSource::ActionSourceUserInput:

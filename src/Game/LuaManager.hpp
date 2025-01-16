@@ -65,9 +65,9 @@ namespace RType {
             ~LuaManager(void);
             /**
             * @fn addScript
-            * @brief Load a script into the manager.
+            * @brief Load a script into the manager and return the id of the lua state.
             */
-            void addScript(const std::string& filename);
+            int addScript(const std::string& filename);
             /**
             * @fn callFunction
             * @template Args The arguments to pass to the function
@@ -77,7 +77,7 @@ namespace RType {
             * @brief Call the lua function 'name' from the script 'filename' with the provided args.
             */
             template <typename ...Args>
-            std::vector<LuaReturn> callFunction(const std::string& filename, const std::string& functionName, Args... args);
+            std::vector<LuaReturn> callFunction(const std::string& filename,int id, const std::string& functionName, Args... args);
 
         private:
             template <typename T, typename ...Args>
@@ -106,17 +106,22 @@ namespace RType {
 
             std::vector<LuaReturn> getLuaResult(lua_State* L);
             std::unordered_map<std::string, std::any> processLuaTable(lua_State* L, int index);
-            std::unordered_map<std::string, lua_State*> states;
+            std::unordered_map<std::string, std::vector<lua_State*>> states;
     };
 
     // Doesn't compile outside of hpp
     template <typename... Args>
-    std::vector<LuaReturn> LuaManager::callFunction(const std::string& file, const std::string& name, Args... args)
+    std::vector<LuaReturn> LuaManager::callFunction(const std::string& file,int id, const std::string& name, Args... args)
     {
         if (states.find(file) == states.end()) {
-            this->addScript(file);
+            throw LuaManagerException("Lua error: file " + file +" needs to be loaded before calling a function");
         }
-        lua_State* L = states[file];
+        std::vector<lua_State*> state = this->states[file];
+        if (state.size() <= id) {
+            throw LuaManagerException("Lua error: id " + std::to_string(id) + " not found in file " + file);
+        }
+
+        lua_State* L = state[id];
 
         if (lua_getglobal(L, name.c_str()) == 0) {
             throw LuaManagerException("Lua error: cannot find function " + name + " in file " + file);

@@ -50,11 +50,13 @@ namespace RType {
     LuaManager::~LuaManager(void)
     {
         for (auto& [name, state] : this->states) {
-            lua_close(state);
+            for (size_t i = 0; i < state.size(); i++) {
+                lua_close(state[i]);
+            }
         }
     }
 
-    void LuaManager::addScript(const std::string& filename)
+    int LuaManager::addScript(const std::string& filename)
     {
         if (states.find(filename) != states.end()) {
             throw LuaManagerException("Lua error: file already loaded");
@@ -69,7 +71,13 @@ namespace RType {
             lua_pop(L, 1);
             throw LuaManagerException("Lua error: Cannot load file: " + filename);
         }
-        this->states[filename] = L;
+        // this->states[filename] = L;
+        if (this->states.find(filename) == this->states.end()) {
+            this->states[filename] = {L};
+            return 0;
+        }
+        this->states[filename].push_back(L);
+        return this->states[filename].size() - 1;
     }
 
     void LuaManager::push(lua_State *)
