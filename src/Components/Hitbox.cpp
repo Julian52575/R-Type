@@ -64,7 +64,7 @@ namespace RType {
                     continue;
                 }
                 float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
-                float timeCooldown = 1.5;
+                float timeCooldown = 0.3;
 
                 if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
                     return;
