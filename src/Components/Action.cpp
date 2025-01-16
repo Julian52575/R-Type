@@ -39,8 +39,7 @@
 namespace RType {
     namespace Components {
 
-        Action::Action(std::reference_wrapper<SceneManager> sceneManager, ActionSource source, const std::string& scriptPath)
-            : _sceneManager(sceneManager)
+        Action::Action(ActionSource source, const std::string& scriptPath)
         {
             this->_actionSource = source;
             switch (source) {
@@ -323,12 +322,12 @@ namespace RType {
                 bool hasVelocity = false;
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
-                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);
+                        projectile.addComponent<Action>(ActionSource::ActionSourceUserInput);
                         hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeScript):
-                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
+                        projectile.addComponent<Action>(ActionSource::ActionSourceScript, it.getScriptPath());
                         hasAction = true;
                         break;
 
@@ -366,7 +365,6 @@ namespace RType {
                         }
                     }
                 );
-                actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }
 

@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <rengine/Rengine.hpp>
-#include <rengine/RengineGraphics.hpp>
 
 #include "Configuration.hpp"
 #include "Action.hpp"

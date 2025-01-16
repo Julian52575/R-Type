@@ -102,7 +102,7 @@ enemyLoading:
             RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
 
             // std::cout << "Script: " << enemies->get()[i].scriptPath << std::endl;
-            currentEnemy.addComponent<RType::Components::Action>(this->_sceneManager, RType::Components::ActionSourceScript, enemies->get()[i].scriptPath);
+            currentEnemy.addComponent<RType::Components::Action>(RType::Components::ActionSourceScript, enemies->get()[i].scriptPath);
 
             if (enemies->get()[i].isBoss == true) {
                 meta.add(RType::Components::Metadata::MetadataListBoss);

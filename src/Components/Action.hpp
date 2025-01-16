@@ -92,7 +92,7 @@ namespace RType {
                 * @param scriptPath The path to the script to execute if ActionSource == ActionSourceLua
                 * @brief Create an instance of Action Component.
                 */
-                Action(std::reference_wrapper<SceneManager> entitySceneManager, ActionSource source, const std::string& scriptPath = "");
+                Action(ActionSource source, const std::string& scriptPath = "");
                 ~Action(void) = default;
                 /**
                 * @fn begin
@@ -174,7 +174,6 @@ namespace RType {
                 void processUserInput(const Rengine::Graphics::UserInput& input);
 
             private:
-                std::reference_wrapper<SceneManager> _sceneManager;
                 ActionSource _actionSource;
                 std::optional<std::string> _scriptPath;
                 container_t _actionVector;
