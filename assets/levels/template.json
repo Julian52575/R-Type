@@ -2,6 +2,7 @@
     "level": {
         "scenes": [
             {
+                "backgroundMusic": "assets/musics/sm64_impact.wav",
                 "background": [
                     "assets/images/space_background.json"
                 ],
@@ -24,6 +25,7 @@
                 "endConditionTime": 10.0
             },
             {
+                "backgroundMusic": "assets/musics/starforx64_training_mode.mp3",
                 "background": [
                     "assets/images/space_background.json",
                     "assets/images/space_background.json"
