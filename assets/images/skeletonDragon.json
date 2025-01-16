@@ -1,0 +1,27 @@
+{
+    "image":{
+        "texturePath":"assets/images/skeletonDragon.png",
+        "origin":{
+            "x": 80,
+            "y": 160
+        },
+        "scale":{
+            "x":1,
+            "y":1
+        },
+        "animations": {
+            "frameRect": {
+                "x": 0,
+                "y": 0,
+                "width": 160,
+                "height": 287
+            },
+        "frameCount": 9,
+        "frameDuration": 0.08,
+        "frameDisplacement": {
+            "x":160,
+            "y":0
+         }
+        }
+    }
+}
