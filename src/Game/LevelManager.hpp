@@ -4,6 +4,7 @@
 
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
+#include "src/Game/SceneManager.hpp"
 
 namespace RType {
     /**
@@ -15,7 +16,7 @@ namespace RType {
     class LevelManager
     {
         public:
-            LevelManager(Rengine::ECS& ecs);
+            LevelManager(Rengine::ECS& ecs,SceneManager& sceneManager);
             ~LevelManager(void) = default;
             /**
             * @fn loadLevel
@@ -83,6 +84,7 @@ namespace RType {
             std::optional<Rengine::Entity::size_type> _bossId;
             std::vector<Rengine::Entity::size_type> _currentSceneBackgroundEntities;
             std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
+            SceneManager &_sceneManager;
     };
 
 }  // namespace RType

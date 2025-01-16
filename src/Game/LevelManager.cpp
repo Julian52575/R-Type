@@ -26,8 +26,7 @@
 
 namespace RType {
 
-    LevelManager::LevelManager(Rengine::ECS& ecs)
-        : _ecs(ecs)
+    LevelManager::LevelManager(Rengine::ECS& ecs,SceneManager& sceneManager) : _ecs(ecs), _sceneManager(sceneManager)
     {
     }
 
@@ -102,6 +101,8 @@ enemyLoading:
             RType::Components::Relationship& rel = currentEnemy.addComponent<RType::Components::Relationship>();
             RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
 
+            currentEnemy.addComponent<RType::Components::Action>(this->_sceneManager, RType::Components::ActionSourceScript, "path/to/script");
+
             if (enemies->get()[i].isBoss == true) {
                 meta.add(RType::Components::Metadata::MetadataListBoss);
                 this->_bossId = Rengine::Entity::size_type(currentEnemy);
@@ -118,7 +119,8 @@ enemyLoading:
                     en.removeComponentNoExcept<RType::Components::Life>();
                     en.removeComponentNoExcept<RType::Components::HealthViewer>();
                     en.removeComponentNoExcept<RType::Components::Metadata>();
-
+                    en.removeComponentNoExcept<RType::Components::Action>();
+                    
                     if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
                         this->_bossId = std::nullopt;
                     }

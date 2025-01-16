@@ -66,6 +66,7 @@ namespace RType {
             switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
+                    std::cout << "RType::Component::Action: Warning: Script not inplemented." << std::endl;
                     return;
 
                 case ActionSource::ActionSourceUserInput:

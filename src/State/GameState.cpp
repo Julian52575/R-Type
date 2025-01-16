@@ -31,7 +31,7 @@
 
 namespace RType {
 
-    GameState::GameState(Rengine::ECS& ecs) : AState(ecs), _levelManager(ecs)
+    GameState::GameState(Rengine::ECS& ecs) : AState(ecs), _levelManager(ecs, this->_sceneManager)
     {
         this->_clientTCP = nullptr;
         this->_clientUDP = nullptr;
