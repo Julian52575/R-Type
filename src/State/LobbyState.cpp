@@ -14,23 +14,97 @@ namespace RType {
     void LobbyState::registerComponents(void) {
     }
 
+    void LobbyState::updateGameInfos(void) {
+        Message<Network::Communication::TypeDetail> msg;
+        msg.header.size = 0;
+        msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::RequestGamesInfo};
+        this->_client->Send(msg);
+    }
+
     State initLobbyConnexion(LobbyState &LobbyState) {
         //mettre le try catch en com pour disable le server
-        // try {
-        //     LobbyState._client = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(LobbyState._lobbyInfo.serverIp, LobbyState._lobbyInfo.port);
-        // } catch (const std::exception& e) {
-        //     std::cerr << "Error" << e.what() << std::endl;
-        //     return State::StateMenu;
-        // }
+        try {
+            LobbyState._client = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(LobbyState._lobbyInfo.serverIp, LobbyState._lobbyInfo.port);
+        } catch (const std::exception& e) {
+            std::cerr << "Error" << e.what() << std::endl;
+            return State::StateMenu;
+        }
+        Message<Network::Communication::TypeDetail> msg;
+        msg.header.size = 0;
+        msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::RequestGamesInfo};
+        LobbyState._client->Send(msg);
         LobbyState._sceneManager.setScene(LobbyScenes::LobbySceneRun);
         return State::StateLobby;
     }
 
+    DisplayGameInfo &LobbyState::getGameInfoByUuid(uuid_t id) {
+        for (auto &game : this->_displayGameInfos) {
+            if (uuid_compare(game.Infos.id, id) == 0) {
+                return game;
+            }
+        }
+        throw std::runtime_error("Game not found");
+    }
+
+    std::string printUuid(uuid_t &uuid) {
+        char uuid_str[37];
+        uuid_unparse(uuid, uuid_str);
+        return std::string(uuid_str);
+    };
+
     State runLevel(LobbyState &LobbyState) {
         // mettre le for en com pour disable le server
-        // for (std::optional<Message<Network::Communication::TypeDetail>> msg = LobbyState._client->Receive(); msg; msg = LobbyState._client->Receive()) {
-        //     std::cout << "Message received: " << msg->header.size << std::endl;
-        // }
+        for (std::optional<Message<Network::Communication::TypeDetail>> msg = LobbyState._client->Receive(); msg; msg = LobbyState._client->Receive()) {
+            std::cout << "Received message of type " << msg->header.type.type << " and precision " << msg->header.type.precision << std::endl;
+            if (msg->header.type.type == Network::Communication::LobbyInfo && msg->header.type.precision == Network::Communication::main::LobbyInfoPrecision::GameInfo) {
+                LobbyState._displayGameInfos.clear();
+                uint16_t nbGames;
+                *msg >> nbGames;
+                for (uint16_t i = 0; i < nbGames; i++) {
+                    uuid_t gameID;
+                    uint16_t nbUsers;
+                    char name[15];
+                    time_t timeStarted;
+                    *msg >> timeStarted >> name >> nbUsers >> gameID;
+                    std::string nameStr(name);
+                    LobbyState.makeGameInfos(nameStr, nbUsers, timeStarted, gameID);
+                }
+            }
+            if (msg->header.type.type == Network::Communication::LobbyInfo && msg->header.type.precision == Network::Communication::main::LobbyInfoPrecision::GameCreated) {
+                uuid_t gameID;
+                uint16_t nbUsers;
+                char name[15];
+                time_t timeStarted;
+                *msg >> timeStarted >> name >> nbUsers >> gameID;
+                std::string nameStr(name);
+                LobbyState.makeGameInfos(nameStr, nbUsers, timeStarted, gameID);
+            }
+
+            if (msg->header.type.type == Network::Communication::LobbyInfo && msg->header.type.precision == Network::Communication::main::LobbyInfoPrecision::GameUpdated) {
+                uuid_t gameID;
+                uint16_t nbUsers;
+                char name[15];
+                time_t timeStarted;
+                *msg >> timeStarted >> name >> nbUsers >> gameID;
+                std::string nameStr(name);
+                try {
+                    DisplayGameInfo& game = LobbyState.getGameInfoByUuid(gameID);
+                    game.Infos.name = nameStr;
+                    game.Infos.playerCount = nbUsers;
+                    game.Infos.time = timeStarted;
+                } catch (const std::runtime_error& e) {
+                    LobbyState.makeGameInfos(nameStr, nbUsers, timeStarted, gameID);
+                }
+            }
+
+            if (msg->header.type.type == Network::Communication::LobbyInfo && msg->header.type.precision == Network::Communication::main::LobbyInfoPrecision::RequestedGame) {
+                uint16_t gameTCPport;
+                uint16_t gameUDPport;
+                *msg >> gameUDPport >> gameTCPport;
+                std::cout << "Game UDP port: " << gameUDPport << std::endl;
+                std::cout << "Game TCP port: " << gameTCPport << std::endl;
+            }
+        }
         LobbyState._time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
         LobbyState.handleInput();
         for (size_t i = LobbyState._begin; i < LobbyState._displayGameInfos.size() && i < LobbyState._begin + 5; i++) {
@@ -45,9 +119,12 @@ namespace RType {
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].time, {pos_x + 450.0f, pos_y});
             // Check enter to start game, might show a compilation error on some IDE, compiles anyways.
             if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
-            .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialENTER}
-                )) {
-                return State::StateGame;
+            .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialENTER})) {
+                Message<Network::Communication::TypeDetail> msg;
+                msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::JoinGame};
+                msg.header.size = 0;
+                msg << LobbyState._displayGameInfos[i].Infos.id;
+                LobbyState._client->Send(msg);
             }
         }
         return State::StateLobby;
@@ -75,12 +152,16 @@ namespace RType {
 
     void LobbyState::handleInput(void)
     {
-        if (this->_time < 0.10f) {
+        if (this->_time < 0.05f) {
             return;
         }
         this->_time = 0;
         Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
         for (auto it : inputManager) {
+            if (it.type == Rengine::Graphics::UserInputTypeKeyboardCharPressed && it.data.keyboardChar == 'r') {
+                this->updateGameInfos();
+                continue;
+            }
             if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
                 switch (it.data.keyboardSpecial) {
                     case Rengine::Graphics::UserInputKeyboardSpecialArrowUP:
@@ -141,12 +222,6 @@ namespace RType {
     void LobbyState::setGameInfos(void) {
         uuid_t id;
         uuid_generate(id);
-        this->makeGameInfos("Eliott", 1, time(nullptr), id);
-        this->makeGameInfos("partie 2 ", 10, time(nullptr), id);
-        this->makeGameInfos("partie 3 ", 10, time(nullptr), id);
-        this->makeGameInfos("partie 4 ", 10, time(nullptr), id);
-        this->makeGameInfos("partie 5 ", 10, time(nullptr), id);
-        this->makeGameInfos("partie 6 ", 10, time(nullptr), id);
 
         Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
         Rengine::Graphics::SpriteSpecs spriteSpecs;
