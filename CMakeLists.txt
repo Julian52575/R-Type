@@ -1,7 +1,7 @@
 # Declare project, source file
 cmake_minimum_required(VERSION 3.20)
 project(R-Engine)
-file(GLOB_RECURSE SRC_FILES src/ECS.hpp)
+file(GLOB_RECURSE SRC_FILES src/ECS.hpp src/Clock/Clock.cpp)
 file(GLOB_RECURSE GRAPHICS_FILES src/Graphics/*.cpp src/Graphics/*.hpp)
 file(GLOB_RECURSE SERVER_FILES src/Network/*.cpp src/Network/*.hpp)
 

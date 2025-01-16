@@ -12,7 +12,7 @@ TEST(Clock, restart)
     Rengine::Clock::restart();
 
     // Expect deltatime to be low
-    EXPECT_TRUE(Rengine::Clock::getElapsedTime<double>() < 1000);
+    EXPECT_TRUE(Rengine::Clock::getElapsedTime() < 1000);
 }
 
 TEST(Clock, getElapsedTime)
@@ -23,7 +23,7 @@ TEST(Clock, getElapsedTime)
         Rengine::Clock::restart();
         // sleep for half a second
         std::this_thread::sleep_for(std::chrono::microseconds(500000));
-        tab[i] = Rengine::Clock::getElapsedTime<double>();
+        tab[i] = Rengine::Clock::getElapsedTime();
     }
     for (int i = 0; i < 8; i++) {
         // best I can do is check if deltatime is supertior to the sleep time
