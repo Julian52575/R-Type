@@ -6,7 +6,7 @@
             {
                 "json": "assets/entities/bigFireBall.json",
                 "offset": {
-                    "x": 20, "y": -65
+                    "x": 20, "y": -60
                 },
                 "controlType": "velocity",
                 "velocity": {

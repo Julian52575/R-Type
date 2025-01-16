@@ -19,6 +19,9 @@
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/HitboxViewer.hpp"
+#include "src/Components/HealthViewer.hpp"
+#include "src/Components/Chrono.hpp"
+#include "src/Components/Life.hpp"
 
 namespace RType {
 
@@ -89,17 +92,26 @@ enemyLoading:
 
             currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
             currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
+
+            currentEnemy.getComponent<RType::Components::Sprite>().getSprite().get()->flip();
+
             currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
             currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
             currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
             currentEnemy.addComponent<RType::Components::Relationship>();
+            
+            currentEnemy.addComponent<RType::Components::Life>(enemies->get()[i].entityConfig.getStats().hp);
+            currentEnemy.addComponent<RType::Components::HealthViewer>(enemies->get()[i].entityConfig.getStats().hp);
+
             RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
 
             if (enemies->get()[i].isBoss == true) {
                 meta.add(RType::Components::Metadata::MetadataListBoss);
+                this->_bossId = Rengine::Entity::size_type(currentEnemy);
             }
+
             currentEnemy.setComponentsDestroyFunction(
-                [](Rengine::Entity& en) {
+                [this](Rengine::Entity& en) {
                     en.removeComponent<RType::Components::Position>();
                     en.removeComponent<RType::Components::Sprite>();
                     en.removeComponent<RType::Components::Hitbox>();
@@ -107,6 +119,13 @@ enemyLoading:
                     en.removeComponent<RType::Components::HitboxViewer>();
                     en.removeComponent<RType::Components::Relationship>();
                     en.removeComponent<RType::Components::Metadata>();
+                    en.removeComponent<RType::Components::Life>();
+                    en.removeComponent<RType::Components::HealthViewer>();
+
+                    if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
+                        this->_bossId = std::nullopt;
+                    }
+                    
                 }
             );
             this->_currentSceneEnemies.push_back(Rengine::Entity::size_type(currentEnemy));
@@ -115,9 +134,9 @@ loadSceneReturn:
         return true;
     }
 
-    void LevelManager::updateDeltatime(float deltaTime)
+    void LevelManager::updateDeltatime(void)
     {
-        this->_time += deltaTime;
+        this->_time += Rengine::Clock::getElapsedTime();
     }
 
     bool LevelManager::isCurrentSceneOver(void)
@@ -132,8 +151,12 @@ loadSceneReturn:
                 if (this->_time >= this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].endConditionData.time) {
                     return true;
                 }
+                break;
 
             case (Config::SceneEndConditionBossDefeat):
+                if (this->_bossId.has_value() == false) {
+                    return true;
+                }
                 break;
 
             // Invalid end condition : return true and hope for reload

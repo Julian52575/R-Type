@@ -2,6 +2,8 @@
 #include "Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Configuration.hpp"
+#include "src/Components/Life.hpp"
+
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/SparseArray.hpp>
 
@@ -23,7 +25,12 @@ namespace RType {
             Rengine::SparseArray<RType::Components::Hitbox>& hitboxs = ecs.getComponents<RType::Components::Hitbox>();
             Rengine::SparseArray<RType::Components::Position>& positions = ecs.getComponents<RType::Components::Position>();
             Rengine::SparseArray<RType::Components::Relationship>& relationships = ecs.getComponents<RType::Components::Relationship>();
+            Rengine::SparseArray<RType::Components::Life>& lifes = ecs.getComponents<RType::Components::Life>();
+            Rengine::SparseArray<RType::Components::Configuration>& configurations = ecs.getComponents<RType::Components::Configuration>();
+
             std::optional<std::reference_wrapper<Position>> posWrapper = entity.getComponentNoExcept<Position>();
+            std::optional<std::reference_wrapper<Life>> lifeWrapper = entity.getComponentNoExcept<Life>();
+            std::optional<std::reference_wrapper<Configuration>> configWrapper = entity.getComponentNoExcept<Configuration>();
 
             // Entity has no position
             if (posWrapper == std::nullopt) {
@@ -43,9 +50,10 @@ namespace RType {
                     continue;
                 }
                 // Check parenty: child cannot damage parents
-                if (relationships[index].has_value() == true && relationships[index]->isParented(uint64_t(entity))) {
+                if (relationships[index].has_value() == true && relationships[index]->isParented(uint64_t(entity)) == true) {
                     continue;
                 }
+
                 // Current entity data
                 float hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;
                 float hitboxEndY = hitboxStartY + hitboxs[index]->getSpecs().size.y;
@@ -58,18 +66,30 @@ namespace RType {
                     continue;
                 }
                 float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
-                float timeCooldown = 1.5;
+                float timeCooldown = 0.3;
 
-                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                    return;
-                }
+                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                //     return;
+                // }
                 hitbox._lastCheckSeconds = currentTime;
-                std::cout << "Colision between " << Rengine::ECS::size_type(entity) << " and " << index << std::endl;
+                //check si l'entité à une vie et si c'est le cas elle take damage
+                if (lifes[index].has_value() == true) {
+                    if (configWrapper.has_value() == true) {
+                        lifes[index]->takeDamage(configWrapper->get().getConfig().getStats().attack);
+                    }
+                    else {
+                        lifes[index]->takeDamage(1);
+                    }
+                }
+                if (lifeWrapper.has_value() == true) {
+                    if (configurations[index].has_value() == true) {
+                        lifeWrapper->get().takeDamage(configurations[index]->getConfig().getStats().attack);
+                    }
+                    else {
+                        lifeWrapper->get().takeDamage(1);
+                    }
+                }
 
-                ecs.removeEntity(ecs.getEntity(index));
-                return;  // Only one collision per frame
-                
-                #warning Debug print
             } // for index
         }
     }  // namespace Components

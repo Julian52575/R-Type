@@ -13,7 +13,6 @@ namespace RType {
             public:
                 HealthViewer(uint16_t maxhp);
                 ~HealthViewer(void) = default;
-                const Config::EntityConfigHitbox& getSpecs(void) const noexcept;
 
                 static void componentFunction(Rengine::ECS& ecs, RType::Components::HealthViewer& health_view, Rengine::Entity& entity);
 

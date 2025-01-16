@@ -6,18 +6,11 @@
 #include <optional>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
-#include <rengine/src/ECS.hpp>
-#include <rengine/src/Entity.hpp>
-#include <rengine/src/Graphics/AWindow.hpp>
-#include <rengine/src/Graphics/GraphicManager.hpp>
-#include <rengine/src/Graphics/UserInputManager.hpp>
-#include <rengine/src/Rng.hpp>
 
 #include "State.hpp"
 #include "GameState.hpp"
 #include "AState.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
-
 #include "src/Components/Clickable.hpp"
 #include "src/Components/Configuration.hpp"
 #include "src/Components/Velocity.hpp"
@@ -32,6 +25,7 @@
 #include "src/Components/HitboxViewer.hpp"
 #include "src/Components/HealthViewer.hpp"
 #include "src/Components/Chrono.hpp"
+#include "src/Components/Life.hpp"
 
 
 namespace RType {
@@ -59,6 +53,7 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Velocity>();
         this->_ecs.registerComponent<RType::Components::HealthViewer>();
         this->_ecs.registerComponent<RType::Components::Chrono>();
+        this->_ecs.registerComponent<RType::Components::Life>();
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
@@ -69,6 +64,7 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::HitboxViewer>(RType::Components::HitboxViewer::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::HealthViewer>(RType::Components::HealthViewer::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Chrono>(RType::Components::Chrono::componentFunction);
+        this->_ecs.setComponentFunction<RType::Components::Life>(RType::Components::Life::componentFunction);
     }
 
     void GameState::loadLevel(const std::string& jsonPath)
@@ -110,7 +106,7 @@ namespace RType {
         if (configVector.size() == 0) {
             return State::StateMenu;
         }
-        idx = Rengine::rngFunction() % configVector.size();
+        idx = Rengine::RNG::rngFunction() % configVector.size();
         gameState.loadLevel(configVector[idx]);
         gameState._sceneManager.setScene(GameScenes::GameScenesPlay);
         return State::StateGame;
@@ -118,28 +114,42 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
-        gameState._levelManager.updateDeltatime(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());
+        gameState._levelManager.updateDeltatime();
         if (gameState._levelManager.isCurrentSceneOver()) {
             if (!gameState._levelManager.nextScene()) {
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
                 std::cout << "Level finished !" << std::endl;
                 return State::StateMenu;
-            }            
+            }
         }
+        //partie movement
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
 
+        //partie collision
         gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
+
+        //partie game rule
+        gameState._ecs.runComponentFunction<RType::Components::Life>();  // handle life
         gameState._ecs.runComponentFunction<RType::Components::Chrono>();  // handle chrono
 
+        //partie render
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
         gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
-        gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitboxa
+        gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitbox
+
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
             return State::StateMenu;
+        }
+        if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
+        .receivedInput(Rengine::Graphics::UserInputTypeMouseLeftClick)) {
+            auto& player = gameState._ecs.getEntity(gameState._playerEntityId);
+            auto& sp = player.getComponent<Components::Sprite>();
+
+            sp.getSprite()->flip();
         }
         return State::StateGame;
     }
@@ -163,18 +173,20 @@ namespace RType {
         }
         Rengine::Entity& player = this->_ecs.addEntity();
         Config::EntityConfig enConfig(jsonPath);
+        RType::Components::Sprite& sp = player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
         player.addComponent<RType::Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
         player.addComponent<RType::Components::Configuration>(enConfig);
         player.addComponent<RType::Components::Position>(0, 0);
-        player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
         player.addComponent<RType::Components::Buff>();
         player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
-        player.addComponent<Components::Relationship>();
+        RType::Components::Relationship relation = player.addComponent<Components::Relationship>();
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::Metadata>();
+        player.addComponent<RType::Components::Life>(enConfig.getStats().hp);
         player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
+
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::Action>();
@@ -187,7 +199,8 @@ namespace RType {
                 en.removeComponent<RType::Components::Relationship>();
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::Metadata>();
-                en.removeComponent<RType::Components::HealthViewer>();  
+                en.removeComponent<RType::Components::HealthViewer>();
+                en.removeComponent<RType::Components::Life>();
             }
         );
         this->_playerEntityId = Rengine::Entity::size_type(player);
