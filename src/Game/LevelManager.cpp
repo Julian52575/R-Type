@@ -101,7 +101,8 @@ enemyLoading:
             RType::Components::Relationship& rel = currentEnemy.addComponent<RType::Components::Relationship>();
             RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
 
-            currentEnemy.addComponent<RType::Components::Action>(this->_sceneManager, RType::Components::ActionSourceScript, "path/to/script");
+            // std::cout << "Script: " << enemies->get()[i].scriptPath << std::endl;
+            currentEnemy.addComponent<RType::Components::Action>(this->_sceneManager, RType::Components::ActionSourceScript, enemies->get()[i].scriptPath);
 
             if (enemies->get()[i].isBoss == true) {
                 meta.add(RType::Components::Metadata::MetadataListBoss);
@@ -120,7 +121,7 @@ enemyLoading:
                     en.removeComponentNoExcept<RType::Components::HealthViewer>();
                     en.removeComponentNoExcept<RType::Components::Metadata>();
                     en.removeComponentNoExcept<RType::Components::Action>();
-                    
+
                     if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
                         this->_bossId = std::nullopt;
                     }

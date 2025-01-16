@@ -77,13 +77,17 @@ namespace RType {
                 if (it.contains("y") == false) {
                     throw std::runtime_error("No 'y' field in one of 'enemies'.");
                 }
+                if (it.contains("script") == false) {
+                    throw std::runtime_error("No 'script' field in one of 'enemies'.");
+                }
                 RType::Config::SceneEntityConfig config;
 
                 std::string json = it["json"];
                 config.path = json;
-                config.entityConfig = entityResolver.get(json);  // Disabled for unknow error
+                config.entityConfig = entityResolver.get(json);
                 config.xSpawn = it["x"];
                 config.ySpawn = it["y"];
+                config.scriptPath = it["script"];
                 // Boss
                 if (it.contains("boss") == true) {
                     config.isBoss = it["boss"];
