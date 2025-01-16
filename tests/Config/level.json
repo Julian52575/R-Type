@@ -2,6 +2,7 @@
     "level": {
         "scenes": [
             {
+                "backgroundMusic": "dokkan.mp3",
                 "background": [
                     "Config/image.json"
                 ],
@@ -10,12 +11,14 @@
                     {
                         "json": "Config/entity.json",
                         "x": 2000,
-                        "y": 540
+                        "y": 540,
+                        "script": "script.lua"
                     },
                     {
                         "json": "Config/entity.json",
                         "x": 2150,
-                        "y": 1000
+                        "y": 1000,
+                        "script": "script.lua"
                     }
                 ],
                 "endCondition": "time",
@@ -31,17 +34,20 @@
                     {
                         "json": "Config/entity.json",
                         "x": 2300,
-                        "y": 540
+                        "y": 540,
+                        "script": "script.lua"
                     },
                     {
                         "json": "Config/entity.json",
                         "x": 2600,
-                        "y": 1000
+                        "y": 1000,
+                        "script": "script.lua"
                     },
                     {
                         "json": "Config/entity.json",
                         "x": 2900,
                         "y": 100,
+                        "script": "script.lua",
                         "boss": true
                     }
                 ],

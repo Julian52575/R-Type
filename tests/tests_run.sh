@@ -30,6 +30,7 @@ function runTest () {
     fi
     if ! ./$OUTPUTFILE 1>> $LOGFILE 2>> $LOGFILE; then
         FAILURE_LIST="$FAILURE_LIST""$TESTNAME "
+        echo -e "$RED$TESTNAME: Failure.$NC"
     else
         echo -e "$GRN$TESTNAME: Success.$NC"
 

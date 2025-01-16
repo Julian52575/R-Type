@@ -22,10 +22,14 @@ namespace RType {
 
         SceneConfig::SceneConfig(nlohmann::json& scene)
         {
-            if (scene.contains("scrollingSpeed") == true) {
+            if (scene.contains("scrollingSpeed") == true
+            && (scene["scrollingSpeed"].is_number_float() || scene["scrollingSpeed"].is_number())) {
                 this->scrollingSpeed = scene["scrollingSpeed"];
             } else {
                 this->scrollingSpeed = 10.0f;
+            }
+            if (scene.contains("backgroundMusic") == true && scene["backgroundMusic"].is_string()) {
+                this->backgroundMusic = scene["backgroundMusic"];
             }
             // Background
             // std::cout << "parseBackground" << std::endl;
@@ -183,18 +187,17 @@ namespace RType {
             try {
                 for (auto it : j["scenes"]) {
                     count += 1;
-                    SceneConfig currentScene = SceneConfig(it);
-                    this->_scenes.push_back(currentScene);
+                    this->_scenes.emplace_back(it);
                 }
             } catch (std::exception& e) {
                 std::string err = e.what();
                 std::string msg = "Error on scene " + std::to_string(count) + " : " + err;
 
-                LevelConfigExceptionInvalidJsonFile(jsonPath, msg.c_str());
+                throw LevelConfigExceptionInvalidJsonFile(jsonPath, msg.c_str());
             }
         }
 
-        const std::vector<RType::Config::SceneConfig>& LevelConfig::getScenes(void) const noexcept
+        const std::vector<RType::Config::SceneConfig>& LevelConfig::getScenes(void) const
         {
             return this->_scenes;
         }

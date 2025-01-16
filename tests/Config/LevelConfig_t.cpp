@@ -9,6 +9,7 @@
     "level": {
         "scenes": [
             {
+                "backgroundMusic": "dokkan.mp3",
                 "background": [
                     "Config/image.json"
                 ],
@@ -17,12 +18,14 @@
                     {
                         "json": "Config/entity.json",
                         "x": 2000,
-                        "y": 540
+                        "y": 540,
+                        "script": "script.lua"
                     },
                     {
                         "json": "Config/entity.json",
                         "x": 2150,
-                        "y": 1000
+                        "y": 1000,
+                        "script": "script.lua"
                     }
                 ],
                 "endCondition": "time",
@@ -201,6 +204,7 @@ TEST(LevelConfig, Scenes)
     const RType::Config::SceneConfig& scene1 = scenes[0];
 
     ASSERT_EQ(scene1.scrollingSpeed, 15.15f);
+    ASSERT_EQ(scene1.backgroundMusic, "dokkan.mp3");
     ASSERT_EQ(scene1.endCondition, RType::Config::SceneEndCondition::SceneEndConditionTime);
     ASSERT_EQ(scene1.endConditionData.time, 10.10f);
     ASSERT_EQ(scene1.backgroundImages.size(), 1);
@@ -215,11 +219,13 @@ TEST(LevelConfig, Scenes)
     compareEntityConfig(scene1Entity1.entityConfig);
     ASSERT_EQ(scene1Entity1.xSpawn, 2000);
     ASSERT_EQ(scene1Entity1.ySpawn, 540);
+    ASSERT_EQ(scene1Entity1.scriptPath, "script.lua");
     ASSERT_FALSE(scene1Entity1.isBoss);
     // scene1Entity2
     compareEntityConfig(scene1Entity2.entityConfig);
     ASSERT_EQ(scene1Entity2.xSpawn, 2150);
     ASSERT_EQ(scene1Entity2.ySpawn, 1000);
+    ASSERT_EQ(scene1Entity2.scriptPath, "script.lua");
     ASSERT_FALSE(scene1Entity2.isBoss);
 
     /* Scene2 */
@@ -227,6 +233,7 @@ TEST(LevelConfig, Scenes)
 
     ASSERT_EQ(scene2.endCondition, RType::Config::SceneEndCondition::SceneEndConditionBossDefeat);
     ASSERT_EQ(scene2.scrollingSpeed, 30.30f);
+    ASSERT_EQ(scene2.backgroundMusic, "");
     ASSERT_EQ(scene2.backgroundImages.size(), 2);
     compareImageConfigData(scene2.backgroundImages[0].getSpecs());
     compareImageConfigData(scene2.backgroundImages[1].getSpecs());
@@ -238,16 +245,19 @@ TEST(LevelConfig, Scenes)
     // scene2Entity1
     ASSERT_EQ(scene2Entity1.xSpawn, 2300);
     ASSERT_EQ(scene2Entity1.ySpawn, 540);
+    ASSERT_EQ(scene2Entity1.scriptPath, "script.lua");
     ASSERT_FALSE(scene2Entity1.isBoss);
     compareEntityConfig(scene2Entity1.entityConfig);
     // scene2Entity2
     ASSERT_EQ(scene2Entity2.xSpawn, 2600);
     ASSERT_EQ(scene2Entity2.ySpawn, 1000);
+    ASSERT_EQ(scene2Entity2.scriptPath, "script.lua");
     ASSERT_FALSE(scene2Entity2.isBoss);
     compareEntityConfig(scene2Entity2.entityConfig);
     // scene2Entity3
     ASSERT_EQ(scene2Entity3.xSpawn, 2900);
     ASSERT_EQ(scene2Entity3.ySpawn, 100);
+    ASSERT_EQ(scene2Entity3.scriptPath, "script.lua");
     ASSERT_TRUE(scene2Entity3.isBoss);
     compareEntityConfig(scene2Entity3.entityConfig);
 }
