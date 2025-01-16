@@ -22,7 +22,6 @@ namespace RType {
         specs.soundPath = "assets/musics/starforx64_training_mode.mp3";
         specs.loop = true;
         this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(specs);
-        this->_backgroundMusic->play();
     }
     void MenuState::registerComponents(void)
     {
@@ -56,6 +55,9 @@ namespace RType {
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(it.second, {550, yDiff * count});
             count += 1;
         }  // it : this->_buttonVector
+        if (thiss._backgroundMusic->isPlaying() == false) {
+            thiss._backgroundMusic->play();
+        }
         return State::StateMenu;
     }
 
