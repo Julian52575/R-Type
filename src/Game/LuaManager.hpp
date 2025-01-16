@@ -79,6 +79,8 @@ namespace RType {
             template <typename ...Args>
             std::vector<LuaReturn> callFunction(const std::string& filename,int id, const std::string& functionName, Args... args);
 
+            void removeScriptAtIndex(const std::string& filename, int id);
+
         private:
             template <typename T, typename ...Args>
             void push(lua_State *L, T&& value, Args&&... args);
@@ -117,11 +119,14 @@ namespace RType {
             throw LuaManagerException("Lua error: file " + file +" needs to be loaded before calling a function");
         }
         std::vector<lua_State*> state = this->states[file];
-        if (state.size() <= id) {
+        if (state.size() <= id || id < 0) {
             throw LuaManagerException("Lua error: id " + std::to_string(id) + " not found in file " + file);
         }
-
+        
         lua_State* L = state[id];
+        if (L == nullptr) {
+            throw LuaManagerException("Lua error: id " + std::to_string(id) + " is not loaded in file " + file);
+        }
 
         if (lua_getglobal(L, name.c_str()) == 0) {
             throw LuaManagerException("Lua error: cannot find function " + name + " in file " + file);

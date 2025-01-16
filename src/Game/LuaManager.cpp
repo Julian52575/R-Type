@@ -51,7 +51,9 @@ namespace RType {
     {
         for (auto& [name, state] : this->states) {
             for (size_t i = 0; i < state.size(); i++) {
-                lua_close(state[i]);
+                if (state[i] != nullptr) {
+                    lua_close(state[i]);
+                }
             }
         }
     }
@@ -76,8 +78,29 @@ namespace RType {
             this->states[filename] = {L};
             return 0;
         }
+
+        for (size_t t = 0; t < this->states[filename].size(); t++) {
+            if (this->states[filename][t] == nullptr) {
+                this->states[filename][t] = L;
+                return t;
+            }
+        }
         this->states[filename].push_back(L);
         return this->states[filename].size() - 1;
+    }
+
+    void LuaManager::removeScriptAtIndex(const std::string& filename, int id){
+        if (this->states.find(filename) == this->states.end()) {
+            throw LuaManagerException("Lua error: "+filename+" not found");
+        }
+        if (this->states[filename].size() <= id) {
+            throw LuaManagerException("Lua error: "+filename+" id "+std::to_string(id)+" not found");
+        }
+        
+        if (this->states[filename][id] != nullptr) {
+            lua_close(this->states[filename][id]);
+            this->states[filename][id] = nullptr;
+        }
     }
 
     void LuaManager::push(lua_State *)
