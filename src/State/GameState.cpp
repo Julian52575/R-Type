@@ -72,6 +72,7 @@ namespace RType {
 
     void GameState::loadLevel(const std::string& jsonPath)
     {
+        std::cout << "load level : " << jsonPath << std::endl;
         this->_levelManager.loadLevel(jsonPath);
         this->createPlayer("assets/entities/skeletonDragon.json");
     }
@@ -107,8 +108,12 @@ namespace RType {
         std::vector<std::string> configVector;
         uint64_t idx = 0;
 
+        // Loading a random level
         for (auto file : std::filesystem::directory_iterator("assets/levels/")) {
-            configVector.push_back(file.path());
+            if (file.path().string() == "assets/levels/id.json") {
+                continue;
+            }
+            configVector.push_back(file.path().string());
         }
         if (configVector.size() == 0) {
             return State::StateMenu;
