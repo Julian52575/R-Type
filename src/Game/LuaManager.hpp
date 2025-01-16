@@ -122,7 +122,7 @@ namespace RType {
         if (state.size() <= id || id < 0) {
             throw LuaManagerException("Lua error: id " + std::to_string(id) + " not found in file " + file);
         }
-        
+
         lua_State* L = state[id];
         if (L == nullptr) {
             throw LuaManagerException("Lua error: id " + std::to_string(id) + " is not loaded in file " + file);
@@ -189,6 +189,19 @@ namespace RType {
             lua_settable(L, -3);
         }
     }
+
+    class LuaManagerSingletone {
+        public:
+            LuaManagerSingletone(void) = default;
+            ~LuaManagerSingletone(void) = default;
+
+            static LuaManager& get(void) noexcept
+            {
+                static LuaManager manager;
+
+                return manager;
+            }
+    };  // class LuaManagerSingletone
 
 }  // namespace RType
 #endif  // SRC_GAME_LUAMANAGER_HPP_
