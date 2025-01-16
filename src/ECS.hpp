@@ -384,6 +384,15 @@ namespace Rengine {
             {
                 this->_registry.clear();
             }
+            /**
+            * @fn getHighestEntityId
+            * @return size_type The hightest entity id currently active.
+            * @brief The hightest entity id currently active.
+            */
+            size_type getHighestEntityId(void) const noexcept
+            {
+                return this->_maxEntityId;
+            }
 
         private:
             /**
