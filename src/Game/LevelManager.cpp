@@ -22,6 +22,7 @@
 #include "src/Components/HealthViewer.hpp"
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
+#include "Team.hpp"
 
 namespace RType {
 
@@ -96,16 +97,16 @@ enemyLoading:
             currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
             currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
             currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
-            currentEnemy.addComponent<RType::Components::Relationship>();
             currentEnemy.addComponent<RType::Components::Life>(enemies->get()[i].entityConfig.getStats().hp);
             currentEnemy.addComponent<RType::Components::HealthViewer>(enemies->get()[i].entityConfig.getStats().hp);
+            RType::Components::Relationship& rel = currentEnemy.addComponent<RType::Components::Relationship>();
             RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
 
             if (enemies->get()[i].isBoss == true) {
                 meta.add(RType::Components::Metadata::MetadataListBoss);
                 this->_bossId = Rengine::Entity::size_type(currentEnemy);
             }
-
+            rel.setGroup(Team::TeamEnemy);
             currentEnemy.setComponentsDestroyFunction(
                 [this](Rengine::Entity& en) {
                     en.removeComponentNoExcept<RType::Components::Position>();

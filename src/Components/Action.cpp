@@ -34,6 +34,7 @@
 #include "src/Components/Velocity.hpp"
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
+#include "src/Game/Team.hpp"
 
 namespace RType {
     namespace Components {
@@ -314,8 +315,9 @@ namespace RType {
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
-                proRelationship.addParent(uint64_t(host));
                 hostRelationship.addChild(uint64_t(projectile));
+                proRelationship.addParent(uint64_t(host));
+                proRelationship.setGroup(hostRelationship.getGroup());
                 bool hasAction = false;
                 bool hasVelocity = false;
                 switch (it.getControlType()) {

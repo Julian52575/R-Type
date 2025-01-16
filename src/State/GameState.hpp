@@ -6,7 +6,6 @@
 #include <optional>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
-#include <rengine/src/Entity.hpp>
 #include <rengine/RengineNetworkClient.hpp>
 
 #include "src/Network/EntityAction.hpp"
@@ -14,7 +13,6 @@
 #include "src/Config/LevelConfigResolver.hpp"
 #include "AState.hpp"
 #include "src/State/State.hpp"
-
 #include "src/Game/LevelManager.hpp"
 
 namespace RType {

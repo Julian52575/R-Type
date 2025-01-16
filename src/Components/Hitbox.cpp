@@ -59,6 +59,12 @@ namespace RType {
                 if (relationshipWrapper.has_value() == true && relationshipWrapper->get().isRelated(index)) {
                     continue;
                 }
+                // Check group belonging
+                if (relationships[index].has_value() == true && relationshipWrapper.has_value() == true) {
+                    if (relationships[index]->belong(relationshipWrapper->get().getGroup()) == true) {
+                        continue;
+                    }
+                }
 
                 // Current entity data
                 float hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;

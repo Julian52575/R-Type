@@ -26,6 +26,7 @@
 #include "src/Components/HealthViewer.hpp"
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
+#include "src/Game/Team.hpp"
 
 
 namespace RType {
@@ -203,12 +204,13 @@ namespace RType {
         player.addComponent<RType::Components::Buff>();
         player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
-        RType::Components::Relationship relation = player.addComponent<Components::Relationship>();
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::Metadata>();
         player.addComponent<RType::Components::Life>(enConfig.getStats().hp);
         player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
+        RType::Components::Relationship relation = player.addComponent<Components::Relationship>();
 
+        relation.setGroup(Team::TeamPlayer);
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::Sprite>();
