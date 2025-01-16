@@ -31,7 +31,7 @@ namespace RType {
                     if (pos.has_value() == false) {
                         return;
                     }
-                    float deltatime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+                    float deltatime = Rengine::Clock::getElapsedTime();
                     float newX = pos->get().getX() + velocity._x + config->get().getConfig().getStats().speedX * deltatime;
                     float newY = pos->get().getY() + velocity._y + config->get().getConfig().getStats().speedY * deltatime;
 

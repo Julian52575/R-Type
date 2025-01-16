@@ -33,7 +33,7 @@ namespace RType {
             * @fn updateDeltatime
             * @brief Update the deltatime
             */
-            void updateDeltatime(float deltaTime);
+            void updateDeltatime(void);
             /**
             * @fn isCurrentSceneOver
             * @return True if the current scene is over, false otherwise

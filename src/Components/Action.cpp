@@ -4,6 +4,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <rengine/src/Clock/Clock.hpp>
 #include <rengine/src/ECS.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
@@ -236,13 +237,13 @@ namespace RType {
         {
             for (uint8_t i = 0; i < 3; i++) {
                 if (component._shootDeltatimes[i] < 10000.0f)
-                    component._shootDeltatimes[i] += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+                    component._shootDeltatimes[i] += Rengine::Clock::getElapsedTime();
             }
         }
 
         void Action::handleMove(Network::EntityAction& action, Configuration& config, Position& pos)
         {
-            float deltatime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+            float deltatime = Rengine::Clock::getElapsedTime();
             Rengine::Graphics::vector2D<float> newPos = pos.getVector2D();
 
             newPos.x += action.data.moveVelocity.x * (config.getConfig().getStats().speedX * deltatime);

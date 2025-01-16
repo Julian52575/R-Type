@@ -13,7 +13,7 @@ namespace RType{
             void Chrono::componentFunction(Rengine::ECS& ecs, Chrono& chrono, Rengine::Entity& entity)
             {
 
-                chrono._time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+                chrono._time += Rengine::Clock::getElapsedTime();
                 if (chrono._time >= chrono._delay) {
                     chrono._fun();
                     chrono._time = 0;

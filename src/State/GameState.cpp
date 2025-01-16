@@ -6,18 +6,11 @@
 #include <optional>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
-#include <rengine/src/ECS.hpp>
-#include <rengine/src/Entity.hpp>
-#include <rengine/src/Graphics/AWindow.hpp>
-#include <rengine/src/Graphics/GraphicManager.hpp>
-#include <rengine/src/Graphics/UserInputManager.hpp>
-#include <rengine/src/Rng.hpp>
 
 #include "State.hpp"
 #include "GameState.hpp"
 #include "AState.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
-
 #include "src/Components/Clickable.hpp"
 #include "src/Components/Configuration.hpp"
 #include "src/Components/Velocity.hpp"
@@ -113,7 +106,7 @@ namespace RType {
         if (configVector.size() == 0) {
             return State::StateMenu;
         }
-        idx = Rengine::rngFunction() % configVector.size();
+        idx = Rengine::RNG::rngFunction() % configVector.size();
         gameState.loadLevel(configVector[idx]);
         gameState._sceneManager.setScene(GameScenes::GameScenesPlay);
         return State::StateGame;
@@ -121,7 +114,7 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
-        gameState._levelManager.updateDeltatime(Rengine::Graphics::GraphicManagerSingletone::get().getWindow().get()->getDeltaTimeSeconds());
+        gameState._levelManager.updateDeltatime();
         if (gameState._levelManager.isCurrentSceneOver()) {
             if (!gameState._levelManager.nextScene()) {
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
