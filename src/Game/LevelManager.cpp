@@ -92,17 +92,13 @@ enemyLoading:
 
             currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
             currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
-
             currentEnemy.getComponent<RType::Components::Sprite>().getSprite().get()->flip();
-
             currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
             currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
             currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
             currentEnemy.addComponent<RType::Components::Relationship>();
-            
             currentEnemy.addComponent<RType::Components::Life>(enemies->get()[i].entityConfig.getStats().hp);
             currentEnemy.addComponent<RType::Components::HealthViewer>(enemies->get()[i].entityConfig.getStats().hp);
-
             RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
 
             if (enemies->get()[i].isBoss == true) {
@@ -112,20 +108,19 @@ enemyLoading:
 
             currentEnemy.setComponentsDestroyFunction(
                 [this](Rengine::Entity& en) {
-                    en.removeComponent<RType::Components::Position>();
-                    en.removeComponent<RType::Components::Sprite>();
-                    en.removeComponent<RType::Components::Hitbox>();
-                    en.removeComponent<RType::Components::Configuration>();
-                    en.removeComponent<RType::Components::HitboxViewer>();
-                    en.removeComponent<RType::Components::Relationship>();
-                    en.removeComponent<RType::Components::Metadata>();
-                    en.removeComponent<RType::Components::Life>();
-                    en.removeComponent<RType::Components::HealthViewer>();
+                    en.removeComponentNoExcept<RType::Components::Position>();
+                    en.removeComponentNoExcept<RType::Components::Sprite>();
+                    en.removeComponentNoExcept<RType::Components::Hitbox>();
+                    en.removeComponentNoExcept<RType::Components::Configuration>();
+                    en.removeComponentNoExcept<RType::Components::HitboxViewer>();
+                    en.removeComponentNoExcept<RType::Components::Relationship>();
+                    en.removeComponentNoExcept<RType::Components::Life>();
+                    en.removeComponentNoExcept<RType::Components::HealthViewer>();
+                    en.removeComponentNoExcept<RType::Components::Metadata>();
 
                     if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
                         this->_bossId = std::nullopt;
                     }
-                    
                 }
             );
             this->_currentSceneEnemies.push_back(Rengine::Entity::size_type(currentEnemy));

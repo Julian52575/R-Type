@@ -33,6 +33,7 @@
 #include "src/Components/HitboxViewer.hpp"
 #include "src/Components/Velocity.hpp"
 #include "src/Components/Chrono.hpp"
+#include "src/Components/Life.hpp"
 
 namespace RType {
     namespace Components {
@@ -300,7 +301,6 @@ namespace RType {
                 RType::Components::Relationship& proRelationship = projectile.addComponent<RType::Components::Relationship>();
 
                 // set Components
-                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
                 projectile.addComponent<Position>(
                         hostPosition.getVector2D().x + it.getOffset().first,
                         hostPosition.getVector2D().y + it.getOffset().second
@@ -310,52 +310,59 @@ namespace RType {
                 projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
                 projectile.addComponent<Configuration>(missileConfig);
                 projectile.addComponent<Buff>();
-
+                projectile.addComponent<Life>(missileConfig.getStats().hp);
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
-
                 proRelationship.addParent(uint64_t(host));
                 hostRelationship.addChild(uint64_t(projectile));
-
-                projectile.setComponentsDestroyFunction(
-                    [&host](Rengine::Entity& en) {
-                        auto hostRelationship = host.getComponentNoExcept<Relationship>();
-
-                        // Remove child projectile on destruction
-                        if (hostRelationship.has_value() == true) {
-                            hostRelationship.value().get().removeChild(uint64_t(en));
-                        }
-                        en.removeComponentNoExcept<HitboxViewer>();
-                        en.removeComponentNoExcept<Position>();
-                        en.removeComponentNoExcept<Hitbox>();
-                        en.removeComponentNoExcept<Sprite>();
-                        en.removeComponentNoExcept<Configuration>();
-                        en.removeComponentNoExcept<Buff>();
-                        en.removeComponentNoExcept<Relationship>();
-                        en.removeComponentNoExcept<Chrono>();
-                        en.removeComponentNoExcept<Action>();
-                        en.removeComponentNoExcept<Velocity>();
-                    }
-                );
-
+                bool hasAction = false;
+                bool hasVelocity = false;
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
                         projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);
+                        hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeScript):
                         projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
+                        hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeVelocity):
                         projectile.addComponent<Velocity>(it.getVelocity().first, it.getVelocity().second);
+                        hasVelocity = true;
                         break;
 
                     // No action component needed for invalid value
                     default:
                         break;
                 } // switch controlType
+                projectile.setComponentsDestroyFunction(
+                    [&host, &hasVelocity, &hasAction](Rengine::Entity& en) {
+                        auto hostRelationship = host.getComponentNoExcept<Relationship>();
+
+                        // Remove child projectile on destruction
+                        if (hostRelationship.has_value() == true) {
+                            hostRelationship.value().get().removeChild(uint64_t(en));
+                        }
+                        en.removeComponent<Relationship>();
+                        en.removeComponent<Position>();
+                        en.removeComponent<Hitbox>();
+                        en.removeComponent<HitboxViewer>();
+                        en.removeComponent<Sprite>();
+                        en.removeComponent<Configuration>();
+                        en.removeComponent<Buff>();
+                        en.removeComponent<Life>();
+                        en.removeComponent<Chrono>();
+                        if (hasAction) {
+                            en.removeComponent<Action>();
+                        }
+                        if (hasVelocity) {
+                            en.removeComponent<Velocity>();
+                        }
+                    }
+                );
                 actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }

@@ -182,7 +182,7 @@ namespace RType {
         player.addComponent<RType::Components::Buff>();
         player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
-        player.addComponent<Components::Relationship>();
+        RType::Components::Relationship relation = player.addComponent<Components::Relationship>();
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::Metadata>();
         player.addComponent<RType::Components::Life>(enConfig.getStats().hp);
@@ -190,18 +190,18 @@ namespace RType {
 
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
+                en.removeComponent<RType::Components::Sprite>();
                 en.removeComponent<RType::Components::Action>();
                 en.removeComponent<RType::Components::Configuration>();
                 en.removeComponent<RType::Components::Position>();
-                en.removeComponent<RType::Components::Sprite>();
                 en.removeComponent<RType::Components::Buff>();
                 en.removeComponent<RType::Components::Hitbox>();
                 en.removeComponent<RType::Components::Clickable>();
                 en.removeComponent<RType::Components::Relationship>();
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::Metadata>();
-                en.removeComponent<RType::Components::HealthViewer>();
                 en.removeComponent<RType::Components::Life>();
+                en.removeComponent<RType::Components::HealthViewer>();
             }
         );
         this->_playerEntityId = Rengine::Entity::size_type(player);

@@ -27,7 +27,7 @@ namespace RType {
     };
 
     struct GameInfo {
-        std::string name; //potentiellment un char * ou un char[]
+        std::string name;
         uuid_t id;
         uint16_t playerCount;
         time_t time;
@@ -72,6 +72,8 @@ namespace RType {
             void handleInput(void);
             void makeGameInfos(std::string name, uint16_t playerCount, time_t time, uuid_t id);
             void setGameInfos(void);
+            DisplayGameInfo& getGameInfoByUuid(uuid_t id);
+            void updateGameInfos(void);
 
             float _time = 0;
             size_t _begin = 0;

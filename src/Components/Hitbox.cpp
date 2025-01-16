@@ -4,6 +4,7 @@
 #include "src/Components/Configuration.hpp"
 #include "src/Components/Life.hpp"
 
+#include <functional>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/SparseArray.hpp>
 
@@ -26,9 +27,12 @@ namespace RType {
             Rengine::SparseArray<RType::Components::Position>& positions = ecs.getComponents<RType::Components::Position>();
             Rengine::SparseArray<RType::Components::Relationship>& relationships = ecs.getComponents<RType::Components::Relationship>();
             Rengine::SparseArray<RType::Components::Life>& lifes = ecs.getComponents<RType::Components::Life>();
+            Rengine::SparseArray<RType::Components::Configuration>& configurations = ecs.getComponents<RType::Components::Configuration>();
 
             std::optional<std::reference_wrapper<Position>> posWrapper = entity.getComponentNoExcept<Position>();
             std::optional<std::reference_wrapper<Life>> lifeWrapper = entity.getComponentNoExcept<Life>();
+            std::optional<std::reference_wrapper<Configuration>> configWrapper = entity.getComponentNoExcept<Configuration>();
+            std::optional<std::reference_wrapper<Relationship>> relationshipWrapper = entity.getComponentNoExcept<Relationship>();
 
             // Entity has no position
             if (posWrapper == std::nullopt) {
@@ -47,8 +51,12 @@ namespace RType {
                 if (hitboxs[index].has_value() == false || positions[index].has_value() == false) {
                     continue;
                 }
-                // Check parenty: child cannot damage parents
+                // Check entity relationship
                 if (relationships[index].has_value() == true && relationships[index]->isRelated(uint64_t(entity))) {
+                    continue;
+                }
+                // Check host relationship
+                if (relationshipWrapper.has_value() == true && relationshipWrapper->get().isRelated(index)) {
                     continue;
                 }
 
@@ -66,16 +74,26 @@ namespace RType {
                 float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
                 float timeCooldown = 0.3;
 
-                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                    return;
-                }
+                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                //     return;
+                // }
                 hitbox._lastCheckSeconds = currentTime;
                 //check si l'entité à une vie et si c'est le cas elle take damage
                 if (lifes[index].has_value() == true) {
-                    lifes[index]->takeDamage(1);// penser à mettre les degats de entity
+                    if (configWrapper.has_value() == true) {
+                        lifes[index]->takeDamage(configWrapper->get().getConfig().getStats().attack);
+                    }
+                    else {
+                        lifes[index]->takeDamage(1);
+                    }
                 }
                 if (lifeWrapper.has_value() == true) {
-                    lifeWrapper->get().takeDamage(1);
+                    if (configurations[index].has_value() == true) {
+                        lifeWrapper->get().takeDamage(configurations[index]->getConfig().getStats().attack);
+                    }
+                    else {
+                        lifeWrapper->get().takeDamage(1);
+                    }
                 }
 
             } // for index
