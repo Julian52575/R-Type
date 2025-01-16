@@ -9,6 +9,7 @@
 #include "GameState.hpp"
 #include "src/State/State.hpp"
 #include "src/Network/EntityAction.hpp"
+#include "GameState.hpp"
 
 #include <ctime>
 #include <uuid/uuid.h>
@@ -74,6 +75,7 @@ namespace RType {
             void setGameInfos(void);
             DisplayGameInfo& getGameInfoByUuid(uuid_t id);
             void updateGameInfos(void);
+            NetworkInfo &getNetworkInfo(void) noexcept;
 
             float _time = 0;
             size_t _begin = 0;
@@ -82,6 +84,7 @@ namespace RType {
 
         private:
             LobbyInfo _lobbyInfo;
+            NetworkInfo _networkInfo;
             std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _client;
     };
 

@@ -25,6 +25,11 @@ namespace RType {
                 }
                 break;
 
+            case State::StateGame:
+                if (this->_currentState == State::StateLobby) {
+                    this->_game.setNetworkInfo(this->_lobby.getNetworkInfo());
+                }
+                break;
             // Nothing to do for other change
             default:
                 break;
