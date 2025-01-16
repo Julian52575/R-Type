@@ -147,3 +147,17 @@ TEST(ECS, clearComponents)
     EXPECT_THROW(ecs.getComponents<int>(), Rengine::ECSExceptionComponentNotRegistred);
     EXPECT_THROW(ecs.getComponents<float>(), Rengine::ECSExceptionComponentNotRegistred);
 }
+TEST(ECS, getHighestEntityId)
+{
+    Rengine::ECS ecs;
+
+    EXPECT_EQ(ecs.getHighestEntityId(), 0);
+    Rengine::Entity& e = ecs.addEntity();
+
+    EXPECT_EQ(ecs.getHighestEntityId(), Rengine::ECS::size_type(e));
+    Rengine::Entity& e2 = ecs.addEntity();
+
+    Rengine::ECS::size_type high = Rengine::ECS::size_type(e2) > Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+
+    EXPECT_EQ(ecs.getHighestEntityId(), high);
+}
