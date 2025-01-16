@@ -7,7 +7,9 @@
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/Entity.hpp>
+#include <rengine/RengineNetworkClient.hpp>
 
+#include "src/Network/EntityAction.hpp"
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "AState.hpp"
@@ -25,10 +27,17 @@ namespace RType {
     */
     enum GameScenes {
         GameScenesNA,
+        GameScenesInitNetwork,
         GameScenesLoadLevel,
         GameScenesPlay,
         GameScenesPause,
         GameScenesGameOver
+    };
+
+    struct NetworkInfo {
+        std::string ip;
+        uint16_t TCPPort;
+        uint16_t UDPPort;
     };
 
     /**
@@ -60,6 +69,7 @@ namespace RType {
             * @brief Load a level.
             */
             void loadLevel(const std::string& jsonPath);
+            void setNetworkInfo(const NetworkInfo& networkInfo) noexcept;
 
         public:
             /*
@@ -74,6 +84,7 @@ namespace RType {
             * @brief Play the game from the currently loaded level.
             */
             friend State playFunction(GameState& gameState);
+            friend State InitNetwork(GameState& gameState);
 
         /*      Player management       */
         private:
@@ -83,6 +94,9 @@ namespace RType {
             * @brief Creates the player entity from the config.
             */
             void createPlayer(const std::string& jsonPath);
+            std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _clientTCP;
+            std::unique_ptr<ClientUDP<Network::Communication::TypeDetail>> _clientUDP;
+            NetworkInfo _networkInfo;
             /*
             * @fn deletePlayer
             * @brief Deletes the player entity.

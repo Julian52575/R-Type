@@ -30,11 +30,13 @@
 
 namespace RType {
 
-    GameState::GameState(Rengine::ECS& ecs)
-        : AState(ecs), _levelManager(ecs)
+    GameState::GameState(Rengine::ECS& ecs) : AState(ecs), _levelManager(ecs)
     {
+        this->_clientTCP = nullptr;
+        this->_clientUDP = nullptr;
         this->initScenes();
         this->_sceneManager.setScene(GameScenes::GameScenesLoadLevel);
+        // this->_sceneManager.setScene(GameScenes::GameScenesInitNetwork);
     }
 
     void GameState::registerComponents(void)
@@ -79,6 +81,10 @@ namespace RType {
         State s = this->_sceneManager.callCurrentSceneFunction<State, GameState&>(*this);
 
         return s;
+    }
+
+    void GameState::setNetworkInfo(const NetworkInfo& networkInfo) noexcept {
+        this->_networkInfo = networkInfo;
     }
 
     void GameState::deletePlayer(void)
@@ -155,8 +161,23 @@ namespace RType {
         return State::StateGame;
     }
 
+    State InitNetwork(GameState& gameState) {
+        try {
+            gameState._clientTCP = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.TCPPort);
+            gameState._clientUDP = std::make_unique<ClientUDP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.UDPPort);
+        } catch (const std::exception& e) {
+            std::cerr << "Error" << e.what() << std::endl;
+            return State::StateLobby;
+        }
+        gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
+        return State::StateGame;
+    }
+
     void GameState::initScenes(void)
     {
+        std::function<State(GameState&)> funScene0(InitNetwork);
+        this->_sceneManager.setSceneFunction<State, GameState&>(GameScenes::GameScenesInitNetwork, funScene0);
+
         // Laod level scene
         std::function<State(GameState&)> funScene1(loadLevelFunction);
 

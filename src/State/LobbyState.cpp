@@ -21,6 +21,10 @@ namespace RType {
         this->_client->Send(msg);
     }
 
+    NetworkInfo &LobbyState::getNetworkInfo(void) noexcept {
+        return this->_networkInfo;
+    }
+
     State initLobbyConnexion(LobbyState &LobbyState) {
         //mettre le try catch en com pour disable le server
         try {
@@ -101,8 +105,10 @@ namespace RType {
                 uint16_t gameTCPport;
                 uint16_t gameUDPport;
                 *msg >> gameUDPport >> gameTCPport;
-                std::cout << "Game UDP port: " << gameUDPport << std::endl;
-                std::cout << "Game TCP port: " << gameTCPport << std::endl;
+                LobbyState._networkInfo.ip = LobbyState._lobbyInfo.serverIp;
+                LobbyState._networkInfo.TCPPort = gameTCPport;
+                LobbyState._networkInfo.UDPPort = gameUDPport;
+                return StateGame;
             }
         }
         LobbyState._time += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
@@ -117,7 +123,6 @@ namespace RType {
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].name, {pos_x, pos_y});
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].playerCount, {pos_x + 250.0f, pos_y});
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(LobbyState._displayGameInfos[i].time, {pos_x + 450.0f, pos_y});
-            // Check enter to start game, might show a compilation error on some IDE, compiles anyways.
             if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
             .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialENTER})) {
                 Message<Network::Communication::TypeDetail> msg;
