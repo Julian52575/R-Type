@@ -7,6 +7,7 @@
 #include <rengine/src/Entity.hpp>
 
 #include "LevelManager.hpp"
+#include "src/Game/EntityMaker.hpp"
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Components/Clickable.hpp"
@@ -88,38 +89,31 @@ enemyLoading:
             goto loadSceneReturn;
         }
         for (i = 0; i < enemies->get().size(); i++) {
-            Rengine::Entity& currentEnemy = this->_ecs.addEntity();
+            Rengine::Entity& currentEnemy = RType::EntityMaker::make(this->_ecs, enemies->get()[i].entityConfig, Team::TeamEnemy);
 
-            currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
+            currentEnemy.getComponent<RType::Components::Position>().set(
+                    {(float) enemies->get()[i].xSpawn,
+                    (float) enemies->get()[i].ySpawn}
+            );
             currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
             currentEnemy.getComponent<RType::Components::Sprite>().getSprite().get()->flip();
-            currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
-            currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
             currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
-            currentEnemy.addComponent<RType::Components::Life>(enemies->get()[i].entityConfig.getStats().hp);
             currentEnemy.addComponent<RType::Components::HealthViewer>(enemies->get()[i].entityConfig.getStats().hp);
-            RType::Components::Relationship& rel = currentEnemy.addComponent<RType::Components::Relationship>();
-            RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
-
             // std::cout << "Script: " << enemies->get()[i].scriptPath << std::endl;
             currentEnemy.addComponent<RType::Components::Action>(RType::Components::ActionSourceScript, enemies->get()[i].scriptPath);
 
             if (enemies->get()[i].isBoss == true) {
-                meta.add(RType::Components::Metadata::MetadataListBoss);
+                currentEnemy.getComponent<RType::Components::Metadata>().add(RType::Components::Metadata::MetadataListBoss);
                 this->_bossId = Rengine::Entity::size_type(currentEnemy);
             }
+            RType::Components::Relationship& rel = currentEnemy.getComponent<RType::Components::Relationship>();
+
             rel.setGroup(Team::TeamEnemy);
             currentEnemy.setComponentsDestroyFunction(
                 [this](Rengine::Entity& en) {
-                    en.removeComponentNoExcept<RType::Components::Position>();
                     en.removeComponentNoExcept<RType::Components::Sprite>();
-                    en.removeComponentNoExcept<RType::Components::Hitbox>();
-                    en.removeComponentNoExcept<RType::Components::Configuration>();
                     en.removeComponentNoExcept<RType::Components::HitboxViewer>();
-                    en.removeComponentNoExcept<RType::Components::Relationship>();
-                    en.removeComponentNoExcept<RType::Components::Life>();
                     en.removeComponentNoExcept<RType::Components::HealthViewer>();
-                    en.removeComponentNoExcept<RType::Components::Metadata>();
                     en.removeComponentNoExcept<RType::Components::Action>();
 
                     if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
