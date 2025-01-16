@@ -51,6 +51,7 @@ runTest "Config/AttackConfigResolver_t.cpp ../src/Config/AttackConfig.cpp" "Atta
 runTest "Config/ImageConfig_t.cpp ../src/Config/ImageConfig.cpp" "ImageConfigResolver"
 runTest "Config/EntityConfigResolver_t.cpp ../src/Config/EntityConfig.cpp ../src/Config/AttackConfig.cpp ../src/Config/ImageConfig.cpp" "EntityConfigResolver"
 runTest "Config/LevelConfigResolver_t.cpp ../src/Config/*.cpp" "LevelConfigResolver"
+runTest "Config/ConfigurationIdResolver_t.cpp" "ConfigurationIdResolver"
 
 runTest "Components/Relationship_t.cpp ../src/Components/Relationship.cpp" "Relationship"
 
