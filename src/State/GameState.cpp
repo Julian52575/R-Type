@@ -188,7 +188,7 @@ namespace RType {
         player.addComponent<RType::Components::Buff>();
         player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
-        player.addComponent<Components::Relationship>();
+        RType::Components::Relationship relation = player.addComponent<Components::Relationship>();
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::Metadata>();
         player.addComponent<RType::Components::Life>(enConfig.getStats().hp);

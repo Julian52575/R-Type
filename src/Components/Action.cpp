@@ -32,6 +32,7 @@
 #include "src/Components/HitboxViewer.hpp"
 #include "src/Components/Velocity.hpp"
 #include "src/Components/Chrono.hpp"
+#include "src/Components/Life.hpp"
 
 namespace RType {
     namespace Components {
@@ -298,7 +299,6 @@ namespace RType {
                 RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
 
                 // set Components
-                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
                 projectile.addComponent<Position>(
                         hostPosition.getVector2D().x + it.getOffset().first,
                         hostPosition.getVector2D().y + it.getOffset().second
@@ -308,6 +308,7 @@ namespace RType {
                 projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
                 projectile.addComponent<Configuration>(missileConfig);
                 projectile.addComponent<Buff>();
+                projectile.addComponent<Life>(missileConfig.getStats().hp);
 
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
@@ -315,37 +316,47 @@ namespace RType {
 
                 relationship.addParent(uint64_t(entity));
 
-                projectile.setComponentsDestroyFunction(
-                    [](Rengine::Entity& en) {
-                        en.removeComponent<HitboxViewer>();
-                        en.removeComponent<Position>();
-                        en.removeComponent<Hitbox>();
-                        en.removeComponent<HitboxViewer>();
-                        en.removeComponent<Sprite>();
-                        en.removeComponent<Configuration>();
-                        en.removeComponent<Buff>();
-                        en.removeComponent<Relationship>();
-                        en.removeComponent<Chrono>();
-                    }
-                );
-
+                bool hasAction = false;
+                bool hasVelocity = false;
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
                         projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);
+                        hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeScript):
                         projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
+                        hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeVelocity):
                         projectile.addComponent<Velocity>(it.getVelocity().first, it.getVelocity().second);
+                        hasVelocity = true;
                         break;
 
                     // No action component needed for invalid value
                     default:
                         break;
                 } // switch controlType
+                projectile.setComponentsDestroyFunction(
+                    [&hasVelocity, &hasAction](Rengine::Entity& en) {
+                        en.removeComponent<Relationship>();
+                        en.removeComponent<Position>();
+                        en.removeComponent<Hitbox>();
+                        en.removeComponent<HitboxViewer>();
+                        en.removeComponent<Sprite>();
+                        en.removeComponent<Configuration>();
+                        en.removeComponent<Buff>();
+                        en.removeComponent<Life>();
+                        en.removeComponent<Chrono>();
+                        if (hasAction) {
+                            en.removeComponent<Action>();
+                        }
+                        if (hasVelocity) {
+                            en.removeComponent<Velocity>();
+                        }
+                    }
+                );
                 actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }
