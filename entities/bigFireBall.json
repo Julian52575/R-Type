@@ -1,0 +1,26 @@
+{
+    "entity": {
+        "sprite": "assets/images/bigFireBall.json",
+        "hitbox": {
+            "size": {
+                "x": 175, "y": 150
+            },
+            "offset": {
+                "x": 0, "y": 0
+            }
+        },
+        "stats": {
+            "hp": 150,
+            "attack": 80,
+            "defense": 80,
+            "speedY": 0,
+            "speedX": 100,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": false,
+            "persistsOffScreen": false
+        }
+    }
+}

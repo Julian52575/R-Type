@@ -1,0 +1,21 @@
+R-Type
+.vscode
+*.o
+#Template .gitignore
+
+*.o
+*.~
+build
+*.log
+doxygen/*
+bs
+.vscode
+CMakeUserPresets.json
+librengine.so
+rtype
+rengine/
+*.deb
+_CPack_Packages/
+venvconan/
+*.out
+*.log
