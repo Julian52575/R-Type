@@ -177,12 +177,13 @@ namespace Rengine {
             * @fn setComponentsDestroyFunction
             * @exception EntityExceptionNotActive This entity has been previously destroyed.
             * @param fun The function returning a void and taking a reference to this entity.
-            * @brief Set the function to be called by this->destroy().
+            * @brief Add a function to be called by this->destroy().
             * This function should remove ALL the linked components to avoid glitches.
+            * You can add as many function as you need.
             */
             void setComponentsDestroyFunction(const std::function<void(Rengine::Entity &)> fun)
             {
-                this->_destroyFunction = fun;
+                this->_destroyFunctions.push_back(fun);
             }
             /**
             * @fn destroyComponents
@@ -192,14 +193,19 @@ namespace Rengine {
             */
             void destroyComponents(void)
             {
-                this->_destroyFunction(*this);
+                if (this->_destroyFunctions.size() == 0) {
+                    return;
+                }
+                for (auto it : this->_destroyFunctions) {
+                    it(*this);
+                }
             }
 
         private:
             size_t _id = (size_t) -1;
             ComponentRegistry& _registry;
             uint64_t _flag = 0;
-            std::function<void(Rengine::Entity &)> _destroyFunction = _RENGINEENTITYDESTROYNOOP_;
+            std::vector<std::function<void(Rengine::Entity &)>> _destroyFunctions;
 
     };  // class Entity
 

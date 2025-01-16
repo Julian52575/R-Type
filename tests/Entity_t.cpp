@@ -111,3 +111,18 @@ TEST(Entity, getComponentNoExcept)
     EXPECT_TRUE(comp2.has_value());
     EXPECT_EQ(std::addressof(comp), std::addressof(comp2.value().get()));
 }
+static int destroyConsCall = 0;
+void destroyCons(Rengine::Entity& e)
+{
+    destroyConsCall += 1;
+}
+TEST(Entity, destroyComponentsWith2UserProvidedFunction)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+
+    e.setComponentsDestroyFunction(destroyCons);
+    e.setComponentsDestroyFunction(destroyCons);
+    e.destroyComponents();
+    EXPECT_EQ(destroyConsCall, 2);
+}
