@@ -134,6 +134,24 @@ namespace RType {
                 return State::StateMenu;
             }
         }
+
+        // for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientTCP->Receive(); msg; msg = gameState._clientTCP->Receive()) {
+        //     std::cout << "Received message from server with size: " << msg->header.size << std::endl;
+        // }
+
+        // for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
+        //     std::cout << "Received message from server with size: " << msg->header.size << std::endl;
+        //     if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
+        //         uint16_t health;
+        //         uint16_t maxHealth;
+        //         uint64_t id;
+        //         float posX;
+        //         float posY;
+        //         *msg >> posY >> posX >> maxHealth >> health >> id;
+        //         std::cout << "Entity with ID: " << id << " at position: (" << posX << ", " << posY << ") with health: " << health << "/" << maxHealth << std::endl;
+        //     }
+        // }
+
         //partie movement
         gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
@@ -168,13 +186,13 @@ namespace RType {
     }
 
     State InitNetwork(GameState& gameState) {
-        // try {
-        //     gameState._clientTCP = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.TCPPort);
-        //     gameState._clientUDP = std::make_unique<ClientUDP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.UDPPort);
-        // } catch (const std::exception& e) {
-        //     std::cerr << "Error" << e.what() << std::endl;
-        //     return State::StateLobby;
-        // }
+        try {
+            gameState._clientTCP = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.TCPPort);
+            gameState._clientUDP = std::make_unique<ClientUDP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.UDPPort);
+        } catch (const std::exception& e) {
+            std::cerr << "Error" << e.what() << std::endl;
+            return State::StateLobby;
+        }
         gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
         return State::StateGame;
     }
