@@ -22,6 +22,7 @@ namespace Rengine {
                 if (this->_spriteSpecs.texturePath != "") {
                     try {
                         this->_texture.loadFromFile(this->_spriteSpecs.texturePath);
+                        this->_texture.setSmooth(true);
                         this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
                     } catch (std::exception& e) {
                         std::string msg = e.what();
