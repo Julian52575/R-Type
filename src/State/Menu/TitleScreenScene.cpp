@@ -49,6 +49,10 @@ namespace RType {
                 {380,
                 750}
             );
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_spaceText,
+                {380,
+                850}
+            );
             if (this->_textDeltatime > 2.0f * 2) {
                 this->_textDeltatime = 0.0f;
             }
@@ -73,6 +77,15 @@ namespace RType {
                         default:
                             break;
                     }  // switch it.data.keyboardSpecial
+
+                case Rengine::Graphics::UserInputTypeKeyboardCharPressed:
+                    switch (it.data.keyboardChar) {
+                        case ' ':
+                            return MenuScenesOptions;
+
+                        default:
+                            break;
+                    }  // switch it.data.keyboardChar
 
                 default:
                     break;
@@ -115,6 +128,8 @@ namespace RType {
         this->_enterText = Rengine::Graphics::GraphicManagerSingletone::get().createText(text);
         text.message = "Press tab for online player";
         this->_tabText = Rengine::Graphics::GraphicManagerSingletone::get().createText(text);
+        text.message =  "Press space for options";
+        this->_spaceText = Rengine::Graphics::GraphicManagerSingletone::get().createText(text);
     }
 
 }  // namespace RType

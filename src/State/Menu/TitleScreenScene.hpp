@@ -1,22 +1,17 @@
 //
 #pragma once
 
+#include <cstddef>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/Graphics/ASound.hpp>
 #include <rengine/src/Graphics/ASprite.hpp>
 #include <rengine/src/Graphics/AText.hpp>
+#include <rengine/src/Rng/Rng.hpp>
 
 #include "src/State/AScene.hpp"
 #include "src/State/Menu/Scenes.hpp"
 
 namespace RType {
-
-    enum Buttons : uint8_t {
-        ButtonsIp,
-        ButtonsPort,
-        ButtonsPlayerJson,
-        ButtonsMax
-    };
 
     class TitleScreenScene : public AScene<MenuScenes> {
         public:
@@ -41,6 +36,7 @@ namespace RType {
             float _textDeltatime = 2.0f;
             std::shared_ptr<Rengine::Graphics::AText> _enterText = nullptr;
             std::shared_ptr<Rengine::Graphics::AText> _tabText = nullptr;
+            std::shared_ptr<Rengine::Graphics::AText> _spaceText = nullptr;
     };
 
 }  // namespace RType

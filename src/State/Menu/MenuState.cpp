@@ -7,6 +7,7 @@
 
 #include "MenuState.hpp"
 #include "src/State/Menu/EnterLobbyInfoScene.hpp"
+#include "src/State/Menu/OptionsScene.hpp"
 #include "src/State/Menu/Scenes.hpp"
 #include "src/State/Menu/TitleScreenScene.hpp"
 #include "src/State/State.hpp"
@@ -59,6 +60,7 @@ namespace RType {
     {
         this->_scenesArray[MenuScenesEnterLobbyInfo] = std::make_shared<EnterLobbyInfoScene>(EnterLobbyInfoScene(this->_lobbyInfo));
         this->_scenesArray[MenuScenesTitleScreen] = std::make_shared<TitleScreenScene>();
+        this->_scenesArray[MenuScenesOptions] = std::make_shared<OptionsScene>(this->_accessibilitySettings);
     }
 
     /*              Getter              */
