@@ -135,6 +135,9 @@ skipIcon:
         void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
             const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
         {
+            if (sprite == nullptr) {
+                return;
+            }
             try {
                 if (updateAnimationFrame == true && sprite->hasAnimation() == true) {
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
