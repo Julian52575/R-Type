@@ -18,7 +18,6 @@ static void input(void)
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
     for (auto it : manager) {
-        std::cout << it << std::endl;
         if (it.type == Rengine::Graphics::UserInputTypeWindowClosed) {
             Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
             std::cout << "Close" << std::endl;
@@ -145,7 +144,6 @@ static void inputFlipSprite(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
     for (auto it : manager) {
-        std::cout << it.type << std::endl;
         if (it.type == Rengine::Graphics::UserInputTypeMouseLeftClick) {
             sprite->flip();
             std::cout << "Flip !" << std::endl;
@@ -191,6 +189,50 @@ static void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
     textBox->setText(currentText);
 }
 
+static void inputTurnDownMusic(std::shared_ptr<Rengine::Graphics::ASound>& music)
+{
+    Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+
+    for (auto it : inputManager) {
+        if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial && it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN) {
+            music->setVolume(music->getVolume() - 2);
+            std::cout << "Volume is now " << music->getVolume() << std::endl;
+        }
+    }
+}
+
+static void inputJoystick(void)
+{
+    Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+
+    for (auto it : inputManager) {
+        if (it.type == Rengine::Graphics::UserInputTypeJoystickConnected) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " connected." << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickDisconnected) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " disconnected." << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickButton) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " pressed button " << it.data.joystickInput.data.joystickButton << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickLeftPressed) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " pressed left joystick." << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickRightPressed) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " pressed right joystick." << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickRightMove) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " moved right stick: " << it.data.joystickInput.data.joystickPosition << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickLeftMove) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " moved left stick: " << it.data.joystickInput.data.joystickPosition << std::endl;
+        }
+        else if (it.type == Rengine::Graphics::UserInputTypeJoystickDPad) {
+            std::cout << "Joystick " << it.data.joystickInput.joystickId << " moved d-pad: " << it.data.joystickInput.data.dpadPosition << std::endl;
+        }
+    }
+}
+
 int main(void)
 {
     Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
@@ -215,6 +257,8 @@ int main(void)
         inputFlipSprite(sprite);
         inputTextbox(textBox);
         inputChangeColor(rectangle);
+        inputTurnDownMusic(music);
+        inputJoystick();
         manager.addToRender(circle, {0, 0});
         manager.addToRender(sprite, {300, 300});
         manager.addToRender(rectangle, {600, 600});

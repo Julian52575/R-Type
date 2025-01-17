@@ -74,7 +74,7 @@ namespace Rengine {
                     return a.data.keyboardSpecial == b.data.keyboardSpecial;
 
                 case (UserInputType::UserInputTypeJoystickButton):
-                    return a.data.joystickButton == b.data.joystickButton;
+                    return a.data.joystickInput.data.joystickButton == b.data.joystickInput.data.joystickButton;
 
                 // The other type needs no comparison
                 default:
@@ -135,6 +135,9 @@ namespace Rengine {
                     break;
                 case UserInputTypeJoystickButton:
                     str = "UserInputTypeJoystickButton";
+                    break;
+                case UserInputTypeJoystickDPad:
+                    str = "UserInputTypeJoystickDPad";
                     break;
                 default:
                     str = "Unknow";
