@@ -18,7 +18,6 @@ static void input(void)
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
     for (auto it : manager) {
-        std::cout << it << std::endl;
         if (it.type == Rengine::Graphics::UserInputTypeWindowClosed) {
             Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
             std::cout << "Close" << std::endl;
@@ -191,6 +190,18 @@ static void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
     textBox->setText(currentText);
 }
 
+static void inputTurnDownMusic(std::shared_ptr<Rengine::Graphics::ASound>& music)
+{
+    Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+
+    for (auto it : inputManager) {
+        if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial && it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN) {
+            music->setVolume(music->getVolume() - 2);
+            std::cout << "Volume is now " << music->getVolume() << std::endl;
+        }
+    }
+}
+
 int main(void)
 {
     Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
@@ -215,6 +226,7 @@ int main(void)
         inputFlipSprite(sprite);
         inputTextbox(textBox);
         inputChangeColor(rectangle);
+        inputTurnDownMusic(music);
         manager.addToRender(circle, {0, 0});
         manager.addToRender(sprite, {300, 300});
         manager.addToRender(rectangle, {600, 600});
