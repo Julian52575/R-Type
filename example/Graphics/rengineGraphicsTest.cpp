@@ -18,6 +18,7 @@ static void input(void)
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
     for (auto it : manager) {
+        std::cout << it << std::endl;  //
         if (it.type == Rengine::Graphics::UserInputTypeWindowClosed) {
             Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
             std::cout << "Close" << std::endl;
