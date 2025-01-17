@@ -30,7 +30,7 @@ namespace RType {
         try {
             LobbyState._client = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(LobbyState._lobbyInfo.serverIp, LobbyState._lobbyInfo.port);
         } catch (const std::exception& e) {
-            std::cerr << "Error" << e.what() << std::endl;
+            std::cerr << "Error " << e.what() << " on " << LobbyState._lobbyInfo.serverIp << ":" << LobbyState._lobbyInfo.port << std::endl;
             return State::StateMenu;
         }
         Message<Network::Communication::TypeDetail> msg;
