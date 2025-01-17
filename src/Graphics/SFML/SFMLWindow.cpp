@@ -201,7 +201,6 @@ skipIcon:
         {
             sf::Event event;
 
-            sf::Joystick::update();
             while (this->_renderWindow.pollEvent(event)) {
                 Rengine::Graphics::UserInput newInput;
 

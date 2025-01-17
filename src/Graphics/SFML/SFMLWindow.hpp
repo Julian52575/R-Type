@@ -60,7 +60,7 @@ namespace Rengine {
                 inline UserInput processJoystickMove(const sf::Event& event);
                 void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
                 inline void processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(unsigned int joystickId);
-                std::vector<unsigned int> _joystickIds;
+                std::vector<unsigned int> _joystickIds = {0};
                 void removeJoystickFromVector(unsigned int joystickId);
         };
 

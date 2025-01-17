@@ -250,7 +250,7 @@ int main(void)
     specs.resolution = {800, 800};
     specs.options.isFullscreen = false;
     specs.options.isBorderless = false;
-    specs.joystickThreshold = 5.9f;
+    specs.joystickThreshold = 4.0f;
     manager.createWindow(specs);
     while (manager.getWindow()->isOpen()) {
         manager.getWindow()->pollInput();
