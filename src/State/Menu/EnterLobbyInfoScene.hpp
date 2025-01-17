@@ -1,7 +1,7 @@
 //
 #pragma once
 
-#include <vector>
+#include <array>
 #include <rengine/RengineGraphics.hpp>
 
 #include "Scenes.hpp"
@@ -12,11 +12,11 @@
 
 namespace RType {
 
-    enum Buttons : uint8_t {
-        ButtonsIp,
-        ButtonsPort,
-        ButtonsPlayerJson,
-        ButtonsMax
+    enum EnterLobbyButtons : uint8_t {
+        EnterLobbyButtonsIp,
+        EnterLobbyButtonsPort,
+        EnterLobbyButtonsPlayerJson,
+        EnterLobbyButtonsMax
     };
 
     class EnterLobbyInfoScene : public AScene<MenuScenes> {
@@ -41,8 +41,8 @@ namespace RType {
             LobbyInfo& _lobbyInfo;
             // A vector of text, first is the name, second is the input
             // Can be access by using Buttons
-            Buttons _currentIndex = ButtonsIp;
-            std::vector<std::pair<std::shared_ptr<Rengine::Graphics::AText>, std::shared_ptr<Rengine::Graphics::AText>>> _buttonVector;
+            EnterLobbyButtons _currentIndex = EnterLobbyButtonsIp;
+            std::array<std::pair<std::shared_ptr<Rengine::Graphics::AText>, std::shared_ptr<Rengine::Graphics::AText>>, EnterLobbyButtonsMax> _buttonVector;
             std::shared_ptr<Rengine::Graphics::ASprite> _buttonCursor;
             std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic;
 

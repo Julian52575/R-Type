@@ -11,7 +11,7 @@ namespace RType {
 
         void EnterLobbyInfoScene::unload(void)
         {
-            this->_currentIndex = ButtonsIp;
+            this->_currentIndex = EnterLobbyButtonsIp;
             this->_backgroundMusic->reset();
         }
         void EnterLobbyInfoScene::reload(void)
@@ -42,7 +42,7 @@ namespace RType {
         MenuScenes EnterLobbyInfoScene::handleInputs(void)
         {
             Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
-            std::string currentTextCopy = this->_buttonVector[this->_currentIndex % ButtonsMax].second->getText();
+            std::string currentTextCopy = this->_buttonVector[this->_currentIndex % EnterLobbyButtonsMax].second->getText();
             bool textUpdate = false;
             std::optional<std::reference_wrapper<const Rengine::Graphics::UserInput>> charInput = inputManager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardChar);
             std::optional<std::reference_wrapper<const Rengine::Graphics::UserInput>> spInput = inputManager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecial);
@@ -62,7 +62,7 @@ namespace RType {
                             break;
 
                         case Rengine::Graphics::UserInputKeyboardSpecialTAB:
-                            this->_currentIndex = static_cast<Buttons>((this->_currentIndex + 1) % ButtonsMax);
+                            this->_currentIndex = static_cast<EnterLobbyButtons>((this->_currentIndex + 1) % EnterLobbyButtonsMax);
                             break;
 
                         case Rengine::Graphics::UserInputKeyboardSpecialENTER:
@@ -78,7 +78,7 @@ namespace RType {
                 }
             }  // for it
             if (textUpdate == true) {
-                this->_buttonVector[this->_currentIndex % ButtonsMax].second->setText(currentTextCopy);
+                this->_buttonVector[this->_currentIndex % EnterLobbyButtonsMax].second->setText(currentTextCopy);
             }
             return MenuScenesEnterLobbyInfo;
         }
@@ -86,9 +86,9 @@ namespace RType {
         MenuScenes EnterLobbyInfoScene::exitToLobby(void)
         {
             try {
-                this->_lobbyInfo.serverIp = this->_buttonVector[ButtonsIp].second->getText();
-                this->_lobbyInfo.port = std::stoi(this->_buttonVector[ButtonsPort].second->getText());
-                this->_lobbyInfo.playerJson = this->_buttonVector[ButtonsPlayerJson].second->getText();
+                this->_lobbyInfo.serverIp = this->_buttonVector[EnterLobbyButtonsIp].second->getText();
+                this->_lobbyInfo.port = std::stoi(this->_buttonVector[EnterLobbyButtonsPort].second->getText());
+                this->_lobbyInfo.playerJson = this->_buttonVector[EnterLobbyButtonsPlayerJson].second->getText();
             } catch (std::exception& e) {
                 std::cout << "Exception '" << e.what() << "' when converting port input to int. Staying on menu." << std::endl;
                 return MenuScenesEnterLobbyInfo;
@@ -98,8 +98,6 @@ namespace RType {
 
         void EnterLobbyInfoScene::initGraphics(void)
         {
-            this->_buttonVector.resize(ButtonsMax);
-            // WIP
             Rengine::Graphics::TextSpecs inputSpecs;
             Rengine::Graphics::TextSpecs specs;
 
@@ -115,7 +113,7 @@ namespace RType {
             specs.fontPath = "assets/fonts/arial.ttf";
             specs.message = "Ip address :";
             inputSpecs.message = "0.0.0.0";
-            this->_buttonVector[ButtonsIp] = {
+            this->_buttonVector[EnterLobbyButtonsIp] = {
                     Rengine::Graphics::GraphicManagerSingletone::get().createText(specs),
                     Rengine::Graphics::GraphicManagerSingletone::get().createText(inputSpecs)
             };
@@ -123,14 +121,14 @@ namespace RType {
             specs.color = {255, 0, 0};
             specs.message = "Port :";
             inputSpecs.message = "4242";
-            this->_buttonVector[ButtonsPort] = {
+            this->_buttonVector[EnterLobbyButtonsPort] = {
                 Rengine::Graphics::GraphicManagerSingletone::get().createText(specs),
                 Rengine::Graphics::GraphicManagerSingletone::get().createText(inputSpecs)
             };
             specs.color = {0, 255, 0};
             specs.message = "Player json :";
             inputSpecs.message = "assets/entities/playerDefault.json";
-            this->_buttonVector[ButtonsPlayerJson] = {
+            this->_buttonVector[EnterLobbyButtonsPlayerJson] = {
                 Rengine::Graphics::GraphicManagerSingletone::get().createText(specs),
                 Rengine::Graphics::GraphicManagerSingletone::get().createText(inputSpecs)
             };
