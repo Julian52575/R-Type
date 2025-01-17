@@ -1,5 +1,10 @@
 #include <bits/types/struct_tm.h>
-#include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
+#include <lua5.4/lua.h>
+#ifdef UNIT_TESTS
+    #include <lua5.4/lua.hpp>
+#else
+    #include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
+#endif
 #include <utility>
 #include <iostream>
 #include <vector>
@@ -95,7 +100,7 @@ namespace RType {
         if (this->states[filename].size() <= id) {
             throw LuaManagerException("Lua error: "+filename+" id "+std::to_string(id)+" not found");
         }
-        
+
         if (this->states[filename][id] != nullptr) {
             lua_close(this->states[filename][id]);
             this->states[filename][id] = nullptr;
@@ -165,35 +170,43 @@ namespace RType {
         }
     }
 
-    std::unordered_map<std::string, std::any> LuaManager::processLuaTable(lua_State* L, int index)
+    int LuaManager::processLuaTable(lua_State* L, int index, std::vector<LuaReturn>& result)
     {
-        std::unordered_map<std::string, std::any> result;
+        int i = 0;
 
-        lua_pushnil(L);
-        while (lua_next(L, index) != 0) {
-            std::string key = lua_tostring(L, -2);
+        lua_pushnil(L);  // push the first key for iteration
+        for (; lua_next(L, index) != 0; i++) {
+            LuaReturn r;
+
+            r.type = LuaTypeNA;
+            r.data = {0};
             switch (lua_type(L, -1)) {
                 case LUA_TNUMBER:
-                    result[key] = lua_tonumber(L, -1);
+                    r.type = LuaTypeInt;
+                    r.data.integer = lua_tonumber(L, -1);
                     break;
                 case LUA_TBOOLEAN:
-                    result[key] = bool(lua_toboolean(L, -1));
+                    r.type = LuaTypeBoolean;
+                    r.data.boolean = bool(lua_toboolean(L, -1));
                     break;
                 case LUA_TSTRING:
-                    result[key] = std::string(lua_tostring(L, -1));
+                    r.type = LuaTypeString;
+                    r.data.str = lua_tostring(L, -1);
                     break;
                 case LUA_TNIL:
-                    result[key] = nullptr;
+                    r.type = LuaTypeNA;
                     break;
                 case LUA_TTABLE:
-                    result[key] = processLuaTable(L, lua_gettop(L));
-                    break;
+                    lua_pushvalue(L, -2);
+                    processLuaTable(L, lua_gettop(L), result);
+                    continue;
                 default:
                     throw LuaManagerException("Lua error: unknown type");
-            }
+            }  // switch lua_type
             lua_pop(L, 1);
-        }
-        return result;
+            result.push_back(r);
+        }  // while lua_next
+        return i;
     }
 
     std::vector<LuaReturn> LuaManager::getLuaResult(lua_State* L)
@@ -230,8 +243,11 @@ namespace RType {
                     break;
 
                 case LUA_TTABLE:
-                    //processLuaTable(L, i);
-                    #warning Lua table ignored
+                    // Copy the key to preserve it for lua_next
+                    lua_pushvalue(L, -2);
+                    processLuaTable(L, i, result);
+                    // Restore the key for the next iteration
+                    lua_pop(L, 1);
                     continue;
 
                 default:

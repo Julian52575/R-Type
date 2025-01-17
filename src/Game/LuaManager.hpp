@@ -2,7 +2,11 @@
 #ifndef SRC_GAME_LUAMANAGER_HPP_
 #define SRC_GAME_LUAMANAGER_HPP_
 
-#include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
+#ifdef UNIT_TESTS
+    #include <lua5.4/lua.hpp>
+#else
+    #include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
+#endif
 #include <iostream>
 #include <any>
 #include <vector>
@@ -66,6 +70,7 @@ namespace RType {
             ~LuaManager(void);
             /**
             * @fn addScript
+            * @param The script's id.
             * @brief Load a script into the manager and return the id of the lua state.
             */
             int loadLuaScript(const std::string& filename);
@@ -73,12 +78,13 @@ namespace RType {
             * @fn callFunction
             * @template Args The arguments to pass to the function
             * @param filename The script to run.
+            * @param id The script id returned by this->loadLuaScript().
             * @param functionName The lua function from the script to run.
             * @return std::vector<std::any> A vector containing the result from the lua script. Using lua types.
             * @brief Call the lua function 'name' from the script 'filename' with the provided args.
             */
             template <typename ...Args>
-            std::vector<LuaReturn> callFunction(const std::string& filename,int id, const std::string& functionName, Args... args);
+            std::vector<LuaReturn> callFunction(const std::string& filename, int id, const std::string& functionName, Args... args);
 
             void removeScriptAtIndex(const std::string& filename, int id);
 
@@ -108,7 +114,12 @@ namespace RType {
             void push(lua_State *L, std::vector<T> value);
 
             std::vector<LuaReturn> getLuaResult(lua_State* L);
-            std::unordered_map<std::string, std::any> processLuaTable(lua_State* L, int index);
+            /**
+             * @fn processLuaTable
+             * @return The number of elements removed from the stack.
+             * @brief Parse a table from the stack.
+             */
+            int processLuaTable(lua_State* L, int index, std::vector<LuaReturn>& result);
 
             std::unordered_map<std::string, std::vector<lua_State*>> states;
             std::unordered_map<std::string, std::queue<int>> freeIds;
@@ -116,10 +127,11 @@ namespace RType {
 
     // Doesn't compile outside of hpp
     template <typename... Args>
-    std::vector<LuaReturn> LuaManager::callFunction(const std::string& file,int id, const std::string& name, Args... args)
+    std::vector<LuaReturn> LuaManager::callFunction(const std::string& file, int id, const std::string& name, Args... args)
     {
         if (states.find(file) == states.end()) {
-            throw LuaManagerException("Lua error: file " + file +" needs to be loaded before calling a function");
+            //throw LuaManagerException("Lua error: file " + file +" needs to be loaded before calling a function");
+            id = this->loadLuaScript(file);
         }
         std::vector<lua_State*> state = this->states[file];
         if (state.size() <= id || id < 0) {
