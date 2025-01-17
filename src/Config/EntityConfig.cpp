@@ -20,6 +20,11 @@ namespace RType {
 
         EntityConfig::EntityConfig(const std::string& jsonPath)
         {
+            this->parseJson(jsonPath);
+        }
+        void EntityConfig::parseJson(const std::string& jsonPath)
+        {
+            this->_jsonPath = jsonPath;
             std::ifstream f;
 
             try {
@@ -182,6 +187,11 @@ namespace RType {
             if (attacksField.contains("shoot3") == true) {
                 this->_attacks[2] = resolver.get(attacksField["shoot3"]);
             }
+        }
+
+        const std::string& EntityConfig::getJsonPath(void) const noexcept
+        {
+            return this->_jsonPath;
         }
     }  // namespace Config
 }  // namespace RType

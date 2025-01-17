@@ -65,6 +65,19 @@ namespace RType {
                 * @brief Check if the entity is a child of parent.
                 */
                 bool isParented(uint64_t parent) const noexcept;
+                /**
+                * @fn isOrphan
+                * @return true if the entity has no parent, false otherwise
+                * @brief Check if the entity has no parent.
+                */
+                bool isOrphan(void) const noexcept;
+                /**
+                * @fn getParents
+                * @return A vector of the entity's parent(s)
+                * @brief Get the entity's parent(s)
+                */
+                const std::vector<uint64_t>& getParents(void) const noexcept;
+
 
             private:
                 uint64_t _group;

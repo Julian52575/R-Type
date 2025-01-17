@@ -1,6 +1,9 @@
 //
 #include "Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
+#include "src/Components/Configuration.hpp"
+#include "src/Components/Life.hpp"
+
 #include <rengine/src/SparseArray.hpp>
 
 namespace RType {
@@ -21,17 +24,22 @@ namespace RType {
             Rengine::SparseArray<RType::Components::Hitbox>& hitboxs = ecs.getComponents<RType::Components::Hitbox>();
             Rengine::SparseArray<RType::Components::Position>& positions = ecs.getComponents<RType::Components::Position>();
             Rengine::SparseArray<RType::Components::Relationship>& relationships = ecs.getComponents<RType::Components::Relationship>();
+            Rengine::SparseArray<RType::Components::Life>& lifes = ecs.getComponents<RType::Components::Life>();
+            Rengine::SparseArray<RType::Components::Configuration>& configurations = ecs.getComponents<RType::Components::Configuration>();
+
             std::optional<std::reference_wrapper<Position>> posWrapper = entity.getComponentNoExcept<Position>();
+            std::optional<std::reference_wrapper<Life>> lifeWrapper = entity.getComponentNoExcept<Life>();
+            std::optional<std::reference_wrapper<Configuration>> configWrapper = entity.getComponentNoExcept<Configuration>();
 
             // Entity has no position
             if (posWrapper == std::nullopt) {
                 return;
             }
             // This entity data
-            uint16_t ownHitboxStartY = posWrapper->get().getVector2D().y + hitbox.getSpecs().offsetFromSpriteOrigin.y;
-            uint16_t ownHitboxEndY = ownHitboxStartY + hitbox.getSpecs().size.y;
-            uint16_t ownHitboxStartX = posWrapper->get().getVector2D().x + hitbox.getSpecs().offsetFromSpriteOrigin.x;
-            uint16_t ownHitboxEndX = ownHitboxStartX + hitbox.getSpecs().size.x;
+            float ownHitboxStartY = posWrapper->get().getVector2D().y + hitbox.getSpecs().offsetFromSpriteOrigin.y;
+            float ownHitboxEndY = ownHitboxStartY + hitbox.getSpecs().size.y;
+            float ownHitboxStartX = posWrapper->get().getVector2D().x + hitbox.getSpecs().offsetFromSpriteOrigin.x;
+            float ownHitboxEndX = ownHitboxStartX + hitbox.getSpecs().size.x;
 
             // Parse hitboxs and positions from the current entity to avoid double checks.
             // Assumes hitboxs and positions have the default size defined in the ecs.
@@ -41,22 +49,46 @@ namespace RType {
                     continue;
                 }
                 // Check parenty: child cannot damage parents
-                if (relationships[index].has_value() == true && relationships[index]->isParented(uint64_t(entity))) {
+                if (relationships[index].has_value() == true && relationships[index]->isParented(uint64_t(entity)) == true) {
                     continue;
                 }
+
                 // Current entity data
-                uint16_t hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;
-                uint16_t hitboxEndY = hitboxStartY + hitboxs[index]->getSpecs().size.y;
-                uint16_t hitboxStartX = positions[index]->getVector2D().x + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.x;
-                uint16_t hitboxEndX = hitboxStartX + hitboxs[index]->getSpecs().size.x;
+                float hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;
+                float hitboxEndY = hitboxStartY + hitboxs[index]->getSpecs().size.y;
+                float hitboxStartX = positions[index]->getVector2D().x + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.x;
+                float hitboxEndX = hitboxStartX + hitboxs[index]->getSpecs().size.x;
 
                 // Comparison from https://stackoverflow.com/questions/65924292/most-efficient-way-to-compare-all-collision-boxes
-                if (!((ownHitboxStartX <= hitboxEndX && ownHitboxEndX >= hitboxStartX) &&
-                (ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY))) {
+                if (!(ownHitboxStartX <= hitboxEndX && ownHitboxEndX >= hitboxStartX &&
+                    ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY)) {
                     continue;
                 }
-                std::cout << "Colision between " << int(entity) << " and " << index << std::endl;
-                #warning Debug print
+                // float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
+                float timeCooldown = 0.3;
+
+                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                //     return;
+                // }
+                // hitbox._lastCheckSeconds = currentTime;
+                //check si l'entité à une vie et si c'est le cas elle take damage
+                if (lifes[index].has_value() == true) {
+                    if (configWrapper.has_value() == true) {
+                        lifes[index]->takeDamage(configWrapper->get().getConfig().getStats().attack);
+                    }
+                    else {
+                        lifes[index]->takeDamage(1);
+                    }
+                }
+                if (lifeWrapper.has_value() == true) {
+                    if (configurations[index].has_value() == true) {
+                        lifeWrapper->get().takeDamage(configurations[index]->getConfig().getStats().attack);
+                    }
+                    else {
+                        lifeWrapper->get().takeDamage(1);
+                    }
+                }
+
             } // for index
         }
     }  // namespace Components

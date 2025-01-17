@@ -85,7 +85,7 @@ namespace RType {
         */
         struct EntityConfigHitbox {
             Rengine::Graphics::vector2D<uint16_t> size = {25, 25};
-            Rengine::Graphics::vector2D<uint16_t> offsetFromSpriteOrigin = {0, 0};
+            Rengine::Graphics::vector2D<float> offsetFromSpriteOrigin = {0, 0};
         };
         /**
         * @addtogroup RType::Config
@@ -107,6 +107,12 @@ namespace RType {
                 * The entity configuration must start with the 'entity' field.
                 */
                 explicit EntityConfig(const std::string& jsonPath);
+                /**
+                * @fn parseJson
+                * @param jsonPath The path to a json entity configuration.
+                * The entity configuration must start with the 'entity' field.
+                */
+                void parseJson(const std::string& jsonPath);
                 ~EntityConfig(void) = default;
                 /**
                 * @fn getStats
@@ -144,8 +150,16 @@ namespace RType {
                 * @brief Returns the data for the entity's attack.
                 */
                 const std::optional<AttackConfig>& getAttack(uint8_t id) const noexcept;
+                /**
+                * @fn getJsonPath
+                * @return std::string The path to the json used to create this entity.
+                * @brief Returns the path to the json used to create this entity.
+                */
+                const std::string& getJsonPath(void) const noexcept;
+
 
             private:
+                std::string _jsonPath = "";
                 ImageConfig _sprite;
                 EntityConfigStats _stats;
                 EntityConfigCharacteristics _characteristics;

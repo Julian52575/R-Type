@@ -2,7 +2,6 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Graphics/Vector.hpp>
 #include <stdexcept>
@@ -12,10 +11,8 @@
 #include <rengine/Rengine.hpp>
 
 #include "../Network/EntityAction.hpp"
-#include "Action.hpp"
 #include "Configuration.hpp"
 #include "Position.hpp"
-#include "Sprite.hpp"
 #include "src/Config/AttackBuffTypeEnum.hpp"
 #include "src/Config/AttackConfig.hpp"
 #include "src/Config/EntityConfig.hpp"
@@ -23,6 +20,7 @@
 
 namespace RType {
     namespace Components {
+
         Position::Position(void){}
 
         Position::Position(float x, float y) : _position({x, y}) {}
@@ -53,21 +51,14 @@ namespace RType {
             this->_position.y = y;
         }
 
-        void Position::componentFunction(Rengine::ECS& ecs, RType::Components::Position& pos, Rengine::Entity& entity)
+        float Position::getX(void) const noexcept
         {
-            std::optional<std::reference_wrapper<Configuration>> entityConfig = entity.getComponentNoExcept<Configuration>();
-            std::optional<std::reference_wrapper<Action>> actionComponent = entity.getComponentNoExcept<Action>();
-
-            if (entityConfig == std::nullopt || actionComponent != std::nullopt) {
-                return;
-            }
-
-            float deltatime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
-
-            auto& config = entityConfig.value().get();
-            float newX = pos.getVector2D().x + config.getConfig().getStats().speedX * deltatime;
-            float newY = pos.getVector2D().y + config.getConfig().getStats().speedY * deltatime;
-            pos.set({newX, newY});
+            return this->_position.x;
         }
-    }
-}
+        float Position::getY(void) const noexcept
+        {
+            return this->_position.y;
+        }
+
+    }  // namespace Components
+}  // namespace RType

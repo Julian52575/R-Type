@@ -109,18 +109,22 @@ void game(std::string &ip, uint16_t TCPPort, uint16_t UDPPort) {
     msg << clientUDP.getLocalEndpoint();
     clientTCP.Send(msg);
 
-    std::string input;
-    while (std::getline(std::cin, input)) {
-        if (input.empty()) break;
-        if (input == "send") {
-            Message<Communication::TypeDetail> msg2;
-            msg2.header.type = {Communication::Type::EntityInfo, Communication::main::EntityInfoPrecision::InfoAll};
-            msg2.header.size = 0;
-            clientUDP.Send(msg2);
-            clientTCP.Send(msg2);
-            std::cout << "Sent message: " << input << std::endl;
+    while (true) {
+        for (std::optional<Message<Communication::TypeDetail>> msg = clientTCP.Receive(); msg; msg = clientTCP.Receive()) {
+            std::cout << "Received message from server with size: " << msg->header.size << std::endl;
         }
-        input.clear();
+        for (std::optional<Message<Communication::TypeDetail>> msg = clientUDP.Receive(); msg; msg = clientUDP.Receive()) {
+            std::cout << "Received message from server with size: " << msg->header.size << std::endl;
+            if (msg->header.type.type == Communication::Type::EntityInfo && msg->header.type.precision == Communication::main::EntityInfoPrecision::InfoAll) {
+                uint16_t health;
+                uint16_t maxHealth;
+                uint64_t id;
+                uint16_t configID;
+                float posX;
+                float posY;
+                *msg >> configID >> posY >> posX >> maxHealth >> health >> id;
+            }
+        }
     }
 }
 
@@ -180,6 +184,14 @@ void lobby(int ac, char **argv) {
                     game(ip, gameTCPport, gameUDPport);
                     return;
                 }
+                if (msg->header.type.type == Communication::Type::LobbyInfo && msg->header.type.precision == Communication::main::LobbyInfoPrecision::GameUpdated) {
+                    uuid_t gameID;
+                    uint16_t nbUsers;
+                    char name[15];
+                    time_t timeStarted;
+                    *msg >> timeStarted >> name >> nbUsers >> gameID;
+                    std::cout << "Game with ID: " << printUuid(gameID) << " and " << nbUsers << " users. Started at: " << timeStarted << " with name: " << name << std::endl;
+                }
                 if (msg->header.type.type == Communication::Type::LobbyInfo && msg->header.type.precision == Communication::main::LobbyInfoPrecision::GameInfo) {
                     uint16_t nbGames;
                     *msg >> nbGames;
@@ -187,15 +199,19 @@ void lobby(int ac, char **argv) {
                     for (uint16_t i = 0; i < nbGames; i++) {
                         uuid_t gameID;
                         uint16_t nbUsers;
-                        *msg >> nbUsers >> gameID;
-                        std::cout << "Game ID: " << printUuid(gameID) << " with " << nbUsers << " users." << std::endl;
+                        char name[15];
+                        time_t timeStarted;
+                        *msg >> timeStarted >> name >> nbUsers >> gameID;
+                        std::cout << "Game with ID: " << printUuid(gameID) << " and " << nbUsers << " users. Started at: " << timeStarted << " with name: " << name << std::endl;
                     }
                 }
                 if (msg->header.type.type == Communication::Type::LobbyInfo && msg->header.type.precision == Communication::main::LobbyInfoPrecision::GameCreated) {
                     uuid_t gameID;
                     uint16_t nbUsers;
-                    *msg >> nbUsers >> gameID;
-                    std::cout << "Game created with ID: " << printUuid(gameID) << " and " << nbUsers << " users." << std::endl;
+                    char name[15];
+                    time_t timeStarted;
+                    *msg >> timeStarted >> name >> nbUsers >> gameID;
+                    std::cout << "Game with ID: " << printUuid(gameID) << " and " << nbUsers << " users. Started at: " << timeStarted << " with name: " << name << std::endl;
                 }
             }
         }

@@ -81,9 +81,10 @@ namespace RType {
         */
         struct SceneEntityConfig {
             EntityConfig entityConfig;
-            uint16_t xSpawn;
-            uint16_t ySpawn;
-            bool isBoss;
+            std::string path;
+            uint16_t xSpawn = 1919;
+            uint16_t ySpawn = 0;
+            bool isBoss = false;
         };  // struct SceneEntityConfig
 
         /**
