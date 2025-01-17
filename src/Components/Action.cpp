@@ -1,4 +1,5 @@
 //
+#include <chrono>
 #include <cstddef>
 #include <exception>
 #include <functional>
@@ -70,14 +71,17 @@ namespace RType {
 
         void Action::updateFromSource(void) noexcept
         {
-            std::vector<RType::LuaReturn> reply;
-
             switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
-                    reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "movement", 0,0,0,0);
-                    reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "attack", true,0,0);
-                    return;
+                    try {
+                        this->processLuaScriptInput();
+                    } catch (...) {
+                        std::cerr << "Script " << this->_luaInfos.scriptPath << " received execption: " << ". Disabling it..." << std::endl;
+                        this->_actionSource = ActionSource::ActionSourceNA;
+                        return;
+                    }
+                    break;
 
                 case ActionSource::ActionSourceUserInput:
                     this->processUserInput();
@@ -102,8 +106,8 @@ namespace RType {
 
             while (it != inputManager.end()) {
                 // Check keyboard
-                if (it->type == Rengine::Graphics::UserInputTypeKeyboardCharPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardCharPressed
-                || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
+                if (it->type == Rengine::Graphics::UserInputTypeKeyboardCharPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardChar
+                || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
                     this->processUserInputKeyboard(*it);
                 } else if (it->type == Rengine::Graphics::UserInputTypeJoystickButton
                 || it->type == Rengine::Graphics::UserInputTypeJoystickLeftMove || it->type == Rengine::Graphics::UserInputTypeJoystickLeftPressed
@@ -130,9 +134,11 @@ namespace RType {
 
                 if (it->first.type == input.type) {
                     // Check KeyboardSpecial
-                    if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+                    if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecial
+                    || it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                         dataComparaison = (it->first.data.keyboardSpecial == input.data.keyboardSpecial);
-                    } else if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardChar) {  // Check KeyboardChar
+                    } else if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardChar
+                    || it->first.type == Rengine::Graphics::UserInputTypeKeyboardCharPressed) {  // Check KeyboardChar
                         dataComparaison = (it->first.data.keyboardChar == input.data.keyboardChar);
                     }
                     if (dataComparaison == true) {
@@ -152,7 +158,7 @@ namespace RType {
                 float moveX = 0.0f;
                 float moveY = 0.0f;
                 // Handle keyboard arrows
-                if (input.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+                if (input.type == Rengine::Graphics::UserInputTypeKeyboardSpecial || input.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                     switch (input.data.keyboardSpecial) {
                         // Down arrow
                         case Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN:
@@ -228,6 +234,42 @@ namespace RType {
         void Action::processAction(const Network::EntityAction& rfcAction) noexcept
         {
             this->_actionVector.push_back(rfcAction);
+        }
+
+        void Action::processLuaScriptInput(void)
+        {
+            std::vector<RType::LuaReturn> reply;
+            Network::EntityAction act;
+
+            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "move");
+            // reply is not formatted correcly: ignore
+            if (reply.size() < 1) {
+                goto shootFunction;
+            }
+            if (reply[0].type != LuaTypeInt && reply[0].data.integer > Network::EntityActionTypeUltimate) {
+                goto shootFunction;
+            }
+            // Move checks
+            if (reply[0].data.integer == Network::EntityActionType::EntityActionTypeMove) {
+                // Ensure reply as at least 2 more int type elements
+                if (reply.size() < 3 || reply[1].type != LuaTypeInt || reply[2].type != LuaTypeInt) {
+                    goto shootFunction;
+                }
+                act.data.moveVelocity.x = reply[1].data.integer;
+                act.data.moveVelocity.y = reply[2].data.integer;
+            }
+            act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
+            this->_actionVector.push_back(act);
+
+shootFunction:
+            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "shoot");
+            // Check reply size and type
+            if (reply.size() < 1 || reply[0].type != LuaTypeInt) {
+                return;
+            }
+            act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
+            act.data = {0};
+            this->_actionVector.push_back(act);
         }
 
         Action::const_iterator Action::begin(void) const
@@ -387,14 +429,20 @@ namespace RType {
                         hostPosition.getVector2D().y + (float) it.getOffset().second}
                 );
                 projectile.addComponent<Sprite>(currentMissileEntityConfig.getSprite().getSpecs());
+                if (hostRelationship.belong(Team::TeamEnemy) == true) {
+                    projectile.getComponent<Sprite>().getSprite()->flip();
+                }
                 projectile.addComponent<HitboxViewer>(currentMissileEntityConfig.getHitbox().size.x, currentMissileEntityConfig.getHitbox().size.y);
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
                 hostRelationship.addChild(uint64_t(projectile));
                 proRelationship.addParent(uint64_t(host));
+                proRelationship.setGroup(hostRelationship.getGroup());
                 bool hasAction = false;
                 bool hasVelocity = false;
+                float xVelo = 0.0f;
+
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
                         projectile.addComponent<Action>(ActionSource::ActionSourceUserInput);
@@ -407,7 +455,13 @@ namespace RType {
                         break;
 
                     case (Config::MissileControlTypeVelocity):
-                        projectile.addComponent<Velocity>(it.getVelocity().first, it.getVelocity().second);
+                        // Change direction of enemies' projectile
+                        xVelo = it.getVelocity().first;
+
+                        if (hostRelationship.belong(Team::TeamEnemy) == true) {
+                            xVelo *= -1;
+                        }
+                        projectile.addComponent<Velocity>(xVelo, it.getVelocity().second);
                         hasVelocity = true;
                         break;
 

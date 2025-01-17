@@ -56,7 +56,7 @@ runTest "Config/ConfigurationIdResolver_t.cpp" "ConfigurationIdResolver"
 
 runTest "Components/Relationship_t.cpp ../src/Components/Relationship.cpp" "Relationship"
 
-runTest "Game/LuaManager_t.cpp ../src/Components/LuaManager.cpp" "LuaManager"
+runTest "Game/LuaManager_t.cpp ../src/Game/LuaManager.cpp -llua5.4" "LuaManager"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
