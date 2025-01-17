@@ -51,8 +51,6 @@ namespace RType {
                 case ActionSourceScript:
                     this->_luaInfos.id = RType::LuaManagerSingletone::get().loadLuaScript(scriptPath);
                     this->_luaInfos.scriptPath = scriptPath;
-
-                    std::cout << "Script loaded: " << scriptPath << " with id: " << this->_luaInfos.id << std::endl;
                     break;
 
 
@@ -223,10 +221,6 @@ namespace RType {
             if (newAction.type == Network::EntityActionTypeMove) {
                 newAction.data.moveVelocity.x = input.data.joystickInput.data.joystickPosition.x;
                 newAction.data.moveVelocity.y = input.data.joystickInput.data.joystickPosition.y;
-                // set minimum speed for smoother movement
-                if (newAction.data.moveVelocity.x != 0 && newAction.data.moveVelocity.x < 20.0f) {
-                    newAction.data.moveVelocity.x = 50.0f;
-                }
             }
             this->_actionVector.push_back(newAction);
         }
@@ -367,11 +361,13 @@ shootFunction:
         void Action::handleMove(Network::EntityAction& action, Configuration& config, Position& pos)
         {
             float deltatime = Rengine::Clock::getElapsedTime();
-            Rengine::Graphics::vector2D<float> newPos = pos.getVector2D();
+            float changeX = config.getConfig().getStats().speedX * deltatime;
+            float changeY = config.getConfig().getStats().speedY * deltatime;
 
-            newPos.x += action.data.moveVelocity.x * (config.getConfig().getStats().speedX * deltatime);
-            newPos.y += action.data.moveVelocity.y * (config.getConfig().getStats().speedY * deltatime);
-            pos.set(newPos);
+            pos.set(
+                    {pos.getX() + (action.data.moveVelocity.x * changeX),
+                    pos.getY() + (action.data.moveVelocity.y * changeY)}
+            );
         }
 
         void Action::handleShoot(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig)
