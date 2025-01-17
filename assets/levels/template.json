@@ -12,13 +12,13 @@
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 1500,
                         "y": 540,
-                        "script": "assets/scripts/file.lua"
+                        "script": "assets/scripts/black.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 900,
                         "y": 300,
-                        "script": "assets/scripts/file.lua"
+                        "script": "assets/scripts/black.lua"
                     }
                 ],
                 "endCondition": "time",
@@ -36,20 +36,20 @@
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 1000,
                         "y": 540,
-                        "script": "assets/scripts/file.lua"
+                        "script": "assets/scripts/black.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 700,
                         "y": 500,
-                        "script": "assets/scripts/file.lua"
+                        "script": "assets/scripts/black.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 450,
                         "y": 100,
                         "boss": true,
-                        "script":"assets/scripts/file.lua"
+                        "script":"assets/scripts/black.lua"
                     }
                 ],
                 "endCondition": "bossDefeat"

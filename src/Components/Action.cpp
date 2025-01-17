@@ -38,6 +38,8 @@
 #include "src/Components/Life.hpp"
 #include "src/Game/Team.hpp"
 
+#include "src/Game/LuaManager.hpp"
+
 namespace RType {
     namespace Components {
 
@@ -46,9 +48,12 @@ namespace RType {
             this->_actionSource = source;
             switch (source) {
                 case ActionSourceScript:
-                    //load le script lua -> stocker l'id renvoyer par le lua -> appeler la fonction lua grace a l'id et au path
-                    std::cout << "RType::Component::Action: Warning: Script not inplemented." << scriptPath << std::endl;
+                    this->_luaInfos.id = RType::LuaManagerSingletone::get().loadLuaScript(scriptPath);
+                    this->_luaInfos.scriptPath = scriptPath;
+
+                    std::cout << "Script loaded: " << scriptPath << " with id: " << this->_luaInfos.id << std::endl;
                     break;
+                
 
                 case ActionSourceUserInput:
                     break;
@@ -65,9 +70,12 @@ namespace RType {
 
         void Action::updateFromSource(void) noexcept
         {
+            std::vector<RType::LuaReturn> reply;
+
             switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
+                    reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "movement", 0,0,0,0);
                     return;
 
                 case ActionSource::ActionSourceUserInput:

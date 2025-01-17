@@ -79,6 +79,11 @@ namespace RType {
             }
         };
 
+        struct LuaInfos {
+            std::string scriptPath;
+            int id;
+        };
+
         class Action {
             public:
                 using container_t = std::vector<Network::EntityAction>;
@@ -178,6 +183,7 @@ namespace RType {
                 std::optional<std::string> _scriptPath;
                 container_t _actionVector;
                 float _shootDeltatimes[3] = {0.0f};
+                struct LuaInfos _luaInfos;
         };  // class Action
     }  // namespace Components
 }  // namespace RType
