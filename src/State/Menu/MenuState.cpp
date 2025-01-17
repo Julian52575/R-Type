@@ -38,7 +38,6 @@ namespace RType {
     {
         this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->unload();
         if (newScene == MenuScenesExitToLobby) {
-            std::cout << "Going to lobby with ip " << this->_lobbyInfo.serverIp << std::endl;  //
             return StateLobby;
         }
         this->_scenesArray[newScene % MENUSCENES_MAX]->reload();

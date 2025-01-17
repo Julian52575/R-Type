@@ -89,7 +89,6 @@ namespace RType {
                 this->_lobbyInfo.serverIp = this->_buttonVector[ButtonsIp].second->getText();
                 this->_lobbyInfo.port = std::stoi(this->_buttonVector[ButtonsPort].second->getText());
                 this->_lobbyInfo.playerJson = this->_buttonVector[ButtonsPlayerJson].second->getText();
-                std::cout << "exitToLobby with ip = " << this->_lobbyInfo.serverIp << std::endl;
             } catch (std::exception& e) {
                 std::cout << "Exception '" << e.what() << "' when converting port input to int. Staying on menu." << std::endl;
                 return MenuScenesEnterLobbyInfo;
