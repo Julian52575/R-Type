@@ -12,13 +12,13 @@
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 1500,
                         "y": 540,
-                        "script": "assets/scripts/black.lua"
+                        "script": "assets/scripts/template.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 900,
                         "y": 300,
-                        "script": "assets/scripts/black.lua"
+                        "script": "assets/scripts/template.lua"
                     }
                 ],
                 "endCondition": "time",
