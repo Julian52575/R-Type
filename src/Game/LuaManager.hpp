@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <map>
 #include <optional>
+#include <queue>
 
 namespace RType {
 
@@ -67,7 +68,7 @@ namespace RType {
             * @fn addScript
             * @brief Load a script into the manager and return the id of the lua state.
             */
-            int addScript(const std::string& filename);
+            int loadLuaScript(const std::string& filename);
             /**
             * @fn callFunction
             * @template Args The arguments to pass to the function
@@ -108,7 +109,9 @@ namespace RType {
 
             std::vector<LuaReturn> getLuaResult(lua_State* L);
             std::unordered_map<std::string, std::any> processLuaTable(lua_State* L, int index);
+
             std::unordered_map<std::string, std::vector<lua_State*>> states;
+            std::unordered_map<std::string, std::queue<int>> freeIds;
     };
 
     // Doesn't compile outside of hpp

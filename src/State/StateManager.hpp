@@ -10,7 +10,7 @@
 #include "AState.hpp"
 #include "GameState.hpp"
 #include "LobbyState.hpp"
-#include "MenuState.hpp"
+#include "Menu/MenuState.hpp"
 
 namespace RType {
 

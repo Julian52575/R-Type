@@ -78,10 +78,10 @@ namespace RType {
                     continue;
                 }
                 float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
-                float timeCooldown = 0.3;
+                // float timeCooldown = 0.7f;
 
                 // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                //     return;
+                //      return;
                 // }
                 hitbox._lastCheckSeconds = currentTime;
                 //check si l'entité à une vie et si c'est le cas elle take damage

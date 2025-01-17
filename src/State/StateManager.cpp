@@ -2,11 +2,12 @@
 #include "StateManager.hpp"
 #include "State.hpp"
 #include "GameState.hpp"
+#include <rengine/src/Graphics/GraphicManager.hpp>
 
 namespace RType {
 
 
-    StateManager::StateManager(Rengine::ECS& ecs) : _ecs(ecs), _menu(ecs), _game(ecs), _lobby(ecs)
+    StateManager::StateManager(Rengine::ECS& ecs) : _ecs(ecs), _menu(ecs), _game(ecs, this->_menu.getAccessibilitySettings()), _lobby(ecs)
     {
         this->_menu.registerComponents();
         this->_lobby.registerComponents();
@@ -30,6 +31,11 @@ namespace RType {
                     this->_game.setNetworkInfo(this->_lobby.getNetworkInfo());
                 }
                 break;
+
+            // Exit game on NA
+            case State::StateNA:
+                Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
+                return;
             // Nothing to do for other change
             default:
                 break;

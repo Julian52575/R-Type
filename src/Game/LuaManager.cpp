@@ -58,11 +58,8 @@ namespace RType {
         }
     }
 
-    int LuaManager::addScript(const std::string& filename)
+    int LuaManager::loadLuaScript(const std::string& filename)
     {
-        if (states.find(filename) != states.end()) {
-            throw LuaManagerException("Lua error: file already loaded");
-        }
         lua_State* L = luaL_newstate();
 
         if (!L) {
@@ -73,18 +70,20 @@ namespace RType {
             lua_pop(L, 1);
             throw LuaManagerException("Lua error: Cannot load file: " + filename);
         }
-        // this->states[filename] = L;
+
         if (this->states.find(filename) == this->states.end()) {
             this->states[filename] = {L};
+            this->freeIds[filename] = std::queue<int>();
             return 0;
         }
 
-        for (size_t t = 0; t < this->states[filename].size(); t++) {
-            if (this->states[filename][t] == nullptr) {
-                this->states[filename][t] = L;
-                return t;
-            }
+        if (this->freeIds.find(filename) != this->freeIds.end() && !this->freeIds[filename].empty()) {
+            int id = this->freeIds[filename].front();
+            this->freeIds[filename].pop();
+            this->states[filename][id] = L;
+            return id;
         }
+
         this->states[filename].push_back(L);
         return this->states[filename].size() - 1;
     }
@@ -100,6 +99,7 @@ namespace RType {
         if (this->states[filename][id] != nullptr) {
             lua_close(this->states[filename][id]);
             this->states[filename][id] = nullptr;
+            this->freeIds[filename].push(id);
         }
     }
 

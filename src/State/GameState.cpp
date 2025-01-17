@@ -10,6 +10,8 @@
 #include "State.hpp"
 #include "GameState.hpp"
 #include "AState.hpp"
+#include "src/Config/EntityConfig.hpp"
+#include "src/Game/EntityMaker.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Components/Clickable.hpp"
 #include "src/Components/Configuration.hpp"
@@ -31,7 +33,8 @@
 
 namespace RType {
 
-    GameState::GameState(Rengine::ECS& ecs) : AState(ecs), _levelManager(ecs, this->_sceneManager)
+    GameState::GameState(Rengine::ECS& ecs, AccessibilitySettings& access)
+        : AState(ecs), _levelManager(ecs, this->_sceneManager), _accessibilitySettings(access)
     {
         this->_clientTCP = nullptr;
         this->_clientUDP = nullptr;
@@ -217,36 +220,20 @@ namespace RType {
         if (this->_playerEntityId != RTYPE_NO_PLAYER_ENTITY_ID) {
             this->deletePlayer();
         }
-        Rengine::Entity& player = this->_ecs.addEntity();
-        Config::EntityConfig enConfig(jsonPath);
+        RType::Config::EntityConfig enConfig;
+        Rengine::Entity& player = RType::EntityMaker::make(this->_ecs, jsonPath, Team::TeamPlayer, &enConfig);
         RType::Components::Sprite& sp = player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
-        player.addComponent<RType::Components::Action>(this->_sceneManager, Components::ActionSourceUserInput);
-        player.addComponent<RType::Components::Configuration>(enConfig);
-        player.addComponent<RType::Components::Position>(0, 0);
-        player.addComponent<RType::Components::Buff>();
-        player.addComponent<RType::Components::Hitbox>(enConfig.getHitbox());
+        player.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
         player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
-        player.addComponent<RType::Components::Metadata>();
-        player.addComponent<RType::Components::Life>(enConfig.getStats().hp);
         player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
-        RType::Components::Relationship relation = player.addComponent<Components::Relationship>();
 
-        relation.setGroup(Team::TeamPlayer);
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
-                en.removeComponent<RType::Components::Sprite>();
                 en.removeComponent<RType::Components::Action>();
-                en.removeComponent<RType::Components::Configuration>();
-                en.removeComponent<RType::Components::Position>();
-                en.removeComponent<RType::Components::Buff>();
-                en.removeComponent<RType::Components::Hitbox>();
                 en.removeComponent<RType::Components::Clickable>();
-                en.removeComponent<RType::Components::Relationship>();
                 en.removeComponent<RType::Components::HitboxViewer>();
-                en.removeComponent<RType::Components::Metadata>();
-                en.removeComponent<RType::Components::Life>();
                 en.removeComponent<RType::Components::HealthViewer>();
             }
         );

@@ -6,6 +6,7 @@
 #include <optional>
 #include <rengine/src/Clock/Clock.hpp>
 #include <rengine/src/ECS.hpp>
+#include <rengine/src/Entity.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Graphics/Vector.hpp>
@@ -15,6 +16,7 @@
 #include <iostream>
 #include <rengine/Rengine.hpp>
 
+#include "src/Game/EntityMaker.hpp"
 #include "../Network/EntityAction.hpp"
 #include "Components.hpp"
 #include "src/Game/SceneManager.hpp"
@@ -36,18 +38,22 @@
 #include "src/Components/Life.hpp"
 #include "src/Game/Team.hpp"
 
+#include "src/Game/LuaManager.hpp"
+
 namespace RType {
     namespace Components {
 
-        Action::Action(std::reference_wrapper<SceneManager> sceneManager, ActionSource source, const std::string& scriptPath)
-            : _sceneManager(sceneManager)
+        Action::Action(ActionSource source, const std::string& scriptPath)
         {
             this->_actionSource = source;
             switch (source) {
                 case ActionSourceScript:
-                    //load le script lua -> stocker l'id renvoyer par le lua -> appeler la fonction lua grace a l'id et au path
-                    std::cout << "RType::Component::Action: Warning: Script not inplemented." << scriptPath << std::endl;
+                    this->_luaInfos.id = RType::LuaManagerSingletone::get().loadLuaScript(scriptPath);
+                    this->_luaInfos.scriptPath = scriptPath;
+
+                    std::cout << "Script loaded: " << scriptPath << " with id: " << this->_luaInfos.id << std::endl;
                     break;
+
 
                 case ActionSourceUserInput:
                     break;
@@ -64,9 +70,13 @@ namespace RType {
 
         void Action::updateFromSource(void) noexcept
         {
+            std::vector<RType::LuaReturn> reply;
+
             switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
+                    reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "movement", 0,0,0,0);
+                    reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "attack", true,0,0);
                     return;
 
                 case ActionSource::ActionSourceUserInput:
@@ -189,15 +199,9 @@ namespace RType {
         void Action::changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction)
         {
             // Check if source is lua script
-            if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Trying to set user input on lua source.");
-            }
         }
-        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act) const
+        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act)
         {
-            if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Accessing player input on non user source.");
-            }
             auto it = PlayerInputBindVector.begin();
 
             while (it != PlayerInputBindVector.end()) {
@@ -295,40 +299,35 @@ namespace RType {
             }
             Config::EntityConfigResolver singletone = Config::EntityConfigResolverSingletone::get();
             const Position& hostPosition = host.getComponent<Position>();
-            Relationship hostRelationship = host.getComponent<Relationship>();
+            Relationship& hostRelationship = host.getComponent<Relationship>();
 
             for (const Config::MissileConfig& it : attackConfig->getMissiles()) {
-                const RType::Config::EntityConfig& missileConfig = singletone.get(it.getJsonPath());
-                Rengine::Entity& projectile = ecs.addEntity();
-                RType::Components::Relationship& proRelationship = projectile.addComponent<RType::Components::Relationship>();
+                RType::Config::EntityConfig currentMissileEntityConfig;
+                Rengine::Entity& projectile = RType::EntityMaker::make(ecs, it.getJsonPath(), hostRelationship.getGroup(), &currentMissileEntityConfig);
+                RType::Components::Relationship& proRelationship = projectile.getComponent<RType::Components::Relationship>();
 
                 // set Components
-                projectile.addComponent<Position>(
-                        hostPosition.getVector2D().x + it.getOffset().first,
-                        hostPosition.getVector2D().y + it.getOffset().second
+                projectile.getComponent<Position>().set(
+                        {hostPosition.getVector2D().x + (float) it.getOffset().first,
+                        hostPosition.getVector2D().y + (float) it.getOffset().second}
                 );
-                projectile.addComponent<Hitbox>(missileConfig.getHitbox());
-                projectile.addComponent<HitboxViewer>(missileConfig.getHitbox().size.x, missileConfig.getHitbox().size.y);
-                projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
-                projectile.addComponent<Configuration>(missileConfig);
-                projectile.addComponent<Buff>();
-                projectile.addComponent<Life>(missileConfig.getStats().hp);
+                projectile.addComponent<Sprite>(currentMissileEntityConfig.getSprite().getSpecs());
+                projectile.addComponent<HitboxViewer>(currentMissileEntityConfig.getHitbox().size.x, currentMissileEntityConfig.getHitbox().size.y);
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
                 hostRelationship.addChild(uint64_t(projectile));
                 proRelationship.addParent(uint64_t(host));
-                proRelationship.setGroup(hostRelationship.getGroup());
                 bool hasAction = false;
                 bool hasVelocity = false;
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
-                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);
+                        projectile.addComponent<Action>(ActionSource::ActionSourceUserInput);
                         hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeScript):
-                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
+                        projectile.addComponent<Action>(ActionSource::ActionSourceScript, it.getScriptPath());
                         hasAction = true;
                         break;
 
@@ -342,21 +341,15 @@ namespace RType {
                         break;
                 } // switch controlType
                 projectile.setComponentsDestroyFunction(
-                    [&host, &hasVelocity, &hasAction](Rengine::Entity& en) {
+                    [&host, hasVelocity, hasAction](Rengine::Entity& en) {
                         auto hostRelationship = host.getComponentNoExcept<Relationship>();
 
                         // Remove child projectile on destruction
                         if (hostRelationship.has_value() == true) {
                             hostRelationship.value().get().removeChild(uint64_t(en));
                         }
-                        en.removeComponent<Relationship>();
-                        en.removeComponent<Position>();
-                        en.removeComponent<Hitbox>();
-                        en.removeComponent<HitboxViewer>();
                         en.removeComponent<Sprite>();
-                        en.removeComponent<Configuration>();
-                        en.removeComponent<Buff>();
-                        en.removeComponent<Life>();
+                        en.removeComponent<HitboxViewer>();
                         en.removeComponent<Chrono>();
                         if (hasAction) {
                             en.removeComponent<Action>();
@@ -366,7 +359,6 @@ namespace RType {
                         }
                     }
                 );
-                actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
             } // for it
         }
 
