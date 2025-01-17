@@ -101,11 +101,20 @@ namespace RType {
             Rengine::Graphics::UserInputManager::const_iterator it = inputManager.begin();
 
             while (it != inputManager.end()) {
-                this->processUserInput(*it);
+                // Check keyboard
+                if (it->type == Rengine::Graphics::UserInputTypeKeyboardCharPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardCharPressed
+                || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
+                    this->processUserInputKeyboard(*it);
+                } else if (it->type == Rengine::Graphics::UserInputTypeJoystickButton
+                || it->type == Rengine::Graphics::UserInputTypeJoystickLeftMove || it->type == Rengine::Graphics::UserInputTypeJoystickLeftPressed
+                || it->type == Rengine::Graphics::UserInputTypeJoystickRightMove || it->type == Rengine::Graphics::UserInputTypeJoystickRightPressed) {
+                    // Check joystick
+                    this->processUserInputJoystick(*it);
+                }
                 it++;
             }
         }
-        void Action::processUserInput(const Rengine::Graphics::UserInput& input)
+        void Action::processUserInputKeyboard(const Rengine::Graphics::UserInput& input)
         {
             // Check if source is UserInput
             if (this->_actionSource != ActionSourceUserInput) {
@@ -114,9 +123,9 @@ namespace RType {
             Network::EntityAction newAction;
 
             // Parse input vector
-            auto it = PlayerInputBindVector.begin();
+            auto it = PlayerKeyboardInputBindVector.begin();
 
-            while (it != PlayerInputBindVector.end()) {
+            while (it != PlayerKeyboardInputBindVector.end()) {
                 bool dataComparaison = false;
 
                 if (it->first.type == input.type) {
@@ -134,7 +143,7 @@ namespace RType {
                 it++;
             }  // while it != end
             // No match
-            if (it == PlayerInputBindVector.end()) {
+            if (it == PlayerKeyboardInputBindVector.end()) {
                 return;
             }
 
@@ -165,16 +174,57 @@ namespace RType {
                         default:
                             break;
                     }  // switch input.data.keyboardSpecial
-                } else if (input.type == Rengine::Graphics::UserInputTypeJoystickLeftMove
-                        || input.type == Rengine::Graphics::UserInputTypeJoystickRightMove) {
-                    moveX = input.data.joystickPosition.x;
-                    moveY = input.data.joystickPosition.y;
                 }
                 newAction.data.moveVelocity.x = moveX;
                 newAction.data.moveVelocity.y = moveY;
             }  // if newAction.type == Network::EntityActionTypeMove
             this->_actionVector.push_back(newAction);
         }
+        void Action::processUserInputJoystick(const Rengine::Graphics::UserInput& input)
+        {
+            // Check if source is UserInput
+            if (this->_actionSource != ActionSourceUserInput) {
+                throw ActionException("Trying to set user input on non user source.");
+            }
+            Network::EntityAction newAction;
+
+            // Parse input vector
+            auto it = PlayerJoystickInputBindVector.begin();
+
+            while (it != PlayerJoystickInputBindVector.end()) {
+                bool dataComparaison = false;
+
+                if (it->first.type == input.type) {
+                    if (it->first.type == Rengine::Graphics::UserInputTypeJoystickButton) {
+                        if (it->first.data.joystickInput.data.joystickButton == input.data.joystickInput.data.joystickButton) {
+                        newAction.type = it->second;
+                        break;
+                        }
+                    } else {
+                      // No other comparison needed for other types
+                        newAction.type = it->second;
+                        break;
+                    }
+                }
+                it++;
+            }  // while it != end
+            // No match
+            if (it == PlayerJoystickInputBindVector.end()) {
+                return;
+            }
+
+            // Handle movement
+            if (newAction.type == Network::EntityActionTypeMove) {
+                newAction.data.moveVelocity.x = input.data.joystickInput.data.joystickPosition.x;
+                newAction.data.moveVelocity.y = input.data.joystickInput.data.joystickPosition.y;
+                // set minimum speed for smoother movement
+                if (newAction.data.moveVelocity.x != 0 && newAction.data.moveVelocity.x < 20.0f) {
+                    newAction.data.moveVelocity.x = 50.0f;
+                }
+            }
+            this->_actionVector.push_back(newAction);
+        }
+
         void Action::processAction(const Network::EntityAction& rfcAction) noexcept
         {
             this->_actionVector.push_back(rfcAction);
@@ -198,13 +248,38 @@ namespace RType {
         }
         void Action::changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction)
         {
-            // Check if source is lua script
+            auto it = PlayerKeyboardInputBindVector.begin();
+
+            while (it != PlayerKeyboardInputBindVector.end()) {
+                if (it->second == resultingAction) {
+                    it->first = newInput;
+                    return;
+                }
+                it++;
+            }
+            auto jIt = PlayerJoystickInputBindVector.begin();
+
+            while (it != PlayerJoystickInputBindVector.end()) {
+                if (it->second == resultingAction) {
+                    it->first = newInput;
+                    return;
+                }
+                it++;
+            }
         }
         const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act)
         {
-            auto it = PlayerInputBindVector.begin();
+            auto it = PlayerKeyboardInputBindVector.begin();
 
-            while (it != PlayerInputBindVector.end()) {
+            while (it != PlayerKeyboardInputBindVector.end()) {
+                if (it->second == act) {
+                    return it->first;
+                }
+                it++;
+            }
+            auto jIt = PlayerJoystickInputBindVector.begin();
+
+            while (it != PlayerJoystickInputBindVector.end()) {
                 if (it->second == act) {
                     return it->first;
                 }

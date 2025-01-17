@@ -48,7 +48,7 @@ namespace RType {
         /**
         * @brief The player input and the equivalent EntityAction
         */
-        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerInputBindVector = {
+        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerKeyboardInputBindVector = {
             {
                 {Rengine::Graphics::UserInputTypeKeyboardChar, ' '},
                 Network::EntityActionType::EntityActionTypeShoot1
@@ -78,6 +78,25 @@ namespace RType {
                 Network::EntityActionType::EntityActionTypeMove
             }
         };
+        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerJoystickInputBindVector = {
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickButton, .data= {.joystickInput= {.data= {.joystickButton= 0}}}},
+                 Network::EntityActionType::EntityActionTypeShoot1
+            },
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickButton, .data= {.joystickInput= {.data= {.joystickButton= 4}}}},
+                 Network::EntityActionType::EntityActionTypeShoot2
+            },
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickButton, .data= {.joystickInput= {.data= {.joystickButton= 5}}}},
+                 Network::EntityActionType::EntityActionTypeShoot3
+            },
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickLeftMove},
+                 Network::EntityActionType::EntityActionTypeMove
+            }
+        };
+
 
         struct LuaInfos {
             std::string scriptPath;
@@ -176,7 +195,11 @@ namespace RType {
                 * @exception ActionException when ActionSource != ActionSourceUserInput
                 * @brief Process the input and add a new EntityAction inside the vector.
                 */
-                void processUserInput(const Rengine::Graphics::UserInput& input);
+                void processUserInputKeyboard(const Rengine::Graphics::UserInput& input);
+                /**
+                * @brief Same for joysticks
+                */
+                void processUserInputJoystick(const Rengine::Graphics::UserInput& input);
 
             private:
                 ActionSource _actionSource;
