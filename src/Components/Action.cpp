@@ -76,6 +76,7 @@ namespace RType {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
                     reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "movement", 0,0,0,0);
+                    reply = RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "attack", true,0,0);
                     return;
 
                 case ActionSource::ActionSourceUserInput:
