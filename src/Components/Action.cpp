@@ -53,7 +53,7 @@ namespace RType {
 
                     std::cout << "Script loaded: " << scriptPath << " with id: " << this->_luaInfos.id << std::endl;
                     break;
-                
+
 
                 case ActionSourceUserInput:
                     break;
@@ -199,15 +199,9 @@ namespace RType {
         void Action::changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction)
         {
             // Check if source is lua script
-            if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Trying to set user input on lua source.");
-            }
         }
-        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act) const
+        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act)
         {
-            if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Accessing player input on non user source.");
-            }
             auto it = PlayerInputBindVector.begin();
 
             while (it != PlayerInputBindVector.end()) {

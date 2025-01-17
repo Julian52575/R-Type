@@ -135,7 +135,7 @@ namespace RType {
                 * @exception ActionException when ActionSource != ActionSourceUserInput
                 * @brief Change the needed input for the outcome action.
                 */
-                void changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction);
+                static void changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction);
                 /**
                 * @fn getNeededInput
                 * @param outcome The EntityActionType to analyse.
@@ -143,7 +143,7 @@ namespace RType {
                 * UserInput.type == UserInputTypeNA when no match was found.
                 * @brief Get the UserInput needed to trigger an EntityActionType
                 */
-                const Rengine::Graphics::UserInput getPlayerNeededInput(Network::EntityActionType outcome) const;
+                static const Rengine::Graphics::UserInput getPlayerNeededInput(Network::EntityActionType outcome);
 
                 /*      Function for ECS        */
                 /**

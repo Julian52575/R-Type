@@ -8,6 +8,7 @@
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/RengineNetworkClient.hpp>
 
+#include "src/Game/AccessibilitySettings.hpp"
 #include "src/Network/EntityAction.hpp"
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
@@ -46,14 +47,14 @@ namespace RType {
     */
     class GameState : public AState {
         public:
-            GameState(Rengine::ECS& ecs);
+            GameState(Rengine::ECS& ecs, AccessibilitySettings& access);
             ~GameState(void) = default;
-            /*
+            /**
             * @fn registerComponents
             * @brief Registers the neccessary component to the ECS.
             */
             void registerComponents(void);
-            /*
+            /**
             * @fn run
             * @return State The requested next state of the game.
             * @brief Run the program in it's current state.
@@ -61,7 +62,7 @@ namespace RType {
             State run(void);
 
         public:
-            /*
+            /**
             * @fn loadLevel
             * @param std::string The path to a level json
             * @brief Load a level.
@@ -70,13 +71,13 @@ namespace RType {
             void setNetworkInfo(const NetworkInfo& networkInfo) noexcept;
 
         public:
-            /*
+            /**
             * @fn loadLevelFunction
             * @param GameState A reference to this GameState class.
             * @brief Load a level and change the scene to play
             */
             friend State loadLevelFunction(GameState& gameState);
-            /*
+            /**
             * @fn playFunction
             * @param GameState A reference to this GameState class.
             * @brief Play the game from the currently loaded level.
@@ -86,7 +87,7 @@ namespace RType {
 
         /*      Player management       */
         private:
-            /*
+            /**
             * @fn createPlayer
             * @param std::string A path to an entity config
             * @brief Creates the player entity from the config.
@@ -107,6 +108,7 @@ namespace RType {
             #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
             Rengine::ECS::size_type _playerEntityId = RTYPE_NO_PLAYER_ENTITY_ID;
             LevelManager _levelManager;
+            AccessibilitySettings& _accessibilitySettings;
 
         // Graphics
         protected:
@@ -114,7 +116,6 @@ namespace RType {
 
         // Helper
         private:
-            std::string _levelToLoad = "";
             void initScenes(void);
 
     };

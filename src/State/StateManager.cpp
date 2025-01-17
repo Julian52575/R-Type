@@ -6,7 +6,7 @@
 namespace RType {
 
 
-    StateManager::StateManager(Rengine::ECS& ecs) : _ecs(ecs), _menu(ecs), _game(ecs), _lobby(ecs)
+    StateManager::StateManager(Rengine::ECS& ecs) : _ecs(ecs), _menu(ecs), _game(ecs, this->_menu.getAccessibilitySettings()), _lobby(ecs)
     {
         this->_menu.registerComponents();
         this->_lobby.registerComponents();
