@@ -1,5 +1,4 @@
 #include <bits/types/struct_tm.h>
-#include <lua5.4/lua.h>
 #ifdef UNIT_TESTS
     #include <lua5.4/lua.hpp>
 #else
