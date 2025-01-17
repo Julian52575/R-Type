@@ -4,22 +4,22 @@
 #include <rengine/RengineGraphics.hpp>
 
 #include "src/State/AScene.hpp"
-#include "ButtonScene.hpp"
-#include "Scenes.hpp"
+#include "src/State/Menu/Scenes.hpp"
+#include "src/State/Menu/EnterLobbyInfoScene.hpp"
 
 namespace RType {
 
-        void ButtonScene::unload(void)
+        void EnterLobbyInfoScene::unload(void)
         {
             this->_currentIndex = ButtonsIp;
             this->_backgroundMusic->reset();
         }
-        void ButtonScene::reload(void)
+        void EnterLobbyInfoScene::reload(void)
         {
             this->_backgroundMusic->play();
         }
 
-        void ButtonScene::display(void)
+        void EnterLobbyInfoScene::display(void)
         {
             float count = 1;
             float yDiff = 100;
@@ -39,7 +39,7 @@ namespace RType {
             }
         }
 
-        MenuScenes ButtonScene::handleInputs(void)
+        MenuScenes EnterLobbyInfoScene::handleInputs(void)
         {
             Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
             std::string currentTextCopy = this->_buttonVector[this->_currentIndex % ButtonsMax].second->getText();
@@ -80,21 +80,24 @@ namespace RType {
             if (textUpdate == true) {
                 this->_buttonVector[this->_currentIndex % ButtonsMax].second->setText(currentTextCopy);
             }
-            return MenuScenesButtonDisplay;
+            return MenuScenesEnterLobbyInfo;
         }
 
-        MenuScenes ButtonScene::exitToLobby(void)
+        MenuScenes EnterLobbyInfoScene::exitToLobby(void)
         {
             try {
+                this->_lobbyInfo.serverIp = this->_buttonVector[ButtonsIp].second->getText();
                 this->_lobbyInfo.port = std::stoi(this->_buttonVector[ButtonsPort].second->getText());
+                this->_lobbyInfo.playerJson = this->_buttonVector[ButtonsPlayerJson].second->getText();
+                std::cout << "exitToLobby with ip = " << this->_lobbyInfo.serverIp << std::endl;
             } catch (std::exception& e) {
                 std::cout << "Exception '" << e.what() << "' when converting port input to int. Staying on menu." << std::endl;
-                return MenuScenesButtonDisplay;
+                return MenuScenesEnterLobbyInfo;
             }
             return MenuScenesExitToLobby;
         }
 
-        void ButtonScene::initGraphics(void)
+        void EnterLobbyInfoScene::initGraphics(void)
         {
             this->_buttonVector.resize(ButtonsMax);
             // WIP

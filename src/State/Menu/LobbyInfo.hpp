@@ -19,7 +19,7 @@ namespace RType {
         ButtonsMax
     };
 
-    class ButtonScene : public AScene<MenuScenes> {
+    class  : public AScene<MenuScenes> {
         public:
             ButtonScene(LobbyInfo& lobbyInfo)
                 : AScene(MenuScenesButtonDisplay), _lobbyInfo(lobbyInfo)  // Constructor in hpp for AScene(sceneIndex)

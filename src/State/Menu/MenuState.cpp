@@ -6,7 +6,7 @@
 #include <string>
 
 #include "MenuState.hpp"
-#include "src/State/Menu/ButtonScene.hpp"
+#include "src/State/Menu/EnterLobbyInfoScene.hpp"
 #include "src/State/Menu/Scenes.hpp"
 #include "src/State/State.hpp"
 
@@ -38,6 +38,7 @@ namespace RType {
     {
         this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->unload();
         if (newScene == MenuScenesExitToLobby) {
+            std::cout << "Going to lobby with ip " << this->_lobbyInfo.serverIp << std::endl;  //
             return StateLobby;
         }
         this->_scenesArray[newScene % MENUSCENES_MAX]->reload();
@@ -47,7 +48,7 @@ namespace RType {
 
     void MenuState::initScenes(void)
     {
-        this->_scenesArray[MenuScenesButtonDisplay] = std::make_shared<ButtonScene>(ButtonScene(this->_lobbyInfo));
+        this->_scenesArray[MenuScenesEnterLobbyInfo] = std::make_shared<EnterLobbyInfoScene>(EnterLobbyInfoScene(this->_lobbyInfo));
     }
 
     /*              Getter              */

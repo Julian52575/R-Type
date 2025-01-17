@@ -55,7 +55,7 @@ namespace RType {
             void initScenes(void);
 
         private:
-            MenuScenes _currentScene = MenuScenesButtonDisplay;
+            MenuScenes _currentScene = MenuScenesEnterLobbyInfo;
             LobbyInfo _lobbyInfo;
             AccessibilitySettings _accessibilitySettings;
             std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic;
