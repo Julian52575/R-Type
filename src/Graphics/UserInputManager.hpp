@@ -41,7 +41,6 @@ namespace Rengine {
         enum UserInputKeyboardSpecial {
             UserInputKeyboardSpecialNA,
             UserInputKeyboardSpecialESCAPE,
-            UserInputKeyboardSpecialSPACE,
             UserInputKeyboardSpecialENTER,
             UserInputKeyboardSpecialTAB,
             UserInputKeyboardSpecialSHIFT,
