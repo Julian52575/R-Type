@@ -55,11 +55,11 @@ namespace RType {
             void initScenes(void);
 
         private:
-            MenuScenes _currentScene = MenuScenesEnterLobbyInfo;
+            MenuScenes _currentScene = MenuScenesTitleScreen;
             LobbyInfo _lobbyInfo;
             AccessibilitySettings _accessibilitySettings;
             std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic;
-            std::array<std::shared_ptr<AScene<MenuScenes>>, MenuScenes::MenuScenesExitToLobby> _scenesArray;
+            std::array<std::shared_ptr<AScene<MenuScenes>>, static_cast<std::size_t>(MENUSCENES_MAX)> _scenesArray;
     };
 
 }  // namespace RType

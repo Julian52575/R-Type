@@ -8,6 +8,7 @@
 #include "MenuState.hpp"
 #include "src/State/Menu/EnterLobbyInfoScene.hpp"
 #include "src/State/Menu/Scenes.hpp"
+#include "src/State/Menu/TitleScreenScene.hpp"
 #include "src/State/State.hpp"
 
 namespace RType {
@@ -37,17 +38,27 @@ namespace RType {
     State MenuState::changeScene(MenuScenes newScene)
     {
         this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->unload();
-        if (newScene == MenuScenesExitToLobby) {
+        if (newScene == MenuScenesNA) {
+            return StateNA;
+        } else if (newScene == MenuScenesExitToLobby) {
             return StateLobby;
+        } else if (newScene == MenuScenesExitToGame) {
+            return StateGame;
         }
-        this->_scenesArray[newScene % MENUSCENES_MAX]->reload();
-        this->_currentScene = newScene;
+        if (this->_scenesArray[newScene % MENUSCENES_MAX] != nullptr) {
+            this->_scenesArray[newScene % MENUSCENES_MAX]->reload();
+            this->_currentScene = newScene;
+        } else {
+            std::cerr << "Scene " << newScene << " not loaded: exiting..." << std::endl;
+            return StateNA;
+        }
         return StateMenu;
     }
 
     void MenuState::initScenes(void)
     {
         this->_scenesArray[MenuScenesEnterLobbyInfo] = std::make_shared<EnterLobbyInfoScene>(EnterLobbyInfoScene(this->_lobbyInfo));
+        this->_scenesArray[MenuScenesTitleScreen] = std::make_shared<TitleScreenScene>();
     }
 
     /*              Getter              */

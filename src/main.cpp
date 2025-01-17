@@ -42,7 +42,7 @@ int main(void)
     RType::StateManager stateManager(ecs);
 
     init();
-    stateManager.setState(RType::State::StateGame);
+    stateManager.setState(RType::State::StateMenu);
     while (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->isOpen()) {
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->pollInput();
         stateManager.run();

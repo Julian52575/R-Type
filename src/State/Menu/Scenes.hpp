@@ -4,12 +4,12 @@ namespace RType {
 
     enum MenuScenes {
         MenuScenesNA,
-        MenuScenesAttractMode,
         MenuScenesTitleScreen,
         MenuScenesOptions,
         MenuScenesSelectCharacter,
         MenuScenesSelectLobby,
         MenuScenesEnterLobbyInfo,
+        MenuScenesExitToGame,
         MenuScenesExitToLobby
     };
 
