@@ -196,6 +196,7 @@ skipIcon:
         {
             sf::Event event;
 
+            sf::Joystick::update();
             while (this->_renderWindow.pollEvent(event)) {
                 Rengine::Graphics::UserInput newInput;
 
@@ -227,9 +228,11 @@ skipIcon:
                     // Joystick connection
                     case sf::Event::JoystickConnected:
                         newInput.type = UserInputTypeJoystickConnected;
+                        newInput.data.joystickInput.joystickId = event.joystickConnect.joystickId;
                         break;
                     case sf::Event::JoystickDisconnected:
                         newInput.type = UserInputTypeJoystickDisconnected;
+                        newInput.data.joystickInput.joystickId = event.joystickConnect.joystickId;
                         break;
                     // Joystick movement
                     case sf::Event::JoystickMoved:
@@ -238,13 +241,16 @@ skipIcon:
                     // Joystick button
                     case sf::Event::JoystickButtonPressed:
                         newInput.type = UserInputTypeJoystickButton;
-                        newInput.data.joystickButton = event.joystickButton.button;
+                        newInput.data.joystickInput.data.joystickButton = event.joystickButton.button;
+                        newInput.data.joystickInput.joystickId = event.joystickButton.joystickId;
                         break;
 
                     default:
                         continue;
                 }  // switch(event.type)
-                this->_inputManager.addInput(newInput);
+                if (newInput.type != UserInputTypeNA) {
+                    this->_inputManager.addInput(newInput);
+                }
             }  // while (this->_renderWindow.pollEvent(event)
             // Keyboard processing
             this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide();
@@ -274,37 +280,45 @@ skipIcon:
             }
             return result;
         }
+
+        ///         +0
+        ///   -1 joystick  +1
+        ///         -0
+        ///                                     +4
+        ///                              -5  joystick +5
+        ///                                     -4
+        ///          7
+        ///      6 d-pad 6
+        ///          7
+        ///
         inline UserInput SFMLWindow::processJoystickMove(const sf::Event& event)
         {
             UserInput input;
-            //unsigned int id = event.joystickMove.joystickId;
-            sf::Joystick::Axis axis = event.joystickMove.axis;
-            float position = event.joystickMove.position;
 
-            switch (axis) {
-                // Left Joystick
-                case sf::Joystick::X:
-                    input.type = UserInputTypeJoystickLeftMove;
-                    input.data.joystickPosition.x = position;
-                case sf::Joystick::Y:
-                    input.type = UserInputTypeJoystickLeftMove;
-                    input.data.joystickPosition.y = position;
-                case sf::Joystick::U:
-                    input.type = UserInputTypeJoystickRightMove;
-                    input.data.joystickPosition.x = position;
-                case sf::Joystick::V:
-                    input.type = UserInputTypeJoystickRightMove;
-                    input.data.joystickPosition.y = position;
-                default:
-                    static bool alreadyWarn = false;
-
-                    if (alreadyWarn == false) {
-                        std::cerr << "Rengine::Graphics::SFMLWindow: Warning: Unsupported joystick axis. This warning will not appear again." << std::endl;
-                        alreadyWarn = true;
-                    }
-                    input.type = UserInputTypeNA;
-                    break;
-                // Right Joystick
+            input.data.joystickInput.joystickId = event.joystickMove.joystickId;
+            // left joystick
+            if (event.joystickMove.axis == 0) {
+                input.type = UserInputTypeJoystickLeftMove;
+                input.data.joystickInput.data.joystickPosition.x = event.joystickMove.position;
+            } else if (event.joystickMove.axis == 1) {
+                input.type = UserInputTypeJoystickLeftMove;
+                input.data.joystickInput.data.joystickPosition.y = event.joystickMove.position;
+            }
+            // right joystick
+            if (event.joystickMove.axis == 4) {
+                input.type = UserInputTypeJoystickRightMove;
+                input.data.joystickInput.data.joystickPosition.x = event.joystickMove.position;
+            } else if (event.joystickMove.axis == 5) {
+                input.type = UserInputTypeJoystickRightMove;
+                input.data.joystickInput.data.joystickPosition.y = event.joystickMove.position;
+            }
+            // d-pad
+            if (event.joystickMove.axis == 7) {
+                input.type = UserInputTypeJoystickDPad;
+                input.data.joystickInput.data.dpadPosition.y = event.joystickMove.position;
+            } else if (event.joystickMove.axis == 6) {
+                input.type = UserInputTypeJoystickDPad;
+                input.data.joystickInput.data.dpadPosition.x = event.joystickMove.position;
             }
             return input;
         }

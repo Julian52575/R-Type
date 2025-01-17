@@ -34,6 +34,7 @@ namespace Rengine {
             UserInputTypeJoystickRightMove,
             UserInputTypeJoystickRightPressed,
             UserInputTypeJoystickButton,
+            UserInputTypeJoystickDPad,
             UserInputTypeWindowClosed
         };
         std::ostream& operator<<(std::ostream& os, const UserInputType& inputType);
@@ -52,6 +53,19 @@ namespace Rengine {
             UserInputKeyboardSpecialArrowRIGHT
         };
 
+        union JoystickInputData {
+            /**
+            * @brief the position of the joystick from -100 to +100
+            */
+            Rengine::Graphics::vector2D<float> dpadPosition;
+            Rengine::Graphics::vector2D<float> joystickPosition;
+            unsigned int joystickButton;
+        };
+        struct JoystickInput {
+            unsigned int joystickId;
+            JoystickInputData data;
+        };
+
         /**
         * @addtogroup Rengine::Graphics
         * @namespace Graphics
@@ -62,11 +76,7 @@ namespace Rengine {
             char keyboardChar;
             enum UserInputKeyboardSpecial keyboardSpecial;
             Rengine::Graphics::vector2D<float> mousePosition;
-            /**
-            * @brief the position of the joystick from -100 to +100
-            */
-            Rengine::Graphics::vector2D<float> joystickPosition;
-            unsigned int joystickButton;
+            JoystickInput joystickInput;
         };
 
         /**
