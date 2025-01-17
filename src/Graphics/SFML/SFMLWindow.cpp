@@ -14,9 +14,12 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
+#include <cmath>
 #include <exception>
 #include <memory>
 #include <iostream>
+#include <valarray>
+#include <vector>
 
 #include "../ASound.hpp"
 #include "../AText.hpp"
@@ -118,6 +121,8 @@ skipIcon:
             // Options (re)
             this->_renderWindow.setMouseCursorVisible(this->_windowSpecs.options.isCursorVisible);
             this->_renderWindow.setVerticalSyncEnabled(this->_windowSpecs.options.enableVsync);
+            // Joystick threshold
+            this->_renderWindow.setJoystickThreshold(this->_windowSpecs.joystickThreshold);
         }
 
         SFMLWindow::SFMLWindow(const WindowSpecs& windowSpecs) : AWindow(windowSpecs)
@@ -229,15 +234,19 @@ skipIcon:
                     case sf::Event::JoystickConnected:
                         newInput.type = UserInputTypeJoystickConnected;
                         newInput.data.joystickInput.joystickId = event.joystickConnect.joystickId;
+                        this->_joystickIds.push_back(event.joystickConnect.joystickId);
                         break;
                     case sf::Event::JoystickDisconnected:
                         newInput.type = UserInputTypeJoystickDisconnected;
                         newInput.data.joystickInput.joystickId = event.joystickConnect.joystickId;
+                        this->removeJoystickFromVector(event.joystickConnect.joystickId);
                         break;
                     // Joystick movement
                     case sf::Event::JoystickMoved:
-                        newInput = this->processJoystickMove(event);
-                        break;
+                        // newInput = this->processJoystickMove(event);
+                        // break;
+                        // Moved to processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide
+                        continue;
                     // Joystick button
                     case sf::Event::JoystickButtonPressed:
                         newInput.type = UserInputTypeJoystickButton;
@@ -254,6 +263,9 @@ skipIcon:
             }  // while (this->_renderWindow.pollEvent(event)
             // Keyboard processing
             this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide();
+            for (auto it : this->_joystickIds) {
+                this->processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(it);
+            }
         }
 
         inline UserInput SFMLWindow::getPressedUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
@@ -348,6 +360,65 @@ skipIcon:
                 this->_inputManager.addInput(it.second);
             }
             return;
+        }
+        inline void SFMLWindow::processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(unsigned int joystickId)
+        {
+            UserInput input;
+            float axis = 0.0f;
+
+            input.data.joystickInput.joystickId = joystickId;
+            // Checking joystick threshold myself since sfml no work
+            // left joystick
+            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(0));
+            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
+                input.type = UserInputTypeJoystickLeftMove;
+                input.data.joystickInput.data.joystickPosition.x = axis;
+                this->_inputManager.addInput(input);
+            }
+            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(1));
+            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
+                input.type = UserInputTypeJoystickLeftMove;
+                input.data.joystickInput.data.joystickPosition.y = axis;
+                this->_inputManager.addInput(input);
+            }
+            // right joystick
+            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(4));
+            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
+                input.type = UserInputTypeJoystickRightMove;
+                input.data.joystickInput.data.joystickPosition.x = axis;
+                this->_inputManager.addInput(input);
+            }
+            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(5));
+            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
+                input.type = UserInputTypeJoystickRightMove;
+                input.data.joystickInput.data.joystickPosition.y = axis;
+                this->_inputManager.addInput(input);
+            }
+            // d-pad
+            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(7));
+            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
+                input.type = UserInputTypeJoystickDPad;
+                input.data.joystickInput.data.dpadPosition.y = axis;
+                this->_inputManager.addInput(input);
+            }
+            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(6));
+            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
+                input.type = UserInputTypeJoystickDPad;
+                input.data.joystickInput.data.dpadPosition.x = axis;
+                this->_inputManager.addInput(input);
+            }
+        }
+        void SFMLWindow::removeJoystickFromVector(unsigned int joystickId)
+        {
+            std::vector<unsigned int>::const_iterator it = this->_joystickIds.begin();
+
+            while (it != this->_joystickIds.end()) {
+                if (*it == joystickId) {
+                    this->_joystickIds.erase(it);
+                    return;
+                }
+                it++;
+            }
         }
 
         uint64_t SFMLWindow::getElapsedTimeMicroseconds(void) const noexcept

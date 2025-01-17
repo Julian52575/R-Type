@@ -9,6 +9,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <optional>
 #include <memory>
+#include <vector>
 
 #include "../ASprite.hpp"
 #include "../AWindow.hpp"
@@ -57,7 +58,10 @@ namespace Rengine {
                 */
                 inline UserInput getPressedUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
                 inline UserInput processJoystickMove(const sf::Event& event);
-                inline void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
+                void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
+                inline void processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(unsigned int joystickId);
+                std::vector<unsigned int> _joystickIds;
+                void removeJoystickFromVector(unsigned int joystickId);
         };
 
     }  // namespace Rengine
