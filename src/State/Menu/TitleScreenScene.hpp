@@ -37,6 +37,7 @@ namespace RType {
         private:
             std::shared_ptr<Rengine::Graphics::ASprite> _logo = nullptr;
             std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic = nullptr;
+            std::shared_ptr<Rengine::Graphics::ASprite> _background = nullptr;
             float _textDeltatime = 2.0f;
             std::shared_ptr<Rengine::Graphics::AText> _enterText = nullptr;
             std::shared_ptr<Rengine::Graphics::AText> _tabText = nullptr;

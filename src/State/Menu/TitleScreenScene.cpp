@@ -10,6 +10,7 @@
 #include <rengine/src/Graphics/UserInputManager.hpp>
 
 #include "TitleScreenScene.hpp"
+#include "src/Config/ImageConfig.hpp"
 #include "src/Config/ImageConfigResolver.hpp"
 #include "src/State/Menu/Scenes.hpp"
 
@@ -30,8 +31,9 @@ namespace RType {
     }
     void TitleScreenScene::display(void)
     {
+        Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_background, {0, 0});
         Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_logo,
-            {450,
+            {500,
             75}
         );
         if (this->_backgroundMusic != nullptr && this->_backgroundMusic->isPlaying() == false) {
@@ -93,9 +95,13 @@ namespace RType {
             std::cout << "Cannot load :" << music.soundPath << " : " << e.what() << std::endl;
         }
         // Logo
-        const RType::Config::ImageConfig& logo = RType::Config::ImageConfigResolverSingletone::get().get("assets/images/RTypeLogo.json");
+        const RType::Config::ImageConfig& logo = RType::Config::ImageConfigResolverSingletone::get().get("assets/images/menu/RTypeLogo.json");
 
         this->_logo = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(logo.getSpecs());
+        // Background
+        const RType::Config::ImageConfig& bg = RType::Config::ImageConfigResolverSingletone::get().get("assets/images/menu/spaceDust.json");
+
+        this->_background = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(bg.getSpecs());
         // Space Text
         Rengine::Graphics::TextSpecs text;
 
