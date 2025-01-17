@@ -1,0 +1,13 @@
+{
+   "image":{
+      "texturePath":"assets/images/RTypeLogo.png",
+      "origin":{
+         "x": 0,
+         "y": 0
+      },
+      "scale":{
+         "x": 2,
+         "y": 2
+      }
+   }
+}
