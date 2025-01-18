@@ -4,6 +4,7 @@
 #ifndef SRC_ECS_HPP_
 #define SRC_ECS_HPP_
 
+#include <any>
 #include <cstddef>
 #include <exception>
 #include <functional>
@@ -51,6 +52,10 @@ namespace Rengine {
     class ECSExceptionBadComponentFunctionType : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: The component function and the provided template have different type definition."; };
+    };
+    class ECSExceptionBadOnEntityRemovalFunctionType : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::ECS: The onEntityRemovalFunction and the provided template have different type definition."; };
     };
     class ECSException : public std::exception {
         public:
@@ -393,6 +398,56 @@ namespace Rengine {
             {
                 return this->_maxEntityId;
             }
+            /**
+            * @fn setOnEntityRemovalFunction
+            * @template Parameters The paremeters of the function.
+            * @param fun A function templated void(Entity&, Parameters&&).
+            * @brief Set a function to be run when any entity is removed using the templated removeEntity methods.
+            * The entity is removed after calling this function.
+            * Is prototyped void(Entity&, Parameters&&).
+            */
+            template<class ... Parameters>
+            void setOnEntityRemovalFunction(const std::function<void(Entity&, Parameters&&...)> fun)
+            {
+                this->_onEntityRemovalFunction = fun;
+            }
+            /**
+            * @fn removeEntity
+            * @template Parameters The parameters of the onEntityRemovalFunction.
+            * @param idx The index of the entity to remove
+            * @param params The parameters to pass to the onEntityRemovalFunction.
+            * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
+            * @exception ECSEXce
+            * @brief Remove an entity and its components from the ECS.
+            * Call the onEntityRemovalFunction if previously set by setOnEntityRemovalFunction.
+            */
+            template<class ... Parameters>
+            void removeEntity(Rengine::ECS::size_type idx, Parameters&& ... params)
+            {
+                if (idx == static_cast<size_type>(-1)) {
+                    throw ECSExceptionEntityNotFound();
+                }
+                if (this->_currentEntities[idx].has_value() == false) {
+                    throw ECSExceptionEntityNotFound();
+                }
+                if (this->_onEntityRemovalFunction.has_value() == true) {
+                    try {
+                        std::function<void(Entity&, Parameters&&...)> fun =
+                            std::any_cast<std::function<void(Entity&, Parameters&&...)>>(this->_onEntityRemovalFunction.value());
+
+                        fun(this->_currentEntities[idx].value(), params...);
+                    } catch (std::bad_any_cast& e) {
+                        throw ECSExceptionBadOnEntityRemovalFunctionType();
+                    }
+                }
+                this->_currentEntities[idx].value().destroyComponents();
+                this->_currentEntities[idx].reset();
+                this->_currentEntitiesCount -= 1;
+                if (idx >= this->_maxEntityId) {
+                    this->updateMaxEntityId();
+                }
+            }
+
 
         private:
             /**
@@ -427,6 +482,8 @@ namespace Rengine {
             size_type _currentEntitiesCount = 0;
             //                      Type    - std::function<void(ECS&, Component&, Entity&)>
             std::unordered_map<std::type_index, std::any> _functionArray;
+            //           std::function<void(Entity&, Params&& ...)>
+            std::optional<std::any> _onEntityRemovalFunction;
     };  // class ECS
 }  // namespace Rengine
 #endif  // SRC_ECS_HPP_
