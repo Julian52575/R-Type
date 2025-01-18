@@ -205,6 +205,12 @@ namespace RType {
                 void processUserInputJoystick(const Rengine::Graphics::UserInput& input);
 
             private:
+                /**
+                 * @brief Call lua scripts and add output in the vector
+                */
+                void processLuaScriptInput(void);
+
+            private:
                 ActionSource _actionSource;
                 std::optional<std::string> _scriptPath;
                 container_t _actionVector;

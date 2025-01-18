@@ -32,7 +32,7 @@ namespace RType {
         uint16_t playerCount;
         time_t time;
     };
-    
+
     struct DisplayGameInfo {
         std::shared_ptr<Rengine::Graphics::AText> name;
         std::shared_ptr<Rengine::Graphics::AText> playerCount;
@@ -70,7 +70,7 @@ namespace RType {
             */
             void setLobbyInfo(const LobbyInfo& lobbyInfo) noexcept;
             void handleInput(void);
-            void makeGameInfos(std::string name, uint16_t playerCount, time_t time, Rengine::UUID::uuid_t &id);
+            void makeGameInfos(std::string name, uint16_t playerCount, time_t time, uuid_t id);
             void setGameInfos(void);
             DisplayGameInfo& getGameInfoByUuid(Rengine::UUID::uuid_t &id);
             void updateGameInfos(void);

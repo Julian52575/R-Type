@@ -21,6 +21,7 @@ namespace RType {
         if (this->_backgroundMusic != nullptr) {
             this->_backgroundMusic->pause();
         }
+        this->_isLoaded = false;
     }
 
     void TitleScreenScene::reload(void)
@@ -28,6 +29,7 @@ namespace RType {
         if (this->_backgroundMusic != nullptr) {
             this->_backgroundMusic->play();
         }
+        this->_isLoaded = true;
     }
     void TitleScreenScene::display(void)
     {

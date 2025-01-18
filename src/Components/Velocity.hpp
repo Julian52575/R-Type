@@ -31,10 +31,13 @@ namespace RType {
                         return;
                     }
                     float deltatime = Rengine::Clock::getElapsedTime();
-                    float newX = pos->get().getX() + velocity._x + config->get().getConfig().getStats().speedX * deltatime;
-                    float newY = pos->get().getY() + velocity._y + config->get().getConfig().getStats().speedY * deltatime;
+                    float changeX = config->get().getConfig().getStats().speedX * deltatime;
+                    float changeY = config->get().getConfig().getStats().speedY * deltatime;
 
-                    pos->get().set({newX, newY});
+                    pos->get().set(
+                            {pos->get().getX() + (velocity._x * changeX),
+                            pos->get().getY() + (velocity._y * changeY)}
+                    );
                 }
 
             private:

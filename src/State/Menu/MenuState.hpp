@@ -54,10 +54,14 @@ namespace RType {
             */
             void initScenes(void);
 
+        // These variables are passed as parameters to the scenes.
+        private:
+            LobbyInfo _lobbyInfo;
+            std::string _newRoomName;
+            AccessibilitySettings _accessibilitySettings;
+
         private:
             MenuScenes _currentScene = MenuScenesTitleScreen;
-            LobbyInfo _lobbyInfo;
-            AccessibilitySettings _accessibilitySettings;
             std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic;
             std::array<std::shared_ptr<AScene<MenuScenes>>, static_cast<std::size_t>(MENUSCENES_MAX)> _scenesArray;
     };

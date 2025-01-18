@@ -1,5 +1,7 @@
 //
+#include <memory>
 #include <rengine/src/Clock/Clock.hpp>
+#include <rengine/src/Graphics/AWindow.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/SpriteSpecs.hpp>
 #include <rengine/src/Graphics/TextSpecs.hpp>
@@ -21,11 +23,13 @@ namespace RType {
     void OptionsScene::unload(void)
     {
         this->_deltatime = 0;
+        this->_isLoaded = false;
     }
         // Called when coming back to this scene
         // mainly used for music
     void OptionsScene::reload(void)
     {
+        this->_isLoaded = true;
     }
 
         // Called each frame
@@ -34,7 +38,7 @@ namespace RType {
         Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
 
         this->_deltatime += Rengine::Clock::getElapsedTime();
-        manager.addToRender(this->_sprite, {.x= 100, .y = 100});
+        manager.addToRender(this->_colorWheel, {.x= 100, .y = 100});
         manager.addToRender(this->_rectangle, {.x= 200, .y = 300});
         manager.addToRender(this->_text, {800, 50});
     }
@@ -52,6 +56,9 @@ namespace RType {
                     std::cout << "Pressed down" << std::endl;
                 }
             }  // if SpecialPressed
+            if (it.type == Rengine::Graphics::UserInputTypeKeyboardCharPressed && it.data.keyboardChar == 'd') {
+                this->loadNextShader();
+            }
             if (it.type == Rengine::Graphics::UserInputTypeMouseLeftClick) {
                 std::cout << "Click at " << it.data.mousePosition << std::endl;
             }  // if LeftClick
@@ -69,18 +76,26 @@ namespace RType {
         //          To bind the shoot1 action to the enter key.
         return MenuScenesOptions;
     }
+    void OptionsScene::loadNextShader(void)
+    {
+        std::shared_ptr<Rengine::Graphics::AWindow> window = Rengine::Graphics::GraphicManagerSingletone::get().getWindow();
+
+        this->_shaderIndex = (this->_shaderIndex + 1) % this->_shaderVector.size();
+        window->setShader("", this->_shaderVector[this->_shaderIndex]);
+        std::cout << "Loaded shader : " << this->_shaderVector[this->_shaderIndex] << " at index " << this->_shaderIndex << std::endl;  //
+    }
 
     void OptionsScene::initGraphics(void)
     {
         // example image
-        RType::Config::ImageConfig spriteImage = RType::Config::ImageConfigResolverSingletone::get().get("assets/images/playerDefault.json");
+        RType::Config::ImageConfig spriteImage = RType::Config::ImageConfigResolverSingletone::get().get("assets/images/menu/colorWheel.json");
 
-        this->_sprite = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(spriteImage.getSpecs());
+        this->_colorWheel = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(spriteImage.getSpecs());
         // example text
         Rengine::Graphics::TextSpecs textSpecs;
 
         textSpecs.fontPath = "assets/fonts/arial_narrow_7.ttf";
-        textSpecs.message = "Options";
+        textSpecs.message = "Options (press d for shader)";
         textSpecs.letterSpacing = 3;
         textSpecs.style = Rengine::Graphics::TextStyle::TextStyleBold | Rengine::Graphics::TextStyle::TextStyleUnderline;
         this->_text = Rengine::Graphics::GraphicManagerSingletone::get().createText(textSpecs);
@@ -92,6 +107,19 @@ namespace RType {
         rectSpecs.shapeData.specifics.rectangleSize = {.x = 120, .y = 150};
         this->_rectangle = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(rectSpecs);
     }
+    void OptionsScene::initShaders(void)
+    {
+        uint64_t i = 0;
 
+        // Parsing shaders file
+        for (auto file : std::filesystem::directory_iterator("assets/shaders/")) {
+            // Found default shader
+            if (file.path().string().find("default") != std::string::npos) {
+                this->_shaderIndex = i;
+            }
+            this->_shaderVector.push_back(file.path().string());
+            i++;
+        }
+    }
 
 }  // namespace RType

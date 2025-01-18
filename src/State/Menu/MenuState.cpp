@@ -6,6 +6,8 @@
 #include <string>
 
 #include "MenuState.hpp"
+#include "src/State/AScene.hpp"
+#include "src/State/Menu/CreateLobbyScene.hpp"
 #include "src/State/Menu/EnterLobbyInfoScene.hpp"
 #include "src/State/Menu/OptionsScene.hpp"
 #include "src/State/Menu/Scenes.hpp"
@@ -27,6 +29,9 @@ namespace RType {
         // WIP
         MenuScenes request;
 
+        if (this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->isLoaded() == false) {
+            this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->reload();
+        }
         this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->display();
         request = this->_scenesArray[this->_currentScene % MENUSCENES_MAX]->handleInputs();
 
@@ -61,6 +66,7 @@ namespace RType {
         this->_scenesArray[MenuScenesEnterLobbyInfo] = std::make_shared<EnterLobbyInfoScene>(EnterLobbyInfoScene(this->_lobbyInfo));
         this->_scenesArray[MenuScenesTitleScreen] = std::make_shared<TitleScreenScene>();
         this->_scenesArray[MenuScenesOptions] = std::make_shared<OptionsScene>(this->_accessibilitySettings);
+        this->_scenesArray[MenuScenesCreateLobby] = std::make_shared<CreateLobbyScene>(this->_newRoomName);
     }
 
     /*              Getter              */

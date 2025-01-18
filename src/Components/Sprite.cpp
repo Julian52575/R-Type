@@ -56,12 +56,11 @@ namespace RType {
             sprite.id_text.get()->setText(std::to_string(int(entity)));
             sprite.renderSprite(pos.value().get().getVector2D());
 
+        #ifdef _DEBUG
             Rengine::Graphics::vector2D<float> posText = pos.value().get().getVector2D();
             posText.y -= 20;
             Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->addTextToRender(sprite.id_text, posText);
-
-
-
+        #endif
         }
     }  // namespace Components
 }  // namespace RType

@@ -15,10 +15,9 @@ TEST(LuaManager, loadScript)
     EXPECT_EQ(antoine[0].data.integer, 1);
 }
 
-TEST(LuaManager, callFunction)
+TEST(LuaManager, callFunctionArray)
 {
     RType::LuaManager manager;
-
     int id = manager.loadLuaScript("Game/array.lua");   // return {{0, 1}, {10, 11}, {20, 21}}
     std::vector<RType::LuaReturn> antoine = manager.callFunction<>("Game/array.lua", id, "run");
 
@@ -32,4 +31,14 @@ TEST(LuaManager, callFunction)
     ASSERT_EQ(antoine[3].data.integer, 11);
     ASSERT_EQ(antoine[4].data.integer, 20);
     ASSERT_EQ(antoine[5].data.integer, 21);
+}
+TEST(LuaManager, callFunctionFloat)
+{
+    RType::LuaManager manager;
+    int id = manager.loadLuaScript("Game/float.lua");   // return 1.1
+    std::vector<RType::LuaReturn> antoine = manager.callFunction<>("Game/float.lua", id, "run");
+
+    ASSERT_EQ(antoine.size(), 1);
+    ASSERT_EQ(antoine[0].type, RType::LuaType::LuaTypeInt);
+    ASSERT_EQ((float) antoine[0].data.integer, 1.1f);
 }
