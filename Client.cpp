@@ -93,7 +93,7 @@ struct Communication {
     };
 };
 
-std::string printUuid(uuid_t &uuid) {
+std::string printUuid(Rengine::UUID::uuid_t &uuid) {
     char uuid_str[37];
     uuid_unparse(uuid, uuid_str);
     return std::string(uuid_str);
@@ -167,7 +167,7 @@ void lobby(int ac, char **argv) {
             Message<Communication::TypeDetail> msg5;
             msg5.header.type = {Communication::Type::LobbyInfo, Communication::main::LobbyInfoPrecision::JoinGame};
             msg5.header.size = 0;
-            uuid_t gameID;
+            Rengine::UUID::uuid_t gameID;
             uuid_parse(input.substr(5).c_str(), gameID);
             std::cout << "Game ID: " << printUuid(gameID) << std::endl;
             msg5 << gameID;
@@ -185,7 +185,7 @@ void lobby(int ac, char **argv) {
                     return;
                 }
                 if (msg->header.type.type == Communication::Type::LobbyInfo && msg->header.type.precision == Communication::main::LobbyInfoPrecision::GameUpdated) {
-                    uuid_t gameID;
+                    Rengine::UUID::uuid_t gameID;
                     uint16_t nbUsers;
                     char name[15];
                     time_t timeStarted;
@@ -197,7 +197,7 @@ void lobby(int ac, char **argv) {
                     *msg >> nbGames;
                     std::cout << "Received " << nbGames << " games." << std::endl;
                     for (uint16_t i = 0; i < nbGames; i++) {
-                        uuid_t gameID;
+                        Rengine::UUID::uuid_t gameID;
                         uint16_t nbUsers;
                         char name[15];
                         time_t timeStarted;
@@ -206,7 +206,7 @@ void lobby(int ac, char **argv) {
                     }
                 }
                 if (msg->header.type.type == Communication::Type::LobbyInfo && msg->header.type.precision == Communication::main::LobbyInfoPrecision::GameCreated) {
-                    uuid_t gameID;
+                    Rengine::UUID::uuid_t gameID;
                     uint16_t nbUsers;
                     char name[15];
                     time_t timeStarted;

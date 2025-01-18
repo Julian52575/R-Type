@@ -10,8 +10,8 @@
                 "enemies": [
                     {
                         "json": "assets/entities/skeletonDragon.json",
-                        "x": 1500,
-                        "y": 540,
+                        "x": 200,
+                        "y": 0,
                         "script": "assets/scripts/template.lua"
                     },
                     {
@@ -22,7 +22,7 @@
                     }
                 ],
                 "endCondition": "time",
-                "endConditionTime": 10.0
+                "endConditionTime": 1000000.0
             },
             {
                 "backgroundMusic": "assets/musics/starforx64_training_mode.mp3",

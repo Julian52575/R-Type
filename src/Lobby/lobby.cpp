@@ -6,7 +6,7 @@ Lobby::Lobby(uint16_t port) : _server(port, "Lobby", false) {
     _runing = true;
 };
 
-std::shared_ptr<RType::Games> Lobby::getGameByID(uuid_t &gameID) {
+std::shared_ptr<RType::Games> Lobby::getGameByID(Rengine::UUID::uuid_t &gameID) {
     for (auto &game : _games) {
         if (Rengine::UUID::compareUUID(game->getGameID(), gameID))
             return game;
@@ -58,7 +58,7 @@ bool Lobby::_handleMessages(std::shared_ptr<Connexion<Communication::TypeDetail>
         }
 
         case Communication::main::LobbyInfoPrecision::JoinGame: {
-            uuid_t gameID;
+            Rengine::UUID::uuid_t gameID;
             msg >> gameID;
             std::shared_ptr<RType::Games> game = getGameByID(gameID);
             if (game != nullptr) {
@@ -80,7 +80,6 @@ bool Lobby::_handleMessages(std::shared_ptr<Connexion<Communication::TypeDetail>
             }
             break;
         }
-            
     }
     return true;
 };

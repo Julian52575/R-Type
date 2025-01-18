@@ -17,7 +17,6 @@ namespace RType {
         public:
             LevelManager(std::shared_ptr<Rengine::ECS> ecs);
             ~LevelManager(void) = default;
-            void setECS(std::shared_ptr<Rengine::ECS> ecs);
             /**
             * @fn loadLevel
             * @brief Load a level from its path
@@ -59,6 +58,7 @@ namespace RType {
             * @brief Reload the current scene.
             */
             bool resetCurrentScene(void);
+            void setECS(std::shared_ptr<Rengine::ECS> ecs);
             /**
             * @fn getCurrentSceneEnemies
             * @return std::optional<const std::vector<RType::Config::SceneEntityConfig>> A vector of SceneEntityConfig
@@ -82,7 +82,6 @@ namespace RType {
             uint8_t _currentSceneIndex = 0;
             std::optional<std::reference_wrapper<const RType::Config::LevelConfig>> _levelConfig;
             std::optional<Rengine::Entity::size_type> _bossId;
-            std::vector<Rengine::Entity::size_type> _currentSceneBackgroundEntities;
             std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
     };
 

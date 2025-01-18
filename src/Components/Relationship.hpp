@@ -31,12 +31,26 @@ namespace RType {
                 */
                 void addParent(uint64_t parent) noexcept;
                 /**
+                * @fn addChild
+                * @param parent The child entity to add.
+                * @brief Add a child to the list.
+                * Note: The child is added even if it's alreay present, it's more optimized than iterating over the children list.
+                */
+                void addChild(uint64_t child) noexcept;
+                /**
                 * @fn removeParent
                 * @param parent The parent entity to remove.
                 * @brief Remove the parent from the list.
                 * Note: Does nothing if the parent isn't in the list.
                 */
                 void removeParent(uint64_t parent) noexcept;
+                /**
+                * @fn removeChild
+                * @param child The child entity to remove.
+                * @brief Remove the child from the list.
+                * Note: Does nothing if the child isn't in the list.
+                */
+                void removeChild(uint64_t child) noexcept;
 
             public:
                 /**
@@ -59,18 +73,33 @@ namespace RType {
                 */
                 bool belong(uint64_t group) const noexcept;
                 /**
-                * @fn isParented
-                * @param parent The parent to check.
-                * @return true if the entity is a child, false otherwise.
-                * @brief Check if the entity is a child of parent.
+                * @fn isRelated
+                * @param id The id to check.
+                * @return true if the id is a child or parent, false otherwise.
+                * @brief Check if the id is related.
                 */
-                bool isParented(uint64_t parent) const noexcept;
+                bool isRelated(uint64_t id) const noexcept;
                 /**
-                * @fn isOrphan
-                * @return true if the entity has no parent, false otherwise
-                * @brief Check if the entity has no parent.
+                * @fn isParent
+                * @param id The id to check.
+                * @return true if is a parent, false otherwise.
+                * @brief Check if a id is a parent..
                 */
-                bool isOrphan(void) const noexcept;
+                bool isParent(uint64_t id) const noexcept;
+                /**
+                * @fn isChild
+                * @param id The id to check.
+                * @return true if is a child, false otherwise.
+                * @brief Check if a id is a child.
+                */
+                bool isChild(uint64_t id) const noexcept;
+                /**
+                * @fn isKinless
+                * @return true if the entity has no parent or child, false otherwise
+                * @brief Check if the entity has no parent and no children.
+                * https://en.wikipedia.org/wiki/Kinlessness
+                */
+                bool isKinless(void) const noexcept;
                 /**
                 * @fn getParents
                 * @return A vector of the entity's parent(s)
@@ -82,6 +111,7 @@ namespace RType {
             private:
                 uint64_t _group;
                 std::vector<uint64_t> _parentVector;
+                std::vector<uint64_t> _childVector;
         };
     }  // namespace Components
 }  // namespace RType

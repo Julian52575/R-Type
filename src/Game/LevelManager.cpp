@@ -7,22 +7,29 @@
 #include <rengine/src/Entity.hpp>
 
 #include "LevelManager.hpp"
+#include "src/Game/EntityMaker.hpp"
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Components/Metadata.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Position.hpp"
+#include "src/Components/Action.hpp"
 #include "src/Components/Components.hpp"
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
+#include "Team.hpp"
 
 namespace RType {
 
-    LevelManager::LevelManager(std::shared_ptr<Rengine::ECS> ecs)
-        : _ecs(ecs)
+    LevelManager::LevelManager(std::shared_ptr<Rengine::ECS> ecs) : _ecs(ecs)
     {
+    }
+
+    void LevelManager::setECS(std::shared_ptr<Rengine::ECS> ecs)
+    {
+        this->_ecs = ecs;
     }
 
     bool LevelManager::loadLevel(const std::string& jsonPath)
@@ -34,11 +41,6 @@ namespace RType {
             return false;
         }
         return this->loadScene(0);
-    }
-
-    void LevelManager::setECS(std::shared_ptr<Rengine::ECS> ecs)
-    {
-        this->_ecs = ecs;
     }
 
     bool LevelManager::loadScene(uint8_t index)
@@ -53,46 +55,59 @@ namespace RType {
         this->_currentSceneIndex = index;
         this->_time = 0;
 
+       // background
+        std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> backgroundImages
+            = this->getCurrentSceneBackgroundImages();
         // enemies
         std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> enemies
             = this->getCurrentSceneEnemies();
         uint64_t i = 0;
+
+        // No background : skip background
+        if (backgroundImages.has_value() == false) {
+            goto enemyLoading;
+        }
+        // No entity left : skip background
+        if ((this->_ecs->getEntityLimit() - this->_ecs->getActiveEntitiesCount()) < backgroundImages->get().size()) {
+            goto enemyLoading;
+        }
+        for (i = 0; i < backgroundImages->get().size(); i++) {
+            Rengine::Entity& bgEntity = this->_ecs->addEntity();
+
+            bgEntity.addComponent<RType::Components::Position>(0, 0);
+            bgEntity.setComponentsDestroyFunction(
+                [](Rengine::Entity& en) {
+                    en.removeComponent<RType::Components::Position>();
+                }
+            );
+        }
 
 enemyLoading:
         if (enemies.has_value() == false) {
             goto loadSceneReturn;
         }
         for (i = 0; i < enemies->get().size(); i++) {
-            Rengine::Entity& currentEnemy = this->_ecs->addEntity();
+            Rengine::Entity& currentEnemy = RType::EntityMaker::make(this->_ecs, enemies->get()[i].entityConfig, Team::TeamEnemy);
 
-            currentEnemy.addComponent<RType::Components::Position>(enemies->get()[i].xSpawn, enemies->get()[i].ySpawn);
-
-            currentEnemy.addComponent<RType::Components::Hitbox>(enemies->get()[i].entityConfig.getHitbox());
-            currentEnemy.addComponent<RType::Components::Configuration>(enemies->get()[i].entityConfig);
-            currentEnemy.addComponent<RType::Components::Relationship>();
-            
-            currentEnemy.addComponent<RType::Components::Life>(enemies->get()[i].entityConfig.getStats().hp);
-
-            RType::Components::Metadata& meta = currentEnemy.addComponent<RType::Components::Metadata>();
+            currentEnemy.getComponent<RType::Components::Position>().set(
+                    {(float) enemies->get()[i].xSpawn,
+                    (float) enemies->get()[i].ySpawn}
+            );
+            currentEnemy.addComponent<RType::Components::Action>(RType::Components::ActionSourceScript, enemies->get()[i].scriptPath);
 
             if (enemies->get()[i].isBoss == true) {
-                meta.add(RType::Components::Metadata::MetadataListBoss);
+                currentEnemy.getComponent<RType::Components::Metadata>().add(RType::Components::Metadata::MetadataListBoss);
                 this->_bossId = Rengine::Entity::size_type(currentEnemy);
             }
+            RType::Components::Relationship& rel = currentEnemy.getComponent<RType::Components::Relationship>();
 
+            rel.setGroup(Team::TeamEnemy);
             currentEnemy.setComponentsDestroyFunction(
                 [this](Rengine::Entity& en) {
-                    en.removeComponent<RType::Components::Position>();
-                    en.removeComponent<RType::Components::Hitbox>();
-                    en.removeComponent<RType::Components::Configuration>();
-                    en.removeComponent<RType::Components::Relationship>();
-                    en.removeComponent<RType::Components::Metadata>();
-                    en.removeComponent<RType::Components::Life>();
-
+                    en.removeComponentNoExcept<RType::Components::Action>();
                     if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {
                         this->_bossId = std::nullopt;
                     }
-                    
                 }
             );
             this->_currentSceneEnemies.push_back(Rengine::Entity::size_type(currentEnemy));
@@ -172,17 +187,11 @@ loadSceneReturn:
 
     void LevelManager::clearCurrentScene(void)
     {
-        this->_currentSceneBackgroundEntities.clear();
         this->_bossId = std::nullopt;
         this->_time = 0;
-        for (auto bgIt : this->_currentSceneBackgroundEntities) {
-            try {
-                this->_ecs->removeEntity(bgIt);
-            } catch (std::exception& e) {;}
-        }
         for (auto enIt : this->_currentSceneEnemies) {
             try {
-                this->_ecs->removeEntity(enIt);
+                this->_ecs->removeEntity<>(enIt);
             } catch (std::exception& e) {;}
         }
     }

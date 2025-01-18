@@ -2,6 +2,7 @@
 #include <rengine/RengineNetworkServer.hpp>
 #include <rengine/Rengine.hpp>
 #include "LevelManager.hpp"
+#include "src/Components/Action.hpp"
 
 struct Communication {
     enum Type : uint16_t {
@@ -69,7 +70,6 @@ struct userGame {
     std::shared_ptr<Connexion<Communication::TypeDetail>> client;
     Rengine::Entity::size_type entity;
     User user;
-    uint16_t entityID;
 };
 namespace RType {
     class Games {
@@ -78,7 +78,7 @@ namespace RType {
             void start();
             void stop();
             time_t &getTimeStarted();
-            uuid_t &getGameID();
+            Rengine::UUID::uuid_t &getGameID();
             std::string &getIP();
             uint16_t &getTCPPort();
             uint16_t &getUDPPort();
@@ -89,16 +89,15 @@ namespace RType {
 
         private:
             void _handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
-            void _handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg);
+            void _handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
             void _handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
-            void _handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg);
+            void _handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
 
             std::shared_ptr<userGame> _getUserByClient(std::shared_ptr<Connexion<Communication::TypeDetail>> client);
-            std::shared_ptr<userGame> _getUserByEntityID(uint16_t entityID);
             std::shared_ptr<userGame> _getUserByUDPClient(asio::ip::udp::endpoint &UDPClient);
             std::thread _gameThread;
             bool _running;
-            uuid_t _gameID;
+            Rengine::UUID::uuid_t _gameID;
             std::string _gameName;
             std::string _ip;
             uint16_t _TCPPort;

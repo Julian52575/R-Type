@@ -1,5 +1,7 @@
 #include "./game.hpp"
 #include "src/Game/EntityMaker.hpp"
+#include "src/Network/EntityAction.hpp"
+#include "src/Components/Action.hpp"
 
 void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
     asio::ip::udp::endpoint UDPClient;
@@ -9,8 +11,16 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     UDPClient.address(asio::ip::make_address(client->getSocket().remote_endpoint().address().to_string()));
     User newUDPUser = {UDPClient};
     Rengine::Entity &entity = RType::EntityMaker::make(this->_ecs, configID);
+    entity.addComponent<RType::Components::Action>(RType::Components::ActionSource::ActionSourceUserInput);
+    entity.addComponent<RType::Components::Velocity>(0, 0);
+    entity.setComponentsDestroyFunction(
+       [](Rengine::Entity& en) {
+            en.removeComponentNoExcept<RType::Components::Action>();
+            en.removeComponent<RType::Components::Velocity>();
+        }
+    );
     Rengine::Entity::size_type entityID = entity;
-    std::shared_ptr<userGame> newUser = std::make_shared<userGame>(userGame{client, entityID, newUDPUser, 0});
+    std::shared_ptr<userGame> newUser = std::make_shared<userGame>(userGame{client, entityID, newUDPUser});
     _users.push_back(newUser);
     this->_GameServerUDP.AddUser(newUDPUser);
     Message<Communication::TypeDetail> msg2;
@@ -18,7 +28,6 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     msg2.header.size = 0;
     msg2 << entityID;
     this->_GameServerTCP.Send(msg2, client);
-    std::cout << "User added with entityID: " << entityID << std::endl;
 };
 
 void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
@@ -29,31 +38,45 @@ void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::Ty
     };
 };
 
-void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg) {
+void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
     switch (msg.header.type.precision) {
-        case Communication::main::EntityActionPrecision::EntityActionTypeMove:
+        case Communication::main::EntityActionPrecision::EntityActionTypeMove: {
             float x, y;
             msg >> y >> x;
-            std::cout << "Entity " << user->entity << " moved to x: " << x << " y: " << y << std::endl;
+            Network::EntityAction act;
+            act.type = Network::EntityActionTypeMove;
+            act.data.moveVelocity = {x, y};
+            actions[user->entity]->processAction(act);
             break;
-        
-        case Communication::main::EntityActionPrecision::EntityActionTypeShoot1:
-            std::cout << "Entity " << user->entity << " shooted 1" << std::endl;
+        }
+
+        case Communication::main::EntityActionPrecision::EntityActionTypeShoot1: {
+            Network::EntityAction act;
+            act.type = Network::EntityActionTypeShoot1;
+            actions[user->entity]->processAction(act);
             break;
-        
-        case Communication::main::EntityActionPrecision::EntityActionTypeShoot2:
-            std::cout << "Entity " << user->entity << " shooted 2" << std::endl;
+        }
+
+        case Communication::main::EntityActionPrecision::EntityActionTypeShoot2: {
+            Network::EntityAction act;
+            act.type = Network::EntityActionTypeShoot2;
+            actions[user->entity]->processAction(act);
             break;
-        
-        case Communication::main::EntityActionPrecision::EntityActionTypeShoot3:
-            std::cout << "Entity " << user->entity << " shooted 3" << std::endl;
+        }
+
+        case Communication::main::EntityActionPrecision::EntityActionTypeShoot3: {
+            Network::EntityAction act;
+            act.type = Network::EntityActionTypeShoot3;
+            actions[user->entity]->processAction(act);
             break;
+        }
     }
 }
 
-void RType::Games::_handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg) {
+void RType::Games::_handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
     switch (msg.header.type.type) {
-        case Communication::Type::EntityInfo:
+        case Communication::Type::EntityAction:
+            _handleEntityInfoUDPMessage(user, msg, actions);
             break;
     };
 };

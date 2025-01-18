@@ -18,11 +18,12 @@
 #include "src/Config/EntityConfigResolver.hpp"
 #include "src/Game/Team.hpp"
 #include "src/Config/ConfigurationIdResolver.hpp"
+#include "src/Components/Action.hpp"
 
 namespace RType {
 
 
-        Rengine::Entity& EntityMaker::make(std::shared_ptr<Rengine::ECS> ecs, const RType::Config::EntityConfig& enConfig, uint64_t group)
+        Rengine::Entity& EntityMaker::make(std::shared_ptr<Rengine::ECS> &ecs, const RType::Config::EntityConfig& enConfig, uint64_t group)
         {
             Rengine::Entity& entity = ecs->addEntity();
 
@@ -49,7 +50,7 @@ namespace RType {
             return entity;
         }
 
-        Rengine::Entity& EntityMaker::make(std::shared_ptr<Rengine::ECS> ecs, const std::string& json, uint64_t group, RType::Config::EntityConfig* configPtr)
+        Rengine::Entity& EntityMaker::make(std::shared_ptr<Rengine::ECS> &ecs, const std::string& json, uint64_t group, RType::Config::EntityConfig* configPtr)
         {
             const Config::EntityConfig& enConfig = Config::EntityConfigResolverSingletone::get().get(json);
 
@@ -59,7 +60,7 @@ namespace RType {
             return EntityMaker::make(ecs, enConfig, group);
         }
 
-        Rengine::Entity& EntityMaker::make(std::shared_ptr<Rengine::ECS> ecs, uint64_t configurationId, uint64_t group, RType::Config::EntityConfig* configPtr)
+        Rengine::Entity& EntityMaker::make(std::shared_ptr<Rengine::ECS> &ecs, uint64_t configurationId, uint64_t group, RType::Config::EntityConfig* configPtr)
         {
             std::string path = RType::Config::EntityConfigurationIdResolverSingletone::get().get(configurationId);
 

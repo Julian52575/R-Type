@@ -28,7 +28,7 @@ namespace RType {
             * @param group The group the new entity belong to. Default = 0.
             * @brief Create an entity and asign basic components to it.
             */
-            static Rengine::Entity& make(std::shared_ptr<Rengine::ECS> ecs, const RType::Config::EntityConfig& config, uint64_t group = 0);
+            static Rengine::Entity& make(std::shared_ptr<Rengine::ECS> &ecs, const RType::Config::EntityConfig& config, uint64_t group = 0);
             /**
             * @fn make
             * @param ecs A reference to the ECS in use.
@@ -37,7 +37,7 @@ namespace RType {
             * @param configPtr A pointer to an EntityConfig to be updated with the parsed configuration.
             * @brief Create an entity and asign basic components to it.
             */
-            static Rengine::Entity& make(std::shared_ptr<Rengine::ECS> ecs, const std::string& json, uint64_t group = 0, RType::Config::EntityConfig* configPtr = nullptr);
+            static Rengine::Entity& make(std::shared_ptr<Rengine::ECS> &ecs, const std::string& json, uint64_t group = 0, RType::Config::EntityConfig* configPtr = nullptr);
             /**
             * @fn make
             * @param ecs A reference to the ECS in use.
@@ -47,7 +47,7 @@ namespace RType {
             * @exception EntityMakerException The configurationId is invalid.
             * @brief Create an entity and asign basic components to it.
             */
-            static Rengine::Entity& make(std::shared_ptr<Rengine::ECS> ecs, uint64_t configurationId, uint64_t group = 0, RType::Config::EntityConfig* configPtr = nullptr);
+            static Rengine::Entity& make(std::shared_ptr<Rengine::ECS> &ecs, uint64_t configurationId, uint64_t group = 0, RType::Config::EntityConfig* configPtr = nullptr);
     };
 
 }  // namespace RType

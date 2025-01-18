@@ -7,6 +7,7 @@
 
 #include "Configuration.hpp"
 #include "src/Components/Position.hpp"
+
 namespace RType {
     namespace Components {
 
@@ -18,6 +19,14 @@ namespace RType {
                 {
                 }
                 ~Velocity(void) = default;
+                void setX(float x)
+                {
+                    this->_x = x;
+                }
+                void setY(float y)
+                {
+                    this->_y = y;
+                }
                 static void componentFunction(Rengine::ECS& ecs, RType::Components::Velocity& velocity, Rengine::Entity& entity)
                 {
                     std::optional<std::reference_wrapper<Configuration>> config = entity.getComponentNoExcept<Configuration>();
@@ -30,10 +39,13 @@ namespace RType {
                         return;
                     }
                     float deltatime = Rengine::Clock::getElapsedTime();
-                    float newX = pos->get().getX() + velocity._x + config->get().getConfig().getStats().speedX * deltatime;
-                    float newY = pos->get().getY() + velocity._y + config->get().getConfig().getStats().speedY * deltatime;
+                    float changeX = config->get().getConfig().getStats().speedX * deltatime;
+                    float changeY = config->get().getConfig().getStats().speedY * deltatime;
 
-                    pos->get().set({newX, newY});
+                    pos->get().set(
+                            {pos->get().getX() + (velocity._x * changeX),
+                            pos->get().getY() + (velocity._y * changeY)}
+                    );
                 }
 
             private:

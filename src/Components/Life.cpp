@@ -33,7 +33,7 @@ namespace RType {
                 return;
             }
             if (life->get()._hp <= 0) {
-                ecs.removeEntity(entity);
+                ecs.removeEntity<>(entity);
             }
         }
     }  // namespace Components
