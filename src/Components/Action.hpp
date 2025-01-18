@@ -6,6 +6,7 @@
 #include <rengine/src/ECS.hpp>
 #include <rengine/src/Entity.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
+#include <rengine/src/Graphics/Vector.hpp>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -17,6 +18,7 @@
 #include "../Game/SceneManager.hpp"
 #include "Position.hpp"
 #include "Configuration.hpp"
+#include "src/Components/Velocity.hpp"
 #include "src/Config/AttackConfig.hpp"
 
 namespace RType {
@@ -174,7 +176,7 @@ namespace RType {
                 */
                 static void componentFunction(Rengine::ECS& ecs, Action& component, Rengine::Entity& entity);
                 friend void updateDeltatimes(Action& component) noexcept;
-                inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
+                inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Velocity& vel);
                 inline void handleShoot(Action& actionComponent, Network::EntityAction& action,
                         Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig);
                 friend inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
@@ -213,6 +215,7 @@ namespace RType {
                 container_t _actionVector;
                 float _shootDeltatimes[3] = {0.0f};
                 struct LuaInfos _luaInfos;
+                Rengine::Graphics::vector2D<bool> _updatedNonZeroVelocity = {false, false};
         };  // class Action
     }  // namespace Components
 }  // namespace RType

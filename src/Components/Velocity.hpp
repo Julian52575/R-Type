@@ -6,8 +6,8 @@
 #include <rengine/Rengine.hpp>
 
 #include "Configuration.hpp"
-#include "Action.hpp"
 #include "src/Components/Position.hpp"
+
 namespace RType {
     namespace Components {
 
@@ -19,6 +19,14 @@ namespace RType {
                 {
                 }
                 ~Velocity(void) = default;
+                void setX(float x)
+                {
+                    this->_x = x;
+                }
+                void setY(float y)
+                {
+                    this->_y = y;
+                }
                 static void componentFunction(Rengine::ECS& ecs, RType::Components::Velocity& velocity, Rengine::Entity& entity)
                 {
                     std::optional<std::reference_wrapper<Configuration>> config = entity.getComponentNoExcept<Configuration>();

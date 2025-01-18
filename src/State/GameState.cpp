@@ -225,6 +225,7 @@ namespace RType {
         RType::Components::Sprite& sp = player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
         player.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
+        player.addComponent<RType::Components::Velocity>(0, 0);
     #ifdef DEBUG
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
@@ -234,6 +235,7 @@ namespace RType {
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::Action>();
                 en.removeComponent<RType::Components::Clickable>();
+                en.removeComponent<RType::Components::Velocity>();
             #ifdef DEBUG
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::HealthViewer>();

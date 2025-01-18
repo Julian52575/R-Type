@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <rengine/src/Entity.hpp>
 #include <stdexcept>
 #include <vector>
 #include <string>
@@ -324,6 +325,7 @@ shootFunction:
             updateDeltatimes(actionComponent);
             std::optional<std::reference_wrapper<Configuration>> entityConfig = entity.getComponentNoExcept<Configuration>();
             std::optional<std::reference_wrapper<Position>> pos = entity.getComponentNoExcept<Position>();
+            auto vel = entity.getComponentNoExcept<Velocity>();
 
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
@@ -334,8 +336,8 @@ shootFunction:
 
             for (auto it : actionComponent) {
                 // Move
-                if (it.type == Network::EntityActionTypeMove) {
-                    actionComponent.handleMove(it, entityConfig.value(), pos.value());
+                if (it.type == Network::EntityActionTypeMove && vel.has_value() == true) {
+                    actionComponent.handleMove(it, entityConfig.value(), vel->get());
                 }
                 // Shoot1 -> 3
                 if (Network::EntityActionTypeShoot1 <= it.type && it.type <= Network::EntityActionTypeShoot3) {
@@ -343,6 +345,14 @@ shootFunction:
                 }
             }  // for it
             actionComponent.clear();
+            // No move input : no velocity
+            if (vel.has_value() == true && actionComponent._updatedNonZeroVelocity.x == false) {
+                vel->get().setX(0.0f);
+            }
+            if (vel.has_value() == true && actionComponent._updatedNonZeroVelocity.y == false) {
+                vel->get().setY(0.0f);
+            }
+            actionComponent._updatedNonZeroVelocity = {false, false};
         }
 
         void updateDeltatimes(Action& component) noexcept
@@ -353,16 +363,16 @@ shootFunction:
             }
         }
 
-        void Action::handleMove(Network::EntityAction& action, Configuration& config, Position& pos)
+        void Action::handleMove(Network::EntityAction& action, Configuration& config, RType::Components::Velocity& vel)
         {
-            float deltatime = Rengine::Clock::getElapsedTime();
-            float changeX = config.getConfig().getStats().speedX * deltatime;
-            float changeY = config.getConfig().getStats().speedY * deltatime;
-
-            pos.set(
-                    {pos.getX() + (action.data.moveVelocity.x * changeX),
-                    pos.getY() + (action.data.moveVelocity.y * changeY)}
-            );
+            if (action.data.moveVelocity.x != 0.0f) {
+                vel.setX(action.data.moveVelocity.x);
+                this->_updatedNonZeroVelocity.x = true;
+            }
+            if (action.data.moveVelocity.y != 0.0f) {
+                vel.setY(action.data.moveVelocity.y);
+                this->_updatedNonZeroVelocity.y = true;
+            }
         }
 
         void Action::handleShoot(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig)
