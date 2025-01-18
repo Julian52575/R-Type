@@ -464,6 +464,18 @@ namespace Rengine {
 
                 return this->removeEntity<Parameters...>(idx, params...);
             }
+            /**
+            * @fn isEntityActive
+            * @param id The id of the entity to check.
+            * @brief Check if the entity at id is active.
+            */
+            bool isEntityActive(size_type id) const noexcept
+            {
+                if (id > this->_sparseArrayDefaultSize) {
+                    return false;
+                }
+                return this->_currentEntities[id].has_value();
+            }
 
         private:
             /**

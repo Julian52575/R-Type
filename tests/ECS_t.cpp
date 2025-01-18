@@ -257,3 +257,17 @@ TEST(ECS, onEntityRemovalFunctionVoidIndex)
 
     EXPECT_EQ(ecs.getHighestEntityId(), low);
 }
+TEST(ECS, isEntityActive)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    Rengine::Entity& e2 = ecs.addEntity();
+
+    ASSERT_TRUE(ecs.isEntityActive(uint64_t(e)));
+    ASSERT_TRUE(ecs.isEntityActive(uint64_t(e2)));
+    ecs.removeEntity(e);
+    ecs.removeEntity(e2);
+    ASSERT_FALSE(ecs.isEntityActive(uint64_t(e)));
+    ASSERT_FALSE(ecs.isEntityActive(uint64_t(e2)));
+    ASSERT_FALSE(ecs.isEntityActive(-1));
+}
