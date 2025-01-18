@@ -9,7 +9,7 @@
 TEST(UserInput, operatorEqual)
 {
     Rengine::Graphics::UserInput escape = {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialESCAPE};
-    Rengine::Graphics::UserInput space = {Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, Rengine::Graphics::UserInputKeyboardSpecialSPACE};
+    Rengine::Graphics::UserInput space = {Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, Rengine::Graphics::UserInputKeyboardSpecialBACKSPACE};
     Rengine::Graphics::UserInput a = {Rengine::Graphics::UserInputType::UserInputTypeKeyboardChar, 'a'};
     Rengine::Graphics::UserInput b = {Rengine::Graphics::UserInputType::UserInputTypeKeyboardCharPressed, 'b'};
     Rengine::Graphics::UserInput close = {Rengine::Graphics::UserInputTypeWindowClosed, {0}};
@@ -18,8 +18,8 @@ TEST(UserInput, operatorEqual)
     Rengine::Graphics::vector2D<float> joystick2d2 = {99.9, 99.9};
     Rengine::Graphics::UserInput joystick2 = {Rengine::Graphics::UserInputTypeJoystickRightMove};
 
-    joystick.data.joystickPosition = joystick2d;
-    joystick2.data.joystickPosition = joystick2d2;
+    joystick.data.joystickInput.data.joystickPosition = joystick2d;
+    joystick2.data.joystickInput.data.joystickPosition = joystick2d2;
 
     // escape
     EXPECT_EQ(escape, escape);
@@ -54,12 +54,12 @@ TEST(UserInput, receivedInput)
 {
     Rengine::Graphics::UserInputManager manager;
     Rengine::Graphics::UserInput close = {Rengine::Graphics::UserInputTypeWindowClosed};
-    Rengine::Graphics::UserInput space = {Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, Rengine::Graphics::UserInputKeyboardSpecialSPACE};
+    Rengine::Graphics::UserInput space = {Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, Rengine::Graphics::UserInputKeyboardSpecialBACKSPACE};
 
     manager.addInput(close);
     manager.addInput(space);
     std::optional<std::reference_wrapper<const Rengine::Graphics::UserInput>> closeResult = manager.receivedInput(close);
-    auto spaceResult = manager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialSPACE});
+    auto spaceResult = manager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialBACKSPACE});
 
     EXPECT_TRUE(closeResult.has_value());
     std::optional<std::reference_wrapper<const Rengine::Graphics::UserInput>> aResult = manager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardChar, {'a'});
