@@ -40,9 +40,18 @@ namespace RType {
             * @brief Handle inputs.
             */
             virtual SceneType handleInputs(void) = 0;
+            /**
+            * @fn isLoaded
+            * @brief Check is the scene is loaded.
+            */
+            bool isLoaded(void) const noexcept
+            {
+                return this->_isLoaded;
+            }
 
         protected:
             SceneType _sceneIndex;
+            bool _isLoaded = true;
     };
 
 }  // namespace RType

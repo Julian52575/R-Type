@@ -3,6 +3,8 @@
 
 #include <array>
 #include <rengine/RengineGraphics.hpp>
+#include <rengine/src/Graphics/ASprite.hpp>
+#include <rengine/src/Graphics/Vector.hpp>
 
 #include "Scenes.hpp"
 #include "src/State//AScene.hpp"
@@ -45,7 +47,9 @@ namespace RType {
             std::array<std::pair<std::shared_ptr<Rengine::Graphics::AText>, std::shared_ptr<Rengine::Graphics::AText>>, EnterLobbyButtonsMax> _buttonVector;
             std::shared_ptr<Rengine::Graphics::ASprite> _buttonCursor;
             std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic;
-
+            std::shared_ptr<Rengine::Graphics::ASprite> _newLobbyButton;
+            Rengine::Graphics::vector2D<float> _newLobbyButtonPos;
+            std::shared_ptr<Rengine::Graphics::AText> _newLobbyButtonText;
     };
 
 }  // namespace RType

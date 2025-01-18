@@ -23,11 +23,13 @@ namespace RType {
     void OptionsScene::unload(void)
     {
         this->_deltatime = 0;
+        this->_isLoaded = false;
     }
         // Called when coming back to this scene
         // mainly used for music
     void OptionsScene::reload(void)
     {
+        this->_isLoaded = true;
     }
 
         // Called each frame

@@ -9,6 +9,7 @@ namespace RType {
         MenuScenesSelectCharacter,
         MenuScenesSelectLobby,
         MenuScenesEnterLobbyInfo,
+        MenuScenesCreateLobby,
         MenuScenesExitToGame,
         MenuScenesExitToLobby
     };

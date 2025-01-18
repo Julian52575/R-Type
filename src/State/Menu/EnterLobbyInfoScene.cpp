@@ -1,4 +1,7 @@
 //
+#include <rengine/src/Graphics/GraphicManager.hpp>
+#include <rengine/src/Graphics/SpriteSpecs.hpp>
+#include <rengine/src/Graphics/TextSpecs.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <vector>
 #include <rengine/RengineGraphics.hpp>
@@ -13,10 +16,12 @@ namespace RType {
         {
             this->_currentIndex = EnterLobbyButtonsIp;
             this->_backgroundMusic->reset();
+            this->_isLoaded = false;
         }
         void EnterLobbyInfoScene::reload(void)
         {
             this->_backgroundMusic->play();
+            this->_isLoaded = true;
         }
 
         void EnterLobbyInfoScene::display(void)
@@ -34,6 +39,13 @@ namespace RType {
                 Rengine::Graphics::GraphicManagerSingletone::get().addToRender(it.second, {550, yDiff * count});
                 count += 1;
             }  // it : this->_buttonVector
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_newLobbyButton,
+                    this->_newLobbyButtonPos
+            );
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_newLobbyButtonText,
+                    {this->_newLobbyButtonPos.x + 1,
+                    this->_newLobbyButtonPos.y + 10}
+            );
             if (this->_backgroundMusic->isPlaying() == false) {
                 this->_backgroundMusic->play();
             }
@@ -75,6 +87,15 @@ namespace RType {
                         default:
                             break;
                     }
+                }
+                if (it.type == Rengine::Graphics::UserInputTypeMouseLeftClick) {
+                    if (this->_newLobbyButtonPos.x <= it.data.mousePosition.x
+                    && it.data.mousePosition.x <= this->_newLobbyButtonPos.x + this->_newLobbyButton->getSpriteSpecs().shapeData.specifics.rectangleSize.x) {
+                        if (this->_newLobbyButtonPos.y <= it.data.mousePosition.y
+                        && it.data.mousePosition.y <= this->_newLobbyButtonPos.y + this->_newLobbyButton->getSpriteSpecs().shapeData.specifics.rectangleSize.y) {
+                            return MenuScenesCreateLobby;
+                        }  // y check
+                    }  // x check
                 }
             }  // for it
             if (textUpdate == true) {
@@ -147,7 +168,23 @@ namespace RType {
 
             musicSpecs.soundPath = "assets/musics/starforx64_training_mode.mp3";
             musicSpecs.loop = true;
-                this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(musicSpecs);
+            this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(musicSpecs);
+            // New lobby button
+            Rengine::Graphics::SpriteSpecs newSpecs;
+
+            newSpecs.type = Rengine::Graphics::SpriteTypeRectangle;
+            newSpecs.shapeData.specifics.rectangleSize = {300, 100};
+            newSpecs.color = {250, 50, 0};
+            this->_newLobbyButton = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(newSpecs);
+            this->_newLobbyButtonPos = {(1920 / 2) - (newSpecs.shapeData.specifics.rectangleSize.x / 2), 700};
+            // New lobby text
+            Rengine::Graphics::TextSpecs newText;
+
+            newText.message = "Create a room";
+            newText.characterSize = 36;
+            newText.letterSpacing += 2;
+            newText.fontPath = "assets/fonts/arial_narrow_7.ttf";
+            this->_newLobbyButtonText = Rengine::Graphics::GraphicManagerSingletone::get().createText(newText);
         }
 
 }  // namespace RType
