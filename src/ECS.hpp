@@ -140,18 +140,21 @@ namespace Rengine {
             * @exception ECSExceptionEntityNotFound The provided entity is not registred in the ECS.
             * @brief Remove an entity and its components from the ECS.
             */
+            /* Replaced by templated version
             void removeEntity(const Entity& en)
             {
                 size_type idx = this->_currentEntities.getIndex(en);
 
                 this->removeEntity(idx);
             }
+            */
             /**
             * @fn removeEntity
             * @param idx The index of the entity to remove
             * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
             * @brief Remove an entity and its components from the ECS.
             */
+            /* Replaced by templated version
             void removeEntity(Rengine::ECS::size_type idx)
             {
                 if (idx == static_cast<size_type>(-1)) {
@@ -167,6 +170,7 @@ namespace Rengine {
                     this->updateMaxEntityId();
                 }
             }
+            */
 
             /**
             * @fn getEntity
@@ -417,7 +421,6 @@ namespace Rengine {
             * @param idx The index of the entity to remove
             * @param params The parameters to pass to the onEntityRemovalFunction.
             * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
-            * @exception ECSEXce
             * @brief Remove an entity and its components from the ECS.
             * Call the onEntityRemovalFunction if previously set by setOnEntityRemovalFunction.
             */
@@ -436,9 +439,7 @@ namespace Rengine {
                             std::any_cast<std::function<void(Entity&, Parameters&&...)>>(this->_onEntityRemovalFunction.value());
 
                         fun(this->_currentEntities[idx].value(), params...);
-                    } catch (std::bad_any_cast& e) {
-                        throw ECSExceptionBadOnEntityRemovalFunctionType();
-                    }
+                    } catch (std::bad_any_cast& e) {;}  // ignore fun call if invalid parameters, best to delete entity anyways
                 }
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
@@ -447,7 +448,22 @@ namespace Rengine {
                     this->updateMaxEntityId();
                 }
             }
+            /**
+            * @fn removeEntity
+            * @template Parameters The parameters of the onEntityRemovalFunction.
+            * @param entity A reference to the entity to remove.
+            * @param params The parameters to pass to the onEntityRemovalFunction.
+            * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
+            * @brief Remove an entity and its components from the ECS.
+            * Call the onEntityRemovalFunction if previously set by setOnEntityRemovalFunction.
+            */
+            template<class ... Parameters>
+            void removeEntity(const Rengine::Entity& entity, Parameters&& ... params)
+            {
+                size_type idx = this->_currentEntities.getIndex(entity);
 
+                return this->removeEntity<Parameters...>(idx, params...);
+            }
 
         private:
             /**
