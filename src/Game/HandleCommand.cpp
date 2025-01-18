@@ -28,3 +28,32 @@ void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::Ty
             break;
     };
 };
+
+void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg) {
+    switch (msg.header.type.precision) {
+        case Communication::main::EntityActionPrecision::EntityActionTypeMove:
+            float x, y;
+            msg >> y >> x;
+            std::cout << "Entity " << user->entity << " moved to x: " << x << " y: " << y << std::endl;
+            break;
+        
+        case Communication::main::EntityActionPrecision::EntityActionTypeShoot1:
+            std::cout << "Entity " << user->entity << " shooted 1" << std::endl;
+            break;
+        
+        case Communication::main::EntityActionPrecision::EntityActionTypeShoot2:
+            std::cout << "Entity " << user->entity << " shooted 2" << std::endl;
+            break;
+        
+        case Communication::main::EntityActionPrecision::EntityActionTypeShoot3:
+            std::cout << "Entity " << user->entity << " shooted 3" << std::endl;
+            break;
+    }
+}
+
+void RType::Games::_handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg) {
+    switch (msg.header.type.type) {
+        case Communication::Type::EntityInfo:
+            break;
+    };
+};

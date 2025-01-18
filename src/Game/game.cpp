@@ -110,7 +110,7 @@ void RType::Games::run() {
             std::cout << "Received message from UDPclient: " << msg->first << " with size: " << msg->second.header.size << std::endl;
             std::shared_ptr<userGame> user = _getUserByUDPClient(msg->first);
             if (user) {
-                std::cout << "User found with entityID: " << user->entityID << std::endl;
+                _handleUDPMessage(user, msg->second);
             }
         }
 

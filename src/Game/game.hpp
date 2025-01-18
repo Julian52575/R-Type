@@ -12,12 +12,10 @@ struct Communication {
         EntityInfo = 4,
         LobbyInfo = 5
     };
-
     union main {
         enum NOOPPrecision : uint16_t {
             NOOP = 0
         };
-
         enum ConnexionDetailPrecision : uint16_t {
             ClientConnexion = 0,
             ClientDisconnect = 1,
@@ -28,16 +26,16 @@ struct Communication {
             ServerStop = 6,
             RequestPlaybleEntity = 7
         };
-
         enum EntityActionPrecision : uint16_t {
-            Move = 0,
-            Shoot = 1,
-            Dodge = 2,
-            Barrier = 3,
-            Death = 4,
-            Ultimate = 5
+            EntityActionTypeMove   = 0x00,
+            EntityActionTypeShoot1 = 0x01,
+            EntityActionTypeShoot2 = 0x02,
+            EntityActionTypeShoot3 = 0x03,
+            EntityActionTypeDodge  = 0x04,
+            EntityActionTypeBarrier = 0x05,
+            EntityActionTypeDeath  = 0x06,
+            EntityActionTypeUltimate = 0x07
         };
-
         enum EntityInfoPrecision : uint16_t {
             InfoAll = 0,
             InGameAndConfigurationId = 1,
@@ -50,7 +48,6 @@ struct Communication {
             NewEntity = 8,
             DeleteEntity = 9
         };
-
         enum LobbyInfoPrecision : uint16_t {
             GameCreated = 0,
             GameDeleted = 1,
@@ -62,7 +59,6 @@ struct Communication {
             JoinGame = 7
         };
     };
-
     struct TypeDetail {
         Type type;
         uint16_t precision;
@@ -93,7 +89,9 @@ namespace RType {
 
         private:
             void _handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
+            void _handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg);
             void _handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
+            void _handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg);
 
             std::shared_ptr<userGame> _getUserByClient(std::shared_ptr<Connexion<Communication::TypeDetail>> client);
             std::shared_ptr<userGame> _getUserByEntityID(uint16_t entityID);
