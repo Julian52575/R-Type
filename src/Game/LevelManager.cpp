@@ -19,8 +19,11 @@
 #include "src/Components/Components.hpp"
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
-#include "src/Components/HitboxViewer.hpp"
-#include "src/Components/HealthViewer.hpp"
+
+#ifdef DEBUG
+    #include "src/Components/HitboxViewer.hpp"
+    #include "src/Components/HealthViewer.hpp"
+#endif
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
 #include "Team.hpp"
@@ -97,8 +100,11 @@ enemyLoading:
             );
             currentEnemy.addComponent<RType::Components::Sprite>(enemies->get()[i].entityConfig.getSprite().getSpecs());
             currentEnemy.getComponent<RType::Components::Sprite>().getSprite().get()->flip();
+
+        #ifdef DEBUG
             currentEnemy.addComponent<RType::Components::HitboxViewer>(enemies->get()[i].entityConfig.getHitbox().size.x, enemies->get()[i].entityConfig.getHitbox().size.y);
             currentEnemy.addComponent<RType::Components::HealthViewer>(enemies->get()[i].entityConfig.getStats().hp);
+        #endif
             // std::cout << "Script: " << enemies->get()[i].scriptPath << std::endl;
             currentEnemy.addComponent<RType::Components::Action>(RType::Components::ActionSourceScript, enemies->get()[i].scriptPath);
 
@@ -112,8 +118,11 @@ enemyLoading:
             currentEnemy.setComponentsDestroyFunction(
                 [this](Rengine::Entity& en) {
                     en.removeComponentNoExcept<RType::Components::Sprite>();
+
+                #ifdef DEBUG
                     en.removeComponentNoExcept<RType::Components::HitboxViewer>();
                     en.removeComponentNoExcept<RType::Components::HealthViewer>();
+                #endif
                     en.removeComponentNoExcept<RType::Components::Action>();
 
                     if (this->_bossId.has_value() == true && this->_bossId.value() == Rengine::Entity::size_type(en)) {

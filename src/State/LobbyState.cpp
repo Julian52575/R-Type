@@ -1,6 +1,8 @@
 #include "src/State/LobbyState.hpp"
+#include <rengine/src/CustomUUID.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
+#include <rengine/Rengine.hpp>
 
 namespace RType {
     LobbyState::LobbyState(Rengine::ECS& ecs) : AState(ecs)
@@ -41,9 +43,10 @@ namespace RType {
         return State::StateLobby;
     }
 
-    DisplayGameInfo &LobbyState::getGameInfoByUuid(uuid_t id) {
+    DisplayGameInfo &LobbyState::getGameInfoByUuid(Rengine::UUID::uuid_t& id)
+    {
         for (auto &game : this->_displayGameInfos) {
-            if (uuid_compare(game.Infos.id, id) == 0) {
+            if (Rengine::UUID::compareUUID(game.Infos.id, id) == 0) {
                 return game;
             }
         }
@@ -187,12 +190,12 @@ namespace RType {
         }
     }
 
-    void LobbyState::makeGameInfos(std::string name, uint16_t playerCount, time_t time, uuid_t id){
+    void LobbyState::makeGameInfos(std::string name, uint16_t playerCount, time_t time, Rengine::UUID::uuid_t& id){
         GameInfo gameInfo;
         gameInfo.name = name;
         gameInfo.playerCount = playerCount;
         gameInfo.time = time;
-        uuid_copy(gameInfo.id, id);
+        Rengine::UUID::copyUUID(gameInfo.id, id);
 
         DisplayGameInfo displayGameInfo;
         displayGameInfo.Infos = gameInfo;
@@ -225,8 +228,8 @@ namespace RType {
     };
 
     void LobbyState::setGameInfos(void) {
-        uuid_t id;
-        uuid_generate(id);
+        Rengine::UUID::uuid_t id;
+        Rengine::UUID::generateUUID(id);
 
         Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
         Rengine::Graphics::SpriteSpecs spriteSpecs;

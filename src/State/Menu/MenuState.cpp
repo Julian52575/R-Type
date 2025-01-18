@@ -6,6 +6,7 @@
 #include <string>
 
 #include "MenuState.hpp"
+#include "src/State/AScene.hpp"
 #include "src/State/Menu/EnterLobbyInfoScene.hpp"
 #include "src/State/Menu/OptionsScene.hpp"
 #include "src/State/Menu/Scenes.hpp"

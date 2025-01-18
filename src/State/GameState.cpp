@@ -225,16 +225,19 @@ namespace RType {
         RType::Components::Sprite& sp = player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
         player.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
-        player.addComponent<RType::Components::Clickable>( [](void){} );  // damn fork bomb is an empty lambda
+    #ifdef DEBUG
         player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
+    #endif
 
         player.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::Action>();
                 en.removeComponent<RType::Components::Clickable>();
+            #ifdef DEBUG
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::HealthViewer>();
+            #endif
             }
         );
         this->_playerEntityId = Rengine::Entity::size_type(player);

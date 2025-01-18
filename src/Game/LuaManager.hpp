@@ -2,11 +2,12 @@
 #ifndef SRC_GAME_LUAMANAGER_HPP_
 #define SRC_GAME_LUAMANAGER_HPP_
 
-#ifdef UNIT_TESTS
-    #include <lua5.4/lua.hpp>
+#if DCMAKE_COMPILATION_
+    #include <lua.hpp>
 #else
-    #include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
+    #include <lua5.4/lua.hpp>
 #endif
+
 #include <iostream>
 #include <any>
 #include <vector>

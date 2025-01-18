@@ -5,21 +5,15 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <rengine/src/Clock/Clock.hpp>
-#include <rengine/src/ECS.hpp>
-#include <rengine/src/Entity.hpp>
-#include <rengine/src/Graphics/GraphicManager.hpp>
-#include <rengine/src/Graphics/UserInputManager.hpp>
-#include <rengine/src/Graphics/Vector.hpp>
 #include <stdexcept>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <rengine/Rengine.hpp>
 
+#include "src/Game/LuaManager.hpp"
 #include "src/Game/EntityMaker.hpp"
-#include "../Network/EntityAction.hpp"
-#include "Components.hpp"
+#include "src/Network/EntityAction.hpp"
 #include "src/Game/SceneManager.hpp"
 #include "src/Config/AttackBuffTypeEnum.hpp"
 #include "src/Config/AttackConfig.hpp"
@@ -33,13 +27,14 @@
 #include "src/Components/Position.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Sprite.hpp"
-#include "src/Components/HitboxViewer.hpp"
+#ifdef DEBUG
+    #include "src/Components/HitboxViewer.hpp"
+    #include "src/Components/HealthViewer.hpp"
+#endif
 #include "src/Components/Velocity.hpp"
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
 #include "src/Game/Team.hpp"
-
-#include "src/Game/LuaManager.hpp"
 
 namespace RType {
     namespace Components {
@@ -428,7 +423,11 @@ shootFunction:
                 if (hostRelationship.belong(Team::TeamEnemy) == true) {
                     projectile.getComponent<Sprite>().getSprite()->flip();
                 }
+
+            #ifdef DEBUG
                 projectile.addComponent<HitboxViewer>(currentMissileEntityConfig.getHitbox().size.x, currentMissileEntityConfig.getHitbox().size.y);
+                //projectile.addComponent<HealthViewer>(currentMissileEntityConfig.getStats().hp);
+            #endif
                 projectile.addComponent<Chrono>([&ecs, &projectile]() {
                     ecs.removeEntity(projectile);
                 }, 7.0f);
@@ -474,7 +473,10 @@ shootFunction:
                             hostRelationship.value().get().removeChild(uint64_t(en));
                         }
                         en.removeComponent<Sprite>();
+                #ifdef DEBUG
                         en.removeComponent<HitboxViewer>();
+                        //en.removeComponent<HealthViewer>();
+                #endif
                         en.removeComponent<Chrono>();
                         if (hasAction) {
                             en.removeComponent<Action>();

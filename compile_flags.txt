@@ -8,6 +8,6 @@
 -I/usr/include
 
 --std=c++20
--DDEBUG
+-D_DEBUG
 -iquote./
 -DUNIT_TESTS

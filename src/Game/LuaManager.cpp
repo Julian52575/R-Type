@@ -1,10 +1,11 @@
-#include <bits/types/struct_tm.h>
-#ifdef UNIT_TESTS
-    #include <lua5.4/lua.hpp>
+#if DCMAKE_COMPILATION_
+    #include <lua.hpp>
 #else
-    #include <lua.hpp>  // <lua5.4/lua.hpp>  // changed for CMake
+    #include <lua5.4/lua.hpp>
 #endif
+
 #include <utility>
+#include <bits/types/struct_tm.h>
 #include <iostream>
 #include <vector>
 #include <string>

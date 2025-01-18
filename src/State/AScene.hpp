@@ -24,12 +24,12 @@ namespace RType {
             * @fn unload
             * @brief Unload some of the scene's elements such as music...
             */
-            virtual void unload(void);
+            virtual void unload(void) = 0;
             /**
             * @fn reload
             * @brief Reload some of the scene's elements such as music...
             */
-            virtual void reload(void);
+            virtual void reload(void) = 0;
             /**
             * @fn run
             * @brief Run a frame of the scene.
