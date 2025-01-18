@@ -18,17 +18,26 @@ namespace Rengine {
             SFMLSprite::SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTickMicroseconds)
                 : ASprite(spriteSpecs, creationTickMicroseconds), _renderObject(spriteSpecs)
             {
+                bool textureLoadingSuccess = false;
+
                 // Load texture if set
                 if (this->_spriteSpecs.texturePath != "") {
                     try {
                         this->_texture.loadFromFile(this->_spriteSpecs.texturePath);
                         this->_texture.setSmooth(true);
                         this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
-                    } catch (std::exception& e) {
-                        std::string msg = e.what();
+                        textureLoadingSuccess = true;
+                    } catch (std::exception& e) {;}
+                }
+                if (textureLoadingSuccess == false) {
+                    // Creating a texture with the provided color for shaders comptatibility and error handling
+                    sf::Color color = {this->_spriteSpecs.color.x,
+                        this->_spriteSpecs.color.y, this->_spriteSpecs.color.z, this->_spriteSpecs.opacity};
+                    sf::Image image;
 
-                        throw SpriteException(msg);
-                    }
+                    image.create(1, 1, color);
+                    this->_texture.loadFromImage(image);
+                    this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
                 }
                 this->applySpecs(spriteSpecs);
             }

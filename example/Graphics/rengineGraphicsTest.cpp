@@ -49,6 +49,7 @@ static std::shared_ptr<Rengine::Graphics::ASprite> initRectangle(void)
     //specs.shapeData.specifics.rectangleSize = {150, 150};
     specs.color = {100, 100, 255};
     specs.shapeData.outlineColor = {0, 0, 255};
+    specs.opacity = 150;
     return manager.createSprite(specs);
 }
 
@@ -262,6 +263,7 @@ int main(void)
     specs.options.isFullscreen = false;
     specs.options.isBorderless = false;
     specs.joystickThreshold = 4.0f;
+    specs.backgroundColor = {100, 100, 100};
     manager.createWindow(specs);
     while (manager.getWindow()->isOpen()) {
         manager.getWindow()->pollInput();
