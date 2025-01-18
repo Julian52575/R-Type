@@ -2,6 +2,7 @@
 #ifndef _SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
 #define _SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
@@ -42,6 +43,7 @@ namespace Rengine {
                 void resetDeltatime(void) noexcept;
                 uint64_t getDeltaTimeMicroseconds(void) noexcept;
                 float getDeltaTimeSeconds(void) noexcept;
+                void setShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 
             private:
                 void initSfKeyboardBindVector(void);
@@ -50,6 +52,7 @@ namespace Rengine {
                 sf::Color _backgroundColor;
                 sf::Clock _clock;
                 sf::Clock _deltatimeClock;
+                std::optional<sf::Shader> _shader;
                 std::vector<std::pair<sf::Keyboard::Key, UserInput>> _sfKeyboardToUserInputBindVector;
                 /**
                 * @return UserInput The UserInput matching the sf::Event::KeyEvent.

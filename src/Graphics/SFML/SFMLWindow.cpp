@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -28,6 +29,7 @@
 #include "SFMLText.hpp"
 #include "SFMLWindow.hpp"
 #include "SFMLSprite.hpp"
+#include "numbers"
 
 namespace Rengine {
     namespace Graphics {
@@ -148,6 +150,7 @@ skipIcon:
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
                 }
                 Rengine::Graphics::SFMLSprite& sfmlSpriteWrapper = (SFMLSprite&) *sprite;
+                sf::Shader* shader = this->_shader.has_value() ? &this->_shader.value() : nullptr;
                 auto type = sfmlSpriteWrapper.getSpriteSpecs().type;
 
                 sfmlSpriteWrapper.setPosition({position.x, position.y});
@@ -155,15 +158,15 @@ skipIcon:
                 if (type == SpriteType::SpriteTypeSprite) {
                     sf::Sprite *sprite = sfmlSpriteWrapper.getSfSprite();
 
-                    this->_renderWindow.draw(*sprite);
+                    this->_renderWindow.draw(*sprite, shader);
                 } else if (type == SpriteType::SpriteTypeCircle) {
                     sf::CircleShape *circle = sfmlSpriteWrapper.getCircle();
 
-                    this->_renderWindow.draw(*circle);
+                    this->_renderWindow.draw(*circle, shader);
                 } else if (type == SpriteType::SpriteTypeRectangle) {
                     sf::RectangleShape* rectangle = sfmlSpriteWrapper.getRectangle();
 
-                    this->_renderWindow.draw(*rectangle);
+                    this->_renderWindow.draw(*rectangle, shader);
                 }
             } catch (std::exception& e) {
                 std::string msg = e.what();
@@ -440,6 +443,30 @@ skipIcon:
         float SFMLWindow::getDeltaTimeSeconds(void) noexcept
         {
             return this->_deltatimeClock.getElapsedTime().asSeconds();
+        }
+        void SFMLWindow::setShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+        {
+            if (this->_shader.has_value() == false) {
+                this->_shader.emplace();
+            }
+            try {
+                bool result = false;
+
+                if (vertexShaderPath != "" && fragmentShaderPath != "") {
+                    result = this->_shader->loadFromFile(vertexShaderPath, fragmentShaderPath);
+                } else if (vertexShaderPath != "") {
+                    result = this->_shader->loadFromFile(vertexShaderPath, sf::Shader::Vertex);
+                } else if (fragmentShaderPath != "") {
+                    result = this->_shader->loadFromFile(fragmentShaderPath, sf::Shader::Fragment);
+                }
+                if (result == false) {
+                    throw WindowException("Cannot load shaders from vertex file '" + vertexShaderPath + "' and fragment file '" + fragmentShaderPath + "'.");
+                }
+            } catch (std::exception& e) {
+                std::string msg = e.what();
+
+                throw WindowException("Error on setShader: " + msg);
+            }
         }
 
     }  // namespace Rengine

@@ -2,6 +2,7 @@
 #include <rengine/src/Graphics/ASound.hpp>
 #include <rengine/src/Graphics/ASprite.hpp>
 #include <rengine/src/Graphics/AText.hpp>
+#include <rengine/src/Graphics/AWindow.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/SpriteSpecs.hpp>
 #include <rengine/src/Graphics/TextSpecs.hpp>
@@ -182,7 +183,7 @@ static void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
     std::string currentText = textBox->getText();
 
     for (auto it : inputManager) {
-        if (it.type != Rengine::Graphics::UserInputTypeKeyboardChar && it.type != Rengine::Graphics::UserInputTypeKeyboardCharPressed) {
+        if (it.type != Rengine::Graphics::UserInputTypeKeyboardCharPressed) {
             continue;
         }
         currentText += it.data.keyboardChar;
@@ -234,6 +235,16 @@ static void inputJoystick(void)
     }
 }
 
+void inputShader(void)
+{
+    std::shared_ptr<Rengine::Graphics::AWindow> window = Rengine::Graphics::GraphicManagerSingletone::get().getWindow();
+
+    if (window->getInputManager().receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialTAB})) {
+        window->setShader("", "shaders/colorblind_protanopia.frag");
+        std::cout << "Set protanopia fragment shader" << std::endl;
+    }
+}
+
 int main(void)
 {
     Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
@@ -261,6 +272,7 @@ int main(void)
         inputChangeColor(rectangle);
         inputTurnDownMusic(music);
         inputJoystick();
+        inputShader();
         manager.addToRender(circle, {0, 0});
         manager.addToRender(sprite, {300, 300});
         manager.addToRender(rectangle, {600, 600});
