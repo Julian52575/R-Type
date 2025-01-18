@@ -91,6 +91,11 @@ namespace RType {
             }
         }
 
+        std::vector<Network::EntityAction> &Action::getActionVector(void) noexcept
+        {
+            return this->_actionVector;
+        }
+
         void Action::processUserInput(void)
         {
             // Check if source is UserInput
@@ -114,6 +119,12 @@ namespace RType {
                 it++;
             }
         }
+
+        ActionSource Action::getActionSource(void) const noexcept
+        {
+            return this->_actionSource;
+        }
+
         void Action::processUserInputKeyboard(const Rengine::Graphics::UserInput& input)
         {
             // Check if source is UserInput

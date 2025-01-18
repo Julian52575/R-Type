@@ -17,6 +17,20 @@ namespace RType {
             return this->_maxhp;
         }
 
+        void Life::setHp(uint16_t hp) noexcept
+        {
+            if (hp > this->_maxhp) {
+                this->_hp = this->_maxhp;
+            } else {
+                this->_hp = hp;
+            }
+        }
+
+        void Life::setMaxHp(uint16_t maxhp) noexcept
+        {
+            this->_maxhp = maxhp;
+        }
+
         void Life::takeDamage(uint16_t damage) noexcept
         {
             if (damage > this->_hp) {

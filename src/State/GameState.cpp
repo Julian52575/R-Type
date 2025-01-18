@@ -29,7 +29,7 @@
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
 #include "src/Game/Team.hpp"
-
+#include "src/Config/ConfigurationIdResolver.hpp"
 
 namespace RType {
 
@@ -39,8 +39,77 @@ namespace RType {
         this->_clientTCP = nullptr;
         this->_clientUDP = nullptr;
         this->initScenes();
-        this->_sceneManager.setScene(GameScenes::GameScenesLoadLevel);
-        // this->_sceneManager.setScene(GameScenes::GameScenesInitNetwork);
+        // this->_sceneManager.setScene(GameScenes::GameScenesLoadLevel);
+        this->_sceneManager.setScene(GameScenes::GameScenesInitNetwork);
+        this->_playerEntityId = RTYPE_NO_PLAYER_ENTITY_ID;
+    }
+
+    std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> &GameState::getClientTCP(void) noexcept
+    {
+        return this->_clientTCP;
+    }
+
+    std::unique_ptr<ClientUDP<Network::Communication::TypeDetail>> &GameState::getClientUDP(void) noexcept
+    {
+        return this->_clientUDP;
+    }
+
+
+    void componentActionServerFunction(Rengine::ECS& ecs, Components::Action& actionComponent, Rengine::Entity& entity, GameState& gameState)
+    {
+        updateDeltatimes(actionComponent);
+        std::optional<std::reference_wrapper<RType::Components::Configuration>> entityConfig = entity.getComponentNoExcept<RType::Components::Configuration>();
+        std::optional<std::reference_wrapper<RType::Components::Position>> pos = entity.getComponentNoExcept<RType::Components::Position>();
+        if (entityConfig.has_value() == false || pos.has_value() == false) {
+            return;
+        }
+
+        if (actionComponent.getActionSource() != Components::ActionSource::ActionSourceUserInput) {
+            return;
+        }
+        actionComponent.updateFromSource();
+        const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
+        Rengine::Graphics::vector2D<float> newPos = currentPos;
+        for (auto it : actionComponent) {
+            // Move
+            if (it.type == Network::EntityActionTypeMove) {
+                actionComponent.handleMove(it, entityConfig.value(), pos.value());
+                Message<RType::Network::Communication::TypeDetail> msg;
+                msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeMove};
+                msg.header.size = 0;
+                msg << it.data.moveVelocity.x << it.data.moveVelocity.y;
+                gameState.getClientUDP()->Send(msg);
+            }
+            // Shoot1 -> 3
+            if (Network::EntityActionTypeShoot1 <= it.type && it.type <= Network::EntityActionTypeShoot3) {
+                switch (it.type) {
+                    case Network::EntityActionTypeShoot1: {
+                        Message<RType::Network::Communication::TypeDetail> msg;
+                        msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeShoot1};
+                        msg.header.size = 0;
+                        gameState.getClientUDP()->Send(msg);
+                        break;
+                    }
+
+                    case Network::EntityActionTypeShoot2: {
+                        Message<RType::Network::Communication::TypeDetail> msg;
+                        msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeShoot2};
+                        msg.header.size = 0;
+                        gameState.getClientUDP()->Send(msg);
+                        break;
+                    }
+
+                    case Network::EntityActionTypeShoot3: {
+                        Message<RType::Network::Communication::TypeDetail> msg;
+                        msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeShoot3};
+                        msg.header.size = 0;
+                        gameState.getClientUDP()->Send(msg);
+                        break;
+                    }
+                }
+            }
+        }  // for it
+        actionComponent.clear();
     }
 
     void GameState::registerComponents(void)
@@ -63,7 +132,8 @@ namespace RType {
 
         // Function
         this->_ecs.setComponentFunction<RType::Components::Sprite>(RType::Components::Sprite::componentFunction);
-        this->_ecs.setComponentFunction<RType::Components::Action>(RType::Components::Action::componentFunction);
+        std::function<void(Rengine::ECS&, RType::Components::Action&, Rengine::Entity&, GameState&)> actionFunction = componentActionServerFunction;
+        this->_ecs.setComponentFunction<RType::Components::Action, GameState&>(actionFunction);
         this->_ecs.setComponentFunction<RType::Components::Velocity>(RType::Components::Velocity::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Clickable>(RType::Components::Clickable::componentFunction);
@@ -76,8 +146,13 @@ namespace RType {
     void GameState::loadLevel(const std::string& jsonPath)
     {
         std::cout << "load level : " << jsonPath << std::endl;
-        this->_levelManager.loadLevel(jsonPath);
-        this->createPlayer("assets/entities/skeletonDragon.json");
+        // this->_levelManager.loadLevel(jsonPath);
+        uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get("assets/entities/skeletonDragon.json");
+        Message<Network::Communication::TypeDetail> msg;
+        msg.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
+        msg.header.size = 0;
+        msg << configID << this->_clientUDP->getLocalEndpoint();
+        this->_clientTCP->Send(msg);
     }
 
 
@@ -90,6 +165,30 @@ namespace RType {
 
     void GameState::setNetworkInfo(const NetworkInfo& networkInfo) noexcept {
         this->_networkInfo = networkInfo;
+    }
+
+    Rengine::Entity &GameState::getOrCreateEntity(Rengine::Entity::size_type id, uint16_t configurationID) {
+        for (auto &entry : this->_entities) {
+            if (entry.first == id) {
+                return this->_ecs.getEntity(entry.second);
+            }
+        }
+        std::cout << "Creating entity with id: " << id << std::endl;
+        Rengine::Entity &entity = EntityMaker::make(this->_ecs, configurationID);
+        RType::Config::EntityConfig enConfig = entity.getComponent<RType::Components::Configuration>().getConfig();
+        RType::Components::Sprite& sp = entity.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
+
+        entity.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
+        entity.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
+
+        entity.setComponentsDestroyFunction(
+           [](Rengine::Entity& en) {
+                en.removeComponent<RType::Components::HitboxViewer>();
+                en.removeComponent<RType::Components::HealthViewer>();
+            }
+        );
+        this->_entities.push_back({id, Rengine::Entity::size_type(entity)});
+        return entity;
     }
 
     void GameState::deletePlayer(void)
@@ -129,34 +228,53 @@ namespace RType {
 
     State playFunction(GameState& gameState)
     {
-        gameState._levelManager.updateDeltatime();
-        if (gameState._levelManager.isCurrentSceneOver()) {
-            if (!gameState._levelManager.nextScene()) {
-                gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
-                std::cout << "Level finished !" << std::endl;
-                return State::StateMenu;
+        Rengine::SparseArray<RType::Components::Hitbox>& hitboxs = gameState._ecs.getComponents<RType::Components::Hitbox>();
+        Rengine::SparseArray<RType::Components::Position>& positions = gameState._ecs.getComponents<RType::Components::Position>();
+        Rengine::SparseArray<RType::Components::Relationship>& relationships = gameState._ecs.getComponents<RType::Components::Relationship>();
+        Rengine::SparseArray<RType::Components::Life>& lifes = gameState._ecs.getComponents<RType::Components::Life>();
+
+        for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientTCP->Receive(); msg; msg = gameState._clientTCP->Receive()) {
+            if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId) {
+                Rengine::Entity::size_type id;
+                *msg >> id;
+                uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get("assets/entities/skeletonDragon.json");
+                Rengine::Entity &entity = gameState.getOrCreateEntity(id, configID);
+
+                entity.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
+                entity.addComponent<RType::Components::Clickable>( [](void){} );
+
+                entity.setComponentsDestroyFunction(
+                   [](Rengine::Entity& en) {
+                        en.removeComponent<RType::Components::Action>();
+                        en.removeComponent<RType::Components::Clickable>();
+                    }
+                );
+                gameState._playerEntityId = Rengine::Entity::size_type(entity);
             }
         }
 
-        // for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientTCP->Receive(); msg; msg = gameState._clientTCP->Receive()) {
-        //     std::cout << "Received message from server with size: " << msg->header.size << std::endl;
-        // }
-
-        // for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
-        //     std::cout << "Received message from server with size: " << msg->header.size << std::endl;
-        //     if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
-        //         uint16_t health;
-        //         uint16_t maxHealth;
-        //         uint64_t id;
-        //         float posX;
-        //         float posY;
-        //         *msg >> posY >> posX >> maxHealth >> health >> id;
-        //         std::cout << "Entity with ID: " << id << " at position: (" << posX << ", " << posY << ") with health: " << health << "/" << maxHealth << std::endl;
-        //     }
-        // }
+        for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
+            if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
+                uint16_t health;
+                uint16_t maxHealth;
+                uint64_t id;
+                uint16_t configID;
+                float posX;
+                float posY;
+                *msg >> configID >> posY >> posX >> maxHealth >> health >> id;
+                Rengine::Entity& entity = gameState.getOrCreateEntity(id, configID);
+                if (positions[entity].has_value()) {
+                    // positions[entity]->set({posX, posY});
+                }
+                if (lifes[entity].has_value()) {
+                    lifes[entity]->setHp(health);
+                    lifes[entity]->setMaxHp(maxHealth);
+                }
+            }
+        }
 
         //partie movement
-        gameState._ecs.runComponentFunction<RType::Components::Action>();  // handle action player
+        gameState._ecs.runComponentFunction<RType::Components::Action>(gameState);  // update action
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
 
         //partie collision

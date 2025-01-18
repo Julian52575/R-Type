@@ -12,7 +12,6 @@
 #include "GameState.hpp"
 
 #include <ctime>
-#include <uuid/uuid.h>
 
 namespace RType {
 
@@ -22,14 +21,14 @@ namespace RType {
     };
 
     struct LobbyInfo {
-        std::string serverIp = "0.0.0.0";
+        std::string serverIp = "127.0.0.1";
         uint16_t port = 4242;
         std::string playerJson = "assets/entities/playerDefault.json";
     };
 
     struct GameInfo {
         std::string name;
-        uuid_t id;
+        Rengine::UUID::uuid_t id;
         uint16_t playerCount;
         time_t time;
     };
@@ -71,9 +70,9 @@ namespace RType {
             */
             void setLobbyInfo(const LobbyInfo& lobbyInfo) noexcept;
             void handleInput(void);
-            void makeGameInfos(std::string name, uint16_t playerCount, time_t time, uuid_t id);
+            void makeGameInfos(std::string name, uint16_t playerCount, time_t time, Rengine::UUID::uuid_t &id);
             void setGameInfos(void);
-            DisplayGameInfo& getGameInfoByUuid(uuid_t id);
+            DisplayGameInfo& getGameInfoByUuid(Rengine::UUID::uuid_t &id);
             void updateGameInfos(void);
             NetworkInfo &getNetworkInfo(void) noexcept;
 

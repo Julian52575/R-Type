@@ -174,13 +174,16 @@ namespace RType {
                 */
                 static void componentFunction(Rengine::ECS& ecs, Action& component, Rengine::Entity& entity);
                 friend void updateDeltatimes(Action& component) noexcept;
-                inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
+                void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
                 inline void handleShoot(Action& actionComponent, Network::EntityAction& action,
                         Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig);
                 friend inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
                 inline void handleShootBuff(Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
+
+                container_t &getActionVector(void) noexcept;
+                ActionSource getActionSource(void) const noexcept;
 
             private:
                 /**

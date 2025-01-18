@@ -8,6 +8,7 @@
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/RengineNetworkClient.hpp>
 
+#include "src/Components/Action.hpp"
 #include "src/Game/AccessibilitySettings.hpp"
 #include "src/Network/EntityAction.hpp"
 #include "src/Config/LevelConfig.hpp"
@@ -60,6 +61,8 @@ namespace RType {
             * @brief Run the program in it's current state.
             */
             State run(void);
+            std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> &getClientTCP(void) noexcept;
+            std::unique_ptr<ClientUDP<Network::Communication::TypeDetail>> &getClientUDP(void) noexcept;
 
         public:
             /**
@@ -96,6 +99,10 @@ namespace RType {
             std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _clientTCP;
             std::unique_ptr<ClientUDP<Network::Communication::TypeDetail>> _clientUDP;
             NetworkInfo _networkInfo;
+            std::vector<std::pair<Rengine::Entity::size_type, Rengine::Entity::size_type>> _entities;
+
+            Rengine::Entity &getOrCreateEntity(Rengine::ECS::size_type entityId, uint16_t configurationId);
+
             /*
             * @fn deletePlayer
             * @brief Deletes the player entity.

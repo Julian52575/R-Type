@@ -17,6 +17,9 @@ namespace RType {
                 uint16_t getHp(void) const noexcept;
                 uint16_t getMaxHp(void) const noexcept;
 
+                void setHp(uint16_t hp) noexcept;
+                void setMaxHp(uint16_t maxhp) noexcept;
+
                 void takeDamage(uint16_t damage) noexcept;
 
                 static void componentFunction(Rengine::ECS& ecs, RType::Components::Life& , Rengine::Entity& entity);
