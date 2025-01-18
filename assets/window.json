@@ -1,0 +1,20 @@
+{
+    "title": "Undertale",
+    "resolution": {
+        "width": 640,
+        "height": 480
+    },
+    "framerateLimit": 60,
+    "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0
+    },
+    "options": {
+        "isFullscreen": false,
+        "isResizable": true,
+        "isBorderless": false,
+        "enableVsync": true,
+        "isCursorVisible": true
+    }
+}

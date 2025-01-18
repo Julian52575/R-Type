@@ -1,0 +1,10 @@
+{
+    "image":{
+       "texturePath":"assets/images/heart.png",
+       "origin":{
+          "x":500,
+          "y":500
+       }
+    }
+ }
+ 
