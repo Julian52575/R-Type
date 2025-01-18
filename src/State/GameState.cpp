@@ -170,10 +170,12 @@ namespace RType {
     Rengine::Entity &GameState::getOrCreateEntity(Rengine::Entity::size_type id, uint16_t configurationID) {
         for (auto &entry : this->_entities) {
             if (entry.first == id) {
-                return this->_ecs.getEntity(entry.second);
+                if (this->_ecs.isEntityActive(entry.second))
+                    return this->_ecs.getEntity(entry.second);
+                else
+                    continue;
             }
         }
-        std::cout << "Creating entity with id: " << id << std::endl;
         Rengine::Entity &entity = EntityMaker::make(this->_ecs, configurationID);
         RType::Config::EntityConfig enConfig = entity.getComponent<RType::Components::Configuration>().getConfig();
         RType::Components::Sprite& sp = entity.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
@@ -251,6 +253,19 @@ namespace RType {
                 );
                 gameState._playerEntityId = Rengine::Entity::size_type(entity);
             }
+
+            if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::DeleteEntity) {
+                uint64_t id;
+                *msg >> id;
+                try {
+                    gameState._entities.erase(std::remove_if(gameState._entities.begin(), gameState._entities.end(), [id](const std::pair<Rengine::Entity::size_type, Rengine::Entity::size_type>& entry) {
+                        return entry.first == id;
+                    }), gameState._entities.end());
+                    gameState._ecs.removeEntity(id);
+                } catch (std::exception& e) {
+                    std::cerr << "Error on delete entity: " << e.what() << std::endl;
+                }
+            }
         }
 
         for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
@@ -264,7 +279,7 @@ namespace RType {
                 *msg >> configID >> posY >> posX >> maxHealth >> health >> id;
                 Rengine::Entity& entity = gameState.getOrCreateEntity(id, configID);
                 if (positions[entity].has_value()) {
-                    // positions[entity]->set({posX, posY});
+                    positions[entity]->set({posX, posY});
                 }
                 if (lifes[entity].has_value()) {
                     lifes[entity]->setHp(health);
@@ -277,13 +292,7 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::Action>(gameState);  // update action
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
 
-        //partie collision
-        gameState._ecs.runComponentFunction<RType::Components::Hitbox>();  // handle collision
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
-
-        //partie game rule
-        gameState._ecs.runComponentFunction<RType::Components::Life>();  // handle life
-        gameState._ecs.runComponentFunction<RType::Components::Chrono>();  // handle chrono
 
         //partie render
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite

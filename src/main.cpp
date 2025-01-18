@@ -47,7 +47,6 @@ int main(void)
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->pollInput();
         stateManager.run();
         parseInputCloseWindow();
-        Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->resetDeltatime();
         Rengine::Clock::restart();
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->render();
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager().clear();

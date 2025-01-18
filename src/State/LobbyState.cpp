@@ -45,7 +45,7 @@ namespace RType {
 
     DisplayGameInfo &LobbyState::getGameInfoByUuid(Rengine::UUID::uuid_t &id) {
         for (auto &game : this->_displayGameInfos) {
-            if (uuid_compare(game.Infos.id, id) == 0) {
+            if (Rengine::UUID::compareUUID(game.Infos.id, id) == 0) {
                 return game;
             }
         }
@@ -184,7 +184,7 @@ namespace RType {
         }
     }
 
-    void LobbyState::makeGameInfos(std::string name, uint16_t playerCount, time_t time, uuid_t id){
+    void LobbyState::makeGameInfos(std::string name, uint16_t playerCount, time_t time, Rengine::UUID::uuid_t &id){
         GameInfo gameInfo;
         gameInfo.name = name;
         gameInfo.playerCount = playerCount;
