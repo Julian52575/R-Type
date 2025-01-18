@@ -7,10 +7,12 @@
 #include <iostream>
 #include <string>
 
-typedef unsigned char uuid_t[16];
 
 namespace Rengine {
     namespace UUID {
+
+        typedef unsigned char uuid_t[16];
+
         inline void generateUUID(uuid_t& outUuid) {
             for (int i = 0; i < 16; ++i) {
                 outUuid[i] = static_cast<unsigned char>(Rengine::RNG::rngFunction() & 0xFF);
