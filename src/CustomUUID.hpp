@@ -37,7 +37,7 @@ namespace Rengine {
             return ss.str();
         }
 
-        inline void copyUUID(uuid_t& dest, const uuid_t& src) {
+        inline void copyUUID(uuid_t& dest, uuid_t& src) {
             std::memcpy(dest, src, 16);
         }
 
