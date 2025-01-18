@@ -28,6 +28,10 @@ TEST(Entity, removeComponent)
     e.removeComponent<int>();
     EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionComponentNotLinked);
     EXPECT_FALSE(sp[Rengine::ECS::size_type(e)].has_value());
+    EXPECT_NO_THROW(e.removeComponent<int>());
+    int& con2 = e.addComponent<int>(42);
+
+    EXPECT_EQ(std::addressof(con2), std::addressof(e.getComponent<int>()));
 }
 TEST(Entity, removeComponentNoExcept)
 {
