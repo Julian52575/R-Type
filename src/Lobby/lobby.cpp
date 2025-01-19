@@ -35,7 +35,7 @@ bool Lobby::_handleMessages(std::shared_ptr<Connexion<Communication::TypeDetail>
                 memset(name, 0, 15);
                 strcpy(name, newGame->getGameName());
                 broadCast << newGame->getGameID() << (uint16_t) newGame->getNbUsers() << name << newGame->getTimeStarted();
-                std::cout << "Game with ID: " << Rengine::UUID::printUUID(newGame->getGameID()) << " and " << newGame->getNbUsers() << " users. Started at: " << newGame->getTimeStarted() << " with name: " << name << std::endl;
+                std::cout << "Game with ID: " << Rengine::UUID::printUUID(newGame->getGameID()) << " and " << newGame->getNbUsers() << " users. Started at: " << newGame->getTimeStarted() << " with name: " << name << " on level " << newGame->getLevelName() << std::endl;
                 _server.SendAll(broadCast, client);
             }
             break;
@@ -99,6 +99,7 @@ size_t Lobby::getNbGames() {
 
 std::shared_ptr<RType::Games> Lobby::createGame(std::string &ip, uint16_t UDPPort, uint16_t TCPPort, char (&name)[15]) {
     std::shared_ptr<RType::Games> newGame = std::make_shared<RType::Games>(ip, UDPPort, TCPPort, name);
+
     newGame->start();
     _games.push_back(newGame);
     return newGame;

@@ -86,8 +86,10 @@ namespace RType {
             const char *getGameName();
             void run();
             ~Games();
+            const std::string& getLevelName(void) const noexcept;
 
         private:
+            void initLevel(void);
             void _handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
             void _handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
             void _handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);

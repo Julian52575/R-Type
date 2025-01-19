@@ -43,6 +43,7 @@ namespace RType {
         this->_ecs->registerComponent<Components::Velocity>();
         this->_ecs->registerComponent<Components::Chrono>();
         this->_ecs->registerComponent<Components::Life>();
+        this->initLevel();
 
         // Function
         std::function<void(Rengine::ECS&, Components::Action&, Rengine::Entity&, std::shared_ptr<Rengine::ECS>&)> actionFunction = Components::Action::componentFunction;
@@ -51,11 +52,32 @@ namespace RType {
         this->_ecs->setComponentFunction<Components::Hitbox>(Components::Hitbox::componentFunction);
         this->_ecs->setComponentFunction<Components::Chrono>(Components::Chrono::componentFunction);
         this->_ecs->setComponentFunction<Components::Life>(Components::Life::componentFunction);
-        this->_levelManager.loadLevel("assets/levels/template.json");
         _timeStarted = time(NULL);
         _running = true;
         _gameThread = std::thread(&Games::run, this);
     };
+
+    void Games::initLevel(void)
+    {
+        // getting random level config
+        std::vector<std::string> configVector;
+        uint64_t idx = 0;
+
+        // Loading a random level
+        for (auto file : std::filesystem::directory_iterator("assets/levels/")) {
+            if (file.path().string() == "assets/levels/id.json") {
+                continue;
+            }
+            configVector.push_back(file.path().string());
+        }
+        // On error
+        if (configVector.size() == 0) {
+            this->_levelManager.loadLevel("assets/levels/template.json");
+            return;
+        }
+        idx = Rengine::RNG::rngFunction() % configVector.size();
+        this->_levelManager.loadLevel(configVector[idx]);
+    }
 
     void Games::stop() {
         _running = false;
@@ -90,6 +112,10 @@ namespace RType {
         return _gameName.c_str();
     };
 
+    const std::string& Games::getLevelName(void) const noexcept {
+        return this->_levelManager.getLevelName();
+    }
+
     std::shared_ptr<userGame> Games::_getUserByClient(std::shared_ptr<Connexion<Communication::TypeDetail>> client) {
         for (std::shared_ptr<userGame> user : _users) {
             if (user->client == client)
@@ -113,6 +139,7 @@ namespace RType {
                 this->_levelManager.updateDeltatime();
                 if (this->_levelManager.isCurrentSceneOver()) {
                     if (!this->_levelManager.nextScene()) {
+                        this->_levelManager.completeClear();
                         std::cout << "Level is over" << std::endl;
                         _running = false;
                         break;

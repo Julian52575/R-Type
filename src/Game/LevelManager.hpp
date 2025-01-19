@@ -71,9 +71,10 @@ namespace RType {
             * @brief Get the current scene's background images.
             */
             std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> getCurrentSceneBackgroundImages(void);
+            const std::string& getLevelName(void) const noexcept;
+            void completeClear(void);
 
         private:
-            void completeClear(void);
             void clearCurrentScene(void);
 
         private:
@@ -81,6 +82,7 @@ namespace RType {
             float _time = 0;
             uint8_t _currentSceneIndex = 0;
             std::optional<std::reference_wrapper<const RType::Config::LevelConfig>> _levelConfig;
+            std::string _levelName = "";
             std::optional<Rengine::Entity::size_type> _bossId;
             std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
     };

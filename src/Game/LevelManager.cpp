@@ -40,6 +40,7 @@ namespace RType {
         } catch (std::exception& e) {
             return false;
         }
+        this->_levelName = jsonPath;
         return this->loadScene(0);
     }
 
@@ -194,6 +195,10 @@ loadSceneReturn:
                 this->_ecs->removeEntity<>(enIt);
             } catch (std::exception& e) {;}
         }
+    }
+    const std::string& LevelManager::getLevelName(void) const noexcept
+    {
+        return this->_levelName;
     }
 
 }  // namespace RType
