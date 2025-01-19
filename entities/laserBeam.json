@@ -1,0 +1,27 @@
+{
+    "entity": {
+        "sprite": "assets/images/laserBeam.json",
+        "hitbox": {
+            "size": {
+                "x": 30, "y": 10
+            },
+            "offset": {
+                "x": 0, "y": 0
+            }
+        },
+        "stats": {
+            "hp": 1,
+            "attack": 5,
+            "defense": 1,
+            "speedY": 4,
+            "speedX": 200,
+            "acceleration": 100,
+            "enemyColisionDamage": 5
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        }
+    }
+}

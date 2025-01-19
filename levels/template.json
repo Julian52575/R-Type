@@ -9,15 +9,15 @@
                 "scrollingSpeed": 15.15,
                 "enemies": [
                     {
-                        "json": "assets/entities/skeletonDragon.json",
-                        "x": 1500,
-                        "y": 540,
+                        "json": "assets/entities/playerDefault.json",
+                        "x": 500,
+                        "y": 100,
                         "script": "assets/scripts/template.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
-                        "x": 900,
-                        "y": 300,
+                        "x": 500,
+                        "y": 200,
                         "script": "assets/scripts/template.lua"
                     }
                 ],
@@ -36,20 +36,20 @@
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 1000,
                         "y": 540,
-                        "script": "assets/scripts/black.lua"
+                        "script": "assets/scripts/template.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 700,
                         "y": 500,
-                        "script": "assets/scripts/black.lua"
+                        "script": "assets/scripts/template.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
                         "x": 450,
                         "y": 100,
                         "boss": true,
-                        "script":"assets/scripts/black.lua"
+                        "script":"assets/scripts/template.lua"
                     }
                 ],
                 "endCondition": "bossDefeat"
