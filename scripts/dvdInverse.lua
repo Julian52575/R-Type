@@ -15,8 +15,8 @@ DirectionDown = 1
 DirectionLeft = -1
 DirectionRight = 1
 
-x_dir = DirectionDown
-y_dir = DirectionLeft
+x_dir = DirectionUp
+y_dir = DirectionRight
 
 function updateDeltatime(deltatime)  -- float deltatime
 end  -- return values are ignored
