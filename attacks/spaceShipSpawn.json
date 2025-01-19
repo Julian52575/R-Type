@@ -1,0 +1,24 @@
+{
+    "attack": {
+        "type": "missiles",
+        "cooldown": 2.0,
+        "missiles": [
+            {
+                "json": "assets/entities/spaceShip.json",
+                "offset": {
+                    "x": -30, "y": 0
+                },
+                "controlType": "script",
+                "scriptPath": "assets/scripts/dvdInverse.lua"
+            },
+            {
+                "json": "assets/entities/spaceShip.json",
+                "offset": {
+                    "x": 30, "y": 0
+                },
+                "controlType": "script",
+                "scriptPath": "assets/scripts/dvd.lua"
+            }
+        ]
+    }
+}
