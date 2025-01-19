@@ -30,8 +30,6 @@ namespace Rengine {
                 bool isPlaying(void) const noexcept;
                 void pause(void);
                 void reset(void);
-                void setVolume(float volume);
-                float getVolume(void) const noexcept;
 
             private:
                 void setLoopPoint(const Rengine::Graphics::vector2D<uint64_t>& loopPoints);

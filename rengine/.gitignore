@@ -10,6 +10,3 @@ style_error.log
 doxygen/
 *.log
 example/test
-venvconan/
-test
-example/Graphics/test

@@ -4,7 +4,6 @@
 #ifndef SRC_ECS_HPP_
 #define SRC_ECS_HPP_
 
-#include <any>
 #include <cstddef>
 #include <exception>
 #include <functional>
@@ -52,10 +51,6 @@ namespace Rengine {
     class ECSExceptionBadComponentFunctionType : public std::exception {
         public:
             const char *what() const noexcept { return "Rengine::ECS: The component function and the provided template have different type definition."; };
-    };
-    class ECSExceptionBadOnEntityRemovalFunctionType : public std::exception {
-        public:
-            const char *what() const noexcept { return "Rengine::ECS: The onEntityRemovalFunction and the provided template have different type definition."; };
     };
     class ECSException : public std::exception {
         public:
@@ -106,7 +101,9 @@ namespace Rengine {
                     }
                     try {
                         this->removeEntity(*eit);
-                    } catch (std::exception &e) {
+                    }
+                    // Ignore previously destroyed entities
+                    catch (EntityExceptionNotActive &e) {
                         continue;
                     }
                 }
@@ -126,9 +123,6 @@ namespace Rengine {
                     }
                     this->_currentEntities[i].emplace(this->_registry, i);
                     this->_currentEntitiesCount += 1;
-                    if (i > this->_maxEntityId) {
-                        this->_maxEntityId = i;
-                    }
                     return this->_currentEntities[i].value();
                 }
                 // Every entity is already used
@@ -140,21 +134,26 @@ namespace Rengine {
             * @exception ECSExceptionEntityNotFound The provided entity is not registred in the ECS.
             * @brief Remove an entity and its components from the ECS.
             */
-            /* Replaced by templated version
             void removeEntity(const Entity& en)
             {
                 size_type idx = this->_currentEntities.getIndex(en);
 
-                this->removeEntity(idx);
+                if (idx == static_cast<size_type>(-1)) {
+                    throw ECSExceptionEntityNotFound();
+                }
+                if (this->_currentEntities[idx].has_value() == false) {
+                    throw ECSExceptionEntityNotFound();
+                }
+                this->_currentEntities[idx].value().destroyComponents();
+                this->_currentEntities[idx].reset();
+                this->_currentEntitiesCount -= 1;
             }
-            */
             /**
             * @fn removeEntity
             * @param idx The index of the entity to remove
             * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
             * @brief Remove an entity and its components from the ECS.
             */
-            /* Replaced by templated version
             void removeEntity(Rengine::ECS::size_type idx)
             {
                 if (idx == static_cast<size_type>(-1)) {
@@ -166,11 +165,7 @@ namespace Rengine {
                 this->_currentEntities[idx].value().destroyComponents();
                 this->_currentEntities[idx].reset();
                 this->_currentEntitiesCount -= 1;
-                if (idx >= this->_maxEntityId) {
-                    this->updateMaxEntityId();
-                }
             }
-            */
 
             /**
             * @fn getEntity
@@ -288,15 +283,15 @@ namespace Rengine {
                 try {
                     std::function<void(ECS&, Component&, Entity&)> fun = std::any_cast<std::function<void(ECS&, Component&, Entity&)>>(it->second);
 
-                    for (size_type i = 0; i <= this->_maxEntityId; i++) {
+                    for (auto eit : this->_currentEntities) {
                         // Ignore uninitialised entities
-                        if (this->_currentEntities[i].has_value() == false) {
+                        if (eit.has_value() == false) {
                             continue;
                         }
                         try {
-                            Component& con = this->_currentEntities[i]->getComponent<Component>();
+                            Component& con = eit->getComponent<Component>();
 
-                            fun(*this, con, this->_currentEntities[i].value());
+                            fun(*this, con, *eit);
                         }
                         // Ignore entities that do not have this Component
                         catch (EntityExceptionComponentNotLinked& e) {
@@ -393,125 +388,15 @@ namespace Rengine {
             {
                 this->_registry.clear();
             }
-            /**
-            * @fn getHighestEntityId
-            * @return size_type The hightest entity id currently active.
-            * @brief The hightest entity id currently active.
-            */
-            size_type getHighestEntityId(void) const noexcept
-            {
-                return this->_maxEntityId;
-            }
-            /**
-            * @fn setOnEntityRemovalFunction
-            * @template Parameters The paremeters of the function.
-            * @param fun A function templated void(Entity&, Parameters&&).
-            * @brief Set a function to be run when any entity is removed using the templated removeEntity methods.
-            * The entity is removed after calling this function.
-            * Is prototyped void(Entity&, Parameters&&).
-            */
-            template<class ... Parameters>
-            void setOnEntityRemovalFunction(const std::function<void(Entity&, Parameters&&...)> fun)
-            {
-                this->_onEntityRemovalFunction = fun;
-            }
-            /**
-            * @fn removeEntity
-            * @template Parameters The parameters of the onEntityRemovalFunction.
-            * @param idx The index of the entity to remove
-            * @param params The parameters to pass to the onEntityRemovalFunction.
-            * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
-            * @brief Remove an entity and its components from the ECS.
-            * Call the onEntityRemovalFunction if previously set by setOnEntityRemovalFunction.
-            */
-            template<class ... Parameters>
-            void removeEntity(Rengine::ECS::size_type idx, Parameters&& ... params)
-            {
-                if (idx == static_cast<size_type>(-1)) {
-                    throw ECSExceptionEntityNotFound();
-                }
-                if (this->_currentEntities[idx].has_value() == false) {
-                    throw ECSExceptionEntityNotFound();
-                }
-                if (this->_onEntityRemovalFunction.has_value() == true) {
-                    try {
-                        std::function<void(Entity&, Parameters&&...)> fun =
-                            std::any_cast<std::function<void(Entity&, Parameters&&...)>>(this->_onEntityRemovalFunction.value());
-
-                        fun(this->_currentEntities[idx].value(), params...);
-                    } catch (std::bad_any_cast& e) {;}  // ignore fun call if invalid parameters, best to delete entity anyways
-                }
-                this->_currentEntities[idx].value().destroyComponents();
-                this->_currentEntities[idx].reset();
-                this->_currentEntitiesCount -= 1;
-                if (idx >= this->_maxEntityId) {
-                    this->updateMaxEntityId();
-                }
-            }
-            /**
-            * @fn removeEntity
-            * @template Parameters The parameters of the onEntityRemovalFunction.
-            * @param entity A reference to the entity to remove.
-            * @param params The parameters to pass to the onEntityRemovalFunction.
-            * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
-            * @brief Remove an entity and its components from the ECS.
-            * Call the onEntityRemovalFunction if previously set by setOnEntityRemovalFunction.
-            */
-            template<class ... Parameters>
-            void removeEntity(const Rengine::Entity& entity, Parameters&& ... params)
-            {
-                size_type idx = this->_currentEntities.getIndex(entity);
-
-                return this->removeEntity<Parameters...>(idx, params...);
-            }
-            /**
-            * @fn isEntityActive
-            * @param id The id of the entity to check.
-            * @brief Check if the entity at id is active.
-            */
-            bool isEntityActive(size_type id) const noexcept
-            {
-                if (id > this->_sparseArrayDefaultSize) {
-                    return false;
-                }
-                return this->_currentEntities[id].has_value();
-            }
-
-        private:
-            /**
-            * @fn updateMaxEntityId
-            * @brief Update this->_maxEntityId with the maximimum id in this->_currentEntities.
-            * Searchs from 0 to (this->_maxEntityId - 1)
-            */
-            inline void updateMaxEntityId(void) noexcept
-            {
-                size_type maxDifferent = 0;
-
-                for (size_type i = 0; i < this->_maxEntityId; i++) {
-                    // no value : skip
-                    if (this->_currentEntities[i].has_value() == false) {
-                        continue;
-                    }
-                    if (i < maxDifferent) {
-                        continue;
-                    }
-                    maxDifferent = i;
-                }
-                this->_maxEntityId = maxDifferent;
-            }
-
 
         private:
             ComponentRegistry _registry;
             #define DEFAULTSPARSEARRAYSIZE 100
             size_type _sparseArrayDefaultSize = DEFAULTSPARSEARRAYSIZE;
             SparseArray<Entity> _currentEntities;
-            size_type _maxEntityId = 0;
             size_type _currentEntitiesCount = 0;
             //                      Type    - std::function<void(ECS&, Component&, Entity&)>
             std::unordered_map<std::type_index, std::any> _functionArray;
-            //           std::function<void(Entity&, Params&& ...)>
-            std::optional<std::any> _onEntityRemovalFunction;
     };  // class ECS
 }  // namespace Rengine
 #endif  // SRC_ECS_HPP_

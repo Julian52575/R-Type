@@ -111,15 +111,6 @@ skipSetLoopPoints:
         {
             this->_music.stop();
         }
-        void SFMLSound::setVolume(float volume)
-        {
-            this->_music.setVolume(volume);
-        }
-        float SFMLSound::getVolume(void) const noexcept
-        {
-            return this->_music.getVolume();
-        }
-
 
     }  // namespace Rengine
 }  // namespace Graphics

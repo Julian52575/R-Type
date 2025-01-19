@@ -35,7 +35,6 @@ namespace Rengine {
                 sf::RectangleShape* getRectangle(void) noexcept;
                 void rotate(float rotation) noexcept;
                 void flip(void) noexcept;
-                void updateSpriteSpecs(const SpriteSpecs& newSpecs);
 
             private:
                 union SFMLSpriteUnion {
@@ -55,7 +54,6 @@ namespace Rengine {
                         void setTextureRect(SpriteType type, const sf::IntRect& rect);
                         void setColor(SpriteType type, const sf::Color& color);
                         void setPosition(SpriteType type, const sf::Vector2f& pos);
-                        void setOrigin(SpriteType type, const sf::Vector2f& origin);
                         void rotate(SpriteType type, float rotation) noexcept;
                         sf::Sprite* getSprite(void);
                         const sf::Sprite* getSprite(void) const;
@@ -63,7 +61,6 @@ namespace Rengine {
                         const sf::CircleShape* getCircle(void) const;
                         sf::RectangleShape* getRectangle(void);
                         const sf::RectangleShape* getRectangle(void) const;
-                        void updateSpriteSpecs(const SpriteSpecs& specs);
 
                     private:
                         // Using pointer to make the union work
@@ -71,7 +68,6 @@ namespace Rengine {
                         sf::RectangleShape* rectangle;
                         sf::CircleShape* circle;
                 };
-                void applySpecs(const SpriteSpecs& specs);
                 void applyCurrentFrameTexture(void);
                 SFMLSpriteUnion _renderObject;
                 sf::Texture _texture;

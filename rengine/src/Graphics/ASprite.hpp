@@ -73,12 +73,6 @@ namespace Rengine {
                 * @brief Flip the sprite horizontally.
                 */
                 virtual void flip(void) noexcept = 0;
-                /**
-                * @fn updateSpriteSpecs
-                * @param newSpecs The new specs requested.
-                * @brief Update the sprite according to the new specs.
-                */
-                virtual void updateSpriteSpecs(const SpriteSpecs& newSpecs) = 0;
 
 
             protected:
