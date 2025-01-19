@@ -10,7 +10,7 @@
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 10, "y": 0
+                    "x": 100, "y": 0
                 },
                 "timeLimit": 30.0
             }
