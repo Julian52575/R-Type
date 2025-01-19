@@ -60,7 +60,6 @@ namespace RType {
         return this->_clientUDP;
     }
 
-
     void componentActionServerFunction(Rengine::ECS& ecs, Components::Action& actionComponent, Rengine::Entity& entity, GameState& gameState)
     {
         updateDeltatimes(actionComponent);
@@ -83,9 +82,8 @@ namespace RType {
                 Message<RType::Network::Communication::TypeDetail> msg;
                 msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeMove};
                 msg.header.size = 0;
-                Rengine::Entity::size_type id = entity;
-                msg << it.data.moveVelocity.x << it.data.moveVelocity.y << id;
-                gameState.getClientUDP()->Send(msg);
+                msg << it.data.moveVelocity.x << it.data.moveVelocity.y;
+                gameState.getClientTCP()->Send(msg);
             }
             // Shoot1 -> 3
             if (Network::EntityActionTypeShoot1 <= it.type && it.type <= Network::EntityActionTypeShoot3) {
@@ -94,9 +92,7 @@ namespace RType {
                         Message<RType::Network::Communication::TypeDetail> msg;
                         msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeShoot1};
                         msg.header.size = 0;
-                        Rengine::Entity::size_type id = entity;
-                        msg << id;
-                        gameState.getClientUDP()->Send(msg);
+                        gameState.getClientTCP()->Send(msg);
                         break;
                     }
 
@@ -104,9 +100,7 @@ namespace RType {
                         Message<RType::Network::Communication::TypeDetail> msg;
                         msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeShoot2};
                         msg.header.size = 0;
-                        Rengine::Entity::size_type id = entity;
-                        msg << id;
-                        gameState.getClientUDP()->Send(msg);
+                        gameState.getClientTCP()->Send(msg);
                         break;
                     }
 
@@ -114,9 +108,7 @@ namespace RType {
                         Message<RType::Network::Communication::TypeDetail> msg;
                         msg.header.type = {RType::Network::Communication::Type::EntityAction, RType::Network::Communication::main::EntityActionPrecision::EntityActionTypeShoot3};
                         msg.header.size = 0;
-                        Rengine::Entity::size_type id = entity;
-                        msg << id;
-                        gameState.getClientUDP()->Send(msg);
+                        gameState.getClientTCP()->Send(msg);
                         break;
                     }
 
@@ -206,6 +198,9 @@ namespace RType {
         msg << configID << gameState._clientUDP->getLocalEndpoint();
         gameState._clientTCP->Send(msg);
         Message<Network::Communication::TypeDetail> msg2;
+        msg2.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
+        msg2.header.size = 0;
+        gameState._clientUDP->Send(msg2);
         gameState._sceneManager.setScene(GameScenes::GameScenesPlay);
         return State::StateGame;
     }

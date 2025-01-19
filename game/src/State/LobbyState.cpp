@@ -33,9 +33,6 @@ namespace RType {
 
     State initLobbyConnexion(LobbyState &lobbyState)
     {
-        std::cout << "[initLobbyConnexion] NetworkInfo: " << std::endl
-            << "Name: " << lobbyState._networkInfo.lobbyName << std::endl
-            << "IP:UDP:TCP :" << lobbyState._networkInfo.ip << ":" << lobbyState._networkInfo.UDPPort << ":" << lobbyState._networkInfo.TCPPort << std::endl;
         //mettre le try catch en com pour disable le server
         try {
             lobbyState._client = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(lobbyState._lobbyInfo.serverIp, lobbyState._lobbyInfo.port);
@@ -47,11 +44,7 @@ namespace RType {
         msg.header.size = 0;
         msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::RequestGamesInfo};
         lobbyState._client->Send(msg);
-        if (lobbyState._networkInfo.lobbyName == "") {
-            lobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesJoinLobby);
-        } else {
-            lobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesCreateLobby);
-        }
+        lobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesCreateLobby);
         return State::StateLobby;
     }
 
@@ -67,6 +60,10 @@ namespace RType {
         char name[15];
         memset(name, 0, 15);
         strncpy(name, lobbyState._networkInfo.lobbyName.c_str(), 15);
+        if (name[0] == '\0') {
+            lobbyState._sceneManager.setScene(LobbyScenes::LobbySceneRun);
+            return State::StateLobby;
+        }
         msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::CreateGame};
         msg << name;
         lobbyState._client->Send(msg);
