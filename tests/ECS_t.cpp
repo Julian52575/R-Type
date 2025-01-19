@@ -271,3 +271,20 @@ TEST(ECS, isEntityActive)
     ASSERT_FALSE(ecs.isEntityActive(uint64_t(e2)));
     ASSERT_FALSE(ecs.isEntityActive(-1));
 }
+
+void onEntityCreationFunction(Rengine::Entity& e, int& var)
+{
+    var += 10;
+}
+TEST(ECS, onEntityCreationFunction)
+{
+    Rengine::ECS ecs;
+    int var = 0;
+
+    std::function<void(Rengine::Entity&, int&)> fun = onEntityCreationFunction;
+    ecs.setOnEntityCreationFunction<int&>(fun);
+    ecs.addEntity(var);
+    ASSERT_EQ(var, 10);
+    ecs.addEntity(var);
+    ASSERT_EQ(var, 20);
+}
