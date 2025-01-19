@@ -2,12 +2,12 @@
     "image":{
         "texturePath":"assets/images/yoshi/background/sky.jpg",
         "origin":{
-            "x": 0,
+            "x": 120,
             "y": 0
         },
         "scale":{
-            "x":1,
-            "y":1
+            "x":2,
+            "y":2
         }
     }
 }
