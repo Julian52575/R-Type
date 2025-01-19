@@ -1,0 +1,26 @@
+{
+    "entity": {
+        "sprite": "assets/images/yoshi/bird.json",
+        "hitbox": {
+            "size": {
+                "x": 30, "y": 38
+            },
+            "offset": {
+                "x": 0, "y": 0
+            }
+        },
+        "stats": {
+            "hp": 30,
+            "attack": 30,
+            "defense": 1,
+            "speedY": 2.0,
+            "speedX": 5.5,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        }
+    }
+}
