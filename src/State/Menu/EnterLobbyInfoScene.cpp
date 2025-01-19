@@ -1,14 +1,18 @@
 //
+#include <filesystem>
 #include <rengine/src/Graphics/GraphicManager.hpp>
+#include <rengine/src/Graphics/SoundSpecs.hpp>
 #include <rengine/src/Graphics/SpriteSpecs.hpp>
 #include <rengine/src/Graphics/TextSpecs.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <vector>
 #include <rengine/RengineGraphics.hpp>
 
+#include "src/Config/ConfigurationIdResolver.hpp"
 #include "src/State/AScene.hpp"
 #include "src/State/Menu/Scenes.hpp"
 #include "src/State/Menu/EnterLobbyInfoScene.hpp"
+#include "src/State/NetworkStructs.hpp"
 
 namespace RType {
 
@@ -78,8 +82,13 @@ namespace RType {
                             break;
 
                         case Rengine::Graphics::UserInputKeyboardSpecialENTER:
+                            if (RType::Config::EntityConfigurationIdResolverSingletone::get().get(this->_buttonVector[EnterLobbyButtonsPlayerJson].second->getText()) == (uint16_t) -1) {
+                                if (this->_errorSound != nullptr) {
+                                    this->_errorSound->play();
+                                }
+                                break;
+                            }
                             return this->exitToLobby();
-                            break;
 
                         case Rengine::Graphics::UserInputKeyboardSpecialESCAPE:
                             return static_cast<MenuScenes>(this->_sceneIndex - 1);
@@ -133,7 +142,7 @@ namespace RType {
             specs.color = {0, 0, 255};
             specs.fontPath = "assets/fonts/arial.ttf";
             specs.message = "Ip address :";
-            inputSpecs.message = "0.0.0.0";
+            inputSpecs.message = this->_lobbyInfo.serverIp;
             this->_buttonVector[EnterLobbyButtonsIp] = {
                     Rengine::Graphics::GraphicManagerSingletone::get().createText(specs),
                     Rengine::Graphics::GraphicManagerSingletone::get().createText(inputSpecs)
@@ -148,7 +157,7 @@ namespace RType {
             };
             specs.color = {0, 255, 0};
             specs.message = "Player json :";
-            inputSpecs.message = "assets/entities/playerDefault.json";
+            inputSpecs.message = this->_lobbyInfo.playerJson;
             this->_buttonVector[EnterLobbyButtonsPlayerJson] = {
                 Rengine::Graphics::GraphicManagerSingletone::get().createText(specs),
                 Rengine::Graphics::GraphicManagerSingletone::get().createText(inputSpecs)
@@ -168,6 +177,7 @@ namespace RType {
 
             musicSpecs.soundPath = "assets/musics/starforx64_training_mode.mp3";
             musicSpecs.loop = true;
+            musicSpecs.volume = 80;
             this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(musicSpecs);
             // New lobby button
             Rengine::Graphics::SpriteSpecs newSpecs;
@@ -185,6 +195,12 @@ namespace RType {
             newText.letterSpacing += 2;
             newText.fontPath = "assets/fonts/arial_narrow_7.ttf";
             this->_newLobbyButtonText = Rengine::Graphics::GraphicManagerSingletone::get().createText(newText);
+            // Error sound
+            Rengine::Graphics::SoundSpecs sound;
+
+            sound.soundPath = "assets/musics/sm64_impact.wav";
+            sound.volume = 100;
+            this->_errorSound = Rengine::Graphics::GraphicManagerSingletone::get().createSound(sound);
         }
 
 }  // namespace RType

@@ -31,29 +31,33 @@ namespace RType {
         this->_client->Send(msg);
     }
 
-    State initLobbyConnexion(LobbyState &LobbyState) {
+    State initLobbyConnexion(LobbyState &lobbyState)
+    {
+        std::cout << "[initLobbyConnexion] NetworkInfo: " << std::endl
+            << "Name: " << lobbyState._networkInfo.lobbyName << std::endl
+            << "IP:UDP:TCP :" << lobbyState._networkInfo.ip << ":" << lobbyState._networkInfo.UDPPort << ":" << lobbyState._networkInfo.TCPPort << std::endl;
         //mettre le try catch en com pour disable le server
         try {
-            LobbyState._client = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(LobbyState._lobbyInfo.serverIp, LobbyState._lobbyInfo.port);
+            lobbyState._client = std::make_unique<ClientTCP<Network::Communication::TypeDetail>>(lobbyState._lobbyInfo.serverIp, lobbyState._lobbyInfo.port);
         } catch (const std::exception& e) {
-            std::cerr << "Error " << e.what() << " on " << LobbyState._lobbyInfo.serverIp << ":" << LobbyState._lobbyInfo.port << std::endl;
+            std::cerr << "Error " << e.what() << " on " << lobbyState._lobbyInfo.serverIp << ":" << lobbyState._lobbyInfo.port << std::endl;
             return State::StateMenu;
         }
         Message<Network::Communication::TypeDetail> msg;
         msg.header.size = 0;
         msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::RequestGamesInfo};
-        LobbyState._client->Send(msg);
-        if (LobbyState._networkInfo.lobbyName == "") {
-            LobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesJoinLobby);
+        lobbyState._client->Send(msg);
+        if (lobbyState._networkInfo.lobbyName == "") {
+            lobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesJoinLobby);
         } else {
-            LobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesCreateLobby);
+            lobbyState._sceneManager.setScene(LobbyScenes::LobbyScenesCreateLobby);
         }
         return State::StateLobby;
     }
 
     State joinLobbyScene(LobbyState& lobbyState)
     {
-        std::cout << "[connectToLobby] NetworkInfo: " << std::endl
+        std::cout << "[joinLobbyScene] NetworkInfo: " << std::endl
             << "Name: " << lobbyState._networkInfo.lobbyName << std::endl
             << "IP:UDP:TCP :" << lobbyState._networkInfo.ip << ":" << lobbyState._networkInfo.UDPPort << ":" << lobbyState._networkInfo.TCPPort << std::endl;
         lobbyState._sceneManager.setScene(LobbyScenes::LobbySceneRun);
@@ -61,7 +65,7 @@ namespace RType {
     }
     State createLobbyScene(LobbyState& lobbyState)
     {
-        std::cout << "[connectToLobby] NetworkInfo: " << std::endl
+        std::cout << "[createLobbyScene] NetworkInfo: " << std::endl
             << "Name: " << lobbyState._networkInfo.lobbyName << std::endl
             << "IP:UDP:TCP :" << lobbyState._networkInfo.ip << ":" << lobbyState._networkInfo.UDPPort << ":" << lobbyState._networkInfo.TCPPort << std::endl;
         lobbyState._sceneManager.setScene(LobbyScenes::LobbySceneRun);
@@ -175,6 +179,11 @@ namespace RType {
     State LobbyState::run(void)
     {
         State s = this->_sceneManager.callCurrentSceneFunction<State, LobbyState&>(*this);
+
+        if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
+        .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
+            return State::StateMenu;
+        }
         return s;
     }
 
