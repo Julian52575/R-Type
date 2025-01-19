@@ -25,7 +25,8 @@
         },
         "attacks": {
             "shoot1": "assets/attacks/fireBallSpam.json",
-            "shoot2": "assets/attacks/bigFireBall.json"
+            "shoot2": "assets/attacks/bigFireBall.json",
+            "shoot3": "assets/attacks/laserBeam.json"
         }
     }
 }

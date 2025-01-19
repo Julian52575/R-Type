@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <rengine/src/Clock/Clock.hpp>
 #include <rengine/src/Entity.hpp>
 #include <stdexcept>
 #include <vector>
@@ -63,13 +64,13 @@ namespace RType {
             this->_shootDeltatimes[2] = 10000.0f;
         }
 
-        void Action::updateFromSource(void) noexcept
+        void Action::updateFromSource(Rengine::ECS& ecs, Rengine::Entity& entity) noexcept
         {
             switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
                     try {
-                        this->processLuaScriptInput();
+                        this->processLuaScriptInput(ecs, entity);
                     } catch (...) {
                         std::cerr << "Script " << this->_luaInfos.scriptPath << " received execption: " << ". Disabling it..." << std::endl;
                         this->_actionSource = ActionSource::ActionSourceNA;
@@ -226,39 +227,48 @@ namespace RType {
             this->_actionVector.push_back(rfcAction);
         }
 
-        void Action::processLuaScriptInput(void)
+        void Action::processLuaScriptInput(Rengine::ECS& ecs, Rengine::Entity& entity)
         {
             std::vector<RType::LuaReturn> reply;
             Network::EntityAction act;
+            std::optional<std::reference_wrapper<RType::Components::Position>> pos = entity.getComponent<RType::Components::Position>();
 
-            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "move");
+            std::cout << "[processLuaScriptInput]" << std::endl;  //
+            // no pos ? no lua
+            if (pos.has_value() == false) {
+                return;
+            }
+            std::cout << "[processLuaScriptInput] before deltatime" << std::endl;
+            // update deltatime
+            RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "updateDeltatime", Rengine::Clock::getElapsedTime());
+
+            std::cout << "[processLuaScriptInput] after deltatime" << std::endl;
+            // Move
+            reply = RType::LuaManagerSingletone::get().callFunction<float, float>(this->_luaInfos.scriptPath, this->_luaInfos.id,
+                "move", pos->get().getX(), pos->get().getY());
             // reply is not formatted correcly: ignore
-            if (reply.size() < 1) {
+            if (reply.size() < 2) {
                 goto shootFunction;
             }
-            if (reply[0].type != LuaTypeInt && reply[0].data.integer > Network::EntityActionTypeUltimate) {
+            if (reply[0].type != LuaTypeInt && reply[1].type != LuaTypeInt) {
                 goto shootFunction;
             }
-            // Move checks
-            if (reply[0].data.integer == Network::EntityActionType::EntityActionTypeMove) {
-                // Ensure reply as at least 2 more int type elements
-                if (reply.size() < 3 || reply[1].type != LuaTypeInt || reply[2].type != LuaTypeInt) {
-                    goto shootFunction;
-                }
-                act.data.moveVelocity.x = reply[1].data.integer;
-                act.data.moveVelocity.y = reply[2].data.integer;
-            }
-            act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
+            act.data.moveVelocity.x = reply[0].data.integer;
+            act.data.moveVelocity.y = reply[1].data.integer;
+            act.type = static_cast<Network::EntityActionType>(Network::EntityActionTypeMove);
+            std::cout << "[processLuaScriptInput] Move :" << act << std::endl;
             this->_actionVector.push_back(act);
 
 shootFunction:
-            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "shoot");
+            reply = RType::LuaManagerSingletone::get().callFunction<float, float, float>(this->_luaInfos.scriptPath, this->_luaInfos.id,
+                "shoot", this->_shootDeltatimes[0], this->_shootDeltatimes[1], this->_shootDeltatimes[2]);
             // Check reply size and type
-            if (reply.size() < 1 || reply[0].type != LuaTypeInt) {
+            if (reply.size() == 0 || reply[0].type != LuaTypeInt) {
                 return;
             }
             act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
             act.data = {0};
+            std::cout << "[processLuaScriptInput] Shoot :" << act << std::endl;
             this->_actionVector.push_back(act);
         }
 
@@ -330,12 +340,14 @@ shootFunction:
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
-            actionComponent.updateFromSource();
+            actionComponent.updateFromSource(ecs, entity);
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
+            std::cout << "[componentFunction] Entity --" << entity << std::endl;  ///
             for (auto it : actionComponent) {
                 // Move
+                std::cout << "[componentFunction] it = " << it << std::endl;  ///
                 if (it.type == Network::EntityActionTypeMove && vel.has_value() == true) {
                     actionComponent.handleMove(it, entityConfig.value(), vel->get());
                 }
@@ -344,6 +356,7 @@ shootFunction:
                     actionComponent.handleShoot(actionComponent, it, ecs, entity, entityConfig.value());
                 }
             }  // for it
+            std::cout << "[componentFunction] Entity --" << entity << std::endl;  ///
             actionComponent.clear();
             // No move input : no velocity
             if (vel.has_value() == true && actionComponent._updatedNonZeroVelocity.x == false) {
@@ -385,10 +398,12 @@ shootFunction:
             if (attackConfig.has_value() == false) {
                 return;
             }
+            std::cout << "[handleShoot] Entity " << entity << " requested " << action << std::endl;
             // Cooldown not reached : no shoot
             if (this->_shootDeltatimes[attackId - 1] < attackConfig->getCooldown()) {
                 return;
             }
+            std::cout << "[handleShoot] deltatime OK" << std::endl;
             this->_shootDeltatimes[attackId - 1] = 0.0f;
             try {
                 switch (attackConfig->getType()) {

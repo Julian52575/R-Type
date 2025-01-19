@@ -142,7 +142,7 @@ namespace RType {
                 * @fn processInput
                 * @brief Process the inputs from the ActionSource
                 */
-                void updateFromSource(void) noexcept;
+                void updateFromSource(Rengine::ECS& ecs, Rengine::Entity& entity) noexcept;
                 /**
                 * @fn processAction
                 * @brief Process an input from the received paquet.
@@ -207,7 +207,7 @@ namespace RType {
                 /**
                  * @brief Call lua scripts and add output in the vector
                 */
-                void processLuaScriptInput(void);
+                void processLuaScriptInput(Rengine::ECS& ecs, Rengine::Entity& entity);
 
             private:
                 ActionSource _actionSource;
