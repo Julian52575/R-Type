@@ -137,6 +137,7 @@ namespace RType {
             inputSpecs.message = "";
             inputSpecs.characterSize -= 10;
             inputSpecs.letterSpacing += 2;
+            inputSpecs.style = Rengine::Graphics::TextStyleUnderline;
             // specs
             specs.style = Rengine::Graphics::TextStyle::TextStyleBold;
             specs.color = {0, 0, 255};

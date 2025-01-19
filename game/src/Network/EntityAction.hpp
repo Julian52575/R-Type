@@ -30,7 +30,9 @@ namespace RType {
                     ClientReady = 4,
                     PlayableEntityInGameId = 5,
                     ServerStop = 6,
-                    RequestPlaybleEntity = 7
+                    RequestPlaybleEntity = 7,
+                    LevelEnd = 8,
+                    SceneFinish = 9
                 };
 
                 enum EntityActionPrecision : uint16_t {

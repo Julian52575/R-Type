@@ -5,6 +5,9 @@
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Game/SceneManager.hpp"
+#include <future>
+#include <rengine/src/Graphics/ASound.hpp>
+#include <rengine/src/Graphics/ASprite.hpp>
 
 namespace RType {
     /**
@@ -60,18 +63,13 @@ namespace RType {
             */
             bool resetCurrentScene(void);
             /**
-            * @fn getCurrentSceneEnemies
-            * @return std::optional<const std::vector<RType::Config::SceneEntityConfig>> A vector of SceneEntityConfig
-            * @brief Get the current scene's enemies.
-            */
-            std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> getCurrentSceneEnemies(void);
-            /**
             * @fn getCurrentSceneBackgroundImages
             * @return std::optional<const std::vector<RType::Config::ImageConfig>> A vector of ImageConfig
             * @brief Get the current scene's background images.
             */
             std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> getCurrentSceneBackgroundImages(void);
             void completeClear(void);
+            void renderBackground(void);
 
         private:
             void clearCurrentScene(void);
@@ -82,8 +80,8 @@ namespace RType {
             uint8_t _currentSceneIndex = 0;
             std::optional<std::reference_wrapper<const RType::Config::LevelConfig>> _levelConfig;
             std::optional<Rengine::Entity::size_type> _bossId;
-            std::vector<Rengine::Entity::size_type> _currentSceneBackgroundEntities;
-            std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
+            std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic = nullptr;
+            std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _currentSceneBackgroundVector;
             SceneManager &_sceneManager;
     };
 

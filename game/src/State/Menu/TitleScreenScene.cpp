@@ -47,12 +47,8 @@ namespace RType {
                 {700,
                 550}
             );
-            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_tabText,
-                {380,
-                750}
-            );
             Rengine::Graphics::GraphicManagerSingletone::get().addToRender(this->_spaceText,
-                {380,
+                {500,
                 850}
             );
             if (this->_textDeltatime > 2.0f * 2) {
@@ -71,9 +67,6 @@ namespace RType {
                             return static_cast<MenuScenes>(this->_sceneIndex - 1);
 
                         case Rengine::Graphics::UserInputKeyboardSpecialENTER:
-                            return MenuScenesExitToGame;
-
-                        case Rengine::Graphics::UserInputKeyboardSpecialTAB:
                             return MenuScenesEnterLobbyInfo;
 
                         default:
@@ -128,8 +121,6 @@ namespace RType {
         text.letterSpacing = 5;
         text.color = {255, 255, 255};
         this->_enterText = Rengine::Graphics::GraphicManagerSingletone::get().createText(text);
-        text.message = "Press tab for online player";
-        this->_tabText = Rengine::Graphics::GraphicManagerSingletone::get().createText(text);
         text.message =  "Press space for options";
         this->_spaceText = Rengine::Graphics::GraphicManagerSingletone::get().createText(text);
     }
