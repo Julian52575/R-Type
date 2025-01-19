@@ -1,0 +1,32 @@
+{
+    "entity": {
+        "sprite": "assets/images/spaceShip.json",
+        "hitbox": {
+            "size": {
+                "x": 35, "y": 20
+            },
+            "offset": {
+                "x": 0, "y": 0
+            }
+        },
+        "stats": {
+            "hp": 17,
+            "attack": 18,
+            "defense": 19,
+            "speedY": 1,
+            "speedX": 1,
+            "acceleration": 100,
+            "enemyColisionDamage": 23
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        },
+        "attacks": {
+            "shoot1": "assets/attacks/defaultShoot1.json",
+            "shoot2": "assets/attacks/defaultShoot2.json",
+            "shoot3": "assets/attacks/defaultShoot3.json"
+        }
+    }
+}

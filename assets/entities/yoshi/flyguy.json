@@ -1,0 +1,29 @@
+{
+    "entity": {
+        "sprite": "assets/images/yoshi/flyguy.json",
+        "hitbox": {
+            "size": {
+                "x": 30, "y": 50
+            },
+            "offset": {
+                "x": -15, "y": -10
+            }
+        },
+        "stats": {
+            "hp": 100,
+            "attack": 50,
+            "defense": 40,
+            "speedY": 1.5,
+            "speedX": 2.5,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        },
+        "attacks": {
+            "shoot1": "assets/attacks/yoshi/fireBall.json"
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "entity": {
+        "sprite": "assets/images/yoshi/bulletBill.json",
+        "hitbox": {
+            "size": {
+                "x": 80, "y": 70
+            },
+            "offset": {
+                "x": -10, "y": -40
+            }
+        },
+        "stats": {
+            "hp": 150,
+            "attack": 80,
+            "defense": 20,
+            "speedY": 0.1,
+            "speedX": 1.0,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        }
+    }
+}
