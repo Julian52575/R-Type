@@ -22,6 +22,14 @@ namespace RType {
 
         void Hitbox::componentFunction(Rengine::ECS& ecs, RType::Components::Hitbox& hitbox, Rengine::Entity& entity)
         {
+            hitbox._timeBuffer += Rengine::Clock::getElapsedTime();
+            float currentTime = hitbox._timeBuffer;
+            float timeCooldown = 0.999f;
+
+            if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                return;
+            }
+
             Rengine::SparseArray<RType::Components::Hitbox>& hitboxs = ecs.getComponents<RType::Components::Hitbox>();
             Rengine::SparseArray<RType::Components::Position>& positions = ecs.getComponents<RType::Components::Position>();
             Rengine::SparseArray<RType::Components::Relationship>& relationships = ecs.getComponents<RType::Components::Relationship>();
@@ -45,6 +53,7 @@ namespace RType {
             // Parse hitboxs and positions from the current entity to avoid double checks.
             // Assumes hitboxs and positions have the default size defined in the ecs.
             for (Rengine::ECS::size_type index = Rengine::ECS::size_type(entity) + 1; index < ecs.getEntityLimit(); index++) {
+
                 // Check if entity at index has both components
                 if (hitboxs[index].has_value() == false || positions[index].has_value() == false) {
                     continue;
@@ -64,13 +73,6 @@ namespace RType {
                 if (!(ownHitboxStartX <= hitboxEndX && ownHitboxEndX >= hitboxStartX &&
                     ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY)) {
                     continue;
-                }
-                hitbox._timeBuffer += Rengine::Clock::getElapsedTime();
-                float currentTime = hitbox._timeBuffer;
-                float timeCooldown = 0.999f;
-
-                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                    return;
                 }
                 hitbox._lastCheckSeconds = currentTime;
                 //check si l'entité à une vie et si c'est le cas elle take damage
