@@ -37,6 +37,7 @@ namespace RType {
 
             private:
                 std::shared_ptr<Rengine::Graphics::ASprite> _sprite = nullptr;
+                std::shared_ptr<Rengine::Graphics::AText> id_text = nullptr;
         };
     }  // namespace Components
 }  // namespace RType

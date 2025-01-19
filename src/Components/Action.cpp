@@ -1,21 +1,25 @@
 //
+#include <chrono>
 #include <cstddef>
 #include <exception>
 #include <functional>
 #include <memory>
 #include <optional>
-#include <rengine/src/ECS.hpp>
-#include <rengine/src/Graphics/GraphicManager.hpp>
-#include <rengine/src/Graphics/UserInputManager.hpp>
-#include <rengine/src/Graphics/Vector.hpp>
 #include <stdexcept>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <rengine/Rengine.hpp>
 
-#include "../Network/EntityAction.hpp"
-#include "Components.hpp"
+#include "src/Game/LuaManager.hpp"
+#include "src/Game/EntityMaker.hpp"
+#include "src/Network/EntityAction.hpp"
+#include "src/Game/SceneManager.hpp"
+#include "src/Config/AttackBuffTypeEnum.hpp"
+#include "src/Config/AttackConfig.hpp"
+#include "src/Config/EntityConfig.hpp"
+#include "src/Config/EntityConfigResolver.hpp"
+#include "src/Config/MissileConfig.hpp"
 #include "src/Components/Action.hpp"
 #include "src/Components/Buff.hpp"
 #include "src/Components/Configuration.hpp"
@@ -23,24 +27,27 @@
 #include "src/Components/Position.hpp"
 #include "src/Components/Relationship.hpp"
 #include "src/Components/Sprite.hpp"
-#include "src/Config/AttackBuffTypeEnum.hpp"
-#include "src/Config/AttackConfig.hpp"
-#include "src/Config/EntityConfig.hpp"
-#include "src/Config/EntityConfigResolver.hpp"
-#include "src/Config/MissileConfig.hpp"
-#include "src/Game/SceneManager.hpp"
+#ifdef DEBUG
+    #include "src/Components/HitboxViewer.hpp"
+    #include "src/Components/HealthViewer.hpp"
+#endif
+#include "src/Components/Velocity.hpp"
+#include "src/Components/Chrono.hpp"
+#include "src/Components/Life.hpp"
+#include "src/Game/Team.hpp"
 
 namespace RType {
     namespace Components {
 
-        Action::Action(std::reference_wrapper<SceneManager> sceneManager, ActionSource source, const std::string& scriptPath)
-            : _sceneManager(sceneManager)
+        Action::Action(ActionSource source, const std::string& scriptPath)
         {
             this->_actionSource = source;
             switch (source) {
                 case ActionSourceScript:
-                    std::cout << "RType::Component::Action: Warning: Script not inplemented." << scriptPath << std::endl;
+                    this->_luaInfos.id = RType::LuaManagerSingletone::get().loadLuaScript(scriptPath);
+                    this->_luaInfos.scriptPath = scriptPath;
                     break;
+
 
                 case ActionSourceUserInput:
                     break;
@@ -49,17 +56,28 @@ namespace RType {
                     throw std::runtime_error("RType::Component::Action: Unknow ActionSource.");
             }  // switch source
             this->_actionVector.reserve(5);
+
+            this->_shootDeltatimes[0] = 10000.0f;
+            this->_shootDeltatimes[1] = 10000.0f;
+            this->_shootDeltatimes[2] = 10000.0f;
         }
 
-        void processInput(Action& actionComponent) noexcept
+        void Action::updateFromSource(void) noexcept
         {
-            switch (actionComponent._actionSource) {
+            switch (this->_actionSource) {
                 // scripts WIP
                 case ActionSource::ActionSourceScript:
-                    return;
+                    try {
+                        this->processLuaScriptInput();
+                    } catch (...) {
+                        std::cerr << "Script " << this->_luaInfos.scriptPath << " received execption: " << ". Disabling it..." << std::endl;
+                        this->_actionSource = ActionSource::ActionSourceNA;
+                        return;
+                    }
+                    break;
 
                 case ActionSource::ActionSourceUserInput:
-                    actionComponent.processUserInput();
+                    this->processUserInput();
                     break;
 
                 case ActionSource::ActionSourceServer:
@@ -68,6 +86,11 @@ namespace RType {
                 default:
                     return;
             }
+        }
+
+        std::vector<Network::EntityAction> &Action::getActionVector(void) noexcept
+        {
+            return this->_actionVector;
         }
 
         void Action::processUserInput(void)
@@ -80,11 +103,26 @@ namespace RType {
             Rengine::Graphics::UserInputManager::const_iterator it = inputManager.begin();
 
             while (it != inputManager.end()) {
-                this->processUserInput(*it);
+                // Check keyboard
+                if (it->type == Rengine::Graphics::UserInputTypeKeyboardCharPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardChar
+                || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed || it->type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+                    this->processUserInputKeyboard(*it);
+                } else if (it->type == Rengine::Graphics::UserInputTypeJoystickButton
+                || it->type == Rengine::Graphics::UserInputTypeJoystickLeftMove || it->type == Rengine::Graphics::UserInputTypeJoystickLeftPressed
+                || it->type == Rengine::Graphics::UserInputTypeJoystickRightMove || it->type == Rengine::Graphics::UserInputTypeJoystickRightPressed) {
+                    // Check joystick
+                    this->processUserInputJoystick(*it);
+                }
                 it++;
             }
         }
-        void Action::processUserInput(const Rengine::Graphics::UserInput& input)
+
+        ActionSource Action::getActionSource(void) const noexcept
+        {
+            return this->_actionSource;
+        }
+
+        void Action::processUserInputKeyboard(const Rengine::Graphics::UserInput& input)
         {
             // Check if source is UserInput
             if (this->_actionSource != ActionSourceUserInput) {
@@ -93,16 +131,18 @@ namespace RType {
             Network::EntityAction newAction;
 
             // Parse input vector
-            auto it = PlayerInputBindVector.begin();
+            auto it = PlayerKeyboardInputBindVector.begin();
 
-            while (it != PlayerInputBindVector.end()) {
+            while (it != PlayerKeyboardInputBindVector.end()) {
                 bool dataComparaison = false;
 
                 if (it->first.type == input.type) {
                     // Check KeyboardSpecial
-                    if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+                    if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecial
+                    || it->first.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                         dataComparaison = (it->first.data.keyboardSpecial == input.data.keyboardSpecial);
-                    } else if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardChar) {  // Check KeyboardChar
+                    } else if (it->first.type == Rengine::Graphics::UserInputTypeKeyboardChar
+                    || it->first.type == Rengine::Graphics::UserInputTypeKeyboardCharPressed) {  // Check KeyboardChar
                         dataComparaison = (it->first.data.keyboardChar == input.data.keyboardChar);
                     }
                     if (dataComparaison == true) {
@@ -113,7 +153,7 @@ namespace RType {
                 it++;
             }  // while it != end
             // No match
-            if (it == PlayerInputBindVector.end()) {
+            if (it == PlayerKeyboardInputBindVector.end()) {
                 return;
             }
 
@@ -122,7 +162,7 @@ namespace RType {
                 float moveX = 0.0f;
                 float moveY = 0.0f;
                 // Handle keyboard arrows
-                if (input.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+                if (input.type == Rengine::Graphics::UserInputTypeKeyboardSpecial || input.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                     switch (input.data.keyboardSpecial) {
                         // Down arrow
                         case Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN:
@@ -144,19 +184,92 @@ namespace RType {
                         default:
                             break;
                     }  // switch input.data.keyboardSpecial
-                } else if (input.type == Rengine::Graphics::UserInputTypeJoystickLeftMove
-                        || input.type == Rengine::Graphics::UserInputTypeJoystickRightMove) {
-                    moveX = input.data.joystickPosition.x;
-                    moveY = input.data.joystickPosition.y;
                 }
                 newAction.data.moveVelocity.x = moveX;
                 newAction.data.moveVelocity.y = moveY;
             }  // if newAction.type == Network::EntityActionTypeMove
             this->_actionVector.push_back(newAction);
         }
+        void Action::processUserInputJoystick(const Rengine::Graphics::UserInput& input)
+        {
+            // Check if source is UserInput
+            if (this->_actionSource != ActionSourceUserInput) {
+                throw ActionException("Trying to set user input on non user source.");
+            }
+            Network::EntityAction newAction;
+
+            // Parse input vector
+            auto it = PlayerJoystickInputBindVector.begin();
+
+            while (it != PlayerJoystickInputBindVector.end()) {
+                bool dataComparaison = false;
+
+                if (it->first.type == input.type) {
+                    if (it->first.type == Rengine::Graphics::UserInputTypeJoystickButton) {
+                        if (it->first.data.joystickInput.data.joystickButton == input.data.joystickInput.data.joystickButton) {
+                        newAction.type = it->second;
+                        break;
+                        }
+                    } else {
+                      // No other comparison needed for other types
+                        newAction.type = it->second;
+                        break;
+                    }
+                }
+                it++;
+            }  // while it != end
+            // No match
+            if (it == PlayerJoystickInputBindVector.end()) {
+                return;
+            }
+
+            // Handle movement
+            if (newAction.type == Network::EntityActionTypeMove) {
+                newAction.data.moveVelocity.x = input.data.joystickInput.data.joystickPosition.x;
+                newAction.data.moveVelocity.y = input.data.joystickInput.data.joystickPosition.y;
+            }
+            this->_actionVector.push_back(newAction);
+        }
+
         void Action::processAction(const Network::EntityAction& rfcAction) noexcept
         {
             this->_actionVector.push_back(rfcAction);
+        }
+
+        void Action::processLuaScriptInput(void)
+        {
+            std::vector<RType::LuaReturn> reply;
+            Network::EntityAction act;
+
+            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "move");
+            // reply is not formatted correcly: ignore
+            if (reply.size() < 1) {
+                goto shootFunction;
+            }
+            if (reply[0].type != LuaTypeInt && reply[0].data.integer > Network::EntityActionTypeUltimate) {
+                goto shootFunction;
+            }
+            // Move checks
+            if (reply[0].data.integer == Network::EntityActionType::EntityActionTypeMove) {
+                // Ensure reply as at least 2 more int type elements
+                if (reply.size() < 3 || reply[1].type != LuaTypeInt || reply[2].type != LuaTypeInt) {
+                    goto shootFunction;
+                }
+                act.data.moveVelocity.x = reply[1].data.integer;
+                act.data.moveVelocity.y = reply[2].data.integer;
+            }
+            act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
+            this->_actionVector.push_back(act);
+
+shootFunction:
+            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "shoot");
+            // Check reply size and type
+            if (reply.size() < 1 || reply[0].type != LuaTypeInt) {
+                return;
+            }
+            act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
+            act.data = {0};
+            this->_actionVector.push_back(act);
         }
 
         Action::const_iterator Action::begin(void) const
@@ -177,19 +290,38 @@ namespace RType {
         }
         void Action::changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction)
         {
-            // Check if source is lua script
-            if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Trying to set user input on lua source.");
+            auto it = PlayerKeyboardInputBindVector.begin();
+
+            while (it != PlayerKeyboardInputBindVector.end()) {
+                if (it->second == resultingAction) {
+                    it->first = newInput;
+                    return;
+                }
+                it++;
+            }
+            auto jIt = PlayerJoystickInputBindVector.begin();
+
+            while (it != PlayerJoystickInputBindVector.end()) {
+                if (it->second == resultingAction) {
+                    it->first = newInput;
+                    return;
+                }
+                it++;
             }
         }
-        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act) const
+        const Rengine::Graphics::UserInput Action::getPlayerNeededInput(Network::EntityActionType act)
         {
-            if (this->_actionSource != ActionSourceUserInput) {
-                throw ActionException("Accessing player input on non user source.");
-            }
-            auto it = PlayerInputBindVector.begin();
+            auto it = PlayerKeyboardInputBindVector.begin();
 
-            while (it != PlayerInputBindVector.end()) {
+            while (it != PlayerKeyboardInputBindVector.end()) {
+                if (it->second == act) {
+                    return it->first;
+                }
+                it++;
+            }
+            auto jIt = PlayerJoystickInputBindVector.begin();
+
+            while (it != PlayerJoystickInputBindVector.end()) {
                 if (it->second == act) {
                     return it->first;
                 }
@@ -207,7 +339,7 @@ namespace RType {
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
-            processInput(actionComponent);
+            actionComponent.updateFromSource();
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
@@ -227,18 +359,21 @@ namespace RType {
         void updateDeltatimes(Action& component) noexcept
         {
             for (uint8_t i = 0; i < 3; i++) {
-                component._shootDeltatimes[i] += Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
+                if (component._shootDeltatimes[i] < 10000.0f)
+                    component._shootDeltatimes[i] += Rengine::Clock::getElapsedTime();
             }
         }
 
         void Action::handleMove(Network::EntityAction& action, Configuration& config, Position& pos)
         {
-            float deltatime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getDeltaTimeSeconds();
-            Rengine::Graphics::vector2D<float> newPos = pos.getVector2D();
+            float deltatime = Rengine::Clock::getElapsedTime();
+            float changeX = config.getConfig().getStats().speedX * deltatime;
+            float changeY = config.getConfig().getStats().speedY * deltatime;
 
-            newPos.x += action.data.moveVelocity.x * (config.getConfig().getStats().speedX * deltatime);
-            newPos.y += action.data.moveVelocity.y * (config.getConfig().getStats().speedY * deltatime);
-            pos.set(newPos);
+            pos.set(
+                    {pos.getX() + (action.data.moveVelocity.x * changeX),
+                    pos.getY() + (action.data.moveVelocity.y * changeY)}
+            );
         }
 
         void Action::handleShoot(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig)
@@ -275,45 +410,93 @@ namespace RType {
         }
 
         inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
-                        Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
+                        Rengine::Entity& host, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig)
         {
             // Not enough entity left for attack : skip it
             if (attackConfig->getMissiles().size() > ecs.getEntityLimit() - ecs.getActiveEntitiesCount()) {
                 return;
             }
             Config::EntityConfigResolver singletone = Config::EntityConfigResolverSingletone::get();
-            const Position& hostPosition = entity.getComponent<Position>();
+            const Position& hostPosition = host.getComponent<Position>();
+            Relationship& hostRelationship = host.getComponent<Relationship>();
 
             for (const Config::MissileConfig& it : attackConfig->getMissiles()) {
-                const RType::Config::EntityConfig& missileConfig = singletone.get(it.getJsonPath());
-                Rengine::Entity& projectile = ecs.addEntity();
+                RType::Config::EntityConfig currentMissileEntityConfig;
+                Rengine::Entity& projectile = RType::EntityMaker::make(ecs, it.getJsonPath(), hostRelationship.getGroup(), &currentMissileEntityConfig);
+                RType::Components::Relationship& proRelationship = projectile.getComponent<RType::Components::Relationship>();
 
-                // set Component
-                projectile.addComponent<Position>(
-                        hostPosition.getVector2D().x + it.getOffset().first,
-                        hostPosition.getVector2D().y + it.getOffset().second
+                // set Components
+                projectile.getComponent<Position>().set(
+                        {hostPosition.getVector2D().x + (float) it.getOffset().first,
+                        hostPosition.getVector2D().y + (float) it.getOffset().second}
                 );
-                projectile.addComponent<Hitbox>(missileConfig.getHitbox());
-                projectile.addComponent<Sprite>(missileConfig.getSprite().getSpecs());
-                projectile.addComponent<Configuration>(missileConfig);
-                projectile.addComponent<Buff>();
-                RType::Components::Relationship& relationship = projectile.addComponent<RType::Components::Relationship>();
+                projectile.addComponent<Sprite>(currentMissileEntityConfig.getSprite().getSpecs());
+                if (hostRelationship.belong(Team::TeamEnemy) == true) {
+                    projectile.getComponent<Sprite>().getSprite()->flip();
+                }
 
-                relationship.addParent(uint64_t(entity));
+            #ifdef DEBUG
+                projectile.addComponent<HitboxViewer>(currentMissileEntityConfig.getHitbox().size.x, currentMissileEntityConfig.getHitbox().size.y);
+                //projectile.addComponent<HealthViewer>(currentMissileEntityConfig.getStats().hp);
+            #endif
+                projectile.addComponent<Chrono>([&ecs, &projectile]() {
+                    ecs.removeEntity(projectile);
+                }, 7.0f);
+                hostRelationship.addChild(uint64_t(projectile));
+                proRelationship.addParent(uint64_t(host));
+                proRelationship.setGroup(hostRelationship.getGroup());
+                bool hasAction = false;
+                bool hasVelocity = false;
+                float xVelo = 0.0f;
+
                 switch (it.getControlType()) {
                     case (Config::MissileControlTypeUserInput):
-                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceUserInput);
+                        projectile.addComponent<Action>(ActionSource::ActionSourceUserInput);
+                        hasAction = true;
                         break;
 
                     case (Config::MissileControlTypeScript):
-                        projectile.addComponent<Action>(actionComponent._sceneManager, ActionSource::ActionSourceScript, it.getScriptPath());
+                        projectile.addComponent<Action>(ActionSource::ActionSourceScript, it.getScriptPath());
+                        hasAction = true;
                         break;
 
-                    // No action component needed for velocity and invalid value
+                    case (Config::MissileControlTypeVelocity):
+                        // Change direction of enemies' projectile
+                        xVelo = it.getVelocity().first;
+
+                        if (hostRelationship.belong(Team::TeamEnemy) == true) {
+                            xVelo *= -1;
+                        }
+                        projectile.addComponent<Velocity>(xVelo, it.getVelocity().second);
+                        hasVelocity = true;
+                        break;
+
+                    // No action component needed for invalid value
                     default:
                         break;
                 } // switch controlType
-                actionComponent._sceneManager.get().addEntityToCurrentScene(Rengine::Entity::size_type(projectile));
+                projectile.setComponentsDestroyFunction(
+                    [&host, hasVelocity, hasAction](Rengine::Entity& en) {
+                        auto hostRelationship = host.getComponentNoExcept<Relationship>();
+
+                        // Remove child projectile on destruction
+                        if (hostRelationship.has_value() == true) {
+                            hostRelationship.value().get().removeChild(uint64_t(en));
+                        }
+                        en.removeComponent<Sprite>();
+                #ifdef DEBUG
+                        en.removeComponent<HitboxViewer>();
+                        //en.removeComponent<HealthViewer>();
+                #endif
+                        en.removeComponent<Chrono>();
+                        if (hasAction) {
+                            en.removeComponent<Action>();
+                        }
+                        if (hasVelocity) {
+                            en.removeComponent<Velocity>();
+                        }
+                    }
+                );
             } // for it
         }
 

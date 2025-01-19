@@ -84,6 +84,7 @@ namespace RType {
             std::string path;
             uint16_t xSpawn = 1919;
             uint16_t ySpawn = 0;
+            std::string scriptPath = "";
             bool isBoss = false;
         };  // struct SceneEntityConfig
 
@@ -112,6 +113,10 @@ namespace RType {
                  * @brief The scene's scrollingSpeed.
                 */
                 float scrollingSpeed = 10;
+                /**
+                * @brief The scene's background music.
+                */
+                std::string backgroundMusic = "";
                 /**
                  * @brief A vector of ImageConfig for the background images.
                 */
@@ -153,7 +158,7 @@ namespace RType {
                 * @return std::vector<SceneConfig> A vector of SceneConfig.
                 * @brief Return the vector of SceneConfig.
                 */
-                const std::vector<RType::Config::SceneConfig>& getScenes(void) const noexcept;
+                const std::vector<RType::Config::SceneConfig>& getScenes(void) const;
 
             private:
                 std::vector<RType::Config::SceneConfig> _scenes;

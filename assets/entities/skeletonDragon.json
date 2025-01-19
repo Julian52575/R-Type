@@ -3,14 +3,14 @@
         "sprite": "assets/images/skeletonDragon.json",
         "hitbox": {
             "size": {
-                "x": 71, "y": 50
+                "x": 80, "y": 30
             },
             "offset": {
-                "x": 40, "y": 120
+                "x": -40, "y": -10
             }
         },
         "stats": {
-            "hp": 17,
+            "hp": 255,
             "attack": 18,
             "defense": 19,
             "speedY": 4,
@@ -25,7 +25,8 @@
         },
         "attacks": {
             "shoot1": "assets/attacks/fireBallSpam.json",
-            "shoot2": "assets/attacks/bigFireBall.json"
+            "shoot2": "assets/attacks/bigFireBall.json",
+            "shoot3": "assets/attacks/laserBeam.json"
         }
     }
 }

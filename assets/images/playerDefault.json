@@ -2,8 +2,8 @@
    "image":{
       "texturePath":"assets/images/playerDefault.png",
       "origin":{
-         "x":16,
-         "y":9
+         "x": 980,
+         "y": 40
       },
       "scale":{
          "x":3.6,

@@ -13,7 +13,7 @@
 namespace RType {
     class SceneManagerExceptionSceneNotFound : public std::exception {
         public:
-            const char *what() const noexcept { return "RType::SceneManager: Scene not found."; };
+            const char *what() const noexcept { return "RType::SceneManager: Scene function not found."; };
     };
     class SceneManagerExceptionNoCurrentScene : public std::exception {
         public:
@@ -53,21 +53,26 @@ namespace RType {
                 }
                 this->_scenesData[scene]._sceneFunction = sceneFunction;
             }
+
             /*
             * @fn addEntityToCurrentScene
             * @param entityId The id of the entity to add.
             * @brief Adds an entity to the current scene.
             */
+            /*
             void addEntityToCurrentScene(Rengine::Entity::size_type entityId)
             {
                 return this->addEntityToScene(this->_currentScene, entityId);
             }
+            */
+
             /*
             * @fn addEntityToCurrentScene
             * @param entityId The id of the entity to add.
             * @brief Adds an entity to the requested scene.
             * Data for the scene is created if it wasn't created previously
             */
+            /*
             void addEntityToScene(scene_type scene, Rengine::Entity::size_type entityId)
             {
                 // Create the sceneData if not created previously
@@ -83,6 +88,8 @@ namespace RType {
                 // Add entity
                 this->_scenesData[scene]._sceneEntities.push_back(entityId);
             }
+            */
+
             /*
             * @fn setScene
             * @param scene The new scene.
