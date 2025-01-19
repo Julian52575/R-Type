@@ -199,7 +199,7 @@ namespace RType {
                 this->updateGameInfos();
                 continue;
             }
-            if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+            if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                 switch (it.data.keyboardSpecial) {
                     case Rengine::Graphics::UserInputKeyboardSpecialArrowUP:
                         if (this->_begin > 0)
