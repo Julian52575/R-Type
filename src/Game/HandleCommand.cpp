@@ -1,4 +1,6 @@
 #include "./game.hpp"
+#include <iostream>
+#include <memory>
 #include "src/Game/EntityMaker.hpp"
 #include "src/Network/EntityAction.hpp"
 #include "src/Components/Action.hpp"

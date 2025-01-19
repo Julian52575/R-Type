@@ -1,4 +1,5 @@
 #include "Lobby/lobby.hpp"
+#include <iostream>
 
 int main(int argc, char **argv) {
     try {

@@ -5,6 +5,7 @@
 #include <exception>
 #include <rengine/Rengine.hpp>
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <string>
@@ -25,6 +26,7 @@ public:
 private:
     std::string _concat;
 };
+
 /**
 * @brief A class holding a map of uint16_t and the association json path
 */
@@ -62,14 +64,17 @@ class ConfigurationIdResolver {
             }
             f.close();
         }
+
         std::unordered_map<std::string, uint16_t>::const_iterator begin(void) const noexcept
         {
             return this->_map.begin();
         }
+
         std::unordered_map<std::string, uint16_t>::const_iterator end(void) const noexcept
         {
             return this->_map.end();
         }
+
         /**
          * @brief Get the path linked to id or "" if not found.
          */
@@ -82,6 +87,7 @@ class ConfigurationIdResolver {
             }
             return "";
         }
+
         /**
          * @brief Get the id linked to the path or -1 if not found.
          */

@@ -1,4 +1,8 @@
 #include "./game.hpp"
+#include <iostream>
+#include <string>
+#include <memory>
+#include <vector>
 #include "src/Components/Velocity.hpp"
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Life.hpp"

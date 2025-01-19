@@ -1,4 +1,7 @@
 #include "./lobby.hpp"
+#include <iostream>
+#include <memory>
+#include <string>
 
 Lobby::Lobby(uint16_t port) : _server(port, "Lobby", false) {
     _port = port;

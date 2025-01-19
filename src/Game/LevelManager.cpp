@@ -5,6 +5,8 @@
 #include <rengine/src/ECS.hpp>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/Entity.hpp>
+#include <string>
+#include <vector>
 
 #include "LevelManager.hpp"
 #include "src/Game/EntityMaker.hpp"
