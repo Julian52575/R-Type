@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <rengine/src/Clock/Clock.hpp>
 #include <stdexcept>
 #include <vector>
 #include <string>
@@ -38,8 +39,13 @@ namespace RType {
             this->_actionSource = source;
             switch (source) {
                 case ActionSourceScript:
-                    this->_luaInfos.id = RType::LuaManagerSingletone::get().loadLuaScript(scriptPath);
-                    this->_luaInfos.scriptPath = scriptPath;
+                    try {
+                        this->_luaInfos.id = RType::LuaManagerSingletone::get().loadLuaScript(scriptPath);
+                        this->_luaInfos.scriptPath = scriptPath;
+                    } catch (std::exception& e) {
+                        std::cerr << "[ACTION] Cannot load script " << this->_luaInfos.scriptPath << std::endl;
+                        this->_actionSource = ActionSourceNA;
+                    }
                     break;
 
 
@@ -56,12 +62,12 @@ namespace RType {
             this->_shootDeltatimes[2] = 10000.0f;
         }
 
-        void Action::updateFromSource(void) noexcept
+        void Action::updateFromSource(Rengine::ECS& ecs, Rengine::Entity& entity) noexcept
         {
             switch (this->_actionSource) {
                 case ActionSource::ActionSourceScript:
                     try {
-                        this->processLuaScriptInput();
+                        this->processLuaScriptInput(ecs, entity);
                     } catch (...) {
                         std::cerr << "Script " << this->_luaInfos.scriptPath << " received execption: " << ". Disabling it..." << std::endl;
                         this->_actionSource = ActionSource::ActionSourceNA;
@@ -89,35 +95,39 @@ namespace RType {
             this->_actionVector.push_back(rfcAction);
         }
 
-        void Action::processLuaScriptInput(void)
+        void Action::processLuaScriptInput(Rengine::ECS& ecs, Rengine::Entity& entity)
         {
             std::vector<RType::LuaReturn> reply;
             Network::EntityAction act;
+            std::optional<std::reference_wrapper<RType::Components::Position>> pos = entity.getComponent<RType::Components::Position>();
 
-            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "move");
+            // no pos ? no lua
+            if (pos.has_value() == false) {
+                return;
+            }
+            // update deltatime
+            RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "updateDeltatime", Rengine::Clock::getElapsedTime());
+
+            // Move
+            reply = RType::LuaManagerSingletone::get().callFunction<float, float>(this->_luaInfos.scriptPath, this->_luaInfos.id,
+                "move", pos->get().getX(), pos->get().getY());
             // reply is not formatted correcly: ignore
-            if (reply.size() < 1) {
+            if (reply.size() < 2) {
                 goto shootFunction;
             }
-            if (reply[0].type != LuaTypeInt && reply[0].data.integer > Network::EntityActionTypeUltimate) {
+            if (reply[0].type != LuaTypeInt && reply[1].type != LuaTypeInt) {
                 goto shootFunction;
             }
-            // Move checks
-            if (reply[0].data.integer == Network::EntityActionType::EntityActionTypeMove) {
-                // Ensure reply as at least 2 more int type elements
-                if (reply.size() < 3 || reply[1].type != LuaTypeInt || reply[2].type != LuaTypeInt) {
-                    goto shootFunction;
-                }
-                act.data.moveVelocity.x = reply[1].data.integer;
-                act.data.moveVelocity.y = reply[2].data.integer;
-            }
-            act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
+            act.data.moveVelocity.x = reply[0].data.integer;
+            act.data.moveVelocity.y = reply[1].data.integer;
+            act.type = static_cast<Network::EntityActionType>(Network::EntityActionTypeMove);
             this->_actionVector.push_back(act);
 
 shootFunction:
-            reply = RType::LuaManagerSingletone::get().callFunction<>(this->_luaInfos.scriptPath, this->_luaInfos.id, "shoot");
+            reply = RType::LuaManagerSingletone::get().callFunction<float, float, float>(this->_luaInfos.scriptPath, this->_luaInfos.id,
+                "shoot", this->_shootDeltatimes[0], this->_shootDeltatimes[1], this->_shootDeltatimes[2]);
             // Check reply size and type
-            if (reply.size() < 1 || reply[0].type != LuaTypeInt) {
+            if (reply.size() == 0 || reply[0].type != LuaTypeInt) {
                 return;
             }
             act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
@@ -152,7 +162,7 @@ shootFunction:
             if (entityConfig.has_value() == false || pos.has_value() == false) {
                 return;
             }
-            actionComponent.updateFromSource();
+            actionComponent.updateFromSource(ecs, entity);
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
