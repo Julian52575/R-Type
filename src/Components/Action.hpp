@@ -54,11 +54,11 @@ namespace RType {
                 Network::EntityActionType::EntityActionTypeShoot1
             },
             {
-                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialSHIFT},
+                {Rengine::Graphics::UserInputTypeKeyboardChar, 'w'},
                 Network::EntityActionType::EntityActionTypeShoot2
             },
             {
-                {Rengine::Graphics::UserInputTypeKeyboardSpecial, Rengine::Graphics::UserInputKeyboardSpecialTAB},
+                {Rengine::Graphics::UserInputTypeKeyboardChar, 'x'},
                 Network::EntityActionType::EntityActionTypeShoot3
             },
             {
