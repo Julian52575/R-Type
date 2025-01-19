@@ -2,12 +2,12 @@
    "image":{
       "texturePath":"assets/images/spaceShip.png",
       "origin":{
-         "x": 980,
-         "y": 40
+         "x": 0,
+         "y": 0
       },
       "scale":{
-         "x":3.6,
-         "y":3.6
+         "x":3,
+         "y":3
       },
       "animations":{
          "frameRect":{
