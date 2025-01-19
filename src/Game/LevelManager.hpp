@@ -60,12 +60,6 @@ namespace RType {
             */
             bool resetCurrentScene(void);
             /**
-            * @fn getCurrentSceneEnemies
-            * @return std::optional<const std::vector<RType::Config::SceneEntityConfig>> A vector of SceneEntityConfig
-            * @brief Get the current scene's enemies.
-            */
-            std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> getCurrentSceneEnemies(void);
-            /**
             * @fn getCurrentSceneBackgroundImages
             * @return std::optional<const std::vector<RType::Config::ImageConfig>> A vector of ImageConfig
             * @brief Get the current scene's background images.
@@ -83,7 +77,6 @@ namespace RType {
             std::optional<std::reference_wrapper<const RType::Config::LevelConfig>> _levelConfig;
             std::optional<Rengine::Entity::size_type> _bossId;
             std::vector<Rengine::Entity::size_type> _currentSceneBackgroundEntities;
-            std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
             SceneManager &_sceneManager;
     };
 

@@ -150,16 +150,6 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::Life>(RType::Components::Life::componentFunction);
     }
 
-    void GameState::loadLevel(const std::string& jsonPath)
-    {
-        uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(this->_lobbyInfo.playerJson);
-        Message<Network::Communication::TypeDetail> msg;
-        msg.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
-        msg.header.size = 0;
-        msg << configID << this->_clientUDP->getLocalEndpoint();
-        this->_clientTCP->Send(msg);
-    }
-
     State GameState::run(void)
     {
         State s = this->_sceneManager.callCurrentSceneFunction<State, GameState&>(*this);
@@ -167,7 +157,7 @@ namespace RType {
         return s;
     }
 
-    Rengine::Entity &GameState::getOrCreateEntity(Rengine::Entity::size_type id, uint16_t configurationID) {
+    Rengine::Entity &GameState::getOrCreateEntity(Rengine::Entity::size_type id, uint16_t configurationID, uint64_t groupID) {
         for (auto &entry : this->_entities) {
             if (entry.first == id) {
                 if (this->_ecs.isEntityActive(entry.second))
@@ -176,7 +166,7 @@ namespace RType {
                     continue;
             }
         }
-        Rengine::Entity &entity = EntityMaker::make(this->_ecs, configurationID);
+        Rengine::Entity &entity = EntityMaker::make(this->_ecs, configurationID, groupID);
         RType::Config::EntityConfig enConfig = entity.getComponent<RType::Components::Configuration>().getConfig();
         RType::Components::Sprite& sp = entity.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
@@ -193,38 +183,14 @@ namespace RType {
         return entity;
     }
 
-    void GameState::deletePlayer(void)
-    {
-        // No player set
-        if (this->_playerEntityId == RTYPE_NO_PLAYER_ENTITY_ID) {
-            return;
-        }
-        try {
-             this->_ecs.removeEntity(this->_playerEntityId);
-        } catch (std::exception& e) {
-            return;
-        }
-    }
-
     State loadLevelFunction(GameState& gameState)
     {
-        // Simulate server by getting random level config
-        std::vector<std::string> configVector;
-        uint64_t idx = 0;
-
-        // Loading a random level
-        for (auto file : std::filesystem::directory_iterator("assets/levels/")) {
-            if (file.path().string() == "assets/levels/id.json") {
-                continue;
-            }
-            configVector.push_back(file.path().string());
-        }
-        if (configVector.size() == 0) {
-            gameState._levelManager.completeClear();
-            return State::StateMenu;
-        }
-        idx = Rengine::RNG::rngFunction() % configVector.size();
-        gameState.loadLevel(configVector[idx]);
+        uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(gameState._lobbyInfo.playerJson);
+        Message<Network::Communication::TypeDetail> msg;
+        msg.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
+        msg.header.size = 0;
+        msg << configID << gameState._clientUDP->getLocalEndpoint();
+        gameState._clientTCP->Send(msg);
         gameState._sceneManager.setScene(GameScenes::GameScenesPlay);
         return State::StateGame;
     }
@@ -236,19 +202,42 @@ namespace RType {
         Rengine::SparseArray<RType::Components::Relationship>& relationships = gameState._ecs.getComponents<RType::Components::Relationship>();
         Rengine::SparseArray<RType::Components::Life>& lifes = gameState._ecs.getComponents<RType::Components::Life>();
 
+        for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
+            if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
+                uint16_t health;
+                uint16_t maxHealth;
+                uint64_t id;
+                uint16_t configID;
+                uint64_t groupID;
+                float posX;
+                float posY;
+                *msg >> groupID >> configID >> posY >> posX >> maxHealth >> health >> id;
+                Rengine::Entity& entity = gameState.getOrCreateEntity(id, configID, groupID);
+                if (positions[entity].has_value()) {
+                    positions[entity]->set({posX, posY});
+                }
+                if (lifes[entity].has_value()) {
+                    lifes[entity]->setHp(health);
+                    lifes[entity]->setMaxHp(maxHealth);
+                }
+            }
+        }
+
         for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientTCP->Receive(); msg; msg = gameState._clientTCP->Receive()) {
             if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId) {
                 Rengine::Entity::size_type id;
                 uint16_t levelID;
                 *msg >> levelID >> id;
-                uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(gameState._lobbyInfo.playerJson);
-                Rengine::Entity &entity = gameState.getOrCreateEntity(id, configID);
                 std::string levelPath = RType::Config::LevelConfigurationIdResolverSingletone::get().get(levelID);
-                if (levelPath != "")
+                if (levelPath != "") {
+                    std::cout << "Load level: " << levelPath << std::endl;
                     gameState._levelManager.loadLevel(levelPath);
+                }
                 else
                     std::cerr << "No level found" << std::endl;
 
+                uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(gameState._lobbyInfo.playerJson);
+                Rengine::Entity &entity = gameState.getOrCreateEntity(id, configID, Team::TeamPlayer);
                 entity.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
                 entity.addComponent<RType::Components::Clickable>( [](void){} );
 
@@ -261,36 +250,37 @@ namespace RType {
                 gameState._playerEntityId = Rengine::Entity::size_type(entity);
             }
 
+            if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::SceneFinish) {
+                gameState._levelManager.nextScene();
+                std::cout << "Scene finish, go next" << std::endl;
+            }
+
+            if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::LevelEnd) {
+                gameState._levelManager.completeClear();
+                gameState._entities.clear();
+                std::cout << "Level finish" << std::endl;
+                Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
+                return State::StateMenu;
+            }
+
             if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::DeleteEntity) {
                 uint64_t id;
                 *msg >> id;
                 try {
+                    if (gameState._ecs.isEntityActive(id))
+                        gameState._ecs.removeEntity(id);
                     gameState._entities.erase(std::remove_if(gameState._entities.begin(), gameState._entities.end(), [id](const std::pair<Rengine::Entity::size_type, Rengine::Entity::size_type>& entry) {
                         return entry.first == id;
                     }), gameState._entities.end());
-                    gameState._ecs.removeEntity(id);
+                    if (id == gameState._playerEntityId) {
+                        std::cout << "Death" << std::endl;
+                        gameState._entities.clear();
+                        gameState._levelManager.completeClear();
+                        Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
+                        return State::StateMenu;
+                    }
                 } catch (std::exception& e) {
                     std::cerr << "Error on delete entity: " << e.what() << std::endl;
-                }
-            }
-        }
-
-        for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
-            if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
-                uint16_t health;
-                uint16_t maxHealth;
-                uint64_t id;
-                uint16_t configID;
-                float posX;
-                float posY;
-                *msg >> configID >> posY >> posX >> maxHealth >> health >> id;
-                Rengine::Entity& entity = gameState.getOrCreateEntity(id, configID);
-                if (positions[entity].has_value()) {
-                    positions[entity]->set({posX, posY});
-                }
-                if (lifes[entity].has_value()) {
-                    lifes[entity]->setHp(health);
-                    lifes[entity]->setMaxHp(maxHealth);
                 }
             }
         }
@@ -298,7 +288,6 @@ namespace RType {
         //partie movement
         gameState._ecs.runComponentFunction<RType::Components::Action>(gameState);  // update action
         gameState._ecs.runComponentFunction<RType::Components::Velocity>();  // move entity
-
         gameState._ecs.runComponentFunction<RType::Components::Clickable>();  // check click on the few entity who has this component
 
         //partie render
@@ -306,13 +295,6 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitbox
 
-        // Check espace input
-        if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
-        .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
-            gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
-            gameState._levelManager.completeClear();
-            return State::StateMenu;
-        }
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeMouseLeftClick)) {
             auto& player = gameState._ecs.getEntity(gameState._playerEntityId);
@@ -349,34 +331,6 @@ namespace RType {
         std::function<State(GameState&)> funScene2(playFunction);
 
         this->_sceneManager.setSceneFunction<State, GameState&>(GameScenes::GameScenesPlay, funScene2);
-    }
-
-    void GameState::createPlayer(const std::string& jsonPath)
-    {
-        if (this->_playerEntityId != RTYPE_NO_PLAYER_ENTITY_ID) {
-            this->deletePlayer();
-        }
-        RType::Config::EntityConfig enConfig;
-        Rengine::Entity& player = RType::EntityMaker::make(this->_ecs, jsonPath, Team::TeamPlayer, &enConfig);
-        RType::Components::Sprite& sp = player.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
-
-        player.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
-    #ifdef DEBUG
-        player.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
-        player.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
-    #endif
-
-        player.setComponentsDestroyFunction(
-           [](Rengine::Entity& en) {
-                en.removeComponent<RType::Components::Action>();
-                en.removeComponent<RType::Components::Clickable>();
-            #ifdef DEBUG
-                en.removeComponent<RType::Components::HitboxViewer>();
-                en.removeComponent<RType::Components::HealthViewer>();
-            #endif
-            }
-        );
-        this->_playerEntityId = Rengine::Entity::size_type(player);
     }
 
     void GameState::alertPlayer(void)
