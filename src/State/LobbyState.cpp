@@ -57,17 +57,19 @@ namespace RType {
 
     State joinLobbyScene(LobbyState& lobbyState)
     {
-        std::cout << "[joinLobbyScene] NetworkInfo: " << std::endl
-            << "Name: " << lobbyState._networkInfo.lobbyName << std::endl
-            << "IP:UDP:TCP :" << lobbyState._networkInfo.ip << ":" << lobbyState._networkInfo.UDPPort << ":" << lobbyState._networkInfo.TCPPort << std::endl;
         lobbyState._sceneManager.setScene(LobbyScenes::LobbySceneRun);
         return State::StateLobby;
     }
     State createLobbyScene(LobbyState& lobbyState)
     {
-        std::cout << "[createLobbyScene] NetworkInfo: " << std::endl
-            << "Name: " << lobbyState._networkInfo.lobbyName << std::endl
-            << "IP:UDP:TCP :" << lobbyState._networkInfo.ip << ":" << lobbyState._networkInfo.UDPPort << ":" << lobbyState._networkInfo.TCPPort << std::endl;
+        Message<Network::Communication::TypeDetail> msg;
+        msg.header.size = 0;
+        char name[15];
+        memset(name, 0, 15);
+        strncpy(name, lobbyState._networkInfo.lobbyName.c_str(), 15);
+        msg.header.type = {Network::Communication::Type::LobbyInfo, Network::Communication::main::LobbyInfoPrecision::CreateGame};
+        msg << name;
+        lobbyState._client->Send(msg);
         lobbyState._sceneManager.setScene(LobbyScenes::LobbySceneRun);
         return State::StateLobby;
     }
@@ -199,7 +201,7 @@ namespace RType {
                 this->updateGameInfos();
                 continue;
             }
-            if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial) {
+            if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecialPressed) {
                 switch (it.data.keyboardSpecial) {
                     case Rengine::Graphics::UserInputKeyboardSpecialArrowUP:
                         if (this->_begin > 0)

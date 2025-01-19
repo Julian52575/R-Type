@@ -61,14 +61,6 @@ namespace RType {
 
         public:
             /**
-            * @fn loadLevel
-            * @param std::string The path to a level json
-            * @brief Load a level.
-            */
-            void loadLevel(const std::string& jsonPath);
-
-        public:
-            /**
             * @fn loadLevelFunction
             * @param GameState A reference to this GameState class.
             * @brief Load a level and change the scene to play
@@ -86,24 +78,11 @@ namespace RType {
         private:
             NetworkInfo& _networkInfo;
             LobbyInfo& _lobbyInfo;
-            /**
-            * @fn createPlayer
-            * @param std::string A path to an entity config
-            * @brief Creates the player entity from the config.
-            */
-            void createPlayer(const std::string& jsonPath);
             std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _clientTCP;
             std::unique_ptr<ClientUDP<Network::Communication::TypeDetail>> _clientUDP;
             std::vector<std::pair<Rengine::Entity::size_type, Rengine::Entity::size_type>> _entities;
 
-            Rengine::Entity &getOrCreateEntity(Rengine::ECS::size_type entityId, uint16_t configurationId);
-
-            /*
-            * @fn deletePlayer
-            * @brief Deletes the player entity.
-            */
-            void deletePlayer(void);
-
+            Rengine::Entity &getOrCreateEntity(Rengine::ECS::size_type entityId, uint16_t configurationId, uint64_t groupID);
             void alertPlayer(void);
 
         protected:

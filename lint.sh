@@ -23,3 +23,4 @@ cat $LOG_FILE >&2
 echo $(eval cat $TMP | grep "Total error")
 echo "Errors are registered in $LOG_FILE."
 rm $TMP || true > /dev/null
+exit 1
