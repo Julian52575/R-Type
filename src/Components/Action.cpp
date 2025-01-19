@@ -233,16 +233,13 @@ namespace RType {
             Network::EntityAction act;
             std::optional<std::reference_wrapper<RType::Components::Position>> pos = entity.getComponent<RType::Components::Position>();
 
-            std::cout << "[processLuaScriptInput]" << std::endl;  //
             // no pos ? no lua
             if (pos.has_value() == false) {
                 return;
             }
-            std::cout << "[processLuaScriptInput] before deltatime" << std::endl;
             // update deltatime
             RType::LuaManagerSingletone::get().callFunction(this->_luaInfos.scriptPath, this->_luaInfos.id, "updateDeltatime", Rengine::Clock::getElapsedTime());
 
-            std::cout << "[processLuaScriptInput] after deltatime" << std::endl;
             // Move
             reply = RType::LuaManagerSingletone::get().callFunction<float, float>(this->_luaInfos.scriptPath, this->_luaInfos.id,
                 "move", pos->get().getX(), pos->get().getY());
@@ -256,7 +253,6 @@ namespace RType {
             act.data.moveVelocity.x = reply[0].data.integer;
             act.data.moveVelocity.y = reply[1].data.integer;
             act.type = static_cast<Network::EntityActionType>(Network::EntityActionTypeMove);
-            std::cout << "[processLuaScriptInput] Move :" << act << std::endl;
             this->_actionVector.push_back(act);
 
 shootFunction:
@@ -268,7 +264,6 @@ shootFunction:
             }
             act.type = static_cast<Network::EntityActionType>(reply[0].data.integer);
             act.data = {0};
-            std::cout << "[processLuaScriptInput] Shoot :" << act << std::endl;
             this->_actionVector.push_back(act);
         }
 
@@ -344,10 +339,8 @@ shootFunction:
             const Rengine::Graphics::vector2D<float>& currentPos = pos->get().getVector2D();
             Rengine::Graphics::vector2D<float> newPos = currentPos;
 
-            std::cout << "[componentFunction] Entity --" << entity << std::endl;  ///
             for (auto it : actionComponent) {
                 // Move
-                std::cout << "[componentFunction] it = " << it << std::endl;  ///
                 if (it.type == Network::EntityActionTypeMove && vel.has_value() == true) {
                     actionComponent.handleMove(it, entityConfig.value(), vel->get());
                 }
@@ -356,7 +349,6 @@ shootFunction:
                     actionComponent.handleShoot(actionComponent, it, ecs, entity, entityConfig.value());
                 }
             }  // for it
-            std::cout << "[componentFunction] Entity --" << entity << std::endl;  ///
             actionComponent.clear();
             // No move input : no velocity
             if (vel.has_value() == true && actionComponent._updatedNonZeroVelocity.x == false) {
@@ -398,12 +390,10 @@ shootFunction:
             if (attackConfig.has_value() == false) {
                 return;
             }
-            std::cout << "[handleShoot] Entity " << entity << " requested " << action << std::endl;
             // Cooldown not reached : no shoot
             if (this->_shootDeltatimes[attackId - 1] < attackConfig->getCooldown()) {
                 return;
             }
-            std::cout << "[handleShoot] deltatime OK" << std::endl;
             this->_shootDeltatimes[attackId - 1] = 0.0f;
             try {
                 switch (attackConfig->getType()) {
