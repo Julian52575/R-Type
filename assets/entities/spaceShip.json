@@ -3,7 +3,7 @@
         "sprite": "assets/images/spaceShip.json",
         "hitbox": {
             "size": {
-                "x": 35, "y": 20
+                "x": 60, "y": 40
             },
             "offset": {
                 "x": 0, "y": 0
@@ -24,8 +24,8 @@
             "persistsOffScreen": false
         },
         "attacks": {
-            "shoot1": "assets/attacks/defaultShoot1.json",
-            "shoot3": "assets/attacks/defaultShoot3.json"
+            "shoot1": "assets/attacks/fastBeam.json",
+            "shoot3": "assets/attacks/spaceShipSpawn.json"
         }
     }
 }
