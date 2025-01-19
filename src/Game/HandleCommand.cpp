@@ -13,8 +13,6 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     uint16_t configID;
     msg >> UDPClient >> configID;
 
-    UDPClient.address(asio::ip::make_address(client->getSocket().remote_endpoint().address().to_string()));
-    User newUDPUser = {UDPClient};
     Rengine::Entity &entity = RType::EntityMaker::make(this->_ecs, configID, 1);
     entity.addComponent<RType::Components::Action>(RType::Components::ActionSource::ActionSourceUserInput);
     entity.addComponent<RType::Components::Velocity>(0, 0);
@@ -26,9 +24,8 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
         }
     );
     Rengine::Entity::size_type entityID = entity;
-    std::shared_ptr<userGame> newUser = std::make_shared<userGame>(userGame{client, entityID, newUDPUser});
+    std::shared_ptr<userGame> newUser = std::make_shared<userGame>(userGame{client, entityID});
     _users.push_back(newUser);
-    this->_GameServerUDP.AddUser(newUDPUser);
     Message<Communication::TypeDetail> msg2;
     msg2.header.type = {Communication::Type::ConnexionDetail, Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId};
     msg2.header.size = 0;
@@ -37,15 +34,19 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     this->_GameServerTCP.Send(msg2, client);
 }
 
-void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
+void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
     switch (msg.header.type.type) {
         case Communication::Type::ConnexionDetail:
             _handleConnexionTCPMessage(client, msg);
             break;
+        case Communication::Type::EntityAction:
+            _handleEntityInfoUDPMessage(client, msg, actions);
+            break;
     }
 }
 
-void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
+void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
+    std::shared_ptr<userGame> user = _getUserByClient(client);
     switch (msg.header.type.precision) {
         case Communication::main::EntityActionPrecision::EntityActionTypeMove: {
             float x, y;
@@ -77,13 +78,5 @@ void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, M
             actions[user->entity]->processAction(act);
             break;
         }
-    }
-}
-
-void RType::Games::_handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
-    switch (msg.header.type.type) {
-        case Communication::Type::EntityAction:
-            _handleEntityInfoUDPMessage(user, msg, actions);
-            break;
     }
 }

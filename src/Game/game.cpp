@@ -132,14 +132,6 @@ namespace RType {
         return nullptr;
     }
 
-    std::shared_ptr<userGame> Games::_getUserByUDPClient(asio::ip::udp::endpoint &UDPClient) {
-        for (std::shared_ptr<userGame> user : _users) {
-            if (user->user.endpoint == UDPClient)
-                return user;
-        }
-        return nullptr;
-    }
-
     std::shared_ptr<userGame> Games::_getUserByTCPEndpoint(asio::ip::tcp::endpoint &TCPEndpoint) {
         for (std::shared_ptr<userGame> user : _users) {
             if (user->client->getSocket().remote_endpoint() == TCPEndpoint)
@@ -188,22 +180,13 @@ namespace RType {
                 Rengine::SparseArray<Components::Relationship>& relation = this->_ecs->getComponents<Components::Relationship>();
 
                 for (std::optional<std::pair<std::shared_ptr<Connexion<Communication::TypeDetail>>, Message<Communication::TypeDetail>>> msg = _GameServerTCP.Receive(); msg; msg = _GameServerTCP.Receive()) {
-                    _handleTCPMessage(msg->first, msg->second);
+                    _handleTCPMessage(msg->first, msg->second, actions);
                 }
 
                 for (std::optional<std::pair<asio::ip::udp::endpoint, Message<Communication::TypeDetail>>> msg = _GameServerUDP.Receive(); msg; msg = _GameServerUDP.Receive()) {
-                    std::shared_ptr<userGame> user = _getUserByUDPClient(msg->first);
-                    if (user) {
-                        Rengine::Entity::size_type entity;
-                        msg->second >> entity;
-                        _handleUDPMessage(user, msg->second, actions);
-                    } else {
-                        Rengine::Entity::size_type entity;
-                        msg->second >> entity;
-                        std::shared_ptr<userGame> user = _getUserByEntity(entity);
-                        if (user) {
-                            _handleEntityInfoUDPMessage(user, msg->second, actions);
-                        }
+                    if (msg->second.header.type.type == Communication::Type::ConnexionDetail && msg->second.header.type.precision == Communication::main::ConnexionDetailPrecision::ClientConnexion) {
+                        User user = {msg->first};
+                        _GameServerUDP.AddUser(user);
                     }
                 }
 
@@ -224,7 +207,6 @@ namespace RType {
                 for (auto it = clients.begin(); it != clients.end(); it++) {
                     std::shared_ptr<userGame> user = _getUserByClient(*it);
                     if (user) {
-                        this->_GameServerUDP.RemoveUser(user->user);
                         try {
                             if (!_ecs->isEntityActive(user->entity))
                                 continue;
