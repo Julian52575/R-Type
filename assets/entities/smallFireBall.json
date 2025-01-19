@@ -10,11 +10,11 @@
             }
         },
         "stats": {
-            "hp": 1,
-            "attack": 5,
+            "hp": 20,
+            "attack": 10,
             "defense": 1,
-            "speedY": 4,
-            "speedX": 200,
+            "speedY": 2,
+            "speedX": 5.5,
             "acceleration": 100,
             "enemyColisionDamage": 5
         },

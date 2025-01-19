@@ -1,0 +1,27 @@
+{
+   "image":{
+      "texturePath":"assets/images/spaceShip.png",
+      "origin":{
+         "x": 0,
+         "y": 0
+      },
+      "scale":{
+         "x":3,
+         "y":3
+      },
+      "animations":{
+         "frameRect":{
+            "x":0,
+            "y":0,
+            "width":32,
+            "height":17
+         },
+         "frameCount":3,
+         "frameDuration":0.6,
+         "frameDisplacement": {
+            "x":32,
+            "y":0
+         }
+      }
+   }
+}

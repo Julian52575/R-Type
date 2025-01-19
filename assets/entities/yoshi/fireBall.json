@@ -1,0 +1,26 @@
+{
+    "entity": {
+        "sprite": "assets/images/yoshi/fireBall.json",
+        "hitbox": {
+            "size": {
+                "x": 80, "y": 45
+            },
+            "offset": {
+                "x": -10, "y": -30
+            }
+        },
+        "stats": {
+            "hp": 31,
+            "attack": 20,
+            "defense": 1,
+            "speedY": 1.5,
+            "speedX": 2.5,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        }
+    }
+}

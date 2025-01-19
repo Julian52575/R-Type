@@ -15,7 +15,7 @@ function updateDeltatime(deltatime)  -- float deltatime
 end  -- return values are ignored
 
 function move(pos_x, pos_y)
-    return {(time * 10) % 100, 0.0} -- return x, y  -- float get converted to int automatically by the api
+    return {10, 0} -- return x, y  -- float get converted to int automatically by the api
 end
 
 function shoot(shoot1Deltatime, shoot2Deltatime, shoot3Deltatime)
