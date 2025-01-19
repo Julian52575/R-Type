@@ -10,21 +10,15 @@
                 "enemies": [
                     {
                         "json": "assets/entities/skeletonDragon.json",
-                        "x": 700,
-                        "y": 200,
-                        "script": "assets/scripts/dvd.lua"
+                        "x": 1450,
+                        "y": 900,
+                        "script": "assets/scripts/dvdSmart.lua"
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
-                        "x": 700,
-                        "y": 200,
-                        "script": "assets/scripts/dvdInverse.lua"
-                    },
-                    {
-                        "json": "assets/entities/spaceShip.json",
-                        "x": 200,
-                        "y": 800,
-                        "script": "assets/scripts/dvd.lua"
+                        "x": 1450,
+                        "y": 900,
+                        "script": "assets/scripts/dvdInverseSmart.lua"
                     }
                 ],
                 "endCondition": "time",
@@ -39,10 +33,11 @@
                 "scrollingSpeed": 30.30,
                 "enemies": [
                     {
-                        "json": "assets/entities/skeletonDragon.json",
-                        "x": 1700,
-                        "y": 540,
-                        "script": "assets/scripts/forward.lua"
+                        "json": "assets/entities/spaceShip.json",
+                        "x": 2000,
+                        "y": 1150,
+                        "script": "assets/scripts/dvdSmart.lua",
+                        "boss": true
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
@@ -52,10 +47,9 @@
                     },
                     {
                         "json": "assets/entities/skeletonDragon.json",
-                        "x": 1800,
-                        "y": 100,
-                        "boss": true,
-                        "script":"assets/scripts/boss.lua"
+                        "x": 860,
+                        "y": 500,
+                        "script":"assets/scripts/smartShoot.lua"
                     }
                 ],
                 "endCondition": "bossDefeat"
