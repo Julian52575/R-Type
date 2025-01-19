@@ -176,6 +176,9 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitbox
 
+        //partie alert
+        gameState.alertPlayer();
+
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
@@ -257,6 +260,17 @@ namespace RType {
         Rengine::SparseArray<RType::Components::Position>& spPosition = this->_ecs.getComponents<RType::Components::Position>();
         Rengine::SparseArray<RType::Components::Relationship>& spRelationship = this->_ecs.getComponents<RType::Components::Relationship>();
 
+        Rengine::Graphics::GraphicManager& manager = Rengine::Graphics::GraphicManagerSingletone::get();
+        Rengine::Graphics::SpriteSpecs spriteSpecs;
+        int radius = 7;
+
+        spriteSpecs.type = Rengine::Graphics::SpriteTypeCircle;
+        spriteSpecs.color = {255, 0, 0};
+        spriteSpecs.shapeData.outlineColor = {255, 255, 255};
+        spriteSpecs.shapeData.outlineThickness = 0;
+        spriteSpecs.shapeData.specifics.circleRadius = radius;
+        std::shared_ptr<Rengine::Graphics::ASprite> sprite = manager.createSprite(spriteSpecs);
+
         for (Rengine::ECS::size_type index = 0; index < this->_ecs.getEntityLimit(); index++) {
             if (index == this->_playerEntityId) {
                 continue;
@@ -273,10 +287,14 @@ namespace RType {
             Rengine::Graphics::vector2D<float> pos = spPosition[index]->getVector2D();
             float distance = sqrt(pow(playerPos.getVector2D().x - pos.x, 2) + pow(playerPos.getVector2D().y - pos.y, 2));
 
-            if (distance > 200) {
+
+            if (distance > 400) {
                 continue;
             }
-            std::cout << "Alert between " << int(this->_playerEntityId) << " and " << index << std::endl;
+            float angle = atan2(pos.y - playerPos.getVector2D().y, pos.x - playerPos.getVector2D().x);
+            float alertX = playerPos.getVector2D().x + 60 * cos(angle);
+            float alertY = playerPos.getVector2D().y + 60 * sin(angle);
+            manager.addToRender(sprite, {alertX - radius, alertY - radius});
         }
     }
 
