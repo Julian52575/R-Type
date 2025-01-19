@@ -1,16 +1,16 @@
 {
     "attack": {
         "type": "missiles",
-        "cooldown": 5.5,
+        "cooldown": 1.0,
         "missiles": [
             {
-                "json": "assets/entities/bigFireBall.json",
+                "json": "assets/entities/yoshi/fireBall.json",
                 "offset": {
-                    "x": 20, "y": -60
+                    "x": 10, "y": 0
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 20, "y": 0
+                    "x": 100, "y": 0
                 }
             }
         ]
