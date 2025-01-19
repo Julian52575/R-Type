@@ -198,6 +198,11 @@ namespace RType {
         msg.header.size = 0;
         msg << configID << gameState._clientUDP->getLocalEndpoint();
         gameState._clientTCP->Send(msg);
+        Message<Network::Communication::TypeDetail> msg2;
+        msg2.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
+        msg2.header.size = 0;
+        msg2 << gameState._clientTCP->getLocalEndpoint();
+        gameState._clientUDP->Send(msg2);
         gameState._sceneManager.setScene(GameScenes::GameScenesPlay);
         return State::StateGame;
     }
