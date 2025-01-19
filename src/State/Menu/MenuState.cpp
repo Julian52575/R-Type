@@ -61,8 +61,8 @@ namespace RType {
             this->_scenesArray[newScene % MENUSCENES_MAX]->reload();
             this->_currentScene = newScene;
         } else {
-            std::cerr << "Scene " << newScene << " not loaded: exiting..." << std::endl;
-            return StateNA;
+            // Non-loaded scene: go to title screen
+            this->_currentScene = MenuScenesTitleScreen;
         }
         return StateMenu;
     }

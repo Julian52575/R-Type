@@ -3,6 +3,7 @@
 
 #include <array>
 #include <rengine/RengineGraphics.hpp>
+#include <rengine/src/Graphics/ASound.hpp>
 #include <rengine/src/Graphics/ASprite.hpp>
 #include <rengine/src/Graphics/Vector.hpp>
 
@@ -50,6 +51,7 @@ namespace RType {
             std::shared_ptr<Rengine::Graphics::ASprite> _newLobbyButton;
             Rengine::Graphics::vector2D<float> _newLobbyButtonPos;
             std::shared_ptr<Rengine::Graphics::AText> _newLobbyButtonText;
+            std::shared_ptr<Rengine::Graphics::ASound> _errorSound;
     };
 
 }  // namespace RType

@@ -39,7 +39,7 @@ namespace RType {
 
         this->_deltatime += Rengine::Clock::getElapsedTime();
         manager.addToRender(this->_colorWheel, {.x= 100, .y = 100});
-        manager.addToRender(this->_rectangle, {.x= 200, .y = 300});
+        manager.addToRender(this->_rectangle, {.x= 1000, .y = 600});
         manager.addToRender(this->_text, {800, 50});
     }
         // Called each frame
@@ -82,7 +82,6 @@ namespace RType {
 
         this->_shaderIndex = (this->_shaderIndex + 1) % this->_shaderVector.size();
         window->setShader("", this->_shaderVector[this->_shaderIndex]);
-        std::cout << "Loaded shader : " << this->_shaderVector[this->_shaderIndex] << " at index " << this->_shaderIndex << std::endl;  //
     }
 
     void OptionsScene::initGraphics(void)
@@ -103,8 +102,8 @@ namespace RType {
         Rengine::Graphics::SpriteSpecs rectSpecs;
 
         rectSpecs.type = Rengine::Graphics::SpriteType::SpriteTypeRectangle;
-        rectSpecs.color = {255, 0, 0};
-        rectSpecs.shapeData.specifics.rectangleSize = {.x = 120, .y = 150};
+        rectSpecs.color = {255, 255, 255};
+        rectSpecs.shapeData.specifics.rectangleSize = {.x = 500, .y = 300};
         this->_rectangle = Rengine::Graphics::GraphicManagerSingletone::get().createSprite(rectSpecs);
     }
     void OptionsScene::initShaders(void)

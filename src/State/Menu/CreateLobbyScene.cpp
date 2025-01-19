@@ -58,6 +58,7 @@ namespace RType {
                 case Rengine::Graphics::UserInputTypeKeyboardSpecialPressed:
                     if (it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialENTER) {
                         this->copyTexbox();
+                        std::cout << "Exiting CreateLobbyScene with &netInfo.lobbyName = " << this->_netInfo.lobbyName << std::endl;
                         return MenuScenes::MenuScenesExitToLobby;
                     }
                     if (it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialESCAPE) {
@@ -68,6 +69,9 @@ namespace RType {
                     && copy.size() > 0) {
                         copy.resize(copy.size() - 1);
                         updated = true;
+                    }
+                    if (it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialESCAPE) {
+                        return static_cast<MenuScenes>(this->_sceneIndex - 1);
                     }
                     break;
 
