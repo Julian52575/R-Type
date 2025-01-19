@@ -2,11 +2,11 @@
 #ifndef SRC_GAME_LUAMANAGER_HPP_
 #define SRC_GAME_LUAMANAGER_HPP_
 
-#if DCMAKE_COMPILATION_
+// #if DCMAKE_COMPILATION_
     #include <lua.hpp>
-#else
-    #include <lua5.4/lua.hpp>
-#endif
+// #else
+    // #include <lua5.4/lua.hpp>
+// #endif
 
 #include <iostream>
 #include <any>

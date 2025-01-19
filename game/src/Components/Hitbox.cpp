@@ -77,36 +77,8 @@ namespace RType {
                     ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY)) {
                     continue;
                 }
-<<<<<<< HEAD
                 std::cout << "Colision between " << int(entity) << " and " << index << std::endl;
                 // #warning Debug print
-=======
-                float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
-                // float timeCooldown = 0.7f;
-
-                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                //      return;
-                // }
-                hitbox._lastCheckSeconds = currentTime;
-                //check si l'entité à une vie et si c'est le cas elle take damage
-                if (lifes[index].has_value() == true) {
-                    if (configWrapper.has_value() == true) {
-                        lifes[index]->takeDamage(configWrapper->get().getConfig().getStats().attack);
-                    }
-                    else {
-                        lifes[index]->takeDamage(1);
-                    }
-                }
-                if (lifeWrapper.has_value() == true) {
-                    if (configurations[index].has_value() == true) {
-                        lifeWrapper->get().takeDamage(configurations[index]->getConfig().getStats().attack);
-                    }
-                    else {
-                        lifeWrapper->get().takeDamage(1);
-                    }
-                }
-
->>>>>>> 1bf0979fc8d90dd222ea66c127248a9182430a77
             } // for index
         }
     }  // namespace Components

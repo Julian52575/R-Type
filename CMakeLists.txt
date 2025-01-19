@@ -81,12 +81,11 @@ if (WIN32)
     add_definitions(-D_WIN32_WINNT=0x0A00)
     # Install dir
     set(INSTALL_ROOT_DIR bin)
-    # CPack exclusive 
+    # CPack exclusive
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_VERSION 4)
     set(CPACK_WIX_SHORTCUTS_ON_DESKTOP ON)
     set(CPACK_WIX_CREATE_DESKTOP_SHORTCUTS "release")
-    #set(CPACK_WIX_PRODUCT_GUID "108415bb-0622-44d8-a270-8c22799aeb7d")
     set(CPACK_WIX_PROGRAM_ICON "${CMAKE_SOURCE_DIR}/release/assets/icon/r-type.ico")
 else()
     # Install dir
@@ -100,16 +99,13 @@ else()
     install(FILES "${CMAKE_BINARY_DIR}/r-type.desktop" DESTINATION /usr/share/applications)
     # Dependencies
     #set(CPACK_DEBIAN_PACKAGE_DEPENDS "SFML lua")
-
 endif()
 
 # Set installing rules
 install(TARGETS release DESTINATION ${INSTALL_ROOT_DIR})
-install(DIRECTORY "game/assets" DESTINATION "${INSTALL_ROOT_DIR}") 
-install(DIRECTORY "release/assets/icon" DESTINATION "${INSTALL_ROOT_DIR}/assets")
-install(FILES "release/assets/r-type.desktop.in" DESTINATION "${INSTALL_ROOT_DIR}/assets")
-install(FILES "game/serverConfig.json" DESTINATION "${INSTALL_ROOT_DIR}")
-
+install(DIRECTORY "game/assets" DESTINATION ${INSTALL_ROOT_DIR}) 
+install(DIRECTORY "release/assets/icon" DESTINATION ${INSTALL_ROOT_DIR})
+install(FILES "game/serverConfig.json" DESTINATION ${INSTALL_ROOT_DIR})
 
 # Set Cpack variables
 set(CPACK_PACKAGE_NAME "R-Type")

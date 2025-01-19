@@ -216,12 +216,6 @@ namespace RType {
 
         // Loading a random level
         for (auto file : std::filesystem::directory_iterator("assets/levels/")) {
-<<<<<<< HEAD
-=======
-            if (file.path().string() == "assets/levels/id.json") {
-                continue;
-            }
->>>>>>> 1bf0979fc8d90dd222ea66c127248a9182430a77
             configVector.push_back(file.path().string());
         }
         if (configVector.size() == 0) {
@@ -405,10 +399,7 @@ namespace RType {
                 continue;
             }
             std::cout << "Alert between " << int(this->_playerEntityId) << " and " << index << std::endl;
-<<<<<<< HEAD
             // #warning Debug print
-=======
->>>>>>> 1bf0979fc8d90dd222ea66c127248a9182430a77
         }
     }
 
