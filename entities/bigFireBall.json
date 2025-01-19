@@ -3,10 +3,10 @@
         "sprite": "assets/images/bigFireBall.json",
         "hitbox": {
             "size": {
-                "x": 175, "y": 150
+                "x": 100, "y": 120
             },
             "offset": {
-                "x": 0, "y": 0
+                "x": -50, "y": -70
             }
         },
         "stats": {
