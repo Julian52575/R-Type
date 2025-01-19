@@ -102,6 +102,7 @@ class Games {
         void _handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
         std::shared_ptr<userGame> _getUserByClient(std::shared_ptr<Connexion<Communication::TypeDetail>> client);
         std::shared_ptr<userGame> _getUserByTCPEndpoint(asio::ip::tcp::endpoint &TCPEndpoint);
+        std::shared_ptr<userGame> _getUserByEntity(Rengine::Entity::size_type entity);
         std::shared_ptr<userGame> _getUserByUDPClient(asio::ip::udp::endpoint &UDPClient);
         std::thread _gameThread;
         bool _running;

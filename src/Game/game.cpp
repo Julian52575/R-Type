@@ -148,6 +148,14 @@ namespace RType {
         return nullptr;
     }
 
+    std::shared_ptr<userGame> Games::_getUserByEntity(Rengine::Entity::size_type entity) {
+        for (std::shared_ptr<userGame> user : _users) {
+            if (user->entity == entity)
+                return user;
+        }
+        return nullptr;
+    }
+
     void Games::run() {
         while (_running) {
             try {
@@ -186,18 +194,15 @@ namespace RType {
                 for (std::optional<std::pair<asio::ip::udp::endpoint, Message<Communication::TypeDetail>>> msg = _GameServerUDP.Receive(); msg; msg = _GameServerUDP.Receive()) {
                     std::shared_ptr<userGame> user = _getUserByUDPClient(msg->first);
                     if (user) {
+                        Rengine::Entity::size_type entity;
+                        msg->second >> entity;
                         _handleUDPMessage(user, msg->second, actions);
-                    } else if (msg->second.header.type.type == Communication::Type::ConnexionDetail && msg->second.header.type.precision == Communication::main::ConnexionDetailPrecision::ClientConnexion) {
-                        asio::ip::tcp::endpoint TCPEndpoint;
-                        msg->second >> TCPEndpoint;
-                        std::shared_ptr<userGame> user = _getUserByTCPEndpoint(TCPEndpoint);
-                        std::cout << "User not found: " << TCPEndpoint << std::endl;
+                    } else {
+                        Rengine::Entity::size_type entity;
+                        msg->second >> entity;
+                        std::shared_ptr<userGame> user = _getUserByEntity(entity);
                         if (user) {
-                            std::cout << "Working" << std::endl;
-                            _GameServerUDP.RemoveUser(user->user);
-                            User newUser = {msg->first};
-                            _GameServerUDP.AddUser(newUser);
-                            user->user = newUser;
+                            _handleEntityInfoUDPMessage(user, msg->second, actions);
                         }
                     }
                 }
