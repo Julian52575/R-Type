@@ -75,8 +75,10 @@ namespace RType {
 
     void GameState::loadLevel(const std::string& jsonPath)
     {
-        std::cout << "load level : " << jsonPath << std::endl;
-        this->_levelManager.loadLevel(jsonPath);
+        // std::cout << "load level : " << jsonPath << std::endl;
+        // this->_levelManager.loadLevel(jsonPath);
+#warning Debug load level
+        this->_levelManager.loadLevel("assets/levels/yoshiIsland.json");
         this->createPlayer("assets/entities/skeletonDragon.json");
     }
 

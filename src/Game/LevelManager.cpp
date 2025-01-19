@@ -40,6 +40,7 @@ namespace RType {
         try {
             this->_levelConfig = resolver.get(jsonPath);
         } catch (std::exception& e) {
+            std::cerr << "Cannot load " << jsonPath << " : " << e.what() << std::endl;
             return false;
         }
         return this->loadScene(0);
