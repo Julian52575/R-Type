@@ -64,7 +64,11 @@ namespace Rengine {
             * Default: 0x, 0y
             */
             Rengine::Graphics::vector2D<uint8_t> iconSize = {0, 0};
-
+            /**
+            * @brief The minimum joystick threshold for the stick movement to be registered. Must be between 0 and 100.
+            * @Default: 5.9
+            */
+            float joystickThreshold = 5.9f;
             /**
             * @addtogroup Rengine::Graphics
             * @namespace Graphics

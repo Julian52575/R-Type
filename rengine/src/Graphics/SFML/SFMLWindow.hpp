@@ -2,6 +2,7 @@
 #ifndef _SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
 #define _SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Event.hpp>
@@ -9,6 +10,7 @@
 #include <SFML/Window/VideoMode.hpp>
 #include <optional>
 #include <memory>
+#include <vector>
 
 #include "../ASprite.hpp"
 #include "../AWindow.hpp"
@@ -41,6 +43,7 @@ namespace Rengine {
                 void resetDeltatime(void) noexcept;
                 uint64_t getDeltaTimeMicroseconds(void) noexcept;
                 float getDeltaTimeSeconds(void) noexcept;
+                void setShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 
             private:
                 void initSfKeyboardBindVector(void);
@@ -49,15 +52,19 @@ namespace Rengine {
                 sf::Color _backgroundColor;
                 sf::Clock _clock;
                 sf::Clock _deltatimeClock;
+                std::optional<sf::Shader> _shader;
                 std::vector<std::pair<sf::Keyboard::Key, UserInput>> _sfKeyboardToUserInputBindVector;
                 /**
                 * @return UserInput The UserInput matching the sf::Event::KeyEvent.
                 * @brief Get a UserInput from a sf::Keyboard
                 * Note: UserInput.UserInputType == UserInputTypeNA if no match
                 */
-                inline UserInput getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
+                inline UserInput getPressedUserInputFromSfKeyboard(const sf::Event::KeyEvent& key);
                 inline UserInput processJoystickMove(const sf::Event& event);
-                inline void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
+                void processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide(void);
+                inline void processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(unsigned int joystickId);
+                std::vector<unsigned int> _joystickIds = {0};
+                void removeJoystickFromVector(unsigned int joystickId);
         };
 
     }  // namespace Rengine
