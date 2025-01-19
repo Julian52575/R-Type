@@ -62,6 +62,9 @@ namespace RType {
                 if (relationships[index].has_value() == true && relationships[index]->isParent(uint64_t(entity)) == true) {
                     continue;
                 }
+                if (relationships[Rengine::ECS::size_type(entity)].has_value() == true && relationships[Rengine::ECS::size_type(entity)]->getGroup() == relationships[index]->getGroup()) {
+                    continue;
+                }
 
                 // Current entity data
                 float hitboxStartY = positions[index]->getVector2D().y + hitboxs[index]->getSpecs().offsetFromSpriteOrigin.y;

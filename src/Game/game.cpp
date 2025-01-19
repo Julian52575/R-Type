@@ -57,6 +57,10 @@ namespace RType {
         _gameThread = std::thread(&Games::run, this);
     };
 
+    bool Games::isRunning() {
+        return _running;
+    }
+
     void Games::initLevel(void)
     {
         // getting random level config
@@ -141,8 +145,19 @@ namespace RType {
                     if (!this->_levelManager.nextScene()) {
                         this->_levelManager.completeClear();
                         std::cout << "Level is over" << std::endl;
+                        Message<Communication::TypeDetail> broadCastLevelEnd;
+                        broadCastLevelEnd.header.type = {Communication::Type::ConnexionDetail, Communication::main::ConnexionDetailPrecision::LevelEnd};
+                        broadCastLevelEnd.header.size = 0;
+                        _GameServerTCP.SendAll(broadCastLevelEnd);
+                        while (Rengine::Clock::getElapsedTime() < 0.5f);
                         _running = false;
                         break;
+                    } else {
+                        std::cout << "Scene is over" << std::endl;
+                        Message<Communication::TypeDetail> broadCastSceneEnd;
+                        broadCastSceneEnd.header.type = {Communication::Type::ConnexionDetail, Communication::main::ConnexionDetailPrecision::SceneFinish};
+                        broadCastSceneEnd.header.size = 0;
+                        _GameServerTCP.SendAll(broadCastSceneEnd);
                     }
                 }
 
@@ -150,6 +165,7 @@ namespace RType {
                 Rengine::SparseArray<Components::Life>& lifes = this->_ecs->getComponents<Components::Life>();
                 Rengine::SparseArray<Components::Configuration>& configurations = this->_ecs->getComponents<Components::Configuration>();
                 Rengine::SparseArray<Components::Action>& actions = this->_ecs->getComponents<Components::Action>();
+                Rengine::SparseArray<Components::Relationship>& relation = this->_ecs->getComponents<Components::Relationship>();
 
                 for (std::optional<std::pair<std::shared_ptr<Connexion<Communication::TypeDetail>>, Message<Communication::TypeDetail>>> msg = _GameServerTCP.Receive(); msg; msg = _GameServerTCP.Receive()) {
                     _handleTCPMessage(msg->first, msg->second);
@@ -197,14 +213,15 @@ namespace RType {
                         if (!_ecs->isEntityActive(index))
                             continue;
                         Rengine::Entity &entity = this->_ecs->getEntity(index);
-                        if (lifes[index].has_value() == false || positions[index].has_value() == false || configurations[index].has_value() == false) {
+                        if (lifes[index].has_value() == false || positions[index].has_value() == false || configurations[index].has_value() == false || relation[index].has_value() == false) {
                             continue;
                         }
                         Message<Communication::TypeDetail> msg;
                         msg.header.type = {Communication::Type::EntityInfo, Communication::main::EntityInfoPrecision::InfoAll};
                         msg.header.size = 0;
                         uint16_t configID = Config::EntityConfigurationIdResolverSingletone::get().get(configurations[index]->getConfig().getJsonPath());
-                        msg << index << lifes[index]->getHp() << lifes[index]->getMaxHp() << positions[index]->getVector2D().x << positions[index]->getVector2D().y << configID;
+                        // std::cout << "Entity Group => " << relation[index]->getGroup() << std::endl;
+                        msg << index << lifes[index]->getHp() << lifes[index]->getMaxHp() << positions[index]->getVector2D().x << positions[index]->getVector2D().y << configID << relation[index]->getGroup();
                         _GameServerUDP.SendAll(msg);
                     } catch (Rengine::ECSExceptionEntityNotFound &e) {
                         std::cerr << "[" << this->getGameName() << "]: Entity #" << index << " not found. Ignoring its stats..." << std::endl;

@@ -55,33 +55,10 @@ namespace RType {
         }
         this->_currentSceneIndex = index;
         this->_time = 0;
-
-       // background
-        std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> backgroundImages
-            = this->getCurrentSceneBackgroundImages();
         // enemies
         std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> enemies
             = this->getCurrentSceneEnemies();
         uint64_t i = 0;
-
-        // No background : skip background
-        if (backgroundImages.has_value() == false) {
-            goto enemyLoading;
-        }
-        // No entity left : skip background
-        if ((this->_ecs->getEntityLimit() - this->_ecs->getActiveEntitiesCount()) < backgroundImages->get().size()) {
-            goto enemyLoading;
-        }
-        for (i = 0; i < backgroundImages->get().size(); i++) {
-            Rengine::Entity& bgEntity = this->_ecs->addEntity();
-
-            bgEntity.addComponent<RType::Components::Position>(0, 0);
-            bgEntity.setComponentsDestroyFunction(
-                [](Rengine::Entity& en) {
-                    en.removeComponent<RType::Components::Position>();
-                }
-            );
-        }
 
 enemyLoading:
         if (enemies.has_value() == false) {
@@ -170,14 +147,6 @@ loadSceneReturn:
             return std::nullopt;
         }
         return this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].enemies;
-    }
-
-    std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> LevelManager::getCurrentSceneBackgroundImages(void)
-    {
-        if (this->_levelConfig.has_value() == false) {
-            return std::nullopt;
-        }
-        return this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].backgroundImages;
     }
 
     void LevelManager::completeClear(void)

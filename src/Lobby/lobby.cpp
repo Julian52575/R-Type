@@ -86,9 +86,19 @@ bool Lobby::_handleMessages(std::shared_ptr<Connexion<Communication::TypeDetail>
 
 void Lobby::run() {
     while (_runing) {
-        for (std::optional<std::pair<std::shared_ptr<Connexion<Communication::TypeDetail>>, Message<Communication::TypeDetail>>> msg = _server.Receive(); msg; msg = _server.Receive()) {
-            if (msg->second.header.type.type == Communication::Type::LobbyInfo)
-                _handleMessages(msg->first, msg->second);
+        try {
+            for (std::optional<std::pair<std::shared_ptr<Connexion<Communication::TypeDetail>>, Message<Communication::TypeDetail>>> msg = _server.Receive(); msg; msg = _server.Receive()) {
+                if (msg->second.header.type.type == Communication::Type::LobbyInfo)
+                    _handleMessages(msg->first, msg->second);
+            }
+            for (auto &it : _games) {
+                if (!it->isRunning()) {
+                    std::cout << "[Lobby] Game with ID: " << Rengine::UUID::printUUID(it->getGameID()) << " is over." << std::endl;
+                    _games.erase(std::remove(_games.begin(), _games.end(), it), _games.end());
+                }
+            }
+        } catch (std::exception &e) {
+            std::cerr << "[Lobby] Error: " << e.what() << std::endl;
         }
     }
 };
@@ -107,7 +117,12 @@ std::shared_ptr<RType::Games> Lobby::createGame(std::string &ip, uint16_t UDPPor
 
 Lobby::~Lobby() {
     _runing = false;
-    for (auto &game : _games) {
-        game->stop();
+    try {
+        for (auto &game : _games) {
+            if (game->isRunning())
+                game->stop();
+        }
+    } catch (std::exception &e) {
+        std::cerr << "[Lobby] Error: " << e.what() << std::endl;
     }
 };

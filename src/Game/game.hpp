@@ -25,7 +25,9 @@ struct Communication {
             ClientReady = 4,
             PlayableEntityInGameId = 5,
             ServerStop = 6,
-            RequestPlaybleEntity = 7
+            RequestPlaybleEntity = 7,
+            LevelEnd = 8,
+            SceneFinish = 9
         };
         enum EntityActionPrecision : uint16_t {
             EntityActionTypeMove   = 0x00,
@@ -75,6 +77,7 @@ namespace RType {
     class Games {
         public:
             Games(std::string &ip, uint16_t TCPPort, uint16_t UDPPort, std::string gameName);
+            bool isRunning();
             void start();
             void stop();
             time_t &getTimeStarted();

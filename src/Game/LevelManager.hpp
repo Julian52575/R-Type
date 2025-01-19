@@ -65,12 +65,6 @@ namespace RType {
             * @brief Get the current scene's enemies.
             */
             std::optional<std::reference_wrapper<const std::vector<RType::Config::SceneEntityConfig>>> getCurrentSceneEnemies(void);
-            /**
-            * @fn getCurrentSceneBackgroundImages
-            * @return std::optional<const std::vector<RType::Config::ImageConfig>> A vector of ImageConfig
-            * @brief Get the current scene's background images.
-            */
-            std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> getCurrentSceneBackgroundImages(void);
             const std::string& getLevelName(void) const noexcept;
             void completeClear(void);
 
