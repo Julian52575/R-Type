@@ -140,6 +140,14 @@ namespace RType {
         return nullptr;
     }
 
+    std::shared_ptr<userGame> Games::_getUserByTCPEndpoint(asio::ip::tcp::endpoint &TCPEndpoint) {
+        for (std::shared_ptr<userGame> user : _users) {
+            if (user->client->getSocket().remote_endpoint() == TCPEndpoint)
+                return user;
+        }
+        return nullptr;
+    }
+
     void Games::run() {
         while (_running) {
             try {
@@ -179,6 +187,15 @@ namespace RType {
                     std::shared_ptr<userGame> user = _getUserByUDPClient(msg->first);
                     if (user) {
                         _handleUDPMessage(user, msg->second, actions);
+                    } else if (msg->second.header.type.type == Communication::Type::ConnexionDetail && msg->second.header.type.precision == Communication::main::ConnexionDetailPrecision::ClientConnexion) {
+                        asio::ip::tcp::endpoint TCPEndpoint;
+                        msg->second >> TCPEndpoint;
+                        std::shared_ptr<userGame> user = _getUserByTCPEndpoint(TCPEndpoint);
+                        if (user) {
+                            _GameServerUDP.RemoveUser(user->user);
+                            User newUser = {msg->first};
+                            user->user = newUser;
+                        }
                     }
                 }
 
