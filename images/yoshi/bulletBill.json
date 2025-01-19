@@ -1,0 +1,28 @@
+{
+    "image":{
+        "texturePath":"assets/images/yoshi/bulletBill.png",
+        "origin":{
+            "x": 0,
+            "y": 0
+        },
+        "scale":{
+            "x":1,
+            "y":1
+        },
+        "animations":{
+            "frameRect":{
+                "x":0,
+                "y":0,
+                "width": 28,
+                "height":23
+            },
+            "frameCount": 2,
+            "frameDuration": 0.01,
+            "frameDisplacement": {
+                "x":40,
+                "y":0
+            }
+        }
+    }
+}
+
