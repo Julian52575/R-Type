@@ -7,7 +7,11 @@
 namespace RType {
 
 
-    StateManager::StateManager(Rengine::ECS& ecs) : _ecs(ecs), _menu(ecs), _game(ecs, this->_menu.getAccessibilitySettings()), _lobby(ecs)
+    StateManager::StateManager(Rengine::ECS& ecs)
+        : _ecs(ecs),
+        _lobby(ecs, this->_lobbyInfo,this->_networkInfo),
+        _menu(ecs, this->_lobbyInfo, this->_networkInfo, this->_accessibilitySettings),
+        _game(ecs, this->_accessibilitySettings, this->_networkInfo)
     {
         this->_menu.registerComponents();
         this->_lobby.registerComponents();
@@ -16,22 +20,8 @@ namespace RType {
 
     void StateManager::setState(State newState)
     {
+        // Special cases
         switch (newState) {
-            // Going to lobby
-            case State::StateLobby:
-                // From menu
-                if (this->_currentState == State::StateMenu) {
-                    // Pass the lobby info
-                    this->_lobby.setLobbyInfo(this->_menu.getLobbyInfo());
-                }
-                break;
-
-            case State::StateGame:
-                if (this->_currentState == State::StateLobby) {
-                    this->_game.setNetworkInfo(this->_lobby.getNetworkInfo());
-                }
-                break;
-
             // Exit game on NA
             case State::StateNA:
                 Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();

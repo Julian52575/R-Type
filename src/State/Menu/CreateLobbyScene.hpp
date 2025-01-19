@@ -8,17 +8,17 @@
 #include <rengine/src/Graphics/AText.hpp>
 
 #include "Scenes.hpp"
+#include "src/State/GameState.hpp"
 #include "src/State/LobbyState.hpp"
 #include "src/State/AScene.hpp"
 namespace RType {
 
     class CreateLobbyScene : public AScene<MenuScenes> {
         public:
-            CreateLobbyScene(std::string& lobbyNameToFill)
-                : AScene(MenuScenesCreateLobby), _lobbyName(lobbyNameToFill)  // Constructor in hpp for AScene(sceneIndex)
+            CreateLobbyScene(NetworkInfo& netInfoToFill)
+                : AScene(MenuScenesCreateLobby), _netInfo(netInfoToFill)  // Constructor in hpp for AScene(sceneIndex)
             {
-                this->_lobbyName = "";
-                this->_lobbyName.resize(16);
+                this->_netInfo.lobbyName.resize(14);
                 this->initGraphics();
             }
             ~CreateLobbyScene(void) = default;
@@ -30,7 +30,7 @@ namespace RType {
         private:
             void initGraphics(void);
             void copyTexbox(void);
-            std::string& _lobbyName;
+            NetworkInfo& _netInfo;
 
         private:
             std::shared_ptr<Rengine::Graphics::ASprite> _background;

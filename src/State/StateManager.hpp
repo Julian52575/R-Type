@@ -11,6 +11,7 @@
 #include "GameState.hpp"
 #include "LobbyState.hpp"
 #include "Menu/MenuState.hpp"
+#include "src/Game/AccessibilitySettings.hpp"
 
 namespace RType {
 
@@ -49,6 +50,11 @@ namespace RType {
             */
             SceneManager& getMenuSceneManager(void) noexcept;
 
+        // shared structs
+        private:
+            LobbyInfo _lobbyInfo;
+            NetworkInfo _networkInfo;
+            AccessibilitySettings _accessibilitySettings;
 
         private:
             Rengine::ECS& _ecs;

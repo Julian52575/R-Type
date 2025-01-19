@@ -33,8 +33,11 @@
 
 namespace RType {
 
-    GameState::GameState(Rengine::ECS& ecs, AccessibilitySettings& access)
-        : AState(ecs), _levelManager(ecs, this->_sceneManager), _accessibilitySettings(access)
+    GameState::GameState(Rengine::ECS& ecs, AccessibilitySettings& access, NetworkInfo& networkInfo)
+        : AState(ecs),
+        _levelManager(ecs, this->_sceneManager),
+        _accessibilitySettings(access),
+        _networkInfo(networkInfo)
     {
         this->_clientTCP = nullptr;
         this->_clientUDP = nullptr;
@@ -106,6 +109,9 @@ namespace RType {
                         gameState.getClientUDP()->Send(msg);
                         break;
                     }
+
+                    default:
+                        break;
                 }
             }
         }  // for it
@@ -161,10 +167,6 @@ namespace RType {
         State s = this->_sceneManager.callCurrentSceneFunction<State, GameState&>(*this);
 
         return s;
-    }
-
-    void GameState::setNetworkInfo(const NetworkInfo& networkInfo) noexcept {
-        this->_networkInfo = networkInfo;
     }
 
     Rengine::Entity &GameState::getOrCreateEntity(Rengine::Entity::size_type id, uint16_t configurationID) {

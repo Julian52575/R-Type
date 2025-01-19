@@ -7,6 +7,7 @@
 
 #include "MenuState.hpp"
 #include "src/State/AScene.hpp"
+#include "src/State/GameState.hpp"
 #include "src/State/Menu/CreateLobbyScene.hpp"
 #include "src/State/Menu/EnterLobbyInfoScene.hpp"
 #include "src/State/Menu/OptionsScene.hpp"
@@ -16,7 +17,11 @@
 
 namespace RType {
 
-    MenuState::MenuState(Rengine::ECS& ecs) : AState(ecs)
+    MenuState::MenuState(Rengine::ECS& ecs, LobbyInfo& lobbyInfo, NetworkInfo &netInfo, AccessibilitySettings& accessibilitySettings)
+        : AState(ecs),
+        _netInfo(netInfo),
+        _lobbyInfo(lobbyInfo),
+        _accessibilitySettings(accessibilitySettings)
     {
         this->initScenes();
     }
@@ -66,17 +71,7 @@ namespace RType {
         this->_scenesArray[MenuScenesEnterLobbyInfo] = std::make_shared<EnterLobbyInfoScene>(EnterLobbyInfoScene(this->_lobbyInfo));
         this->_scenesArray[MenuScenesTitleScreen] = std::make_shared<TitleScreenScene>();
         this->_scenesArray[MenuScenesOptions] = std::make_shared<OptionsScene>(this->_accessibilitySettings);
-        this->_scenesArray[MenuScenesCreateLobby] = std::make_shared<CreateLobbyScene>(this->_newRoomName);
-    }
-
-    /*              Getter              */
-    const LobbyInfo& MenuState::getLobbyInfo(void) const noexcept
-    {
-        return this->_lobbyInfo;
-    }
-    AccessibilitySettings& MenuState::getAccessibilitySettings(void) noexcept
-    {
-        return this->_accessibilitySettings;
+        this->_scenesArray[MenuScenesCreateLobby] = std::make_shared<CreateLobbyScene>(this->_netInfo);
     }
 
 }  // namespace RType

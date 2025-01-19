@@ -61,7 +61,7 @@ namespace RType {
                         return MenuScenes::MenuScenesExitToLobby;
                     }
                     if (it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialESCAPE) {
-                        this->_lobbyName = "";
+                        this->_netInfo.lobbyName = "";
                         return MenuScenes::MenuScenesEnterLobbyInfo;
                     }
                     if (it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialBACKSPACE
@@ -72,7 +72,7 @@ namespace RType {
                     break;
 
                 case Rengine::Graphics::UserInputTypeKeyboardCharPressed:
-                    if (copy.size() >= 16) {
+                    if (copy.size() >= 14) {
                         break;
                     }
                     copy += it.data.keyboardChar;
@@ -90,7 +90,7 @@ namespace RType {
     }
     void CreateLobbyScene::copyTexbox(void)
     {
-        this->_lobbyName = this->_textbox->getText();
+        this->_netInfo.lobbyName = this->_textbox->getText();
     }
 
     void CreateLobbyScene::initGraphics(void)

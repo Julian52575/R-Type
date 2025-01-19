@@ -35,9 +35,10 @@ namespace RType {
     };
 
     struct NetworkInfo {
-        std::string ip;
-        uint16_t TCPPort;
-        uint16_t UDPPort;
+        std::string ip = "0.0.0.0";
+        uint16_t TCPPort = 0;
+        uint16_t UDPPort = 0;
+        std::string lobbyName = "";
     };
 
     /**
@@ -48,7 +49,7 @@ namespace RType {
     */
     class GameState : public AState {
         public:
-            GameState(Rengine::ECS& ecs, AccessibilitySettings& access);
+            GameState(Rengine::ECS& ecs, AccessibilitySettings& access, NetworkInfo& networkInfo);
             ~GameState(void) = default;
             /**
             * @fn registerComponents
@@ -71,7 +72,6 @@ namespace RType {
             * @brief Load a level.
             */
             void loadLevel(const std::string& jsonPath);
-            void setNetworkInfo(const NetworkInfo& networkInfo) noexcept;
 
         public:
             /**
@@ -90,6 +90,7 @@ namespace RType {
 
         /*      Player management       */
         private:
+            NetworkInfo& _networkInfo;
             /**
             * @fn createPlayer
             * @param std::string A path to an entity config
@@ -98,7 +99,6 @@ namespace RType {
             void createPlayer(const std::string& jsonPath);
             std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _clientTCP;
             std::unique_ptr<ClientUDP<Network::Communication::TypeDetail>> _clientUDP;
-            NetworkInfo _networkInfo;
             std::vector<std::pair<Rengine::Entity::size_type, Rengine::Entity::size_type>> _entities;
 
             Rengine::Entity &getOrCreateEntity(Rengine::ECS::size_type entityId, uint16_t configurationId);

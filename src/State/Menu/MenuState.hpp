@@ -12,6 +12,7 @@
 
 #include "src/State/AScene.hpp"
 #include "src/State/AState.hpp"
+#include "src/State/GameState.hpp"
 #include "src/State/LobbyState.hpp"
 #include "src/State/Menu/Scenes.hpp"
 #include "src/State/State.hpp"
@@ -23,7 +24,7 @@ namespace RType {
 
     class MenuState : public AState {
         public:
-            MenuState(Rengine::ECS& ecs);
+            MenuState(Rengine::ECS& ecs, LobbyInfo& lobbyInfo, NetworkInfo &netInfo, AccessibilitySettings& accessibilitySettings);
             ~MenuState(void) = default;
             /**
             * @fn registerComponents
@@ -36,13 +37,6 @@ namespace RType {
             * @brief Run the program in it's current state.
             */
             State run(void);
-            const LobbyInfo& getLobbyInfo(void) const noexcept;
-            /**
-             * @fn getAccessibilitySettings
-             * @return The accessibility settings set by the player.
-             * @brief Return the accessibility settings.
-             */
-            AccessibilitySettings& getAccessibilitySettings(void) noexcept;
 
         private:
             /**
@@ -56,9 +50,9 @@ namespace RType {
 
         // These variables are passed as parameters to the scenes.
         private:
-            LobbyInfo _lobbyInfo;
-            std::string _newRoomName;
-            AccessibilitySettings _accessibilitySettings;
+            NetworkInfo& _netInfo;
+            LobbyInfo& _lobbyInfo;
+            AccessibilitySettings& _accessibilitySettings;
 
         private:
             MenuScenes _currentScene = MenuScenesTitleScreen;

@@ -17,6 +17,8 @@ namespace RType {
 
     enum LobbyScenes {
         LobbySceneInitConnexion,
+        LobbyScenesJoinLobby,
+        LobbyScenesCreateLobby,
         LobbySceneRun
     };
 
@@ -43,15 +45,16 @@ namespace RType {
 
     class LobbyState : public AState {
         public:
-            LobbyState(Rengine::ECS& ecs);
+            LobbyState(Rengine::ECS& ecs, LobbyInfo& lobbyInfo, NetworkInfo& networkInfo);
             ~LobbyState(void) = default;
             /*
             * @fn registerComponents
             * @brief Registers the neccessary component to the ECS.
             */
             void registerComponents(void);
-            friend State initLobbyConnexion(LobbyState &LobbyState);
-
+            friend State initLobbyConnexion(LobbyState &lobbyState);
+            friend State joinLobbyScene(LobbyState& lobbyState);
+            friend State createLobbyScene(LobbyState& lobbyState);
             friend State runLevel(LobbyState &LobbyState);
 
             void initScenes(void);
@@ -63,18 +66,11 @@ namespace RType {
             */
             State run(void);
 
-            /*
-            * @fn setLobbyInfo
-            * @param lobbyInfo The data of the lobby.
-            * @brief Set the lobbyInfo from the menu by the StateManager.
-            */
-            void setLobbyInfo(const LobbyInfo& lobbyInfo) noexcept;
             void handleInput(void);
             void makeGameInfos(std::string name, uint16_t playerCount, time_t time, Rengine::UUID::uuid_t &id);
             void setGameInfos(void);
             DisplayGameInfo& getGameInfoByUuid(Rengine::UUID::uuid_t &id);
             void updateGameInfos(void);
-            NetworkInfo &getNetworkInfo(void) noexcept;
 
             float _time = 0;
             size_t _begin = 0;
@@ -82,8 +78,8 @@ namespace RType {
             std::shared_ptr<Rengine::Graphics::ASprite> _cursor;
 
         private:
-            LobbyInfo _lobbyInfo;
-            NetworkInfo _networkInfo;
+            LobbyInfo& _lobbyInfo;
+            NetworkInfo& _networkInfo;
             std::unique_ptr<ClientTCP<Network::Communication::TypeDetail>> _client;
     };
 
