@@ -71,7 +71,7 @@ namespace RType {
             if (path == "") {
                 std::string sId = std::to_string(configurationId);
 
-                throw EntityMakerException("No match for id : " + sId + ".");
+                throw EntityMakerException("No match for configuration id : " + sId + ". Make sure the game's assets are unmodified.");
             }
             return RType::EntityMaker::make(ecs, path, group, configPtr);
         }
