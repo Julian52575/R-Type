@@ -231,7 +231,6 @@ namespace RType {
                         msg.header.type = {Communication::Type::EntityInfo, Communication::main::EntityInfoPrecision::InfoAll};
                         msg.header.size = 0;
                         uint16_t configID = Config::EntityConfigurationIdResolverSingletone::get().get(configurations[index]->getConfig().getJsonPath());
-                        // std::cout << "Entity Group => " << relation[index]->getGroup() << std::endl;
                         msg << index << lifes[index]->getHp() << lifes[index]->getMaxHp() << positions[index]->getVector2D().x << positions[index]->getVector2D().y << configID << relation[index]->getGroup();
                         _GameServerUDP.SendAll(msg);
                     } catch (Rengine::ECSExceptionEntityNotFound &e) {

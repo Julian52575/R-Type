@@ -7,6 +7,7 @@
 #include "src/Config/ConfigurationIdResolver.hpp"
 #include "Team.hpp"
 #include "src/Components/Relationship.hpp"
+#include "src/Components/Life.hpp"
 
 void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
     asio::ip::udp::endpoint UDPClient;
@@ -32,6 +33,31 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     uint16_t levelID = Config::LevelConfigurationIdResolverSingletone::get().get(_levelManager.getLevelName());
     msg2 << entityID << levelID;
     this->_GameServerTCP.Send(msg2, client);
+    Rengine::SparseArray<Components::Position>& positions = this->_ecs->getComponents<Components::Position>();
+    Rengine::SparseArray<Components::Life>& lifes = this->_ecs->getComponents<Components::Life>();
+    Rengine::SparseArray<Components::Configuration>& configurations = this->_ecs->getComponents<Components::Configuration>();
+    Rengine::SparseArray<Components::Relationship>& relation = this->_ecs->getComponents<Components::Relationship>();
+    for (Rengine::Entity::size_type index = 0; index <= this->_ecs->getHighestEntityId(); index++) {
+        try {
+            if (!_ecs->isEntityActive(index))
+                continue;
+            if (entityID == index)
+                continue;
+            Rengine::Entity &entity = this->_ecs->getEntity(index);
+            if (lifes[index].has_value() == false || positions[index].has_value() == false || configurations[index].has_value() == false || relation[index].has_value() == false) {
+                continue;
+            }
+            Message<Communication::TypeDetail> msg;
+            msg.header.type = {Communication::Type::EntityInfo, Communication::main::EntityInfoPrecision::InfoAll};
+            msg.header.size = 0;
+            uint16_t configID = Config::EntityConfigurationIdResolverSingletone::get().get(configurations[index]->getConfig().getJsonPath());
+            msg << index << lifes[index]->getHp() << lifes[index]->getMaxHp() << positions[index]->getVector2D().x << positions[index]->getVector2D().y << configID << relation[index]->getGroup();
+            this->_GameServerTCP.Send(msg, client);
+        } catch (Rengine::ECSExceptionEntityNotFound &e) {
+            std::cerr << "[" << this->getGameName() << "]: Entity #" << index << " not found. Ignoring its stats..." << std::endl;
+            continue;
+        }
+    }
 }
 
 void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
