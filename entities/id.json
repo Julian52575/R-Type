@@ -1,5 +1,14 @@
 {
     "1": "assets/entities/skeletonDragon.json",
     "2": "assets/entities/smallFireBall.json",
-    "3": "assets/entities/bigFireBall.json"
+    "3": "assets/entities/bigFireBall.json",
+    "4": "assets/entities/spaceShip.json",
+    "5": "assets/entities/laserBeam.json",
+    "6": "assets/entities/yoshi/bird.json",
+    "7": "assets/entities/yoshi/bulletBill.json",
+    "8": "assets/entities/yoshi/fatBird.json",
+    "9": "assets/entities/yoshi/fireBall.json",
+    "10": "assets/entities/yoshi/flyguy.json",
+    "11": "assets/entities/yoshi/kamek.json",
+    "12": "assets/entities/yoshi/yoshicopter.json"
 }

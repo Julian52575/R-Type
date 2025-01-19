@@ -10,7 +10,7 @@
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 0.01, "y": 0
+                    "x": 80, "y": 0
                 }
             }
         ]

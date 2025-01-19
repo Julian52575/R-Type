@@ -1,0 +1,26 @@
+{
+    "entity": {
+        "sprite": "assets/images/yoshi/fatBird.json",
+        "hitbox": {
+            "size": {
+                "x": 80, "y": 70
+            },
+            "offset": {
+                "x": -40, "y": 0
+            }
+        },
+        "stats": {
+            "hp": 220,
+            "attack": 120,
+            "defense": 1,
+            "speedY": 1.5,
+            "speedX": 1.5,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        }
+    }
+}
