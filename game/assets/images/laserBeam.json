@@ -1,0 +1,14 @@
+{
+    "image":{
+        "texturePath":"assets/images/laserBeam.png",
+        "origin":{
+            "x": 0,
+            "y": 0
+        },
+        "scale":{
+            "x":1.5,
+            "y":1
+        }
+    }
+}
+

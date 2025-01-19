@@ -21,6 +21,7 @@ namespace RType {
 
             private:
                 Config::EntityConfigHitbox _hitbox;
+                float _lastCheckSeconds = 0;
         };  // class Hitbox
     }  // namespace Components
 }  // namespace RType

@@ -2,6 +2,7 @@
 #include <memory>
 #include <rengine/Rengine.hpp>
 #include <rengine/RengineGraphics.hpp>
+#include <rengine/src/Clock/Clock.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/src/Graphics/WindowSpecs.hpp>
@@ -46,7 +47,7 @@ int main(void)
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->pollInput();
         stateManager.run();
         parseInputCloseWindow();
-        Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->resetDeltatime();
+        Rengine::Clock::restart();
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->render();
         Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager().clear();
     }

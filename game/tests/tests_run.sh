@@ -3,7 +3,7 @@ RED='\033[0;31m'
 GRN='\033[0;32m'
 NC='\033[0m' # No Color
 CXX="g++"
-CXXFLAGS+="-std=c++20 -g -isystem /usr/local/include -iquote ../ -pthread -lgtest -lgtest_main"
+CXXFLAGS+="-std=c++20 -g -isystem /usr/local/include -iquote ../ -DUNIT_TESTS -pthread -lgtest -lgtest_main"
 FAILURE_LIST=""
 ##
 # @param $1 The file to compile
@@ -30,6 +30,7 @@ function runTest () {
     fi
     if ! ./$OUTPUTFILE 1>> $LOGFILE 2>> $LOGFILE; then
         FAILURE_LIST="$FAILURE_LIST""$TESTNAME "
+        echo -e "$RED$TESTNAME: Failure.$NC"
     else
         echo -e "$GRN$TESTNAME: Success.$NC"
 
@@ -51,8 +52,11 @@ runTest "Config/AttackConfigResolver_t.cpp ../src/Config/AttackConfig.cpp" "Atta
 runTest "Config/ImageConfig_t.cpp ../src/Config/ImageConfig.cpp" "ImageConfigResolver"
 runTest "Config/EntityConfigResolver_t.cpp ../src/Config/EntityConfig.cpp ../src/Config/AttackConfig.cpp ../src/Config/ImageConfig.cpp" "EntityConfigResolver"
 runTest "Config/LevelConfigResolver_t.cpp ../src/Config/*.cpp" "LevelConfigResolver"
+runTest "Config/ConfigurationIdResolver_t.cpp" "ConfigurationIdResolver"
 
 runTest "Components/Relationship_t.cpp ../src/Components/Relationship.cpp" "Relationship"
+
+runTest "Game/LuaManager_t.cpp ../src/Game/LuaManager.cpp -llua5.4" "LuaManager"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})

@@ -48,7 +48,7 @@ namespace RType {
         /**
         * @brief The player input and the equivalent EntityAction
         */
-        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerInputBindVector = {
+        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerKeyboardInputBindVector = {
             {
                 {Rengine::Graphics::UserInputTypeKeyboardChar, ' '},
                 Network::EntityActionType::EntityActionTypeShoot1
@@ -78,6 +78,30 @@ namespace RType {
                 Network::EntityActionType::EntityActionTypeMove
             }
         };
+        static std::vector<std::pair<Rengine::Graphics::UserInput, Network::EntityActionType>> PlayerJoystickInputBindVector = {
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickButton, .data= {.joystickInput= {.data= {.joystickButton= 0}}}},
+                 Network::EntityActionType::EntityActionTypeShoot1
+            },
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickButton, .data= {.joystickInput= {.data= {.joystickButton= 4}}}},
+                 Network::EntityActionType::EntityActionTypeShoot2
+            },
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickButton, .data= {.joystickInput= {.data= {.joystickButton= 5}}}},
+                 Network::EntityActionType::EntityActionTypeShoot3
+            },
+            {
+                 {.type= Rengine::Graphics::UserInputTypeJoystickLeftMove},
+                 Network::EntityActionType::EntityActionTypeMove
+            }
+        };
+
+
+        struct LuaInfos {
+            std::string scriptPath;
+            int id;
+        };
 
         class Action {
             public:
@@ -92,7 +116,7 @@ namespace RType {
                 * @param scriptPath The path to the script to execute if ActionSource == ActionSourceLua
                 * @brief Create an instance of Action Component.
                 */
-                Action(std::reference_wrapper<SceneManager> entitySceneManager, ActionSource source, const std::string& scriptPath = "");
+                Action(ActionSource source, const std::string& scriptPath = "");
                 ~Action(void) = default;
                 /**
                 * @fn begin
@@ -116,7 +140,7 @@ namespace RType {
                 * @fn processInput
                 * @brief Process the inputs from the ActionSource
                 */
-                friend void processInput(Action& actionComponent) noexcept;
+                void updateFromSource(void) noexcept;
                 /**
                 * @fn processAction
                 * @brief Process an input from the received paquet.
@@ -130,7 +154,7 @@ namespace RType {
                 * @exception ActionException when ActionSource != ActionSourceUserInput
                 * @brief Change the needed input for the outcome action.
                 */
-                void changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction);
+                static void changePlayerInput(Rengine::Graphics::UserInput newInput, Network::EntityActionType resultingAction);
                 /**
                 * @fn getNeededInput
                 * @param outcome The EntityActionType to analyse.
@@ -138,7 +162,7 @@ namespace RType {
                 * UserInput.type == UserInputTypeNA when no match was found.
                 * @brief Get the UserInput needed to trigger an EntityActionType
                 */
-                const Rengine::Graphics::UserInput getPlayerNeededInput(Network::EntityActionType outcome) const;
+                static const Rengine::Graphics::UserInput getPlayerNeededInput(Network::EntityActionType outcome);
 
                 /*      Function for ECS        */
                 /**
@@ -150,13 +174,16 @@ namespace RType {
                 */
                 static void componentFunction(Rengine::ECS& ecs, Action& component, Rengine::Entity& entity);
                 friend void updateDeltatimes(Action& component) noexcept;
-                inline void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
+                void handleMove(Network::EntityAction& action, RType::Components::Configuration& config, RType::Components::Position& pos);
                 inline void handleShoot(Action& actionComponent, Network::EntityAction& action,
                         Rengine::ECS& ecs, Rengine::Entity& entity, Configuration& entityConfig);
                 friend inline void handleShootMissile(Action& actionComponent, Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
                 inline void handleShootBuff(Network::EntityAction& action, Rengine::ECS& ecs,
                         Rengine::Entity& entity, Configuration& entityConfig, const std::optional<Config::AttackConfig>& attackConfig);
+
+                container_t &getActionVector(void) noexcept;
+                ActionSource getActionSource(void) const noexcept;
 
             private:
                 /**
@@ -171,14 +198,24 @@ namespace RType {
                 * @exception ActionException when ActionSource != ActionSourceUserInput
                 * @brief Process the input and add a new EntityAction inside the vector.
                 */
-                void processUserInput(const Rengine::Graphics::UserInput& input);
+                void processUserInputKeyboard(const Rengine::Graphics::UserInput& input);
+                /**
+                * @brief Same for joysticks
+                */
+                void processUserInputJoystick(const Rengine::Graphics::UserInput& input);
 
             private:
-                std::reference_wrapper<SceneManager> _sceneManager;
+                /**
+                 * @brief Call lua scripts and add output in the vector
+                */
+                void processLuaScriptInput(void);
+
+            private:
                 ActionSource _actionSource;
                 std::optional<std::string> _scriptPath;
                 container_t _actionVector;
                 float _shootDeltatimes[3] = {0.0f};
+                struct LuaInfos _luaInfos;
         };  // class Action
     }  // namespace Components
 }  // namespace RType
