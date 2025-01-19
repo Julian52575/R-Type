@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include <gtest/gtest.h>
+#include <gtest/internal/gtest-port.h>
 #include <memory>
 #include <functional>
 #include <string>
@@ -146,4 +147,127 @@ TEST(ECS, clearComponents)
     ecs.clearComponents();
     EXPECT_THROW(ecs.getComponents<int>(), Rengine::ECSExceptionComponentNotRegistred);
     EXPECT_THROW(ecs.getComponents<float>(), Rengine::ECSExceptionComponentNotRegistred);
+}
+TEST(ECS, getHighestEntityId)
+{
+    Rengine::ECS ecs;
+
+    EXPECT_EQ(ecs.getHighestEntityId(), 0);
+    Rengine::Entity& e = ecs.addEntity();
+
+    EXPECT_EQ(ecs.getHighestEntityId(), Rengine::ECS::size_type(e));
+    Rengine::Entity& e2 = ecs.addEntity();
+
+    Rengine::ECS::size_type high = Rengine::ECS::size_type(e2) > Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+
+    EXPECT_EQ(ecs.getHighestEntityId(), high);
+}
+TEST(ECS, doubleRemoveEntity)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    auto idx = uint64_t(e);
+
+    EXPECT_NO_THROW(ecs.removeEntity(e));
+    EXPECT_THROW(ecs.removeEntity(e), Rengine::ECSExceptionEntityNotFound);
+    EXPECT_THROW(ecs.removeEntity(idx), Rengine::ECSExceptionEntityNotFound);
+}
+
+void onEntityRemovalFunction(Rengine::Entity&, int& var)
+{
+    var += 1;
+}
+TEST(ECS, onEntityRemovalFunction)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    Rengine::Entity& e2 = ecs.addEntity();
+    int var = 0;
+    std::function<void(Rengine::Entity&, int&)> fun(onEntityRemovalFunction);
+
+    ecs.setOnEntityRemovalFunction<int&>(fun);
+    ASSERT_NO_THROW(ecs.removeEntity(e));
+    ASSERT_EQ(var, 0);  // no onEntityRemovalFunction call without template
+    ecs.removeEntity<int&>(e2, var);
+    ASSERT_EQ(var, 1);
+
+    // Check highest id
+    Rengine::ECS::size_type high = Rengine::ECS::size_type(e2) > Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    Rengine::ECS::size_type low = Rengine::ECS::size_type(e2) < Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    EXPECT_EQ(ecs.getHighestEntityId(), low);
+}
+TEST(ECS, onEntityRemovalFunctionVoid)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    Rengine::Entity& e2 = ecs.addEntity();
+    uint64_t var = 0;
+    std::function<void(Rengine::Entity&)> fun = [&var](Rengine::Entity&) -> void {
+        var += 1;
+    };
+
+    ecs.setOnEntityRemovalFunction<>(fun);
+    ASSERT_NO_THROW(ecs.removeEntity(e));
+    ASSERT_EQ(var, 1);  // no onEntityRemovalFunction call without template
+    ecs.removeEntity<>(e2);
+    EXPECT_EQ(var, 2);
+
+    // Check highest id
+    Rengine::ECS::size_type high = Rengine::ECS::size_type(e2) > Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    Rengine::ECS::size_type low = Rengine::ECS::size_type(e2) < Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    EXPECT_EQ(ecs.getHighestEntityId(), low);
+}
+TEST(ECS, onEntityRemovalFunctionIndex)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    Rengine::Entity& e2 = ecs.addEntity();
+    int var = 0;
+    std::function<void(Rengine::Entity&, int&)> fun(onEntityRemovalFunction);
+
+    ecs.setOnEntityRemovalFunction<int&>(fun);
+    ASSERT_NO_THROW(ecs.removeEntity(uint64_t(e)));
+    ASSERT_EQ(var, 0);  // no onEntityRemovalFunction call without template
+    ecs.removeEntity<int&>(uint64_t(e2), var);
+    ASSERT_EQ(var, 1);
+
+    // Check highest id
+    Rengine::ECS::size_type high = Rengine::ECS::size_type(e2) > Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    Rengine::ECS::size_type low = Rengine::ECS::size_type(e2) < Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    EXPECT_EQ(ecs.getHighestEntityId(), low);
+}
+TEST(ECS, onEntityRemovalFunctionVoidIndex)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    Rengine::Entity& e2 = ecs.addEntity();
+    uint64_t var = 0;
+    std::function<void(Rengine::Entity&)> fun = [&var](Rengine::Entity&) -> void {
+        var += 1;
+    };
+
+    ecs.setOnEntityRemovalFunction<>(fun);
+    ASSERT_NO_THROW(ecs.removeEntity(uint64_t(e)));  // No exception when no template
+    EXPECT_EQ(var, 1);
+    ecs.removeEntity<>(uint64_t(e2));
+    EXPECT_EQ(var, 2);
+    // Check highest id
+    Rengine::ECS::size_type high = Rengine::ECS::size_type(e2) > Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+    Rengine::ECS::size_type low = Rengine::ECS::size_type(e2) < Rengine::ECS::size_type(e) ? Rengine::ECS::size_type(e2) : Rengine::ECS::size_type(e);
+
+    EXPECT_EQ(ecs.getHighestEntityId(), low);
+}
+TEST(ECS, isEntityActive)
+{
+    Rengine::ECS ecs;
+    Rengine::Entity& e = ecs.addEntity();
+    Rengine::Entity& e2 = ecs.addEntity();
+
+    ASSERT_TRUE(ecs.isEntityActive(uint64_t(e)));
+    ASSERT_TRUE(ecs.isEntityActive(uint64_t(e2)));
+    ecs.removeEntity(e);
+    ecs.removeEntity(e2);
+    ASSERT_FALSE(ecs.isEntityActive(uint64_t(e)));
+    ASSERT_FALSE(ecs.isEntityActive(uint64_t(e2)));
+    ASSERT_FALSE(ecs.isEntityActive(-1));
 }
