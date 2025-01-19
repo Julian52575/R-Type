@@ -1,0 +1,19 @@
+{
+    "attack": {
+        "type": "missiles",
+        "cooldown": 5.0,
+        "missiles": [
+            {
+                "json": "assets/entities/yoshi/bulletBill.json",
+                "offset": {
+                    "x": 10, "y": 0
+                },
+                "controlType": "velocity",
+                "velocity": {
+                    "x": 100, "y": 0
+                },
+                "timeLimit": 30.0
+            }
+        ]
+    }
+}

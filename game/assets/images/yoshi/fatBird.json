@@ -1,0 +1,28 @@
+{
+    "image":{
+        "texturePath":"assets/images/yoshi/fatBird.png",
+        "origin":{
+            "x": 22,
+            "y": 22
+        },
+        "scale":{
+            "x":3,
+            "y":3
+        },
+        "animations":{
+            "frameRect":{
+                "x":0,
+                "y":0,
+                "width": 45,
+                "height":44
+            },
+            "frameCount": 4,
+            "frameDuration": 0.10,
+            "frameDisplacement": {
+                "x":46,
+                "y":0
+            }
+        }
+    }
+}
+
