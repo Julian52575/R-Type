@@ -11,42 +11,96 @@
                     {
                         "json": "assets/entities/yoshi/flyguy.json",
                         "x": 1800,
-                        "y": 100,
-                        "script": "assets/scripts/smartShoot.lua"
+                        "y": 150,
+                        "script": "assets/scripts/dvd.lua"
                     },
                     {
-                        "json": "assets/entities/yoshi/yoshicopter.json",
-                        "x": 1600,
-                        "y": 200,
-                        "script": "assets/scripts/smartShoot.lua"
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 500,
+                        "y": 980,
+                        "script": "assets/scripts/dvd.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 800,
+                        "y": 400,
+                        "script": "assets/scripts/dvdInverse.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 1200,
+                        "y": 700,
+                        "script": "assets/scripts/dvdInverse.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 400,
+                        "y": 780,
+                        "script": "assets/scripts/dvdInverse.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 666,
+                        "y": 666,
+                        "script": "assets/scripts/dvdInverse.lua"
                     },
                     {
                         "json": "assets/entities/yoshi/bird.json",
-                        "x": 1400,
-                        "y": 300,
-                        "script": "assets/scripts/smartShoot.lua"
+                        "x": 2000,
+                        "y": 1310,
+                        "script": "assets/scripts/forwardSlightlyUp.lua"
                     },
                     {
-                        "json": "assets/entities/yoshi/fatBird.json",
-                        "x": 1200,
-                        "y": 400,
-                        "script": "assets/scripts/smartShoot.lua"
+                        "json": "assets/entities/yoshi/bird.json",
+                        "x": 2000,
+                        "y": 1310,
+                        "script": "assets/scripts/forwardSlightlyUp.lua"
                     },
                     {
-                        "json": "assets/entities/yoshi/kamek.json",
-                        "x": 1000,
-                        "y": 500,
-                        "script": "assets/scripts/smartShoot.lua"
+                        "json": "assets/entities/yoshi/bird.json",
+                        "x": 2000,
+                        "y": 1340,
+                        "script": "assets/scripts/forwardSlightlyUp.lua"
                     },
                     {
-                        "json": "assets/entities/yoshi/bulletBill.json",
-                        "x": 800,
-                        "y": 600,
-                        "script": "assets/scripts/smartShoot.lua"
+                        "json": "assets/entities/yoshi/bird.json",
+                        "x": 2000,
+                        "y": 1240,
+                        "script": "assets/scripts/forwardSlightlyUp.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/bird.json",
+                        "x": 1999,
+                        "y": 1220,
+                        "script": "assets/scripts/forwardSlightlyUp.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 440,
+                        "y": 1200,
+                        "script": "assets/scripts/dvd.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 560,
+                        "y": 1100,
+                        "script": "assets/scripts/dvd.lua"
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 500,
+                        "y": 1400,
+                        "script": "assets/scripts/dvd.lua",
+                        "boss": true
+                    },
+                    {
+                        "json": "assets/entities/yoshi/flyguy.json",
+                        "x": 380,
+                        "y": 1440,
+                        "script": "assets/scripts/dvd.lua"
                     }
                 ],
-                "endCondition": "time",
-                "endConditionTime": 60.0
+                "endCondition": "bossDefeat"
             }
         ]
     }
