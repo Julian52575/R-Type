@@ -11,7 +11,7 @@ namespace RType {
         : _ecs(ecs),
         _lobby(ecs, this->_lobbyInfo,this->_networkInfo),
         _menu(ecs, this->_lobbyInfo, this->_networkInfo, this->_accessibilitySettings),
-        _game(ecs, this->_accessibilitySettings, this->_networkInfo)
+        _game(ecs, this->_accessibilitySettings, this->_networkInfo, this->_lobbyInfo)
     {
         this->_menu.registerComponents();
         this->_lobby.registerComponents();

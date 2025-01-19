@@ -12,6 +12,7 @@
 #include "LobbyState.hpp"
 #include "Menu/MenuState.hpp"
 #include "src/Game/AccessibilitySettings.hpp"
+#include "NetworkStructs.hpp"
 
 namespace RType {
 

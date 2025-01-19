@@ -16,6 +16,7 @@
 #include "AState.hpp"
 #include "src/State/State.hpp"
 #include "src/Game/LevelManager.hpp"
+#include "NetworkStructs.hpp"
 
 namespace RType {
 
@@ -34,13 +35,6 @@ namespace RType {
         GameScenesGameOver
     };
 
-    struct NetworkInfo {
-        std::string ip = "0.0.0.0";
-        uint16_t TCPPort = 0;
-        uint16_t UDPPort = 0;
-        std::string lobbyName = "";
-    };
-
     /**
     * @addtogroup RType
     * @namespace RType
@@ -49,7 +43,7 @@ namespace RType {
     */
     class GameState : public AState {
         public:
-            GameState(Rengine::ECS& ecs, AccessibilitySettings& access, NetworkInfo& networkInfo);
+            GameState(Rengine::ECS& ecs, AccessibilitySettings& access, NetworkInfo& networkInfo, LobbyInfo& lobbyInfo);
             ~GameState(void) = default;
             /**
             * @fn registerComponents
@@ -91,6 +85,7 @@ namespace RType {
         /*      Player management       */
         private:
             NetworkInfo& _networkInfo;
+            LobbyInfo& _lobbyInfo;
             /**
             * @fn createPlayer
             * @param std::string A path to an entity config

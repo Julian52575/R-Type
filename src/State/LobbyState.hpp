@@ -6,10 +6,10 @@
 #include <rengine/RengineNetworkClient.hpp>
 
 #include "AState.hpp"
-#include "GameState.hpp"
 #include "src/State/State.hpp"
 #include "src/Network/EntityAction.hpp"
 #include "GameState.hpp"
+#include "NetworkStructs.hpp"
 
 #include <ctime>
 
@@ -20,27 +20,6 @@ namespace RType {
         LobbyScenesJoinLobby,
         LobbyScenesCreateLobby,
         LobbySceneRun
-    };
-
-    struct LobbyInfo {
-        std::string serverIp = "127.0.0.1";
-        uint16_t port = 4242;
-        std::string playerJson = "assets/entities/playerDefault.json";
-    };
-
-    struct GameInfo {
-        std::string name;
-        Rengine::UUID::uuid_t id;
-        uint16_t playerCount;
-        time_t time;
-    };
-
-    struct DisplayGameInfo {
-        std::shared_ptr<Rengine::Graphics::AText> name;
-        std::shared_ptr<Rengine::Graphics::AText> playerCount;
-        std::shared_ptr<Rengine::Graphics::AText> time;
-        std::shared_ptr<Rengine::Graphics::ASprite> background;
-        GameInfo Infos;
     };
 
     class LobbyState : public AState {

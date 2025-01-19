@@ -19,6 +19,7 @@
 #include "src/State/Menu/Scenes.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Game/AccessibilitySettings.hpp"
+#include "src/State/NetworkStructs.hpp"
 
 namespace RType {
 

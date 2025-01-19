@@ -14,6 +14,7 @@
 #include "src/State/Menu/Scenes.hpp"
 #include "src/State/Menu/TitleScreenScene.hpp"
 #include "src/State/State.hpp"
+#include "src/State/NetworkStructs.hpp"
 
 namespace RType {
 

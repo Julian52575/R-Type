@@ -1,10 +1,13 @@
-#include "src/State/LobbyState.hpp"
-#include "src/State/State.hpp"
+
 #include <climits>
 #include <rengine/src/CustomUUID.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
 #include <rengine/Rengine.hpp>
+
+#include "src/State/LobbyState.hpp"
+#include "src/State/State.hpp"
+#include "NetworkStructs.hpp"
 
 namespace RType {
     LobbyState::LobbyState(Rengine::ECS& ecs, LobbyInfo& lobbyInfo, NetworkInfo& networkInfo)

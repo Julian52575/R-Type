@@ -30,11 +30,12 @@
 #include "src/Components/Life.hpp"
 #include "src/Game/Team.hpp"
 #include "src/Config/ConfigurationIdResolver.hpp"
+#include "NetworkStructs.hpp"
 
 namespace RType {
 
-    GameState::GameState(Rengine::ECS& ecs, AccessibilitySettings& access, NetworkInfo& networkInfo)
-        : AState(ecs),
+    GameState::GameState(Rengine::ECS& ecs, AccessibilitySettings& access, NetworkInfo& networkInfo, LobbyInfo& lobbyInfo)
+        : AState(ecs), _lobbyInfo(lobbyInfo),
         _levelManager(ecs, this->_sceneManager),
         _accessibilitySettings(access),
         _networkInfo(networkInfo)
@@ -151,16 +152,15 @@ namespace RType {
 
     void GameState::loadLevel(const std::string& jsonPath)
     {
-        std::cout << "load level : " << jsonPath << std::endl;
-        // this->_levelManager.loadLevel(jsonPath);
-        uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get("assets/entities/skeletonDragon.json");
+        std::cout << "Playing " << jsonPath << std::endl;
+        this->_levelManager.loadLevel(jsonPath);
+        uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(this->_lobbyInfo.playerJson);
         Message<Network::Communication::TypeDetail> msg;
         msg.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
         msg.header.size = 0;
         msg << configID << this->_clientUDP->getLocalEndpoint();
         this->_clientTCP->Send(msg);
     }
-
 
     State GameState::run(void)
     {
@@ -222,6 +222,7 @@ namespace RType {
             configVector.push_back(file.path().string());
         }
         if (configVector.size() == 0) {
+            gameState._levelManager.completeClear();
             return State::StateMenu;
         }
         idx = Rengine::RNG::rngFunction() % configVector.size();
@@ -241,7 +242,7 @@ namespace RType {
             if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId) {
                 Rengine::Entity::size_type id;
                 *msg >> id;
-                uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get("assets/entities/skeletonDragon.json");
+                uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(gameState._lobbyInfo.playerJson);
                 Rengine::Entity &entity = gameState.getOrCreateEntity(id, configID);
 
                 entity.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
@@ -305,6 +306,7 @@ namespace RType {
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
             gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
+            gameState._levelManager.completeClear();
             return State::StateMenu;
         }
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
@@ -323,6 +325,7 @@ namespace RType {
             gameState._clientUDP = std::make_unique<ClientUDP<Network::Communication::TypeDetail>>(gameState._networkInfo.ip, gameState._networkInfo.UDPPort);
         } catch (const std::exception& e) {
             std::cerr << "Error" << e.what() << std::endl;
+            gameState._levelManager.completeClear();
             return State::StateLobby;
         }
         gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
