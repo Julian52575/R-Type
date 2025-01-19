@@ -57,6 +57,10 @@ namespace Rengine {
         public:
             const char *what() const noexcept { return "Rengine::ECS: The onEntityRemovalFunction and the provided template have different type definition."; };
     };
+    class ECSExceptionBadOnEntityCreationFunctionType : public std::exception {
+        public:
+            const char *what() const noexcept { return "Rengine::ECS: The onEntityCreationFunction and the provided template have different type definition."; };
+    };
     class ECSException : public std::exception {
         public:
             ECSException(const std::string& msg) : _msg("Rengine::ECS: " + msg) {};
@@ -117,6 +121,7 @@ namespace Rengine {
             * @exception ECSE
             * @brief Add a blank entity to the ECS.
             */
+            /* Replaced by templated function
             Entity& addEntity(void)
             {
                 for (size_type i = 0; i < this->_currentEntities.size(); i++) {
@@ -134,6 +139,7 @@ namespace Rengine {
                 // Every entity is already used
                 throw ECSExceptionCannotAddEntityLimit();
             }
+            */
             /**
             * @fn removeEntity
             * @param Entity The entity to remove. Note that using a reference entity again WILL result in a glitch. :(
@@ -417,7 +423,7 @@ namespace Rengine {
             }
             /**
             * @fn removeEntity
-            * @template Parameters The parameters of the onEntityRemovalFunction.
+            * @template Parameters The parameters of the onEntityRemovalFunction after the Entity&.
             * @param idx The index of the entity to remove
             * @param params The parameters to pass to the onEntityRemovalFunction.
             * @exception ECSExceptionEntityNotFound The asked entity is not registred in the ECS.
@@ -476,6 +482,48 @@ namespace Rengine {
                 }
                 return this->_currentEntities[id].has_value();
             }
+            /**
+            * @fn addEntity
+            * @exception ECSExceptionCannotAddEntityLimit The entity limit has been reached and no place is available.
+            * @exception ECSE
+            * @brief Add an empty entity to the ECS.
+            */
+            template<class ... Parameters>
+            Entity& addEntity(Parameters&& ... params)
+            {
+                size_type i = this->findIdForNewEntity();
+
+                if (i == static_cast<size_type>(-1)) {
+                    // Every entity is already used
+                    throw ECSExceptionCannotAddEntityLimit();
+                }
+                this->_currentEntities[i].emplace(this->_registry, i);
+                this->_currentEntitiesCount += 1;
+                if (i > this->_maxEntityId) {
+                    this->_maxEntityId = i;
+                }
+                if (this->_onEntityCreationFunction.has_value() == true) {
+                    try {
+                        std::function<void(Entity&, Parameters&&...)> fun =
+                            std::any_cast<std::function<void(Entity&, Parameters&&...)>>(this->_onEntityCreationFunction.value());
+
+                        fun(this->_currentEntities[i].value(), params...);
+                    } catch (std::bad_any_cast& e) {;}
+                }
+                return this->_currentEntities[i].value();
+            }
+            /**
+            * @fn setOnEntityCreationFunction
+            * @template Parameters The paremeters of the function to be passed after the Entity&.
+            * @param fun A function templated void(Entity&, Parameters&&).
+            * @brief Set a function to be run when any entity is created using the templated addEntity method.
+            * Is prototyped void(Entity&, Parameters&&).
+            */
+            template<class ... Parameters>
+            void setOnEntityCreationFunction(const std::function<void(Entity&, Parameters&&...)> fun)
+            {
+                this->_onEntityCreationFunction = fun;
+            }
 
         private:
             /**
@@ -499,6 +547,20 @@ namespace Rengine {
                 }
                 this->_maxEntityId = maxDifferent;
             }
+            /**
+             * @brief
+             */
+            size_type findIdForNewEntity(void) const noexcept
+            {
+                for (size_type i = 0; i < this->_currentEntities.size(); i++) {
+                    // If Entity i exists, continue
+                    if (this->_currentEntities[i].has_value() == true) {
+                        continue;
+                    }
+                    return i;
+                }
+                return static_cast<size_type>(-1);
+            }
 
 
         private:
@@ -512,6 +574,8 @@ namespace Rengine {
             std::unordered_map<std::type_index, std::any> _functionArray;
             //           std::function<void(Entity&, Params&& ...)>
             std::optional<std::any> _onEntityRemovalFunction;
+            //           std::function<void(Entity&, Params&& ...)>
+            std::optional<std::any> _onEntityCreationFunction;
     };  // class ECS
 }  // namespace Rengine
 #endif  // SRC_ECS_HPP_
