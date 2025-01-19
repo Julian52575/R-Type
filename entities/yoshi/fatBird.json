@@ -10,11 +10,11 @@
             }
         },
         "stats": {
-            "hp": 450,
-            "attack": 80,
+            "hp": 220,
+            "attack": 120,
             "defense": 1,
-            "speedY": 0.5,
-            "speedX": 1.5,
+            "speedY": 1.5,
+            "speedX": 0.5,
             "acceleration": 100
         },
         "characteristics": {
