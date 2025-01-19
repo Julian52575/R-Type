@@ -1,7 +1,7 @@
 {
     "attack": {
         "type": "missiles",
-        "cooldown": 3.0,
+        "cooldown": 1.5,
         "missiles": [
             {
                 "json": "assets/entities/yoshi/fireBall.json",
@@ -10,7 +10,7 @@
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 10, "y": 0
+                    "x": 100, "y": 0
                 }
             },
             {
@@ -20,7 +20,7 @@
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 10, "y": -2
+                    "x": 90, "y": -80
                 }
             },
             {
@@ -30,7 +30,7 @@
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 10, "y": 2
+                    "x": 90, "y": 80
                 }
             }
         ]

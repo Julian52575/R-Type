@@ -2,8 +2,8 @@
     "image":{
         "texturePath":"assets/images/yoshi/fatBird.png",
         "origin":{
-            "x": 0,
-            "y": 0
+            "x": 22,
+            "y": 22
         },
         "scale":{
             "x":3,

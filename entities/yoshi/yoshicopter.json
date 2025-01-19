@@ -3,10 +3,10 @@
         "sprite": "assets/images/yoshi/yoshicopter.json",
         "hitbox": {
             "size": {
-                "x": 30, "y": 23
+                "x": 80, "y": 50
             },
             "offset": {
-                "x": 0, "y": 0
+                "x": -40, "y": -10
             }
         },
         "stats": {
