@@ -4,7 +4,7 @@
             {
                 "backgroundMusic": "assets/musics/sm64_impact.wav",
                 "background": [
-                    "assets/images/yoshi/forestBackground.json"
+                    "assets/images/yoshi/background/forest.json"
                 ],
                 "scrollingSpeed": 15.15,
                 "enemies": [
