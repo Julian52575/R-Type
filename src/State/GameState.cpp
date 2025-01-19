@@ -79,7 +79,7 @@ namespace RType {
         // this->_levelManager.loadLevel(jsonPath);
 #warning Debug load level
         this->_levelManager.loadLevel("assets/levels/yoshiIsland.json");
-        this->createPlayer("assets/entities/skeletonDragon.json");
+        this->createPlayer("assets/entities/yoshi/yoshicopter.json");
     }
 
 
@@ -121,6 +121,7 @@ namespace RType {
             configVector.push_back(file.path().string());
         }
         if (configVector.size() == 0) {
+            gameState._levelManager.completeClear();
             return State::StateMenu;
         }
         idx = Rengine::RNG::rngFunction() % configVector.size();
@@ -136,6 +137,7 @@ namespace RType {
             if (!gameState._levelManager.nextScene()) {
                 gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
                 std::cout << "Level finished !" << std::endl;
+                gameState._levelManager.completeClear();
                 return State::StateMenu;
             }
         }
@@ -178,6 +180,7 @@ namespace RType {
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialESCAPE})) {
             gameState._sceneManager.setScene(GameScenes::GameScenesLoadLevel);
+            gameState._levelManager.completeClear();
             return State::StateMenu;
         }
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()

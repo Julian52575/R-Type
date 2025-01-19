@@ -73,9 +73,9 @@ namespace RType {
             * @brief Get the current scene's background images.
             */
             std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> getCurrentSceneBackgroundImages(void);
+            void completeClear(void);
 
         private:
-            void completeClear(void);
             void clearCurrentScene(void);
 
         private:

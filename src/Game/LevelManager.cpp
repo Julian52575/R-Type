@@ -57,12 +57,17 @@ namespace RType {
         if (index >= this->_levelConfig->get().getScenes().size()) {
             return false;
         }
+        this->_currentSceneIndex = index;
+        this->_time = 0;
         if (this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic != "") {
             Rengine::Graphics::SoundSpecs music;
 
             music.soundPath = this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic;
             music.loop = true;
             try {
+                if (this->_backgroundMusic != nullptr) {
+                    this->_backgroundMusic->reset();
+                }
                 this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(music);
                 this->_backgroundMusic->play();
             } catch (std::exception& e) {
@@ -70,8 +75,6 @@ namespace RType {
                 this->_backgroundMusic = nullptr;
             }
         }
-        this->_currentSceneIndex = index;
-        this->_time = 0;
 
        // background
         std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> backgroundImages
@@ -230,6 +233,7 @@ loadSceneReturn:
     {
         this->_currentSceneBackgroundEntities.clear();
         this->_bossId = std::nullopt;
+        this->_backgroundMusic = nullptr;
         this->_time = 0;
         for (auto bgIt : this->_currentSceneBackgroundEntities) {
             try {
