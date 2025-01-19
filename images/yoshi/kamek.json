@@ -1,0 +1,14 @@
+{
+    "image":{
+        "texturePath":"assets/images/yoshi/kamek.png",
+        "origin":{
+            "x": 22,
+            "y": 13
+        },
+        "scale":{
+            "x":3,
+            "y":3
+        }
+    }
+}
+

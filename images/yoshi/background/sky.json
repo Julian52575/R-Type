@@ -1,0 +1,14 @@
+{
+    "image":{
+        "texturePath":"assets/images/yoshi/background/sky.jpg",
+        "origin":{
+            "x": 120,
+            "y": 0
+        },
+        "scale":{
+            "x":2,
+            "y":2
+        }
+    }
+}
+

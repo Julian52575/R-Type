@@ -14,7 +14,7 @@
             "attack": 5,
             "defense": 1,
             "speedY": 4,
-            "speedX": 200,
+            "speedX": 5,
             "acceleration": 100,
             "enemyColisionDamage": 5
         },

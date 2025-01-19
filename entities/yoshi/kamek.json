@@ -1,0 +1,31 @@
+{
+    "entity": {
+        "sprite": "assets/images/yoshi/kamek.json",
+        "hitbox": {
+            "size": {
+                "x": 100, "y": 50
+            },
+            "offset": {
+                "x": -50, "y": -20
+            }
+        },
+        "stats": {
+            "hp": 300,
+            "attack": 40,
+            "defense": 10,
+            "speedY": 4,
+            "speedX": 4,
+            "acceleration": 100
+        },
+        "characteristics": {
+            "enemyDamageOnColision": true,
+            "damagedOnColision": true,
+            "persistsOffScreen": false
+        },
+        "attacks": {
+            "shoot1": "assets/attacks/yoshi/fireBall.json",
+            "shoot2": "assets/attacks/yoshi/diagonalFireBall.json",
+            "shoot3": "assets/attacks/yoshi/bulletBill.json"
+        }
+    }
+}
