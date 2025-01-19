@@ -24,8 +24,10 @@
 #include "src/Components/Components.hpp"
 #include "src/Components/Hitbox.hpp"
 #include "src/Components/Relationship.hpp"
-#include "src/Components/HitboxViewer.hpp"
-#include "src/Components/HealthViewer.hpp"
+#ifdef DEBUG
+    #include "src/Components/HitboxViewer.hpp"
+    #include "src/Components/HealthViewer.hpp"
+#endif
 #include "src/Components/Chrono.hpp"
 #include "src/Components/Life.hpp"
 #include "src/Game/Team.hpp"
@@ -130,10 +132,12 @@ namespace RType {
         this->_ecs.registerComponent<RType::Components::Hitbox>();
         this->_ecs.registerComponent<RType::Components::Relationship>();
         this->_ecs.registerComponent<RType::Components::Clickable>();
+    #ifdef DEBUG
         this->_ecs.registerComponent<RType::Components::HitboxViewer>();
+        this->_ecs.registerComponent<RType::Components::HealthViewer>();
+    #endif
         this->_ecs.registerComponent<RType::Components::Metadata>();
         this->_ecs.registerComponent<RType::Components::Velocity>();
-        this->_ecs.registerComponent<RType::Components::HealthViewer>();
         this->_ecs.registerComponent<RType::Components::Chrono>();
         this->_ecs.registerComponent<RType::Components::Life>();
 
@@ -144,8 +148,10 @@ namespace RType {
         this->_ecs.setComponentFunction<RType::Components::Velocity>(RType::Components::Velocity::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Hitbox>(RType::Components::Hitbox::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Clickable>(RType::Components::Clickable::componentFunction);
+    #ifdef DEBUG
         this->_ecs.setComponentFunction<RType::Components::HitboxViewer>(RType::Components::HitboxViewer::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::HealthViewer>(RType::Components::HealthViewer::componentFunction);
+    #endif
         this->_ecs.setComponentFunction<RType::Components::Chrono>(RType::Components::Chrono::componentFunction);
         this->_ecs.setComponentFunction<RType::Components::Life>(RType::Components::Life::componentFunction);
     }
@@ -170,15 +176,16 @@ namespace RType {
         RType::Config::EntityConfig enConfig = entity.getComponent<RType::Components::Configuration>().getConfig();
         RType::Components::Sprite& sp = entity.addComponent<RType::Components::Sprite>(enConfig.getSprite().getSpecs());
 
+    #ifdef DEBUG
         entity.addComponent<RType::Components::HitboxViewer>(enConfig.getHitbox().size.x, enConfig.getHitbox().size.y);
         entity.addComponent<RType::Components::HealthViewer>(enConfig.getStats().hp);
-
         entity.setComponentsDestroyFunction(
            [](Rengine::Entity& en) {
                 en.removeComponent<RType::Components::HitboxViewer>();
                 en.removeComponent<RType::Components::HealthViewer>();
             }
         );
+    #endif
         this->_entities.push_back({id, Rengine::Entity::size_type(entity)});
         return entity;
     }
@@ -294,8 +301,10 @@ namespace RType {
 
         //partie render
         gameState._ecs.runComponentFunction<RType::Components::Sprite>();  // render sprite
+    #ifdef DEBUG
         gameState._ecs.runComponentFunction<RType::Components::HealthViewer>();//render health
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitbox
+    #endif
 
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
         .receivedInput(Rengine::Graphics::UserInputTypeMouseLeftClick)) {
