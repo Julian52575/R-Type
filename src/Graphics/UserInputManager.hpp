@@ -22,9 +22,7 @@ namespace Rengine {
         enum UserInputType {
             UserInputTypeNA,
             UserInputTypeKeyboardChar,
-            UserInputTypeKeyboardCharPressed,
             UserInputTypeKeyboardSpecial,
-            UserInputTypeKeyboardSpecialPressed,
             UserInputTypeMouseLeftClick,
             UserInputTypeMouseRightClick,
             UserInputTypeJoystickConnected,
@@ -34,7 +32,6 @@ namespace Rengine {
             UserInputTypeJoystickRightMove,
             UserInputTypeJoystickRightPressed,
             UserInputTypeJoystickButton,
-            UserInputTypeJoystickDPad,
             UserInputTypeWindowClosed
         };
         std::ostream& operator<<(std::ostream& os, const UserInputType& inputType);
@@ -42,6 +39,7 @@ namespace Rengine {
         enum UserInputKeyboardSpecial {
             UserInputKeyboardSpecialNA,
             UserInputKeyboardSpecialESCAPE,
+            UserInputKeyboardSpecialSPACE,
             UserInputKeyboardSpecialENTER,
             UserInputKeyboardSpecialTAB,
             UserInputKeyboardSpecialSHIFT,
@@ -51,19 +49,6 @@ namespace Rengine {
             UserInputKeyboardSpecialArrowDOWN,
             UserInputKeyboardSpecialArrowLEFT,
             UserInputKeyboardSpecialArrowRIGHT
-        };
-
-        union JoystickInputData {
-            /**
-            * @brief the position of the joystick from -100 to +100
-            */
-            Rengine::Graphics::vector2D<float> dpadPosition;
-            Rengine::Graphics::vector2D<float> joystickPosition;
-            unsigned int joystickButton;
-        };
-        struct JoystickInput {
-            unsigned int joystickId;
-            JoystickInputData data;
         };
 
         /**
@@ -76,7 +61,11 @@ namespace Rengine {
             char keyboardChar;
             enum UserInputKeyboardSpecial keyboardSpecial;
             Rengine::Graphics::vector2D<float> mousePosition;
-            JoystickInput joystickInput;
+            /**
+            * @brief the position of the joystick from -100 to +100
+            */
+            Rengine::Graphics::vector2D<float> joystickPosition;
+            unsigned int joystickButton;
         };
 
         /**
@@ -130,20 +119,19 @@ namespace Rengine {
                 */
                 size_type size(void) const noexcept;
                 /**
-                * @fn receivedInput
+                * @fn size
                 * @param input The input (type and data have to be filled) to retrive.
                 * @return An optional wrapper to the last input received who match the provided type
                 * @brief Retrives the last input of the provided type or a nullopt if not input was received.
                 */
                 std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInput& input);
                 /**
-                * @fn receivedInput
+                * @fn size
                 * @param inputType The type to retrive
-                * @param inputData If applicate to the inputType, the data to match (ie: data.char = 'c' or data.keyboardSpecial = KeyboardSpecialENTER)
                 * @return An optional wrapper to the last input received who match the provided type
                 * @brief Retrives the last input of the provided type or a nullopt if not input was received.
                 */
-                std::optional<std::reference_wrapper<const UserInput>> receivedInput(const UserInputType inputType, const UserInputData inputData = {0});
+                std::optional<std::reference_wrapper<const UserInput>> receivedInput(UserInputType inputType);
 
             public:
                 /**

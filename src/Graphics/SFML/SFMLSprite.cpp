@@ -18,35 +18,22 @@ namespace Rengine {
             SFMLSprite::SFMLSprite(const SpriteSpecs& spriteSpecs, uint64_t creationTickMicroseconds)
                 : ASprite(spriteSpecs, creationTickMicroseconds), _renderObject(spriteSpecs)
             {
-                bool textureLoadingSuccess = false;
-
+                // setSpriteSpecs
+                this->_spriteSpecs = spriteSpecs;
                 // Load texture if set
                 if (this->_spriteSpecs.texturePath != "") {
                     try {
                         this->_texture.loadFromFile(this->_spriteSpecs.texturePath);
-                        this->_texture.setSmooth(true);
                         this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
-                        textureLoadingSuccess = true;
-                    } catch (std::exception& e) {;}
-                }
-                if (textureLoadingSuccess == false) {
-                    // Creating a texture with the provided color for shaders comptatibility and error handling
-                    sf::Color color = {this->_spriteSpecs.color.x,
-                        this->_spriteSpecs.color.y, this->_spriteSpecs.color.z, this->_spriteSpecs.opacity};
-                    sf::Image image;
+                    } catch (std::exception& e) {
+                        std::string msg = e.what();
 
-                    image.create(1, 1, color);
-                    this->_texture.loadFromImage(image);
-                    this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
+                        throw SpriteException(msg);
+                    }
                 }
-                this->applySpecs(spriteSpecs);
-            }
-            void SFMLSprite::applySpecs(const SpriteSpecs& newSpecs)
-            {
                 // Color
                 this->_renderObject.setColor(this->_spriteSpecs.type,
-                        {this->_spriteSpecs.color.x, this->_spriteSpecs.color.y, this->_spriteSpecs.color.x,
-                        this->_spriteSpecs.opacity} );
+                        {this->_spriteSpecs.color.x, this->_spriteSpecs.color.y, this->_spriteSpecs.color.x} );
                 // scale
                 this->_renderObject.setScale(this->_spriteSpecs.type,
                         {this->_spriteSpecs.textureScale.x, this->_spriteSpecs.textureScale.y});
@@ -60,12 +47,6 @@ namespace Rengine {
                     rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
                     this->_renderObject.setTextureRect(this->_spriteSpecs.type, rect);
                 }
-                // origin
-                this->_renderObject.setOrigin(this->_spriteSpecs.type,
-                    {(float) this->_spriteSpecs.originOffset.x,
-                    (float) this->_spriteSpecs.originOffset.y}
-                );
-                this->_spriteSpecs = newSpecs;
             }
 
             void SFMLSprite::advanceFrame(int16_t frameCount)
@@ -142,56 +123,6 @@ namespace Rengine {
                 rect.width = this->_spriteSpecs.animation->frameRectWidthHeight.x;
                 rect.height = this->_spriteSpecs.animation->frameRectWidthHeight.y;
                 this->_renderObject.setTextureRect(this->_spriteSpecs.type, rect);
-            }
-
-            void SFMLSprite::updateSpriteSpecs(const SpriteSpecs& newSpecs)
-            {
-                // Load texture if set
-                if (newSpecs.texturePath != "" && this->_spriteSpecs.texturePath != newSpecs.texturePath) {
-                    try {
-                        this->_texture.loadFromFile(this->_spriteSpecs.texturePath);
-                        this->_renderObject.setTexture(this->_spriteSpecs.type, this->_texture);
-                    } catch (std::exception& e) {
-                        std::string msg = e.what();
-
-                        throw SpriteException(msg);
-                    }
-                }
-                this->_renderObject.updateSpriteSpecs(newSpecs);
-                this->applySpecs(newSpecs);
-            }
-            void SFMLSprite::SFMLSpriteUnion::updateSpriteSpecs(const SpriteSpecs& newSpecs)
-            {
-                switch (newSpecs.type) {
-                    case (SpriteType::SpriteTypeSprite):
-                        break;
-
-                    case (SpriteType::SpriteTypeCircle):
-                        this->circle->setRadius(newSpecs.shapeData.specifics.circleRadius);
-                        this->circle->setOutlineColor(
-                                {newSpecs.shapeData.outlineColor.x,
-                                newSpecs.shapeData.outlineColor.y,
-                                newSpecs.shapeData.outlineColor.z}
-                        );
-                        this->circle->setOutlineThickness(newSpecs.shapeData.outlineThickness);
-                        break;
-
-                    case (SpriteType::SpriteTypeRectangle):
-                        this->rectangle->setSize(
-                                {newSpecs.shapeData.specifics.rectangleSize.x,
-                                newSpecs.shapeData.specifics.rectangleSize.y}
-                        );
-                        this->rectangle->setOutlineColor(
-                                {newSpecs.shapeData.outlineColor.x,
-                                newSpecs.shapeData.outlineColor.y,
-                                newSpecs.shapeData.outlineColor.z}
-                        );
-                        this->rectangle->setOutlineThickness(newSpecs.shapeData.outlineThickness);
-                        break;
-
-                    default:
-                        throw SFMLSprite::SFMLSpriteUnion::SpriteTypeException();
-                }
             }
 
             SFMLSprite::SFMLSpriteUnion::SFMLSpriteUnion(const SpriteSpecs& specs)
@@ -344,25 +275,6 @@ namespace Rengine {
 
                     case (SpriteType::SpriteTypeRectangle):
                         this->rectangle->setPosition(pos);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            void SFMLSprite::SFMLSpriteUnion::setOrigin(SpriteType type, const sf::Vector2f& origin)
-            {
-                switch (type) {
-                    case (SpriteType::SpriteTypeSprite):
-                        this->sprite->setOrigin(origin);
-                        break;
-
-                    case (SpriteType::SpriteTypeCircle):
-                        this->circle->setOrigin(origin);
-                        break;
-
-                    case (SpriteType::SpriteTypeRectangle):
-                        this->rectangle->setOrigin(origin);
                         break;
 
                     default:

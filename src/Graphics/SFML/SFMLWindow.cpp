@@ -5,7 +5,6 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -15,12 +14,9 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowStyle.hpp>
-#include <cmath>
 #include <exception>
 #include <memory>
 #include <iostream>
-#include <valarray>
-#include <vector>
 
 #include "../ASound.hpp"
 #include "../AText.hpp"
@@ -29,7 +25,6 @@
 #include "SFMLText.hpp"
 #include "SFMLWindow.hpp"
 #include "SFMLSprite.hpp"
-#include "numbers"
 
 namespace Rengine {
     namespace Graphics {
@@ -123,8 +118,6 @@ skipIcon:
             // Options (re)
             this->_renderWindow.setMouseCursorVisible(this->_windowSpecs.options.isCursorVisible);
             this->_renderWindow.setVerticalSyncEnabled(this->_windowSpecs.options.enableVsync);
-            // Joystick threshold
-            this->_renderWindow.setJoystickThreshold(this->_windowSpecs.joystickThreshold);
         }
 
         SFMLWindow::SFMLWindow(const WindowSpecs& windowSpecs) : AWindow(windowSpecs)
@@ -142,15 +135,11 @@ skipIcon:
         void SFMLWindow::addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
             const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame)
         {
-            if (sprite == nullptr) {
-                return;
-            }
             try {
                 if (updateAnimationFrame == true && sprite->hasAnimation() == true) {
                     sprite->advanceFrameFromTime(this->getElapsedTimeMicroseconds());
                 }
                 Rengine::Graphics::SFMLSprite& sfmlSpriteWrapper = (SFMLSprite&) *sprite;
-                sf::Shader* shader = this->_shader.has_value() ? &this->_shader.value() : nullptr;
                 auto type = sfmlSpriteWrapper.getSpriteSpecs().type;
 
                 sfmlSpriteWrapper.setPosition({position.x, position.y});
@@ -158,15 +147,15 @@ skipIcon:
                 if (type == SpriteType::SpriteTypeSprite) {
                     sf::Sprite *sprite = sfmlSpriteWrapper.getSfSprite();
 
-                    this->_renderWindow.draw(*sprite, shader);
+                    this->_renderWindow.draw(*sprite);
                 } else if (type == SpriteType::SpriteTypeCircle) {
                     sf::CircleShape *circle = sfmlSpriteWrapper.getCircle();
 
-                    this->_renderWindow.draw(*circle, shader);
+                    this->_renderWindow.draw(*circle);
                 } else if (type == SpriteType::SpriteTypeRectangle) {
                     sf::RectangleShape* rectangle = sfmlSpriteWrapper.getRectangle();
 
-                    this->_renderWindow.draw(*rectangle, shader);
+                    this->_renderWindow.draw(*rectangle);
                 }
             } catch (std::exception& e) {
                 std::string msg = e.what();
@@ -215,13 +204,16 @@ skipIcon:
                         newInput.type = UserInputType::UserInputTypeWindowClosed;
                         break;
                     // Key press
-                    // For CharPressed / SpecialPressed
                     case sf::Event::KeyPressed:
-                        newInput = getPressedUserInputFromSfKeyboard(event.key);
+                        /*
+                        newInput = getUserInputFromSfKeyboard(event.key);
                         if (newInput.type == UserInputType::UserInputTypeNA) {
                             continue;
                         }
-                        break;
+                        */
+                        // Ignored because sf::Event is worthless for keyboard.
+                        // Using this->this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide() instead
+                        continue;
                     // Mouse click
                     case sf::Event::MouseButtonPressed:
                         if (event.mouseButton.button == sf::Mouse::Button::Right) {
@@ -235,42 +227,30 @@ skipIcon:
                     // Joystick connection
                     case sf::Event::JoystickConnected:
                         newInput.type = UserInputTypeJoystickConnected;
-                        newInput.data.joystickInput.joystickId = event.joystickConnect.joystickId;
-                        this->_joystickIds.push_back(event.joystickConnect.joystickId);
                         break;
                     case sf::Event::JoystickDisconnected:
                         newInput.type = UserInputTypeJoystickDisconnected;
-                        newInput.data.joystickInput.joystickId = event.joystickConnect.joystickId;
-                        this->removeJoystickFromVector(event.joystickConnect.joystickId);
                         break;
                     // Joystick movement
                     case sf::Event::JoystickMoved:
-                        // newInput = this->processJoystickMove(event);
-                        // break;
-                        // Moved to processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide
-                        continue;
+                        newInput = this->processJoystickMove(event);
+                        break;
                     // Joystick button
                     case sf::Event::JoystickButtonPressed:
                         newInput.type = UserInputTypeJoystickButton;
-                        newInput.data.joystickInput.data.joystickButton = event.joystickButton.button;
-                        newInput.data.joystickInput.joystickId = event.joystickButton.joystickId;
+                        newInput.data.joystickButton = event.joystickButton.button;
                         break;
 
                     default:
                         continue;
                 }  // switch(event.type)
-                if (newInput.type != UserInputTypeNA) {
-                    this->_inputManager.addInput(newInput);
-                }
+                this->_inputManager.addInput(newInput);
             }  // while (this->_renderWindow.pollEvent(event)
             // Keyboard processing
             this->processKeyboardInputWithSfKeyboardInsteadOfStupidSfEventDeConStupide();
-            for (auto it : this->_joystickIds) {
-                this->processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(it);
-            }
         }
 
-        inline UserInput SFMLWindow::getPressedUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
+        inline UserInput SFMLWindow::getUserInputFromSfKeyboard(const sf::Event::KeyEvent& key)
         {
             UserInput result;
 
@@ -286,53 +266,39 @@ skipIcon:
                     result.data.keyboardChar += 32;
                 }
             }
-            // Convert base to Pressed
-            if (result.type == UserInputTypeKeyboardChar) {
-                result.type = UserInputTypeKeyboardCharPressed;
-            } else {
-                result.type = UserInputTypeKeyboardSpecialPressed;
-            }
             return result;
         }
-
-        ///         +0
-        ///   -1 joystick  +1
-        ///         -0
-        ///                                     +4
-        ///                              -5  joystick +5
-        ///                                     -4
-        ///          7
-        ///      6 d-pad 6
-        ///          7
-        ///
         inline UserInput SFMLWindow::processJoystickMove(const sf::Event& event)
         {
             UserInput input;
+            //unsigned int id = event.joystickMove.joystickId;
+            sf::Joystick::Axis axis = event.joystickMove.axis;
+            float position = event.joystickMove.position;
 
-            input.data.joystickInput.joystickId = event.joystickMove.joystickId;
-            // left joystick
-            if (event.joystickMove.axis == 0) {
-                input.type = UserInputTypeJoystickLeftMove;
-                input.data.joystickInput.data.joystickPosition.x = event.joystickMove.position;
-            } else if (event.joystickMove.axis == 1) {
-                input.type = UserInputTypeJoystickLeftMove;
-                input.data.joystickInput.data.joystickPosition.y = event.joystickMove.position;
-            }
-            // right joystick
-            if (event.joystickMove.axis == 4) {
-                input.type = UserInputTypeJoystickRightMove;
-                input.data.joystickInput.data.joystickPosition.x = event.joystickMove.position;
-            } else if (event.joystickMove.axis == 5) {
-                input.type = UserInputTypeJoystickRightMove;
-                input.data.joystickInput.data.joystickPosition.y = event.joystickMove.position;
-            }
-            // d-pad
-            if (event.joystickMove.axis == 7) {
-                input.type = UserInputTypeJoystickDPad;
-                input.data.joystickInput.data.dpadPosition.y = event.joystickMove.position;
-            } else if (event.joystickMove.axis == 6) {
-                input.type = UserInputTypeJoystickDPad;
-                input.data.joystickInput.data.dpadPosition.x = event.joystickMove.position;
+            switch (axis) {
+                // Left Joystick
+                case sf::Joystick::X:
+                    input.type = UserInputTypeJoystickLeftMove;
+                    input.data.joystickPosition.x = position;
+                case sf::Joystick::Y:
+                    input.type = UserInputTypeJoystickLeftMove;
+                    input.data.joystickPosition.y = position;
+                case sf::Joystick::U:
+                    input.type = UserInputTypeJoystickRightMove;
+                    input.data.joystickPosition.x = position;
+                case sf::Joystick::V:
+                    input.type = UserInputTypeJoystickRightMove;
+                    input.data.joystickPosition.y = position;
+                default:
+                    static bool alreadyWarn = false;
+
+                    if (alreadyWarn == false) {
+                        std::cerr << "Rengine::Graphics::SFMLWindow: Warning: Unsupported joystick axis. This warning will not appear again." << std::endl;
+                        alreadyWarn = true;
+                    }
+                    input.type = UserInputTypeNA;
+                    break;
+                // Right Joystick
             }
             return input;
         }
@@ -363,65 +329,6 @@ skipIcon:
             }
             return;
         }
-        inline void SFMLWindow::processJoystickMoveWithSfJoystickInsteadOfStupidSfEventDeConStupide(unsigned int joystickId)
-        {
-            UserInput input;
-            float axis = 0.0f;
-
-            input.data.joystickInput.joystickId = joystickId;
-            // Checking joystick threshold myself since sfml no work
-            // left joystick
-            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(0));
-            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
-                input.type = UserInputTypeJoystickLeftMove;
-                input.data.joystickInput.data.joystickPosition.x = axis;
-                this->_inputManager.addInput(input);
-            }
-            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(1));
-            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
-                input.type = UserInputTypeJoystickLeftMove;
-                input.data.joystickInput.data.joystickPosition.y = axis;
-                this->_inputManager.addInput(input);
-            }
-            // right joystick
-            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(4));
-            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
-                input.type = UserInputTypeJoystickRightMove;
-                input.data.joystickInput.data.joystickPosition.x = axis;
-                this->_inputManager.addInput(input);
-            }
-            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(5));
-            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
-                input.type = UserInputTypeJoystickRightMove;
-                input.data.joystickInput.data.joystickPosition.y = axis;
-                this->_inputManager.addInput(input);
-            }
-            // d-pad
-            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(7));
-            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
-                input.type = UserInputTypeJoystickDPad;
-                input.data.joystickInput.data.dpadPosition.y = axis;
-                this->_inputManager.addInput(input);
-            }
-            axis = sf::Joystick::getAxisPosition(joystickId, sf::Joystick::Axis(6));
-            if (axis != 0.0f && std::abs(axis) > this->_windowSpecs.joystickThreshold) {
-                input.type = UserInputTypeJoystickDPad;
-                input.data.joystickInput.data.dpadPosition.x = axis;
-                this->_inputManager.addInput(input);
-            }
-        }
-        void SFMLWindow::removeJoystickFromVector(unsigned int joystickId)
-        {
-            std::vector<unsigned int>::const_iterator it = this->_joystickIds.begin();
-
-            while (it != this->_joystickIds.end()) {
-                if (*it == joystickId) {
-                    this->_joystickIds.erase(it);
-                    return;
-                }
-                it++;
-            }
-        }
 
         uint64_t SFMLWindow::getElapsedTimeMicroseconds(void) const noexcept
         {
@@ -443,30 +350,6 @@ skipIcon:
         float SFMLWindow::getDeltaTimeSeconds(void) noexcept
         {
             return this->_deltatimeClock.getElapsedTime().asSeconds();
-        }
-        void SFMLWindow::setShader(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
-        {
-            if (this->_shader.has_value() == false) {
-                this->_shader.emplace();
-            }
-            try {
-                bool result = false;
-
-                if (vertexShaderPath != "" && fragmentShaderPath != "") {
-                    result = this->_shader->loadFromFile(vertexShaderPath, fragmentShaderPath);
-                } else if (vertexShaderPath != "") {
-                    result = this->_shader->loadFromFile(vertexShaderPath, sf::Shader::Vertex);
-                } else if (fragmentShaderPath != "") {
-                    result = this->_shader->loadFromFile(fragmentShaderPath, sf::Shader::Fragment);
-                }
-                if (result == false) {
-                    throw WindowException("Cannot load shaders from vertex file '" + vertexShaderPath + "' and fragment file '" + fragmentShaderPath + "'.");
-                }
-            } catch (std::exception& e) {
-                std::string msg = e.what();
-
-                throw WindowException("Error on setShader: " + msg);
-            }
         }
 
     }  // namespace Rengine

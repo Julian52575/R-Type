@@ -40,11 +40,15 @@ namespace Rengine {
             return this->_inputVector.size();
         }
 
-        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInputType inputType, const UserInputData inputData)
+        std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(UserInputType inputType)
         {
-            UserInput tmp = {inputType, inputData};
-
-            return this->receivedInput(tmp);
+            for (auto& it : *this) {
+                if (it.type == inputType) {
+                    std::reference_wrapper<const UserInput> lol = it;
+                    return it;
+                }
+            }
+            return std::optional<std::reference_wrapper<const UserInput>>();
         }
         std::optional<std::reference_wrapper<const UserInput>> UserInputManager::receivedInput(const UserInput& input)
         {
@@ -65,16 +69,12 @@ namespace Rengine {
             switch (a.type) {
                 case (UserInputType::UserInputTypeKeyboardChar):
                     return a.data.keyboardChar == b.data.keyboardChar;
-                case (UserInputType::UserInputTypeKeyboardCharPressed):
-                    return a.data.keyboardChar == b.data.keyboardChar;
 
                 case (UserInputType::UserInputTypeKeyboardSpecial):
                     return a.data.keyboardSpecial == b.data.keyboardSpecial;
-                case (UserInputType::UserInputTypeKeyboardSpecialPressed):
-                    return a.data.keyboardSpecial == b.data.keyboardSpecial;
 
                 case (UserInputType::UserInputTypeJoystickButton):
-                    return a.data.joystickInput.data.joystickButton == b.data.joystickInput.data.joystickButton;
+                    return a.data.joystickButton == b.data.joystickButton;
 
                 // The other type needs no comparison
                 default:
@@ -97,14 +97,8 @@ namespace Rengine {
                 case UserInputTypeKeyboardChar:
                     str = "UserInputTypeKeyboardChar";
                     break;
-                case UserInputTypeKeyboardCharPressed:
-                    str = "UserInputTypeKeyboardCharPressed";
-                    break;
                 case UserInputTypeKeyboardSpecial:
                     str = "UserInputTypeKeyboardSpecial";
-                    break;
-                case UserInputTypeKeyboardSpecialPressed:
-                    str = "UserInputTypeKeyboardSpecialPressed";
                     break;
                 case UserInputTypeMouseLeftClick:
                     str = "UserInputTypeMouseLeftClick";
@@ -135,9 +129,6 @@ namespace Rengine {
                     break;
                 case UserInputTypeJoystickButton:
                     str = "UserInputTypeJoystickButton";
-                    break;
-                case UserInputTypeJoystickDPad:
-                    str = "UserInputTypeJoystickDPad";
                     break;
                 default:
                     str = "Unknow";

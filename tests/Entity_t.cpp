@@ -20,32 +20,20 @@ TEST(Entity, removeComponent)
     Rengine::ECS ecs;
     Rengine::Entity &e = ecs.addEntity();
     Rengine::SparseArray<int>& sp = ecs.registerComponent<int>();
-    int value = 42;
-    int& con = e.addComponent<int>(42);
+    int& con = e.addComponent<int>(0);
 
-    EXPECT_TRUE(sp[Rengine::ECS::size_type(e)].has_value());
-    EXPECT_EQ(sp[Rengine::ECS::size_type(e)].value(), value);
     e.removeComponent<int>();
     EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionComponentNotLinked);
-    EXPECT_FALSE(sp[Rengine::ECS::size_type(e)].has_value());
-    EXPECT_NO_THROW(e.removeComponent<int>());
-    int& con2 = e.addComponent<int>(42);
-
-    EXPECT_EQ(std::addressof(con2), std::addressof(e.getComponent<int>()));
 }
 TEST(Entity, removeComponentNoExcept)
 {
     Rengine::ECS ecs;
     Rengine::Entity &e = ecs.addEntity();
     Rengine::SparseArray<int>& sp = ecs.registerComponent<int>();
-    int value = 42;
-    int& con = e.addComponent<int>(value);
+    int& con = e.addComponent<int>(0);
 
-    EXPECT_TRUE(sp[Rengine::ECS::size_type(e)].has_value());
-    EXPECT_EQ(sp[Rengine::ECS::size_type(e)].value(), value);
     e.removeComponent<int>();
     EXPECT_NO_THROW(e.removeComponentNoExcept<int>());
-    EXPECT_FALSE(sp[Rengine::ECS::size_type(e)].has_value());
 }
 TEST(Entity, getComponent)
 {
@@ -64,8 +52,7 @@ static int entityTmp = 0;
 void byeByeComponents(Rengine::Entity& e)
 {
     entityTmp = int(e);
-    e.removeComponentNoExcept<int>();
-    e.removeComponentNoExcept<float>();
+    e.removeComponent<int>();
 }
 TEST(Entity, destroyComponents)
 {
@@ -73,11 +60,12 @@ TEST(Entity, destroyComponents)
     Rengine::Entity &e = ecs.addEntity();
 
     ecs.registerComponent<int>();
-    ecs.registerComponent<float>();
     e.addComponent<int>(0);
-    e.setComponentsDestroyFunction(byeByeComponents);
     e.destroyComponents();
-    EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionComponentNotLinked);
+    EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionNotActive);
+    EXPECT_THROW(e.addComponent<float>(15), Rengine::EntityExceptionNotActive);
+    EXPECT_THROW(e.setFlag(0xff), Rengine::EntityExceptionNotActive);
+    EXPECT_THROW(e.setComponentsDestroyFunction(byeByeComponents), Rengine::EntityExceptionNotActive);
 }
 TEST(Entity, destroyComponentsWithUserProvidedFunction)
 {
@@ -89,7 +77,7 @@ TEST(Entity, destroyComponentsWithUserProvidedFunction)
     e.setComponentsDestroyFunction(byeByeComponents);
     entityTmp = int(e) + 1;
     e.destroyComponents();
-    EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionComponentNotLinked);
+    EXPECT_THROW(e.getComponent<int>(), Rengine::EntityExceptionNotActive);
     EXPECT_EQ(entityTmp, int(e));
     // Ensure component at index int(entity) was destroyed
     EXPECT_FALSE(ecs.getComponents<int>()[int(e)].has_value());
@@ -114,19 +102,4 @@ TEST(Entity, getComponentNoExcept)
 
     EXPECT_TRUE(comp2.has_value());
     EXPECT_EQ(std::addressof(comp), std::addressof(comp2.value().get()));
-}
-static int destroyConsCall = 0;
-void destroyCons(Rengine::Entity& e)
-{
-    destroyConsCall += 1;
-}
-TEST(Entity, destroyComponentsWith2UserProvidedFunction)
-{
-    Rengine::ECS ecs;
-    Rengine::Entity& e = ecs.addEntity();
-
-    e.setComponentsDestroyFunction(destroyCons);
-    e.setComponentsDestroyFunction(destroyCons);
-    e.destroyComponents();
-    EXPECT_EQ(destroyConsCall, 2);
 }

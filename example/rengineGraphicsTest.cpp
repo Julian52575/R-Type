@@ -2,7 +2,6 @@
 #include <rengine/src/Graphics/ASound.hpp>
 #include <rengine/src/Graphics/ASprite.hpp>
 #include <rengine/src/Graphics/AText.hpp>
-#include <rengine/src/Graphics/AWindow.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/SpriteSpecs.hpp>
 #include <rengine/src/Graphics/TextSpecs.hpp>
@@ -18,12 +17,9 @@ static void input(void)
 {
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
-    for (auto it : manager) {
-        std::cout << it << std::endl;  //
-        if (it.type == Rengine::Graphics::UserInputTypeWindowClosed) {
-            Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
-            std::cout << "Close" << std::endl;
-        }
+    if (manager.receivedInput(Rengine::Graphics::UserInputTypeWindowClosed)) {
+        Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
+        std::cout << "Close" << std::endl;
     }
 }
 
@@ -36,7 +32,6 @@ static std::shared_ptr<Rengine::Graphics::ASprite> initCircle(void)
     //specs.shapeData.specifics.circleRadius = 150;
     specs.color = {255, 100, 100};
     specs.shapeData.outlineColor = {255, 0, 0};
-    specs.opacity = 0;
     return manager.createSprite(specs);
 }
 
@@ -49,7 +44,6 @@ static std::shared_ptr<Rengine::Graphics::ASprite> initRectangle(void)
     //specs.shapeData.specifics.rectangleSize = {150, 150};
     specs.color = {100, 100, 255};
     specs.shapeData.outlineColor = {0, 0, 255};
-    specs.opacity = 150;
     return manager.createSprite(specs);
 }
 
@@ -60,15 +54,14 @@ static std::shared_ptr<Rengine::Graphics::ASprite> initSprite(void)
 
     specs.texturePath = "marioSheet.png";
     specs.type = Rengine::Graphics::SpriteTypeSprite;
+    specs.originOffset.x = 50;
+    specs.originOffset.y = 50;
     specs.textureScale = {5, 5};
     specs.animation = Rengine::Graphics::SpriteSpecs::SpriteAnimationSpecs();
-    specs.animation->frameCount = 4;
-    specs.animation->frameDisplacement = {17, 0};
-    specs.animation->frameDuration = 0.15;
-    specs.animation->frameRectWidthHeight = {14, 26};
-    specs.originOffset = {
-        (float) (specs.animation->frameRectWidthHeight.x / 2), (float) (specs.animation->frameRectWidthHeight.y / 2)
-    };
+    specs.animation->frameCount = 7;
+    specs.animation->frameDisplacement = {15, 0};
+    specs.animation->frameDuration = 0.08;
+    specs.animation->frameRectWidthHeight = {25, 23};
     specs.animation->frameRectXY = {5, 0};
     return manager.createSprite(specs);
 }
@@ -147,24 +140,11 @@ static void inputFlipSprite(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
     Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
 
     for (auto it : manager) {
+        std::cout << it.type << std::endl;
         if (it.type == Rengine::Graphics::UserInputTypeMouseLeftClick) {
             sprite->flip();
             std::cout << "Flip !" << std::endl;
         }
-    }
-}
-
-static void inputChangeColor(std::shared_ptr<Rengine::Graphics::ASprite> sprite)
-{
-    Rengine::Graphics::UserInputManager& manager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
-
-    if (manager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialArrowUP})) {
-        auto specs = sprite->getSpriteSpecs();
-
-        specs.color.x += 25;
-        specs.shapeData.specifics.rectangleSize.y -= 1;
-        sprite->updateSpriteSpecs(specs);
-        std::cout << "Sprite red = " << int(specs.color.x) << std::endl;
     }
 }
 
@@ -184,66 +164,12 @@ static void inputTextbox(std::shared_ptr<Rengine::Graphics::AText> &textBox)
     std::string currentText = textBox->getText();
 
     for (auto it : inputManager) {
-        if (it.type != Rengine::Graphics::UserInputTypeKeyboardCharPressed) {
+        if (it.type != Rengine::Graphics::UserInputTypeKeyboardChar) {
             continue;
         }
         currentText += it.data.keyboardChar;
     }
     textBox->setText(currentText);
-}
-
-static void inputTurnDownMusic(std::shared_ptr<Rengine::Graphics::ASound>& music)
-{
-    Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
-
-    for (auto it : inputManager) {
-        if (it.type == Rengine::Graphics::UserInputTypeKeyboardSpecial && it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialArrowDOWN) {
-            music->setVolume(music->getVolume() - 2);
-            std::cout << "Volume is now " << music->getVolume() << std::endl;
-        }
-    }
-}
-
-static void inputJoystick(void)
-{
-    Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
-
-    for (auto it : inputManager) {
-        if (it.type == Rengine::Graphics::UserInputTypeJoystickConnected) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " connected." << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickDisconnected) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " disconnected." << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickButton) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " pressed button " << it.data.joystickInput.data.joystickButton << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickLeftPressed) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " pressed left joystick." << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickRightPressed) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " pressed right joystick." << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickRightMove) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " moved right stick: " << it.data.joystickInput.data.joystickPosition << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickLeftMove) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " moved left stick: " << it.data.joystickInput.data.joystickPosition << std::endl;
-        }
-        else if (it.type == Rengine::Graphics::UserInputTypeJoystickDPad) {
-            std::cout << "Joystick " << it.data.joystickInput.joystickId << " moved d-pad: " << it.data.joystickInput.data.dpadPosition << std::endl;
-        }
-    }
-}
-
-void inputShader(void)
-{
-    std::shared_ptr<Rengine::Graphics::AWindow> window = Rengine::Graphics::GraphicManagerSingletone::get().getWindow();
-
-    if (window->getInputManager().receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecialPressed, {Rengine::Graphics::UserInputKeyboardSpecialTAB})) {
-        window->setShader("", "shaders/colorblind_protanopia.frag");
-        std::cout << "Set protanopia fragment shader" << std::endl;
-    }
 }
 
 int main(void)
@@ -262,8 +188,6 @@ int main(void)
     specs.resolution = {800, 800};
     specs.options.isFullscreen = false;
     specs.options.isBorderless = false;
-    specs.joystickThreshold = 4.0f;
-    specs.backgroundColor = {100, 100, 100};
     manager.createWindow(specs);
     while (manager.getWindow()->isOpen()) {
         manager.getWindow()->pollInput();
@@ -271,10 +195,7 @@ int main(void)
         input();
         inputFlipSprite(sprite);
         inputTextbox(textBox);
-        inputChangeColor(rectangle);
-        inputTurnDownMusic(music);
-        inputJoystick();
-        inputShader();
+        manager.getWindow()->getInputManager().clear();
         manager.addToRender(circle, {0, 0});
         manager.addToRender(sprite, {300, 300});
         manager.addToRender(rectangle, {600, 600});
@@ -282,6 +203,5 @@ int main(void)
         manager.addToRender(fancyText, {100, 100});
         manager.addToRender(textBox, {0, 500});
         manager.getWindow()->render();
-        manager.getWindow()->getInputManager().clear();
     }
 }
