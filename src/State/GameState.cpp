@@ -235,6 +235,25 @@ namespace RType {
         }
 
         for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientTCP->Receive(); msg; msg = gameState._clientTCP->Receive()) {
+            if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
+                uint16_t health;
+                uint16_t maxHealth;
+                uint64_t id;
+                uint16_t configID;
+                uint64_t groupID;
+                float posX;
+                float posY;
+                *msg >> groupID >> configID >> posY >> posX >> maxHealth >> health >> id;
+                Rengine::Entity& entity = gameState.getOrCreateEntity(id, configID, groupID);
+                if (positions[entity].has_value()) {
+                    positions[entity]->set({posX, posY});
+                }
+                if (lifes[entity].has_value()) {
+                    lifes[entity]->setHp(health);
+                    lifes[entity]->setMaxHp(maxHealth);
+                }
+            }
+
             if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId) {
                 Rengine::Entity::size_type id;
                 uint16_t levelID;
