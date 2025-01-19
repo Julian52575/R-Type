@@ -7,24 +7,23 @@
 #include <rengine/src/Graphics/Vector.hpp>
 
 namespace RType {
-    namespace Components {
+namespace Components {
+class Position {
+    public:
+        Position(void);
+        Position(float x, float y);
+        ~Position(void);
+        const Rengine::Graphics::vector2D<float>& getVector2D(void) const noexcept;
+        const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept;
+        float getX(void) const noexcept;
+        float getY(void) const noexcept;
+        void set(const Rengine::Graphics::vector2D<float>& pos);
+        void setX(float x);
+        void setY(float y);
 
-        class Position {
-            public:
-                Position(void);
-                Position(float x, float y);
-                ~Position(void);
-                const Rengine::Graphics::vector2D<float>& getVector2D(void) const noexcept;
-                const Rengine::Graphics::vector2D<float>& getVector2D(void) noexcept;
-                float getX(void) const noexcept;
-                float getY(void) const noexcept;
-                void set(const Rengine::Graphics::vector2D<float>& pos);
-                void setX(float x);
-                void setY(float y);
-
-            private:
-                Rengine::Graphics::vector2D<float> _position = {0, 0};
-        };
-    }  // namespace Components
+    private:
+        Rengine::Graphics::vector2D<float> _position = {0, 0};
+};
+}  // namespace Components
 }  // namespace RType
 #endif  // SRC_COMPONENTS_POSITION_HPP_

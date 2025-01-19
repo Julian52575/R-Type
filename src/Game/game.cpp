@@ -30,7 +30,7 @@ namespace RType {
         _ip = ip;
         _timeStarted = time(NULL);
         _running = false;
-    };
+    }
 
     void Games::start() {
         this->_ecs->registerComponent<Components::Action>();
@@ -55,7 +55,7 @@ namespace RType {
         _timeStarted = time(NULL);
         _running = true;
         _gameThread = std::thread(&Games::run, this);
-    };
+    }
 
     bool Games::isRunning() {
         return _running;
@@ -86,35 +86,35 @@ namespace RType {
     void Games::stop() {
         _running = false;
         _gameThread.join();
-    };
+    }
 
     time_t &Games::getTimeStarted() {
         return _timeStarted;
-    };
+    }
 
     Rengine::UUID::uuid_t &Games::getGameID() {
         return _gameID;
-    };
+    }
 
     std::string &Games::getIP() {
         return _ip;
-    };
+    }
 
     uint16_t &Games::getTCPPort() {
         return _TCPPort;
-    };
+    }
 
     uint16_t &Games::getUDPPort() {
         return _UDPPort;
-    };
+    }
 
     size_t Games::getNbUsers() {
         return _users.size();
-    };
+    }
 
     const char *Games::getGameName() {
         return _gameName.c_str();
-    };
+    }
 
     const std::string& Games::getLevelName(void) const noexcept {
         return this->_levelManager.getLevelName();
@@ -126,7 +126,7 @@ namespace RType {
                 return user;
         }
         return nullptr;
-    };
+    }
 
     std::shared_ptr<userGame> Games::_getUserByUDPClient(asio::ip::udp::endpoint &UDPClient) {
         for (std::shared_ptr<userGame> user : _users) {
@@ -134,12 +134,12 @@ namespace RType {
                 return user;
         }
         return nullptr;
-    };
+    }
 
     void Games::run() {
         while (_running) {
             try {
-                while (Rengine::Clock::getElapsedTime() < 0.016f);
+                while (Rengine::Clock::getElapsedTime() < 0.016f) {}
                 this->_levelManager.updateDeltatime();
                 if (this->_levelManager.isCurrentSceneOver()) {
                     if (!this->_levelManager.nextScene()) {
@@ -149,7 +149,7 @@ namespace RType {
                         broadCastLevelEnd.header.type = {Communication::Type::ConnexionDetail, Communication::main::ConnexionDetailPrecision::LevelEnd};
                         broadCastLevelEnd.header.size = 0;
                         _GameServerTCP.SendAll(broadCastLevelEnd);
-                        while (Rengine::Clock::getElapsedTime() < 0.5f);
+                        while (Rengine::Clock::getElapsedTime() < 0.5f) {}
                         _running = false;
                         break;
                     } else {
@@ -178,14 +178,14 @@ namespace RType {
                     }
                 }
 
-                //partie movement
+                // partie movement
                 this->_ecs->runComponentFunction<Components::Action>(this->_ecs);  // handle action
                 this->_ecs->runComponentFunction<Components::Velocity>();  // move entity
 
-                //partie collision
+                // partie collision
                 this->_ecs->runComponentFunction<Components::Hitbox>();  // handle collision
 
-                //partie game rule
+                // partie game rule
                 this->_ecs->runComponentFunction<Components::Life>();  // handle life
                 this->_ecs->runComponentFunction<Components::Chrono>();  // handle chrono
 
@@ -234,11 +234,11 @@ namespace RType {
                 std::cerr << "[" << this->getGameName() << "]: Exception: " << e.what() << std::endl;
             }
         }
-    };
+    }
 
     Games::~Games() {
         std::cout << "[" << this->getGameName() << "Closing..." << std::endl;
         if (_gameThread.joinable())
             _gameThread.join();
-    };
-}
+    }
+}  // namespace RType

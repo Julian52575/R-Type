@@ -1,11 +1,14 @@
 #pragma once
 #include "../Game/game.hpp"
+#include <string>
+#include <vector>
+#include <memory>
 
 class Lobby {
     public:
-        Lobby(uint16_t port);
+        explicit Lobby(uint16_t port);
         void run();
-        void setRunning(bool runing) { _runing = runing; };
+        void setRunning(bool runing) { _runing = runing; }
         ~Lobby();
         size_t getNbGames();
 

@@ -4,7 +4,7 @@ Lobby::Lobby(uint16_t port) : _server(port, "Lobby", false) {
     _port = port;
     _ip = _server.getIp();
     _runing = true;
-};
+}
 
 std::shared_ptr<RType::Games> Lobby::getGameByID(Rengine::UUID::uuid_t &gameID) {
     for (auto &game : _games) {
@@ -12,7 +12,7 @@ std::shared_ptr<RType::Games> Lobby::getGameByID(Rengine::UUID::uuid_t &gameID) 
             return game;
     }
     return nullptr;
-};
+}
 
 bool Lobby::_handleMessages(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
     switch (msg.header.type.precision) {
@@ -82,7 +82,7 @@ bool Lobby::_handleMessages(std::shared_ptr<Connexion<Communication::TypeDetail>
         }
     }
     return true;
-};
+}
 
 void Lobby::run() {
     while (_runing) {
@@ -101,11 +101,11 @@ void Lobby::run() {
             std::cerr << "[Lobby] Error: " << e.what() << std::endl;
         }
     }
-};
+}
 
 size_t Lobby::getNbGames() {
     return _games.size();
-};
+}
 
 std::shared_ptr<RType::Games> Lobby::createGame(std::string &ip, uint16_t UDPPort, uint16_t TCPPort, char (&name)[15]) {
     std::shared_ptr<RType::Games> newGame = std::make_shared<RType::Games>(ip, UDPPort, TCPPort, name);
@@ -113,7 +113,7 @@ std::shared_ptr<RType::Games> Lobby::createGame(std::string &ip, uint16_t UDPPor
     newGame->start();
     _games.push_back(newGame);
     return newGame;
-};
+}
 
 Lobby::~Lobby() {
     _runing = false;
@@ -125,4 +125,4 @@ Lobby::~Lobby() {
     } catch (std::exception &e) {
         std::cerr << "[Lobby] Error: " << e.what() << std::endl;
     }
-};
+}

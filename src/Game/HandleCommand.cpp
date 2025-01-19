@@ -33,15 +33,15 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     uint16_t levelID = Config::LevelConfigurationIdResolverSingletone::get().get(_levelManager.getLevelName());
     msg2 << entityID << levelID;
     this->_GameServerTCP.Send(msg2, client);
-};
+}
 
 void RType::Games::_handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
     switch (msg.header.type.type) {
         case Communication::Type::ConnexionDetail:
             _handleConnexionTCPMessage(client, msg);
             break;
-    };
-};
+    }
+}
 
 void RType::Games::_handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions) {
     switch (msg.header.type.precision) {
@@ -83,5 +83,5 @@ void RType::Games::_handleUDPMessage(std::shared_ptr<userGame> user, Message<Com
         case Communication::Type::EntityAction:
             _handleEntityInfoUDPMessage(user, msg, actions);
             break;
-    };
-};
+    }
+}

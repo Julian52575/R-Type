@@ -3,6 +3,9 @@
 #include <rengine/Rengine.hpp>
 #include "LevelManager.hpp"
 #include "src/Components/Action.hpp"
+#include <string>
+#include <vector>
+#include <memory>
 
 struct Communication {
     enum Type : uint16_t {
@@ -74,44 +77,43 @@ struct userGame {
     User user;
 };
 namespace RType {
-    class Games {
-        public:
-            Games(std::string &ip, uint16_t TCPPort, uint16_t UDPPort, std::string gameName);
-            bool isRunning();
-            void start();
-            void stop();
-            time_t &getTimeStarted();
-            Rengine::UUID::uuid_t &getGameID();
-            std::string &getIP();
-            uint16_t &getTCPPort();
-            uint16_t &getUDPPort();
-            size_t getNbUsers();
-            const char *getGameName();
-            void run();
-            ~Games();
-            const std::string& getLevelName(void) const noexcept;
+class Games {
+    public:
+        Games(std::string &ip, uint16_t TCPPort, uint16_t UDPPort, std::string gameName);
+        bool isRunning();
+        void start();
+        void stop();
+        time_t &getTimeStarted();
+        Rengine::UUID::uuid_t &getGameID();
+        std::string &getIP();
+        uint16_t &getTCPPort();
+        uint16_t &getUDPPort();
+        size_t getNbUsers();
+        const char *getGameName();
+        void run();
+        ~Games();
+        const std::string& getLevelName(void) const noexcept;
 
-        private:
-            void initLevel(void);
-            void _handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
-            void _handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
-            void _handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
-            void _handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
-
-            std::shared_ptr<userGame> _getUserByClient(std::shared_ptr<Connexion<Communication::TypeDetail>> client);
-            std::shared_ptr<userGame> _getUserByUDPClient(asio::ip::udp::endpoint &UDPClient);
-            std::thread _gameThread;
-            bool _running;
-            Rengine::UUID::uuid_t _gameID;
-            std::string _gameName;
-            std::string _ip;
-            uint16_t _TCPPort;
-            uint16_t _UDPPort;
-            time_t _timeStarted;
-            ServerTCP<Communication::TypeDetail> _GameServerTCP;
-            ServerUDP<Communication::TypeDetail> _GameServerUDP;
-            std::vector<std::shared_ptr<userGame>> _users;
-            std::shared_ptr<Rengine::ECS> _ecs;
-            LevelManager _levelManager;
-    };
-}
+    private:
+        void initLevel(void);
+        void _handleTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
+        void _handleUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
+        void _handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg);
+        void _handleEntityInfoUDPMessage(std::shared_ptr<userGame> user, Message<Communication::TypeDetail> &msg, Rengine::SparseArray<RType::Components::Action>& actions);
+        std::shared_ptr<userGame> _getUserByClient(std::shared_ptr<Connexion<Communication::TypeDetail>> client);
+        std::shared_ptr<userGame> _getUserByUDPClient(asio::ip::udp::endpoint &UDPClient);
+        std::thread _gameThread;
+        bool _running;
+        Rengine::UUID::uuid_t _gameID;
+        std::string _gameName;
+        std::string _ip;
+        uint16_t _TCPPort;
+        uint16_t _UDPPort;
+        time_t _timeStarted;
+        ServerTCP<Communication::TypeDetail> _GameServerTCP;
+        ServerUDP<Communication::TypeDetail> _GameServerUDP;
+        std::vector<std::shared_ptr<userGame>> _users;
+        std::shared_ptr<Rengine::ECS> _ecs;
+        LevelManager _levelManager;
+};
+}  // namespace RType

@@ -12,122 +12,120 @@
 #include "MissileConfig.hpp"
 
 namespace RType {
+namespace Config {
+class AttackConfigExceptionWrongTypeAccess : public std::exception {
+public:
+    const char *what() const noexcept {
+        return "RType::Config::AttackConfig Trying to access wrong type vector. Ie: buffs on AttackTypeMissiles.";
+    };
+};
 
-    namespace Config {
+class AttackConfigExceptionFileError : public std::exception {
+public:
+    AttackConfigExceptionFileError(const std::string& fileName, const char *jsonMsg)
+    {
+        std::string msg = "RType::Config::AttackConfig An error happened when trying to read from '" + fileName + "'.";
+        this->_concat = msg + jsonMsg;
+    };
+    const char *what() const noexcept
+    {
+        return this->_concat.c_str();
+    };
 
-        class AttackConfigExceptionWrongTypeAccess : public std::exception {
-        public:
-            const char *what() const noexcept {
-                return "RType::Config::AttackConfig Trying to access wrong type vector. Ie: buffs on AttackTypeMissiles.";
-            };
-        };
-        class AttackConfigExceptionFileError : public std::exception {
-        public:
-            AttackConfigExceptionFileError(const std::string& fileName, const char *jsonMsg)
-            {
-                std::string msg = "RType::Config::AttackConfig An error happened when trying to read from '" + fileName + "'.";
+private:
+    std::string _concat;
+};
 
-                this->_concat = msg + jsonMsg;
-            };
-            const char *what() const noexcept
-            {
-                return this->_concat.c_str();
-            };
+class AttackConfigExceptionInvalidJsonFile : public std::exception {
+public:
+    AttackConfigExceptionInvalidJsonFile(const std::string& fileName, const char *jsonMsg)
+    {
+        std::string msg = "RType::Config::AttackConfig Trying to construct from an invalid json file '" + fileName + "'.\nError: '";
+        this->_concat = msg + jsonMsg + "'.";
+    };
+    const char *what() const noexcept
+    {
+        return this->_concat.c_str();
+    };
 
-        private:
-            std::string _concat;
-        };
-        class AttackConfigExceptionInvalidJsonFile : public std::exception {
-        public:
-            AttackConfigExceptionInvalidJsonFile(const std::string& fileName, const char *jsonMsg)
-            {
-                std::string msg = "RType::Config::AttackConfig Trying to construct from an invalid json file '" + fileName + "'.\nError: '";
+private:
+    std::string _concat;
+};
 
-                this->_concat = msg + jsonMsg + "'.";
-            };
-            const char *what() const noexcept
-            {
-                return this->_concat.c_str();
-            };
-
-        private:
-            std::string _concat;
-        };
-
+/**
+* @addtogroup RType::Config
+* @namespace Config
+* @class AttackConfig
+* @brief This class encapsulate the attack json.
+* Is used to convert a jsonPath to a class of c++ variable.
+*/
+class AttackConfig {
+    public:
         /**
-        * @addtogroup RType::Config
-        * @namespace Config
-        * @class AttackConfig
-        * @brief This class encapsulate the attack json.
-        * Is used to convert a jsonPath to a class of c++ variable.
+        * @fn AttackConfig
+        * @exception AttackConfigExceptionFileError An error happened when reading jsonPath.
+        * @exception AttackConfigExceptionInvalidJsonFile jsonPath has an error.
+        * @brief Create a c++ class from the path of an attack json.
         */
-        class AttackConfig {
-            public:
-                /**
-                * @fn AttackConfig
-                * @exception AttackConfigExceptionFileError An error happened when reading jsonPath.
-                * @exception AttackConfigExceptionInvalidJsonFile jsonPath has an error.
-                * @brief Create a c++ class from the path of an attack json.
-                */
-                AttackConfig(void) = default;
-                explicit AttackConfig(const std::string& jsonPath);
-                ~AttackConfig(void) = default;
-                /**
-                * @fn getType
-                * @return RType::Config::AttackType The type of the attack. See RType::Config::AttackType.
-                * @brief Return the type of the attack.
-                */
-                AttackType getType(void) const noexcept;
-                /**
-                * @fn getBuffs
-                * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeBuffs
-                * @brief Get a vector of RType::Config::BuffData
-                */
-                const std::vector<BuffConfig>& getBuffs(void) const;
-                /**
-                * @fn getMissiles
-                * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeMissiles
-                * @brief Get a vector of RType::Config::MissileData
-                */
-                const std::vector<MissileConfig>& getMissiles(void) const;
-                /**
-                * @fn getCooldown
-                * @return RType::Config::AttackType The type of the attack. See RType::Config::AttackType.
-                * @brief Return the cooldown of the attack.
-                */
-                double getCooldown(void) const noexcept
-                {
-                    return this->_cooldown;
-                }
+        AttackConfig(void) = default;
+        explicit AttackConfig(const std::string& jsonPath);
+        ~AttackConfig(void) = default;
+        /**
+        * @fn getType
+        * @return RType::Config::AttackType The type of the attack. See RType::Config::AttackType.
+        * @brief Return the type of the attack.
+        */
+        AttackType getType(void) const noexcept;
+        /**
+        * @fn getBuffs
+        * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeBuffs
+        * @brief Get a vector of RType::Config::BuffData
+        */
+        const std::vector<BuffConfig>& getBuffs(void) const;
+        /**
+        * @fn getMissiles
+        * @exception AttackConfigExceptionWrongTypeAccess This function is called when this->getType() != RType::Config::AttackType::AttackTypeMissiles
+        * @brief Get a vector of RType::Config::MissileData
+        */
+        const std::vector<MissileConfig>& getMissiles(void) const;
+        /**
+        * @fn getCooldown
+        * @return RType::Config::AttackType The type of the attack. See RType::Config::AttackType.
+        * @brief Return the cooldown of the attack.
+        */
+        double getCooldown(void) const noexcept
+        {
+            return this->_cooldown;
+        }
 
-            private:
-                /**
-                * @fn parseGeneral
-                * @exception std::runtime_exception An error occured when parsing the json fields.
-                * @brief Update this class by parsing the general fields.
-                */
-                void parseGeneral(nlohmann::json &attackField);
-                /**
-                * @fn parseBuffs
-                * @exception std::runtime_exception An error occured when parsing the json fields.
-                * @brief Update this class by parsing the buff specifics fields.
-                */
-                void parseBuffs(nlohmann::json &buffsField);
-                /**
-                * @fn parseMissiles
-                * @exception std::runtime_exception An error occured when parsing the json fields.
-                * @brief Update this class by parsing the missiles specifics fields.
-                */
-                void parseMissiles(nlohmann::json &missilesField);
+    private:
+        /**
+        * @fn parseGeneral
+        * @exception std::runtime_exception An error occured when parsing the json fields.
+        * @brief Update this class by parsing the general fields.
+        */
+        void parseGeneral(nlohmann::json &attackField);
+        /**
+        * @fn parseBuffs
+        * @exception std::runtime_exception An error occured when parsing the json fields.
+        * @brief Update this class by parsing the buff specifics fields.
+        */
+        void parseBuffs(nlohmann::json &buffsField);
+        /**
+        * @fn parseMissiles
+        * @exception std::runtime_exception An error occured when parsing the json fields.
+        * @brief Update this class by parsing the missiles specifics fields.
+        */
+        void parseMissiles(nlohmann::json &missilesField);
 
-            private:
-                AttackType _type = AttackType::AttackTypeNA;
-                double _cooldown = 1.0;
-                // Buff + cooldown
-                std::optional<std::vector<BuffConfig>> _buffsVector;
-                // Missile json -> <offset, velocity>
-                std::optional<std::vector<MissileConfig>> _missilesVector;
-        };
-    }  // namespace Config
+    private:
+        AttackType _type = AttackType::AttackTypeNA;
+        double _cooldown = 1.0;
+        // Buff + cooldown
+        std::optional<std::vector<BuffConfig>> _buffsVector;
+        // Missile json -> <offset, velocity>
+        std::optional<std::vector<MissileConfig>> _missilesVector;
+};
+}  // namespace Config
 }  // namespace RType
 #endif  // SRC_CONFIG_ATTACKCONFIG_HPP_
