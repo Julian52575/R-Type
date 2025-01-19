@@ -17,7 +17,7 @@
                 "height":26
             },
             "frameCount": 4,
-            "frameDuration": 0.02,
+            "frameDuration": 0.3,
             "frameDisplacement": {
                 "x":20,
                 "y":0
