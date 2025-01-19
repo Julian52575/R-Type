@@ -9,7 +9,7 @@ on:
       - rtype_game-dev
 
 jobs:
-  unit_tests:
+  linter:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
