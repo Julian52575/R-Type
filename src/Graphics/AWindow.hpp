@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <string>
 
 #include "AText.hpp"
 #include "ASprite.hpp"
@@ -126,6 +127,14 @@ namespace Rengine {
                 * @brief Retrives the seconds since last deltatime reset.
                 */
                 virtual float getDeltaTimeSeconds(void) noexcept = 0;
+                /**
+                * @fn setShader
+                * @param vertexShaderPath A path to the vertex shader file. Default: "" (loads default shader)
+                * @param fragmentShaderPath A path to the fragment shader file. Default: "" (loads default shader)
+                * @brief Set the shader to apply to the window.
+                */
+                virtual void setShader(const std::string& vertexShaderPath = "", const std::string& fragmentShaderPath = "") = 0;
+
 
             protected:
                 WindowSpecs _windowSpecs;

@@ -252,13 +252,17 @@ std::optional<std::pair<std::shared_ptr<Connexion<T>>, Message<T>>> ServerTCP<T>
 
 template <typename T>
 ServerTCP<T>::~ServerTCP() {
-    if (_acceptor.is_open()) {
-        _acceptor.close();
-    }
-    for (std::shared_ptr<Connexion<T>> client : _clients) {
-        if (client->getSocket().is_open()) {
-            client->getSocket().close();
+    try {
+        if (_acceptor.is_open()) {
+            _acceptor.close();
         }
+        for (std::shared_ptr<Connexion<T>> client : _clients) {
+            if (client->getSocket().is_open()) {
+                client->getSocket().close();
+            }
+        }
+    } catch (std::exception &e) {
+        std::cerr << "[" << _serverName << " - TCP] Exception in destructor: " << e.what() << std::endl;
     }
     std::cout << "[" << _serverName << " - TCP] Server stopped" << std::endl;
 }

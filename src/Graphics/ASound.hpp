@@ -54,6 +54,17 @@ namespace Rengine {
                 * @brief Reset the sound to the start.
                 */
                 virtual void reset(void) = 0;
+                /**
+                * @fn setVolume
+                * @brief Set the sound's volume.
+                */
+                virtual void setVolume(float volume) = 0;
+                /**
+                * @fn getVolume
+                * @return The sound's volume.
+                * @brief Get the sound's volume.
+                */
+                virtual float getVolume(void) const noexcept = 0;
 
             private:
                 SoundSpecs _specs;
