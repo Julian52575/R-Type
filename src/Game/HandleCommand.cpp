@@ -2,6 +2,9 @@
 #include "src/Game/EntityMaker.hpp"
 #include "src/Network/EntityAction.hpp"
 #include "src/Components/Action.hpp"
+#include "src/Config/ConfigurationIdResolver.hpp"
+#include "Team.hpp"
+#include "src/Components/Relationship.hpp"
 
 void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communication::TypeDetail>> client, Message<Communication::TypeDetail> &msg) {
     asio::ip::udp::endpoint UDPClient;
@@ -10,9 +13,10 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
 
     UDPClient.address(asio::ip::make_address(client->getSocket().remote_endpoint().address().to_string()));
     User newUDPUser = {UDPClient};
-    Rengine::Entity &entity = RType::EntityMaker::make(this->_ecs, configID);
+    Rengine::Entity &entity = RType::EntityMaker::make(this->_ecs, configID, 1);
     entity.addComponent<RType::Components::Action>(RType::Components::ActionSource::ActionSourceUserInput);
     entity.addComponent<RType::Components::Velocity>(0, 0);
+    std::cout << entity.getComponent<RType::Components::Relationship>().getGroup() << std::endl;
     entity.setComponentsDestroyFunction(
        [](Rengine::Entity& en) {
             en.removeComponentNoExcept<RType::Components::Action>();
@@ -26,7 +30,8 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     Message<Communication::TypeDetail> msg2;
     msg2.header.type = {Communication::Type::ConnexionDetail, Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId};
     msg2.header.size = 0;
-    msg2 << entityID;
+    uint16_t levelID = Config::LevelConfigurationIdResolverSingletone::get().get(_levelManager.getLevelName());
+    msg2 << entityID << levelID;
     this->_GameServerTCP.Send(msg2, client);
 };
 

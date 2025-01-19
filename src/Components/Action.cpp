@@ -303,15 +303,17 @@ shootFunction:
                     [ecs, hostId, hasVelocity, hasAction](Rengine::Entity& en) {
                         std::optional<std::reference_wrapper<Relationship>> hostRelationship = std::nullopt;
 
-                        try {
-                            Rengine::Entity& host = ecs->getEntity(hostId);
-                            hostRelationship = host.getComponentNoExcept<Relationship>();
-                        } catch (Rengine::ECSExceptionEntityNotFound& e) {
-                            std::cerr << "[projectileLambda] Error: " << e.what() << std::endl;
-                        }
-                        // Remove child projectile on destruction
-                        if (hostRelationship.has_value() == true) {
-                            hostRelationship.value().get().removeChild(uint64_t(en));
+                        if (ecs->isEntityActive(hostId)) {
+                            try {
+                                Rengine::Entity& host = ecs->getEntity(hostId);
+                                hostRelationship = host.getComponentNoExcept<Relationship>();
+                            } catch (Rengine::ECSExceptionEntityNotFound& e) {
+                                std::cerr << "[projectileLambda] Error: " << e.what() << std::endl;
+                            }
+                            // Remove child projectile on destruction
+                            if (hostRelationship.has_value() == true) {
+                                hostRelationship.value().get().removeChild(uint64_t(en));
+                            }
                         }
                         en.removeComponent<Chrono>();
                         if (hasAction) {
