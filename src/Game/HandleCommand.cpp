@@ -14,6 +14,7 @@ void RType::Games::_handleConnexionTCPMessage(std::shared_ptr<Connexion<Communic
     msg >> UDPClient >> configID;
 
     UDPClient.address(asio::ip::make_address(client->getSocket().remote_endpoint().address().to_string()));
+    std::cout << "Client TCP endpoint: " << client->getSocket().remote_endpoint() << std::endl;
     User newUDPUser = {UDPClient};
     Rengine::Entity &entity = RType::EntityMaker::make(this->_ecs, configID, 1);
     entity.addComponent<RType::Components::Action>(RType::Components::ActionSource::ActionSourceUserInput);

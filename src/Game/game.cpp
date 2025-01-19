@@ -191,9 +191,12 @@ namespace RType {
                         asio::ip::tcp::endpoint TCPEndpoint;
                         msg->second >> TCPEndpoint;
                         std::shared_ptr<userGame> user = _getUserByTCPEndpoint(TCPEndpoint);
+                        std::cout << "User not found: " << TCPEndpoint << std::endl;
                         if (user) {
+                            std::cout << "Working" << std::endl;
                             _GameServerUDP.RemoveUser(user->user);
                             User newUser = {msg->first};
+                            _GameServerUDP.AddUser(newUser);
                             user->user = newUser;
                         }
                     }
