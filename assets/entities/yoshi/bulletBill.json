@@ -3,10 +3,10 @@
         "sprite": "assets/images/yoshi/bulletBill.json",
         "hitbox": {
             "size": {
-                "x": 60, "y": 50
+                "x": 80, "y": 70
             },
             "offset": {
-                "x": 0, "y": 0
+                "x": -10, "y": -40
             }
         },
         "stats": {

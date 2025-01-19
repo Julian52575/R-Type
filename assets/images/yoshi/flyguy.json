@@ -2,8 +2,8 @@
     "image":{
         "texturePath":"assets/images/yoshi/flyguy.png",
         "origin":{
-            "x": 0,
-            "y": 0
+            "x": 8,
+            "y": 13
         },
         "scale":{
             "x":3,

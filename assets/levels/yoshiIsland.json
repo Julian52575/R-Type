@@ -10,43 +10,43 @@
                 "enemies": [
                     {
                         "json": "assets/entities/yoshi/flyguy.json",
-                        "x": 500,
-                        "y": 200,
+                        "x": 1800,
+                        "y": 100,
                         "script": "assets/scripts/smartShoot.lua"
                     },
                     {
                         "json": "assets/entities/yoshi/yoshicopter.json",
-                        "x": 500,
-                        "y": 300,
+                        "x": 1600,
+                        "y": 200,
                         "script": "assets/scripts/smartShoot.lua"
                     },
                     {
                         "json": "assets/entities/yoshi/bird.json",
-                        "x": 500,
-                        "y": 400,
+                        "x": 1400,
+                        "y": 300,
                         "script": "assets/scripts/smartShoot.lua"
                     },
                     {
                         "json": "assets/entities/yoshi/fatBird.json",
-                        "x": 500,
-                        "y": 500,
+                        "x": 1200,
+                        "y": 400,
                         "script": "assets/scripts/smartShoot.lua"
                     },
                     {
                         "json": "assets/entities/yoshi/kamek.json",
-                        "x": 500,
-                        "y": 600,
+                        "x": 1000,
+                        "y": 500,
                         "script": "assets/scripts/smartShoot.lua"
                     },
                     {
                         "json": "assets/entities/yoshi/bulletBill.json",
-                        "x": 500,
-                        "y": 700,
+                        "x": 800,
+                        "y": 600,
                         "script": "assets/scripts/smartShoot.lua"
                     }
                 ],
                 "endCondition": "time",
-                "endConditionTime": 20.0
+                "endConditionTime": 60.0
             }
         ]
     }
