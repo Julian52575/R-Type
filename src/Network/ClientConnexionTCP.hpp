@@ -16,9 +16,6 @@ class ClientTCP : public AConnexion {
     public:
         ClientTCP(std::string serverHost, uint16_t serverPort);
         ~ClientTCP();
-        asio::ip::tcp::endpoint getLocalEndpoint() {
-            return _clientSocket.local_endpoint();
-        }
 
         void accept();
         bool Send(Message<T> &msg);
