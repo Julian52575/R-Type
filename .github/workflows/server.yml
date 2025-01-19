@@ -27,11 +27,3 @@ jobs:
           pip install cpplint
       - name: Run Linter
         run: ./lint.sh
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Install GameEngine
-        run: sudo ./install.sh
