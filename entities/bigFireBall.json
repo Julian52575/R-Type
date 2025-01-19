@@ -11,7 +11,7 @@
         },
         "stats": {
             "hp": 500,
-            "attack": 120,
+            "attack": 60,
             "defense": 80,
             "speedY": 0,
             "speedX": 1,
