@@ -10,6 +10,7 @@
 #include <rengine/src/Graphics/AWindow.hpp>
 #include <rengine/src/Graphics/GraphicManager.hpp>
 #include <rengine/src/Graphics/UserInputManager.hpp>
+#include <thread>
 
 #include "State.hpp"
 #include "GameState.hpp"
@@ -22,6 +23,13 @@ namespace Undertale {
     {
         this->initScenes();
         this->_sceneManager.setScene(GameScenes::GameScenesMenu);
+
+        Rengine::Graphics::SoundSpecs specs;
+
+        specs.soundPath = "assets/musics/battle_againt.mp3";
+        specs.loop = true;
+        this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(specs);
+        this->_backgroundMusic->play();
     }
 
     void GameState::registerComponents(void)
@@ -33,10 +41,6 @@ namespace Undertale {
         State s = this->_sceneManager.callCurrentSceneFunction<State, GameState&>(*this);
 
         return s;
-    }
-
-    void destroyEntity(Rengine::ECS& ecs, Rengine::Entity& entity)
-    {
     }
 
     State playFunction(GameState& gameState)
@@ -65,6 +69,7 @@ namespace Undertale {
         manager.addToRender(gameState._yellowhealthlbar, {420, 395});
         manager.addToRender(gameState._healthText, {480, 385});
 
+        gameState.updatePlayerHealth(gameState);
         if (gameState._waitingForStart) {
             if (!gameState._attackSet) {
                 gameState._tinyArrowConfig = std::make_unique<Config::TinyArrowConfig>("assets/attacks/tiny_arrows1.json");
@@ -83,6 +88,32 @@ namespace Undertale {
                 if (gameState._tinyArrowConfig->checkCollision(gameState._undyneRect)) {
                     gameState._playerHealth -= 15;
                     gameState.updatePlayerHealth(gameState);
+                    if (gameState._playerHealth < 0) {
+                        gameState._playerHealth = 56;
+                        gameState._undyneHealth = gameState._undyneMaxHealth;
+
+                        gameState._undyneOpacitySet = false;
+                        gameState._undyneOpacityUnset = false;
+                        gameState._attackSet = false;
+                        gameState._itemSelected = false;
+                        gameState._checkSelected = false;
+                        gameState._playerAttackSelected = false;
+                        gameState._startPlayerAttack = false;
+                        gameState._displayUndyneHeatlh = false;
+                        gameState._swapToUndyne = false;
+
+                        gameState._gameClock.restart();
+                        gameState._sceneManager.setScene(GameScenesGameOver);
+                        gameState.updatePlayerHealth(gameState);
+
+                        float healthPercent = (gameState._undyneHealth / gameState._undyneMaxHealth) * 120;
+                        healthPercent = healthPercent < 0 ? 0 : healthPercent;
+                        Rengine::Graphics::SpriteSpecs specs = gameState._undyneGreenBar->getSpriteSpecs();
+                        specs.shapeData.specifics.rectangleSize = {healthPercent, 25};
+                        gameState._undyneGreenBar->updateSpriteSpecs(specs);
+
+                        return StateGame;
+                    }
                 }
                 if (gameState._tinyArrowConfig->attackOver()) {
                     gameState._bossAttacking = false;
@@ -188,7 +219,33 @@ namespace Undertale {
                                 gameState._startPlayerAttack = false;
                                 gameState._displayUndyneHeatlh = true;
                                 gameState._undyneHealth -= 1500;
-                                float healthPercent = (gameState._undyneHealth / 15000.) * 120;
+                                if (gameState._undyneHealth < 0) {
+                                    gameState._undyneHealth = gameState._undyneMaxHealth;
+                                    gameState._playerHealth = 56;
+                                    gameState._currentMenuScene = GameMenuSceneNa;
+                                    gameState._heartCol = 0;
+
+                                    gameState._undyneOpacitySet = false;
+                                    gameState._undyneOpacityUnset = false;
+                                    gameState._attackSet = false;
+                                    gameState._itemSelected = false;
+                                    gameState._checkSelected = false;
+                                    gameState._playerAttackSelected = false;
+                                    gameState._startPlayerAttack = false;
+                                    gameState._displayUndyneHeatlh = false;
+                                    gameState._swapToUndyne = false;
+
+                                    float healthPercent = (gameState._undyneHealth / gameState._undyneMaxHealth) * 120;
+                                    healthPercent = healthPercent < 0 ? 0 : healthPercent;
+                                    Rengine::Graphics::SpriteSpecs specs = gameState._undyneGreenBar->getSpriteSpecs();
+                                    specs.shapeData.specifics.rectangleSize = {healthPercent, 25};
+                                    gameState._undyneGreenBar->updateSpriteSpecs(specs);
+            
+                                    gameState.updatePlayerHealth(gameState);
+
+                                    return StateMenu;
+                                }
+                                float healthPercent = (gameState._undyneHealth / gameState._undyneMaxHealth) * 120;
                                 healthPercent = healthPercent < 0 ? 0 : healthPercent;
                                 Rengine::Graphics::SpriteSpecs specs = gameState._undyneGreenBar->getSpriteSpecs();
                                 specs.shapeData.specifics.rectangleSize = {healthPercent, 25};
@@ -390,7 +447,37 @@ namespace Undertale {
 
     State playGameOver(GameState& gameState)
     {
-        // make heart break animation and game over screen
+        // make heart break animation and game over screen ()
+
+        auto manager = Rengine::Graphics::GraphicManagerSingletone::get();
+
+        gameState._opacityTime += gameState._gameClock.getElapsedTime();
+        if (gameState._opacity < 255) {
+            if (gameState._opacityTime.asMilliseconds() > 5) {
+                Rengine::Graphics::SpriteSpecs overSpecs = gameState._gameOver->getSpriteSpecs();
+                overSpecs.opacity = gameState._opacity;
+                gameState._gameOver->updateSpriteSpecs(overSpecs);
+                gameState._opacity++;
+                gameState._opacityTime = sf::Time::Zero;
+            }
+        }
+       
+        manager.addToRender(gameState._gameOver, {100, 100});
+
+        Rengine::Graphics::UserInputManager inputManager = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager();
+        inputManager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardChar);
+        inputManager.receivedInput(Rengine::Graphics::UserInputTypeKeyboardSpecial);
+
+        for (auto it : inputManager) {
+            if (it.type = Rengine::Graphics::UserInputTypeKeyboardChar) {
+                if (it.data.keyboardChar = 'z') {
+                    gameState._sceneManager.setScene(GameScenes::GameScenesMenu);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(800));
+                    return StateMenu;
+                }
+            }
+        }
+        gameState._gameClock.restart();
 
         return StateGame;
     }
@@ -528,6 +615,11 @@ namespace Undertale {
         undyneRectSpecs.color = {0, 0, 0};
         undyneRectSpecs.shapeData.specifics.rectangleSize = {_undyneRect._width, _undyneRect._height};
         _undyneRectSprite =  manager.createSprite(undyneRectSpecs);
+
+        Rengine::Graphics::SpriteSpecs overSpecs;
+        overSpecs.texturePath = "assets/images/game_over.png";
+        overSpecs.opacity = 0;
+        _gameOver = manager.createSprite(overSpecs);
     }
 
     void GameState::updatePlayerHealth(GameState& gameState)
@@ -543,7 +635,6 @@ namespace Undertale {
 
     void GameState::setOpacity(GameState& gameState, int opacity)
     {
-        std::cout << "set opacity" << std::endl;
         gameState.setSpriteOpacity(gameState._undyne, opacity);
         gameState.setSpriteOpacity(gameState._yellowhealthlbar, opacity);
         gameState.setSpriteOpacity(gameState._redhealthbar, opacity);

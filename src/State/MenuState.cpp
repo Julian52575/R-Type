@@ -16,13 +16,6 @@ namespace Undertale {
     {
         this->initScenes();
         this->_sceneManager.setScene(MenuScenesButtonDisplay);
-        // Background music
-        // Rengine::Graphics::SoundSpecs specs;
-
-        // specs.soundPath = "assets/musics/starforx64_training_mode.mp3";
-        // specs.loop = true;
-        // this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(specs);
-        // this->_backgroundMusic->play();
     }
 
     void MenuState::registerComponents(void)
@@ -51,6 +44,7 @@ namespace Undertale {
         Rengine::Graphics::GraphicManagerSingletone::get().addToRender(thiss._buttonVector[0], {300, 250});
         Rengine::Graphics::GraphicManagerSingletone::get().addToRender(thiss._buttonVector[1], {300, 300});
         if (thiss.play) {
+            thiss.play = false;
             return StateGame;
         }
         return StateMenu;

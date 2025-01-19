@@ -85,11 +85,6 @@ namespace Undertale {
         private:
             void initScenePlay(void);
 
-
-        protected:
-            #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
-            Rengine::ECS::size_type _playerEntityId = RTYPE_NO_PLAYER_ENTITY_ID;
-
         // Graphics
         protected:
             Rengine::Graphics::GraphicManagerSingletone _graphicManagerSingletone;
@@ -107,7 +102,8 @@ namespace Undertale {
             std::shared_ptr<Rengine::Graphics::ASprite> _undyne;
             std::shared_ptr<Rengine::Graphics::ASprite> _undyneRedBar;
             std::shared_ptr<Rengine::Graphics::ASprite> _undyneGreenBar;
-            int _undyneHealth = 15000;
+            float _undyneMaxHealth = 10000;
+            int _undyneHealth = 10000;
             bool _undyneOpacitySet = false;
             bool _undyneOpacityUnset = false;
 
@@ -186,6 +182,13 @@ namespace Undertale {
             sf::Clock _gameClock;
             sf::Time _buttonTime;
 
+
+            // Game over
+            std::shared_ptr<Rengine::Graphics::ASprite> _gameOver;
+            int _opacity = 0;
+            sf::Time _opacityTime;
+
+            std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic;
     };
 }  // namespace Undertale
 #endif  // SRC_STATE_GAMESTATE_HPP_
