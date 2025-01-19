@@ -3,10 +3,10 @@
         "sprite": "assets/images/yoshi/bird.json",
         "hitbox": {
             "size": {
-                "x": 30, "y": 38
+                "x": 50, "y": 50
             },
             "offset": {
-                "x": 0, "y": 0
+                "x": -20, "y": -15
             }
         },
         "stats": {

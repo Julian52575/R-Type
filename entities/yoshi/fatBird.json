@@ -3,10 +3,10 @@
         "sprite": "assets/images/yoshi/fatBird.json",
         "hitbox": {
             "size": {
-                "x": 44, "y": 44
+                "x": 80, "y": 70
             },
             "offset": {
-                "x": 0, "y": 0
+                "x": -40, "y": 0
             }
         },
         "stats": {
