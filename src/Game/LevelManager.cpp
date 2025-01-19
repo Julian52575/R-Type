@@ -5,6 +5,8 @@
 #include <rengine/src/ECS.hpp>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/Entity.hpp>
+#include <rengine/src/Graphics/GraphicManager.hpp>
+#include <rengine/src/Graphics/SoundSpecs.hpp>
 
 #include "LevelManager.hpp"
 #include "src/Game/EntityMaker.hpp"
@@ -54,6 +56,19 @@ namespace RType {
         }
         if (index >= this->_levelConfig->get().getScenes().size()) {
             return false;
+        }
+        if (this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic != "") {
+            Rengine::Graphics::SoundSpecs music;
+
+            music.soundPath = this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic;
+            music.loop = true;
+            try {
+                this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(music);
+                this->_backgroundMusic->play();
+            } catch (std::exception& e) {
+                std::cerr << "Cannot load music " << this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic << std::endl;
+                this->_backgroundMusic = nullptr;
+            }
         }
         this->_currentSceneIndex = index;
         this->_time = 0;
@@ -146,24 +161,29 @@ loadSceneReturn:
     {
         // No level config : return true and hope for reload
         if (this->_levelConfig.has_value() == false) {
+            this->_backgroundMusic->reset();
             return true;
         }
 
         switch (this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].endCondition) {
             case (Config::SceneEndConditionTime):
                 if (this->_time >= this->_levelConfig->get().getScenes()[this->_currentSceneIndex % this->_levelConfig->get().getScenes().size()].endConditionData.time) {
+                    this->_backgroundMusic->reset();
                     return true;
                 }
                 break;
 
             case (Config::SceneEndConditionBossDefeat):
                 if (this->_bossId.has_value() == false) {
+
+                    this->_backgroundMusic->reset();
                     return true;
                 }
                 break;
 
             // Invalid end condition : return true and hope for reload
             default:
+                this->_backgroundMusic->reset();
                 return true;
         }
         return false;

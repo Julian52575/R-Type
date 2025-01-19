@@ -5,6 +5,8 @@
 #include "src/Config/LevelConfig.hpp"
 #include "src/Config/LevelConfigResolver.hpp"
 #include "src/Game/SceneManager.hpp"
+#include <memory>
+#include <rengine/src/Graphics/ASound.hpp>
 
 namespace RType {
     /**
@@ -84,6 +86,7 @@ namespace RType {
             std::optional<Rengine::Entity::size_type> _bossId;
             std::vector<Rengine::Entity::size_type> _currentSceneBackgroundEntities;
             std::vector<Rengine::Entity::size_type> _currentSceneEnemies;
+            std::shared_ptr<Rengine::Graphics::ASound> _backgroundMusic = nullptr;
             SceneManager &_sceneManager;
     };
 
