@@ -4,6 +4,7 @@
 #include "src/Components/Configuration.hpp"
 #include "src/Components/Life.hpp"
 
+#include <rengine/src/Clock/Clock.hpp>
 #include <rengine/src/SparseArray.hpp>
 
 namespace RType {
@@ -64,13 +65,14 @@ namespace RType {
                     ownHitboxStartY <= hitboxEndY && ownHitboxEndY >= hitboxStartY)) {
                     continue;
                 }
-                // float currentTime = Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getElapsedTimeSeconds();
-                float timeCooldown = 0.3;
+                hitbox._timeBuffer += Rengine::Clock::getElapsedTime();
+                float currentTime = hitbox._timeBuffer;
+                float timeCooldown = 0.999f;
 
-                // if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
-                //     return;
-                // }
-                // hitbox._lastCheckSeconds = currentTime;
+                if (currentTime - hitbox._lastCheckSeconds < timeCooldown) {
+                    return;
+                }
+                hitbox._lastCheckSeconds = currentTime;
                 //check si l'entité à une vie et si c'est le cas elle take damage
                 if (lifes[index].has_value() == true) {
                     if (configWrapper.has_value() == true) {
