@@ -1,10 +1,6 @@
 {
     "image":{
         "texturePath":"assets/images/undyne_spritesheet.png",
-        "origin":{
-            "x":225,
-            "y":5
-        },
         "scale":{
             "x":1.8,
             "y":1.8
@@ -17,7 +13,7 @@
                 "height": 118
             },
             "frameCount": 104,
-            "frameDuration": 0.04,
+            "frameDuration": 0.03,
             "frameDisplacement": {
                 "x":150,
                 "y":0

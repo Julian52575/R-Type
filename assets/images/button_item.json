@@ -1,10 +1,6 @@
 {
     "image":{
       "texturePath":"",
-       "origin":{
-          "x":350,
-          "y":430
-      },
       "scale":{
           "x":0.9,
           "y":0.9

@@ -1,0 +1,33 @@
+{
+    "tinyArrow":
+        [
+            {
+                "direction": 0,
+                "velocity": 0.1,
+                "startTime": 0,
+                "pos_x": 310,
+                "pos_y": 480
+            },
+            {
+                "direction": 1,
+                "velocity": 0.3,
+                "startTime": 0.5,
+                "pos_x": 310,
+                "pos_y": 0
+            },
+            {
+                "direction": 0,
+                "velocity": 0.1,
+                "startTime": 1,
+                "pos_x": 310,
+                "pos_y": 480
+            },
+            {
+                "direction": 0,
+                "velocity": 0.1,
+                "startTime": 2,
+                "pos_x": 310,
+                "pos_y": 480
+            }
+        ]
+}

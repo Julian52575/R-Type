@@ -1,0 +1,9 @@
+{
+    "image":{
+      "texturePath":"assets/images/target.png",
+      "scale":{
+          "x":1.085,
+          "y":1.28
+      }
+    }
+}

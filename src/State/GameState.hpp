@@ -9,9 +9,10 @@
 #include <rengine/src/Entity.hpp>
 
 #include "../Config/ImageConfig.hpp"
+#include "../Config/TinyArrowConfig.hpp"
 #include "AState.hpp"
 #include "src/State/State.hpp"
-
+#include <SFML/System/Clock.hpp>
 
 namespace Undertale {
 
@@ -24,19 +25,16 @@ namespace Undertale {
     enum GameScenes {
         GameScenesNA,
         GameScenesPlay,
+        GameScenesMenu,
         GameScenesGameOver
     };
 
-    enum PlayScene {
-        PlaySceneMenu,
-        PlaySceneBattle,
-    };
-
-    enum MenuScene {
-        MenuSceneAct,
-        MenuSceneFight,
-        MenuSceneItem,
-        MenuSceneMercy
+    enum GameMenuScene {
+        GameMenuSceneNa,
+        GameMenuSceneFight,
+        GameMenuSceneAct,
+        GameMenuSceneItem,
+        GameMenuSceneMercy
     };
 
     /**
@@ -65,27 +63,28 @@ namespace Undertale {
             /*
             * @fn playFunction
             * @param GameState A reference to this GameState class.
-            * @brief Play the game from the currently loaded level.
+            * @brief Play the boss attack.
             */
             friend State playFunction(GameState& gameState);
 
+            /*
+            * @fn playMenu
+            * @param GameState A reference to this GameState class.
+            * @brief Play the menu in the boss fight
+            */
+            friend State playMenu(GameState& gameState);
+
+            /*
+            * @fn playGameOver
+            * @param GameState A reference to this GameState class.
+            * @brief Play the game over screen.
+            */
+            friend State playGameOver(GameState& gameState);
+
         /*      Player management       */
         private:
-            /*
-            * @fn createPlayer
-            * @param std::string A path to an entity config
-            * @brief Creates the player entity from the config.
-            */
-            void createPlayer(const std::string& jsonPath);
-            /*
-            * @fn deletePlayer
-            * @brief Deletes the player entity.
-            */
-            void deletePlayer(void);
-
-            void alertPlayer(void);
-            void loadCurrentScene(void);
             void initScenePlay(void);
+
 
         protected:
             #define RTYPE_NO_PLAYER_ENTITY_ID (Rengine::ECS::size_type) -1
@@ -95,16 +94,38 @@ namespace Undertale {
         protected:
             Rengine::Graphics::GraphicManagerSingletone _graphicManagerSingletone;
 
+        public:
+            void drawButton(GameState& gameState);
+            void setOpacity(GameState& gameState, int opacity);
+            void setSpriteOpacity(std::shared_ptr<Rengine::Graphics::ASprite>& sprite, int opacity);
+
         // Helper
         private:
-            Rengine::Graphics::vector2D<float> getSpriteVecFloat(std::shared_ptr<Rengine::Graphics::ASprite> sprite);
             void initScenes(void);
-            std::vector<std::shared_ptr<Rengine::Graphics::ASprite>> _backgroundSprites;
-            std::vector<Rengine::Entity> _current_enemies;
             
             // Undyne
             std::shared_ptr<Rengine::Graphics::ASprite> _undyne;
+            std::shared_ptr<Rengine::Graphics::ASprite> _undyneRedBar;
+            std::shared_ptr<Rengine::Graphics::ASprite> _undyneGreenBar;
+            int _undyneHealth = 15000;
+            bool _undyneOpacitySet = false;
+            bool _undyneOpacityUnset = false;
 
+            std::unique_ptr<Config::TinyArrowConfig> _tinyArrowConfig;
+            bool _attackSet = false;
+
+            Config::FloatRect _undyneRect;
+            std::shared_ptr<Rengine::Graphics::ASprite> _undyneRectSprite;
+            bool _waitingForStart;
+            bool _waitingBeforeMenu;
+            bool _bossAttacking;
+            sf::Time _startWait;
+            sf::Time _menuWait;
+
+            // Player
+            void updatePlayerHealth(GameState& gameState);
+            std::shared_ptr<Rengine::Graphics::ASprite> _player;
+            int _playerHealth = 56;
 
             // menu buttons
             std::shared_ptr<Rengine::Graphics::ASprite> _act_unselected;
@@ -115,6 +136,56 @@ namespace Undertale {
             std::shared_ptr<Rengine::Graphics::ASprite> _item_selected;
             std::shared_ptr<Rengine::Graphics::ASprite> _mercy_unselected;
             std::shared_ptr<Rengine::Graphics::ASprite> _mercy_selected;
+            std::shared_ptr<Rengine::Graphics::ASprite> _heart;
+
+            // heart in menu
+            Rengine::Graphics::vector2D<float> _heartPos;
+            short int _heartCol = 0;
+
+            short int _menuRow = 0;
+            short int _menuCol = 0;
+
+            // Game scenes
+            GameMenuScene _currentMenuScene = GameMenuSceneNa;
+
+            // Inside menu text
+            std::shared_ptr<Rengine::Graphics::AText> _insideMenuText;
+            std::shared_ptr<Rengine::Graphics::AText> _fightText;
+            std::shared_ptr<Rengine::Graphics::AText> _actText;
+            std::shared_ptr<Rengine::Graphics::AText> _itemText;
+            std::shared_ptr<Rengine::Graphics::AText> _mercyText;
+
+            std::shared_ptr<Rengine::Graphics::AText> _pieText;
+            bool _itemSelected = false;
+
+            std::shared_ptr<Rengine::Graphics::AText> _checkText;
+            bool _checkSelected = false;
+
+            std::shared_ptr<Rengine::Graphics::ASprite> _playerAttack;
+            Rengine::Graphics::vector2D<float> _playerAttackPos;
+            std::shared_ptr<Rengine::Graphics::ASprite> _playerBackground;
+            bool _playerAttackSelected = false;
+            bool _startPlayerAttack = false;
+            bool _displayUndyneHeatlh = false;
+            bool _swapToUndyne = false;
+            sf::Time _waitBeforeAttack;
+            sf::Time _playerAttackTime;
+            sf::Clock _playerAttackClock;
+
+            // info bar
+            std::shared_ptr<Rengine::Graphics::ASprite> _rect;
+            std::shared_ptr<Rengine::Graphics::AText> _playerName;
+            std::shared_ptr<Rengine::Graphics::AText> _playerLvl;
+            std::shared_ptr<Rengine::Graphics::AText> _hpText;
+            std::shared_ptr<Rengine::Graphics::AText> _healthText;
+
+            std::shared_ptr<Rengine::Graphics::ASprite> _redhealthbar;
+            std::shared_ptr<Rengine::Graphics::ASprite> _yellowhealthlbar;
+
+            // Game clock
+            sf::Clock _gameClock;
+            sf::Time _buttonTime;
+
     };
 }  // namespace Undertale
 #endif  // SRC_STATE_GAMESTATE_HPP_

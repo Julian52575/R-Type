@@ -68,10 +68,7 @@ namespace Undertale {
                     this->currentButton = 1;
                 } else if (it.data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialArrowUP) {
                     this->currentButton = 0;
-                }
-            }
-            if (it.type == Rengine::Graphics::UserInputTypeKeyboardChar) {
-                if (it.data.keyboardChar == 'z') {
+                } else if (it .data.keyboardSpecial == Rengine::Graphics::UserInputKeyboardSpecialENTER) {
                     if (this->currentButton == 0) {
                         if (this->play) {
                             return;
