@@ -65,6 +65,7 @@ runTest "Entity_t.cpp" "Entity"
 runTest "Resolver/AResolver_t.cpp" "Resolver"
 runTest "Graphics/WindowSpecs_t.cpp ../src/Graphics/WindowSpecs.cpp" "WindowSpecs"
 runTest "Graphics/UserInputManager_t.cpp ../src/Graphics/UserInputManager.cpp" "UserInputManager"
+runTest "Clock/Clock_t.cpp ../src/Clock/Clock.cpp" "Clock"
 
 #check failure size for print / return status
 #FAILURE_LIST=(${FAILURE_LIST// /\n})
