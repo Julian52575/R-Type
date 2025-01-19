@@ -1,7 +1,7 @@
 {
     "attack": {
         "type": "missiles",
-        "cooldown": 0.0,
+        "cooldown": 0.6,
         "missiles": [
             {
                 "json": "assets/entities/laserBeam.json",
@@ -10,7 +10,7 @@
                 },
                 "controlType": "velocity",
                 "velocity": {
-                    "x": 80, "y": 0
+                    "x": 200, "y": 0
                 }
             }
         ]
