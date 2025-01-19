@@ -7,17 +7,40 @@ EntityActionTypeBarrier = 0x05
 EntityActionTypeDeath = 0x06
 EntityActionTypeUltimate = 0x07
 EntityActionTypeInvalid = 0xff
+
 math.randomseed(os.time())
-time = 0.0
+
+DirectionUp = -1
+DirectionDown = 1
+DirectionLeft = -1
+DirectionRight = 1
+
+x_dir = DirectionDown
+y_dir = DirectionLeft
 
 function updateDeltatime(deltatime)  -- float deltatime
-    time = time + deltatime
 end  -- return values are ignored
 
 function move(pos_x, pos_y)
-    return {10, 0} -- return x, y  -- float get converted to int automatically by the api
+
+    if pos_x <= 10.0
+    then
+        x_dir = DirectionRight
+    elseif pos_x >= 1900.0
+    then
+        x_dir = DirectionLeft
+    end
+
+    if pos_y <= 10.0
+    then
+        y_dir = DirectionDown
+    elseif pos_y >= 1070.0
+    then
+        y_dir = DirectionUp
+    end
+    return {80.0 * x_dir, 80.0 * y_dir}
 end
 
 function shoot(shoot1Deltatime, shoot2Deltatime, shoot3Deltatime)
-    return EntityActionTypeShoot3
+    return
 end

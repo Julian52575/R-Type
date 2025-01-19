@@ -1,22 +1,21 @@
 {
     "entity": {
-        "sprite": "assets/images/playerDefault.json",
+        "sprite": "assets/images/yoshi/bird.json",
         "hitbox": {
             "size": {
-                "x": 35, "y": 20
+                "x": 30, "y": 38
             },
             "offset": {
                 "x": 0, "y": 0
             }
         },
         "stats": {
-            "hp": 17,
-            "attack": 18,
-            "defense": 19,
-            "acceleration": 21.21,
-            "speedY": 0,
-            "speedX": 500,
-            "enemyColisionDamage": 23
+            "hp": 30,
+            "attack": 30,
+            "defense": 1,
+            "speedY": 2.0,
+            "speedX": 5.5,
+            "acceleration": 100
         },
         "characteristics": {
             "enemyDamageOnColision": true,

@@ -1,6 +1,6 @@
 {
     "entity": {
-        "sprite": "assets/images/playerDefault.json",
+        "sprite": "assets/images/spaceShip.json",
         "hitbox": {
             "size": {
                 "x": 35, "y": 20

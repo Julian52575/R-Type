@@ -1,5 +1,7 @@
 {
     "1": "assets/entities/skeletonDragon.json",
     "2": "assets/entities/smallFireBall.json",
-    "3": "assets/entities/bigFireBall.json"
+    "3": "assets/entities/bigFireBall.json",
+    "4": "assets/entities/spaceShip.json",
+    "5": "assets/entities/laserBeam.json"
 }
