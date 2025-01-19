@@ -152,8 +152,6 @@ namespace RType {
 
     void GameState::loadLevel(const std::string& jsonPath)
     {
-        std::cout << "Playing " << jsonPath << std::endl;
-        this->_levelManager.loadLevel(jsonPath);
         uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(this->_lobbyInfo.playerJson);
         Message<Network::Communication::TypeDetail> msg;
         msg.header.type = {Network::Communication::Type::ConnexionDetail, Network::Communication::main::ConnexionDetailPrecision::ClientConnexion};
@@ -241,9 +239,15 @@ namespace RType {
         for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientTCP->Receive(); msg; msg = gameState._clientTCP->Receive()) {
             if (msg->header.type.type == RType::Network::Communication::Type::ConnexionDetail && msg->header.type.precision == RType::Network::Communication::main::ConnexionDetailPrecision::PlayableEntityInGameId) {
                 Rengine::Entity::size_type id;
-                *msg >> id;
+                uint16_t levelID;
+                *msg >> levelID >> id;
                 uint16_t configID = RType::Config::EntityConfigurationIdResolverSingletone::get().get(gameState._lobbyInfo.playerJson);
                 Rengine::Entity &entity = gameState.getOrCreateEntity(id, configID);
+                std::string levelPath = RType::Config::LevelConfigurationIdResolverSingletone::get().get(levelID);
+                if (levelPath != "")
+                    gameState._levelManager.loadLevel(levelPath);
+                else
+                    std::cerr << "No level found" << std::endl;
 
                 entity.addComponent<RType::Components::Action>(RType::Components::ActionSourceUserInput);
                 entity.addComponent<RType::Components::Clickable>( [](void){} );
