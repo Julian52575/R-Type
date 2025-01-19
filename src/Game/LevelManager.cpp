@@ -5,6 +5,8 @@
 #include <rengine/src/ECS.hpp>
 #include <rengine/RengineGraphics.hpp>
 #include <rengine/src/Entity.hpp>
+#include <rengine/src/Graphics/ASprite.hpp>
+#include <rengine/src/Graphics/GraphicManager.hpp>
 
 #include "LevelManager.hpp"
 #include "src/Game/EntityMaker.hpp"
@@ -56,6 +58,22 @@ namespace RType {
         }
         this->_currentSceneIndex = index;
         this->_time = 0;
+        // BGM
+        if (this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic != "") {
+            Rengine::Graphics::SoundSpecs music;
+            music.soundPath = this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic;
+            music.loop = true;
+            try {
+                if (this->_backgroundMusic != nullptr) {
+                    this->_backgroundMusic->reset();
+                }
+                this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(music);
+                this->_backgroundMusic->play();
+            } catch (std::exception& e) {
+                std::cerr << "Cannot load music " << this->_levelConfig->get().getScenes()[this->_currentSceneIndex].backgroundMusic << std::endl;
+                this->_backgroundMusic = nullptr;
+            }
+        }
 
        // background
         std::optional<std::reference_wrapper<const std::vector<RType::Config::ImageConfig>>> backgroundImages
@@ -71,17 +89,11 @@ namespace RType {
             goto loadSceneReturn;
         }
         for (i = 0; i < backgroundImages->get().size(); i++) {
-            Rengine::Entity& bgEntity = this->_ecs.addEntity();
-
-            bgEntity.addComponent<RType::Components::Position>(0, 0);
-            bgEntity.addComponent<RType::Components::Sprite>(backgroundImages->get()[i].getSpecs());
-            bgEntity.setComponentsDestroyFunction(
-                [](Rengine::Entity& en) {
-                    en.removeComponent<RType::Components::Position>();
-                    en.removeComponent<RType::Components::Sprite>();
-                }
+            this->_currentSceneBackgroundVector.emplace_back(
+                std::move(
+                    Rengine::Graphics::GraphicManagerSingletone::get().createSprite(backgroundImages->get()[i].getSpecs())
+                )
             );
-            this->_currentSceneBackgroundEntities.push_back(Rengine::ECS::size_type(bgEntity));
         }
 loadSceneReturn:
         return true;
@@ -90,6 +102,16 @@ loadSceneReturn:
     void LevelManager::updateDeltatime(void)
     {
         this->_time += Rengine::Clock::getElapsedTime();
+    }
+
+    void LevelManager::renderBackground(void)
+    {
+        for (auto it : this->_currentSceneBackgroundVector) {
+            Rengine::Graphics::GraphicManagerSingletone::get().addToRender(
+                it,
+                {0, 0}
+            );
+        }
     }
 
     bool LevelManager::isCurrentSceneOver(void)
@@ -150,13 +172,9 @@ loadSceneReturn:
 
     void LevelManager::clearCurrentScene(void)
     {
-        this->_currentSceneBackgroundEntities.clear();
+        this->_backgroundMusic = nullptr;
+        this->_currentSceneBackgroundVector.clear();
         this->_bossId = std::nullopt;
         this->_time = 0;
-        for (auto bgIt : this->_currentSceneBackgroundEntities) {
-            try {
-                this->_ecs.removeEntity(bgIt);
-            } catch (std::exception& e) {;}
-        }
     }
 }  // namespace RType

@@ -202,6 +202,7 @@ namespace RType {
         Rengine::SparseArray<RType::Components::Relationship>& relationships = gameState._ecs.getComponents<RType::Components::Relationship>();
         Rengine::SparseArray<RType::Components::Life>& lifes = gameState._ecs.getComponents<RType::Components::Life>();
 
+        gameState._levelManager.renderBackground();
         for (std::optional<Message<RType::Network::Communication::TypeDetail>> msg = gameState._clientUDP->Receive(); msg; msg = gameState._clientUDP->Receive()) {
             if (msg->header.type.type == RType::Network::Communication::Type::EntityInfo && msg->header.type.precision == RType::Network::Communication::main::EntityInfoPrecision::InfoAll) {
                 uint16_t health;
@@ -260,6 +261,7 @@ namespace RType {
                 gameState._entities.clear();
                 std::cout << "Level finish" << std::endl;
                 Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->close();
+                gameState._levelManager.completeClear();
                 return State::StateMenu;
             }
 
