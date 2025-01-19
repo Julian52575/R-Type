@@ -11,7 +11,8 @@
                 "controlType": "velocity",
                 "velocity": {
                     "x": 100, "y": 0
-                }
+                },
+                "timeLimit": 10.0
             },
             {
                 "json": "assets/entities/yoshi/fireBall.json",
@@ -21,7 +22,8 @@
                 "controlType": "velocity",
                 "velocity": {
                     "x": 90, "y": -80
-                }
+                },
+                "timeLimit": 10.0
             },
             {
                 "json": "assets/entities/yoshi/fireBall.json",
@@ -31,7 +33,8 @@
                 "controlType": "velocity",
                 "velocity": {
                     "x": 90, "y": 80
-                }
+                },
+                "timeLimit": 10.0
             }
         ]
     }

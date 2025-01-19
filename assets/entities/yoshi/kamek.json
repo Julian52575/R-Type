@@ -23,7 +23,9 @@
             "persistsOffScreen": false
         },
         "attacks": {
-            "shoot1": "assets/attacks/yoshi/diagonalFireBall.json"
+            "shoot1": "assets/attacks/yoshi/fireBall.json",
+            "shoot2": "assets/attacks/yoshi/diagonalFireBall.json",
+            "shoot3": "assets/attacks/yoshi/bulletBill.json"
         }
     }
 }

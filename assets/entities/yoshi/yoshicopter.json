@@ -10,8 +10,8 @@
             }
         },
         "stats": {
-            "hp": 200,
-            "attack": 40,
+            "hp": 250,
+            "attack": 10,
             "defense": 10,
             "speedY": 4.5,
             "speedX": 3,
@@ -23,9 +23,9 @@
             "persistsOffScreen": false
         },
         "attacks": {
-            "shoot1": "assets/attacks/fireBallSpam.json",
-            "shoot2": "assets/attacks/bigFireBall.json",
-            "shoot3": "assets/attacks/laserBeam.json"
+            "shoot1": "assets/attacks/yoshi/fireBall.json",
+            "shoot2": "assets/attacks/yoshi/diagonalFireBall.json",
+            "shoot3": "assets/attacks/yoshi/bulletBill.json"
         }
     }
 }
