@@ -1,4 +1,6 @@
 {
     "1": "assets/levels/template.json",
-    "2": "assets/levels/template2.json"
+    "99": "assets/levels/debug.json",
+    "2": "assets/levels/yoshiIsland.json",
+    "3": "assets/levels/dokkanBattle.json"
 }

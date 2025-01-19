@@ -7,7 +7,6 @@ EntityActionTypeBarrier = 0x05
 EntityActionTypeDeath = 0x06
 EntityActionTypeUltimate = 0x07
 EntityActionTypeInvalid = 0xff
-math.randomseed(os.time())
 time = 0.0
 
 function updateDeltatime(deltatime)  -- float deltatime
@@ -15,9 +14,24 @@ function updateDeltatime(deltatime)  -- float deltatime
 end  -- return values are ignored
 
 function move(pos_x, pos_y)
-    return {10, 0} -- return x, y  -- float get converted to int automatically by the api
+    return {0, 0} -- return x, y  -- float get converted to int automatically by the api
 end
 
 function shoot(shoot1Deltatime, shoot2Deltatime, shoot3Deltatime)
-    return EntityActionTypeShoot3
+    if shoot1Deltatime > 5.0
+    then
+        return EntityActionTypeShoot1
+    end
+
+    if shoot2Deltatime > 3.0
+    then
+        return EntityActionTypeShoot1
+    end
+
+    if shoot1Deltatime > 1.0
+    then
+        return EntityActionTypeShoot1
+    end
+
+    return EntityActionTypeInvalid
 end

@@ -1,0 +1,28 @@
+{
+    "image":{
+        "texturePath":"assets/images/yoshi/bird.png",
+        "origin":{
+            "x": 0,
+            "y": 0
+        },
+        "scale":{
+            "x":1,
+            "y":1
+        },
+        "animations":{
+            "frameRect":{
+                "x":0,
+                "y":0,
+                "width": 30,
+                "height":38
+            },
+            "frameCount": 9,
+            "frameDuration": 0.04,
+            "frameDisplacement": {
+                "x":33,
+                "y":0
+            }
+        }
+    }
+}
+

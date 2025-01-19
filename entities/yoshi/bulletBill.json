@@ -1,22 +1,21 @@
 {
     "entity": {
-        "sprite": "assets/images/playerDefault.json",
+        "sprite": "assets/images/yoshi/bulletBill.json",
         "hitbox": {
             "size": {
-                "x": 35, "y": 20
+                "x": 60, "y": 50
             },
             "offset": {
                 "x": 0, "y": 0
             }
         },
         "stats": {
-            "hp": 17,
-            "attack": 18,
-            "defense": 19,
-            "acceleration": 21.21,
-            "speedY": 0,
-            "speedX": 500,
-            "enemyColisionDamage": 23
+            "hp": 150,
+            "attack": 80,
+            "defense": 20,
+            "speedY": 0.1,
+            "speedX": 1.0,
+            "acceleration": 100
         },
         "characteristics": {
             "enemyDamageOnColision": true,

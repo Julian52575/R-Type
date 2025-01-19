@@ -1,6 +1,6 @@
 {
    "image":{
-      "texturePath":"assets/images/playerDefault.png",
+      "texturePath":"assets/images/spaceShip.png",
       "origin":{
          "x": 980,
          "y": 40

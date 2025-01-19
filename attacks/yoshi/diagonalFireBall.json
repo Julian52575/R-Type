@@ -1,0 +1,38 @@
+{
+    "attack": {
+        "type": "missiles",
+        "cooldown": 3.0,
+        "missiles": [
+            {
+                "json": "assets/entities/yoshi/fireBall.json",
+                "offset": {
+                    "x": 10, "y": 0
+                },
+                "controlType": "velocity",
+                "velocity": {
+                    "x": 10, "y": 0
+                }
+            },
+            {
+                "json": "assets/entities/yoshi/fireBall.json",
+                "offset": {
+                    "x": 10, "y": -12
+                },
+                "controlType": "velocity",
+                "velocity": {
+                    "x": 10, "y": -2
+                }
+            },
+            {
+                "json": "assets/entities/yoshi/fireBall.json",
+                "offset": {
+                    "x": 10, "y": 12
+                },
+                "controlType": "velocity",
+                "velocity": {
+                    "x": 10, "y": 2
+                }
+            }
+        ]
+    }
+}
