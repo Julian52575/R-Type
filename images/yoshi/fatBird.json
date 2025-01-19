@@ -6,8 +6,8 @@
             "y": 0
         },
         "scale":{
-            "x":1,
-            "y":1
+            "x":3,
+            "y":3
         },
         "animations":{
             "frameRect":{
@@ -19,7 +19,7 @@
             "frameCount": 4,
             "frameDuration": 0.03,
             "frameDisplacement": {
-                "x":46,
+                "x":45,
                 "y":0
             }
         }
