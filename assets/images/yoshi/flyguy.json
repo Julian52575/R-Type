@@ -1,0 +1,28 @@
+{
+    "image":{
+        "texturePath":"assets/images/yoshi/flyguy.png",
+        "origin":{
+            "x": 8,
+            "y": 13
+        },
+        "scale":{
+            "x":3,
+            "y":3
+        },
+        "animations":{
+            "frameRect":{
+                "x":0,
+                "y":0,
+                "width": 15,
+                "height":26
+            },
+            "frameCount": 4,
+            "frameDuration": 0.3,
+            "frameDisplacement": {
+                "x":20,
+                "y":0
+            }
+        }
+    }
+}
+
