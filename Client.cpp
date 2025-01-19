@@ -1,8 +1,9 @@
 #include <rengine/RengineNetworkClient.hpp>
+#include <rengine/Rengine.hpp>
 #include <uuid/uuid.h>
 /**
  * @brief Namespace for communication-related definitions and structures.
- * 
+ *
  * This structure defines the communication types and their associated details,
  * including types, precision values, and details about message handling.
  */

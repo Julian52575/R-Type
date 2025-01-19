@@ -23,3 +23,4 @@ _CPack_Packages/
 *.deb
 *.so
 *.dll
+client
