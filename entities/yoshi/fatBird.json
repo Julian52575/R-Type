@@ -14,7 +14,7 @@
             "attack": 120,
             "defense": 1,
             "speedY": 1.5,
-            "speedX": 0.5,
+            "speedX": 1.5,
             "acceleration": 100
         },
         "characteristics": {
