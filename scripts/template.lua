@@ -8,11 +8,16 @@ EntityActionTypeDeath = 0x06
 EntityActionTypeUltimate = 0x07
 EntityActionTypeInvalid = 0xff
 math.randomseed(os.time())
+time = 0.0
+
+function updateDeltatime(deltatime)  -- float deltatime
+    time = time + deltatime
+end  -- return values are ignored
 
 function move(pos_x, pos_y)
-    return {EntityActionTypeShoot1, 20.0, 0} -- float get converted to int automatically by the api
+    return {(time * 10) % 100, 0.0} -- return x, y  -- float get converted to int automatically by the api
 end
 
-function shoot()
-    return 1 + (math.random() % 0x06);
+function shoot(shoot1Deltatime, shoot2Deltatime, shoot3Deltatime)
+    return EntityActionTypeShoot3
 end
