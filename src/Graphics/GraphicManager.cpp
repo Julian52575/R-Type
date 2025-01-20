@@ -71,7 +71,7 @@ namespace Rengine {
 
             // SDL
         #ifdef __RENGINEGRAPHICS_USELIB_SDL
-            ;
+            {}
         #endif
             throw GraphicManagerException("No graphical library set. Check your rengine build.");
         }
@@ -102,5 +102,5 @@ namespace Rengine {
             this->_window->addTextToRender(text, position);
         }
 
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine

@@ -20,6 +20,25 @@ jobs:
       - name: Exec unit tests
         run: cd tests && ./tests_run.sh
 
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install python3 venv
+        run: |
+          sudo apt-get update
+          sudo apt-get install python3-venv
+      - name: Create virtual environment
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+      - name: Install dependencies
+        run: |
+          pip install cpplint
+      - name: Run Linter
+        run: ./lint.sh
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +48,7 @@ jobs:
         run: sudo ./install.sh
 
   pushToRepo:
-    depends-on: [unit_tests, build]
+    needs: [unit_tests, build, linter]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

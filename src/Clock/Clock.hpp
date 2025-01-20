@@ -1,6 +1,6 @@
 //
-#ifndef SRC_CLOCK_HPP_
-#define SRC_CLOCK_HPP_
+#ifndef SRC_CLOCK_CLOCK_HPP_
+#define SRC_CLOCK_CLOCK_HPP_
 
 #include <cstdint>
 #include <cstdlib>
@@ -25,4 +25,4 @@ namespace Rengine {
 
     }  // namespace Clock
 }  // namespace Rengine
-#endif  // SRC_CLOCK_HPP_
+#endif  // SRC_CLOCK_CLOCK_HPP_

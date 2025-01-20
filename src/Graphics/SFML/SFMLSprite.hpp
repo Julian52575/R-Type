@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_
-#define _SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_
+#ifndef SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_
+#define SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -43,6 +43,7 @@ namespace Rengine {
                         public:
                             const char *what() const noexcept { return "Invalid Sprite Type in class SFMLSprite."; };
                     };
+
                     public:
                         /**
                          * @ brief The shape-specific data is applied here.
@@ -77,7 +78,7 @@ namespace Rengine {
                 sf::Texture _texture;
                 bool _flipped = false;
         };  // class SFMLSprite
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine
 
-#endif  // _SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_
+#endif  // SRC_GRAPHICS_SFML_SFMLSPRITE_HPP_

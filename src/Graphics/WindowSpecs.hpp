@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_WINDOWSPECS_HPP_
-#define _SRC_GRAPHICS_WINDOWSPECS_HPP_
+#ifndef SRC_GRAPHICS_WINDOWSPECS_HPP_
+#define SRC_GRAPHICS_WINDOWSPECS_HPP_
 #include <cstdint>
 #include <string>
 #include <nlohmann/json.hpp>
@@ -12,7 +12,7 @@ namespace Rengine {
 
         class WindowSpecsException : public std::exception {
             public:
-                WindowSpecsException(const std::string& msg) : _msg("Rengine::Graphics::WindowSpecs: " + msg) {};
+                explicit WindowSpecsException(const std::string& msg) : _msg("Rengine::Graphics::WindowSpecs: " + msg) {}
                 const char *what() const noexcept
                 {
                     return this->_msg.c_str();
@@ -105,11 +105,11 @@ namespace Rengine {
             * @brief Various options about the window.
             */
             WindowOption options;
+
             private:
                 void parseJsonOptions(nlohmann::json& optionsField);
-
         };  // struct WindowSpecs
 
     }  // namespace Graphics
-}  //namespace Rengine
-#endif
+}  // namespace Rengine
+#endif  // SRC_GRAPHICS_WINDOWSPECS_HPP_

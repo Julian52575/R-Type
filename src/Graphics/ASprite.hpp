@@ -1,17 +1,18 @@
 //
-#ifndef _SRC_GRAPHICS_ASPRITE_HPP_
-#define _SRC_GRAPHICS_ASPRITE_HPP_
+#ifndef SRC_GRAPHICS_ASPRITE_HPP_
+#define SRC_GRAPHICS_ASPRITE_HPP_
 
 #include "SpriteSpecs.hpp"
 #include "Vector.hpp"
 #include <cstdint>
+#include <string>
 
 namespace Rengine {
     namespace Graphics {
 
         class SpriteException : public std::exception {
             public:
-                SpriteException(const std::string& msg) : _msg("Rengine::Graphics::Sprite: " + msg) {};
+                explicit SpriteException(const std::string& msg) : _msg("Rengine::Graphics::Sprite: " + msg) {}
                 const char *what() const noexcept
                 {
                     return this->_msg.c_str();
@@ -88,4 +89,4 @@ namespace Rengine {
         };  // class IWindow
     }  // namespace Graphics
 }  // namespace Rengine
-#endif
+#endif  // SRC_GRAPHICS_ASPRITE_HPP_

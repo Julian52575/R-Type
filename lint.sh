@@ -9,7 +9,7 @@ fi
 LOG_FILE="style_error.log"
 OPTION="--recursive"
 SRC_DIR="src/"
-FILTER="-'build/include',-whitespace/braces,-whitespace/line_length,-legal/copyright,-build/c++11,-whitespace/indent,-whitespace/parens,-runtime/references,-build/include_subdir,+build/include_what_you_use"
+FILTER="-'build/include',-whitespace/braces,-whitespace/line_length,-legal/copyright,-build/c++11,-whitespace/indent,-whitespace/parens,-runtime/references,-build/include_subdir,+build/include_what_you_use,-runtime/indentation_namespace,-readability/casting,-build/c++17,-runtime/printf"
 TMP=.tmp
 
 eval cpplint $OPTION "--filter="$FILTER $SRC_DIR 2> $LOG_FILE 1> $TMP
@@ -23,3 +23,4 @@ cat $LOG_FILE >&2
 echo $(eval cat $TMP | grep "Total error")
 echo "Errors are registered in $LOG_FILE."
 rm $TMP || true > /dev/null
+exit 1

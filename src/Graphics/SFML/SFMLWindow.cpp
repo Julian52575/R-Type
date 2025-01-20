@@ -21,6 +21,7 @@
 #include <iostream>
 #include <valarray>
 #include <vector>
+#include <string>
 
 #include "../ASound.hpp"
 #include "../AText.hpp"
@@ -469,5 +470,5 @@ skipIcon:
             }
         }
 
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine

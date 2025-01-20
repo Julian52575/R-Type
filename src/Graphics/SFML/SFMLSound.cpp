@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
+#include <string>
+#include <memory>
 
 #include "../SoundSpecs.hpp"
 #include "SFMLSound.hpp"
@@ -120,7 +122,5 @@ skipSetLoopPoints:
         {
             return this->_music.getVolume();
         }
-
-
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine

@@ -3,13 +3,14 @@
 #define SRC_GRAPHICS_ASOUND_HPP_
 
 #include "SoundSpecs.hpp"
+#include <string>
 
 namespace Rengine {
     namespace Graphics {
 
         class SoundException : public std::exception {
             public:
-                SoundException(const std::string& msg) : _msg("Rengine::Graphics::Sound: " + msg) {};
+                explicit SoundException(const std::string& msg) : _msg("Rengine::Graphics::Sound: " + msg) {}
                 const char *what() const noexcept
                 {
                     return this->_msg.c_str();
@@ -31,7 +32,7 @@ namespace Rengine {
                 * @param soundSpecs The specs of the sound.
                 * @brief Create the base class for sound.
                 */
-                ASound(const SoundSpecs& soundSpecs);
+                explicit ASound(const SoundSpecs& soundSpecs);
                 ~ASound(void) = default;
                 /**
                 * @fn play
@@ -70,6 +71,6 @@ namespace Rengine {
                 SoundSpecs _specs;
         };
 
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine
 #endif  // SRC_GRAPHICS_ASOUND_HPP_
