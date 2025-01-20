@@ -95,7 +95,7 @@ namespace RType {
         // Sparking zero BGM
         Rengine::Graphics::SoundSpecs music;
 
-        music.soundPath = "assets/musics/DRAGON BALL Sparking! Zero - Main Menu Theme (Official).mp3";
+        music.soundPath = "assets/musics/DRAGON BALL Sparking! Zero - Main Menu Theme (Official).ogg";
         music.loop = true;
         try {
             this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(music);
