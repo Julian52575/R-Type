@@ -7,6 +7,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <exception>
+#include <string>
 
 #include "SFMLSprite.hpp"
 #include "../ASprite.hpp"
@@ -414,5 +415,5 @@ namespace Rengine {
                 return this->rectangle;
             }
 
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine

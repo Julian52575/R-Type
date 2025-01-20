@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_INPUTMANAGER_HPP_
-#define _SRC_GRAPHICS_INPUTMANAGER_HPP_
+#ifndef SRC_GRAPHICS_USERINPUTMANAGER_HPP_
+#define SRC_GRAPHICS_USERINPUTMANAGER_HPP_
 #include <cstddef>
 #include <cstdint>
 #include <functional>
@@ -107,7 +107,7 @@ namespace Rengine {
                 using const_iterator = typename container_t :: const_iterator;
 
             public:
-                UserInputManager(uint16_t maxInputPerFrame = 100);
+                explicit UserInputManager(uint16_t maxInputPerFrame = 100);
                 ~UserInputManager(void) = default;
 
             public:
@@ -160,6 +160,6 @@ namespace Rengine {
         };
 
 
-    }  // namespace Graphic
+    }  // namespace Graphics
 }  // namespace Rengine
-#endif
+#endif  // SRC_GRAPHICS_USERINPUTMANAGER_HPP_

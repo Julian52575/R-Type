@@ -3,6 +3,7 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include <string>
 
 #include "UserInputManager.hpp"
 #include "Vector.hpp"
@@ -152,6 +153,5 @@ namespace Rengine {
             os << input.type;
             return os;
         }
-
-    }  // namespace Graphic
+    }  // namespace Graphics
 }  // namespace Rengine

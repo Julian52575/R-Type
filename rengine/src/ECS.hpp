@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <utility>
 #include <typeindex>
+#include <string>
 
 #include "ComponentRegistry.hpp"
 #include "Entity.hpp"
@@ -34,7 +35,7 @@ namespace Rengine {
     };
     class ECSExceptionNoComponentFunction : public std::exception {
         public:
-            ECSExceptionNoComponentFunction(const char *componentName)
+            explicit ECSExceptionNoComponentFunction(const char *componentName)
             {
                 std::string name = componentName;
                 std::string foot = "'.";
@@ -63,7 +64,7 @@ namespace Rengine {
     };
     class ECSException : public std::exception {
         public:
-            ECSException(const std::string& msg) : _msg("Rengine::ECS: " + msg) {};
+            explicit ECSException(const std::string& msg) : _msg("Rengine::ECS: " + msg) {}
             const char *what() const noexcept
             {
                 return this->_msg.c_str();
