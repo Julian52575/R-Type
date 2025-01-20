@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include "AConnexion.hpp"
 #include "tsqueue.hpp"
 #include "Messages/Message.hpp"

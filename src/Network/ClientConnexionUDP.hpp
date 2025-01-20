@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include "tsqueue.hpp"
 #include "Messages/Message.hpp"
 #define MAX_UDP_BUFF_SIZE 1024

@@ -42,7 +42,7 @@ namespace Rengine {
             float pitch = 1;
         };
 
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine
 
 #endif  // SRC_GRAPHICS_SOUNDSPECS_HPP_
