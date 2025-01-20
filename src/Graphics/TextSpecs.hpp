@@ -79,5 +79,5 @@ namespace Rengine {
         };
 
     }  // namespace Graphics
-}  //namespace Rengine
+}  // namespace Rengine
 #endif  // SRC_GRAPHICS_TEXTSPECS_HPP_

@@ -7,6 +7,8 @@
 #include <functional>
 #include <optional>
 #include "ComponentRegistry.hpp"
+#include <vector>
+#include <utility>
 
 namespace Rengine {
 
@@ -206,7 +208,6 @@ namespace Rengine {
             ComponentRegistry& _registry;
             uint64_t _flag = 0;
             std::vector<std::function<void(Rengine::Entity &)>> _destroyFunctions;
-
     };  // class Entity
 
 

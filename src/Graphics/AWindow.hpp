@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_IWINDOW_HPP_
-#define _SRC_GRAPHICS_IWINDOW_HPP_
+#ifndef SRC_GRAPHICS_AWINDOW_HPP_
+#define SRC_GRAPHICS_AWINDOW_HPP_
 
 #include <cstdint>
 #include <memory>
@@ -17,7 +17,7 @@ namespace Rengine {
 
         class WindowException : public std::exception {
             public:
-                WindowException(const std::string& msg) : _msg("Rengine::Graphics::Window: " + msg) {};
+                explicit WindowException(const std::string& msg) : _msg("Rengine::Graphics::Window: " + msg) {}
                 const char *what() const noexcept
                 {
                     return this->_msg.c_str();
@@ -40,7 +40,7 @@ namespace Rengine {
                 * @param maxInputPerFrame The max number of input to be processed per frame
                 * @brief Create the bass class of windows.
                 */
-                AWindow(const WindowSpecs& windowSpecs, uint16_t maxInputPerFrame = 100) : _windowSpecs(windowSpecs), _inputManager(maxInputPerFrame) {}
+                explicit AWindow(const WindowSpecs& windowSpecs, uint16_t maxInputPerFrame = 100) : _windowSpecs(windowSpecs), _inputManager(maxInputPerFrame) {}
                 virtual ~AWindow(void) = default;
                 /**
                 * @fn addSpriteToRender
@@ -142,4 +142,4 @@ namespace Rengine {
         };  // class IWindow
     }  // namespace Graphics
 }  // namespace Rengine
-#endif
+#endif  // SRC_GRAPHICS_AWINDOW_HPP_

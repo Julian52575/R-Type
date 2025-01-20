@@ -48,7 +48,7 @@ jobs:
         run: sudo ./install.sh
 
   pushToRepo:
-    depends-on: [unit_tests, build, linter]
+    needs: [unit_tests, build, linter]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

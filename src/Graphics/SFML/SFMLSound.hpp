@@ -1,6 +1,6 @@
 //
-#ifndef SRC_GRAPHICS_SFMLSOUND_HPP_
-#define SRC_GRAPHICS_SFMLSOUND_HPP_
+#ifndef SRC_GRAPHICS_SFML_SFMLSOUND_HPP_
+#define SRC_GRAPHICS_SFML_SFMLSOUND_HPP_
 
 #include <SFML/Audio.hpp>
 #include <SFML/Audio/Music.hpp>
@@ -23,7 +23,7 @@ namespace Rengine {
         */
         class SFMLSound : public ASound {
             public:
-                SFMLSound(const SoundSpecs& specs);
+                explicit SFMLSound(const SoundSpecs& specs);
                 ~SFMLSound(void);
                 sf::Music& getMusic(void) noexcept;
                 void play(void);
@@ -40,6 +40,6 @@ namespace Rengine {
                 sf::Music _music;
         };
 
-    }  // namespace Rengine
-}  // namespace Graphics
-#endif  // SRC_GRAPHICS_SFMLSOUND_HPP_
+    }  // namespace Graphics
+}  // namespace Rengine
+#endif  // SRC_GRAPHICS_SFML_SFMLSOUND_HPP_

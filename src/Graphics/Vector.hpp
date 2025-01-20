@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_VECTOR2_HPP_
-#define _SRC_GRAPHICS_VECTOR2_HPP_
+#ifndef SRC_GRAPHICS_VECTOR_HPP_
+#define SRC_GRAPHICS_VECTOR_HPP_
 #include <cstdint>
 #include <type_traits>
 #include <iostream>
@@ -102,6 +102,6 @@ namespace Rengine {
             return os;
         }
 
-    };
-};
-#endif
+    }  // namespace Graphics
+}  // namespace Rengine
+#endif  // SRC_GRAPHICS_VECTOR_HPP_

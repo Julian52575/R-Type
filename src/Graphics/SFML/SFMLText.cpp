@@ -2,6 +2,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <exception>
+#include <string>
 
 #include "SFMLText.hpp"
 #include "../TextSpecs.hpp"
@@ -70,5 +71,5 @@ namespace Rengine {
         }
 
 
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine

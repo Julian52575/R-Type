@@ -1,6 +1,6 @@
 //
-#ifndef _SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
-#define _SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
+#ifndef SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
+#define SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/System/Clock.hpp>
@@ -11,6 +11,8 @@
 #include <optional>
 #include <memory>
 #include <vector>
+#include <utility>
+#include <string>
 
 #include "../ASprite.hpp"
 #include "../AWindow.hpp"
@@ -28,7 +30,7 @@ namespace Rengine {
         */
         class SFMLWindow : public AWindow {
             public:
-                SFMLWindow(const WindowSpecs& windowSpecs);
+                explicit SFMLWindow(const WindowSpecs& windowSpecs);
                 ~SFMLWindow(void) = default;
                 void addSpriteToRender(const std::shared_ptr<Rengine::Graphics::ASprite>& sprite,
                     const Rengine::Graphics::vector2D<float>& position, bool updateAnimationFrame = true);
@@ -66,8 +68,7 @@ namespace Rengine {
                 std::vector<unsigned int> _joystickIds = {0};
                 void removeJoystickFromVector(unsigned int joystickId);
         };
+    }  // namespace Graphics
+}  // namespace Rengine
 
-    }  // namespace Rengine
-}  // namespace Graphics
-
-#endif
+#endif  // SRC_GRAPHICS_SFML_SFMLWINDOW_HPP_

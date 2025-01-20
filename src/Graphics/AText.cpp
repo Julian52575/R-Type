@@ -7,7 +7,6 @@ namespace Rengine {
 
         AText::AText(const TextSpecs& specs) : _specs(specs)
         {
-
         }
     }  // namespace Graphics
 }  // namespace Rengine
