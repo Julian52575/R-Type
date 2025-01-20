@@ -166,7 +166,7 @@ namespace RType {
             // Background music
             Rengine::Graphics::SoundSpecs musicSpecs;
 
-            musicSpecs.soundPath = "assets/musics/starforx64_training_mode.mp3";
+            musicSpecs.soundPath = "assets/musics/starforx64_training_mode.ogg";
             musicSpecs.loop = true;
             this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(musicSpecs);
             // New lobby button

@@ -29,7 +29,7 @@ namespace RType {
 
     struct GameInfo {
         std::string name;
-        uuid_t id;
+        Rengine::UUID::uuid_t id;
         uint16_t playerCount;
         time_t time;
     };

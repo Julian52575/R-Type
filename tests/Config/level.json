@@ -2,7 +2,7 @@
     "level": {
         "scenes": [
             {
-                "backgroundMusic": "dokkan.mp3",
+                "backgroundMusic": "dokkan.ogg",
                 "background": [
                     "Config/image.json"
                 ],

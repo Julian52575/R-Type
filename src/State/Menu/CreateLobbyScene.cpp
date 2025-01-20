@@ -127,7 +127,7 @@ namespace RType {
 
         Rengine::Graphics::SoundSpecs worlds;
 
-        worlds.soundPath = "assets/musics/worlds.mp3";
+        worlds.soundPath = "assets/musics/worlds.ogg";
         worlds.loop = true;
 
         this->_backgroundMusic = Rengine::Graphics::GraphicManagerSingletone::get().createSound(worlds);

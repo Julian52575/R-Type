@@ -53,12 +53,6 @@ namespace RType {
         throw std::runtime_error("Game not found");
     }
 
-    std::string printUuid(uuid_t &uuid) {
-        char uuid_str[37];
-        uuid_unparse(uuid, uuid_str);
-        return std::string(uuid_str);
-    };
-
     State runLevel(LobbyState &LobbyState) {
         // mettre le for en com pour disable le server
         for (std::optional<Message<Network::Communication::TypeDetail>> msg = LobbyState._client->Receive(); msg; msg = LobbyState._client->Receive()) {
@@ -68,7 +62,7 @@ namespace RType {
                 uint16_t nbGames;
                 *msg >> nbGames;
                 for (uint16_t i = 0; i < nbGames; i++) {
-                    uuid_t gameID;
+                    Rengine::UUID::uuid_t gameID;
                     uint16_t nbUsers;
                     char name[15];
                     time_t timeStarted;
@@ -78,7 +72,7 @@ namespace RType {
                 }
             }
             if (msg->header.type.type == Network::Communication::LobbyInfo && msg->header.type.precision == Network::Communication::main::LobbyInfoPrecision::GameCreated) {
-                uuid_t gameID;
+                Rengine::UUID::uuid_t gameID;
                 uint16_t nbUsers;
                 char name[15];
                 time_t timeStarted;
@@ -88,7 +82,7 @@ namespace RType {
             }
 
             if (msg->header.type.type == Network::Communication::LobbyInfo && msg->header.type.precision == Network::Communication::main::LobbyInfoPrecision::GameUpdated) {
-                uuid_t gameID;
+                Rengine::UUID::uuid_t gameID;
                 uint16_t nbUsers;
                 char name[15];
                 time_t timeStarted;

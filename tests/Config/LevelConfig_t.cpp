@@ -9,7 +9,7 @@
     "level": {
         "scenes": [
             {
-                "backgroundMusic": "dokkan.mp3",
+                "backgroundMusic": "dokkan.ogg",
                 "background": [
                     "Config/image.json"
                 ],
@@ -204,7 +204,7 @@ TEST(LevelConfig, Scenes)
     const RType::Config::SceneConfig& scene1 = scenes[0];
 
     ASSERT_EQ(scene1.scrollingSpeed, 15.15f);
-    ASSERT_EQ(scene1.backgroundMusic, "dokkan.mp3");
+    ASSERT_EQ(scene1.backgroundMusic, "dokkan.ogg");
     ASSERT_EQ(scene1.endCondition, RType::Config::SceneEndCondition::SceneEndConditionTime);
     ASSERT_EQ(scene1.endConditionData.time, 10.10f);
     ASSERT_EQ(scene1.backgroundImages.size(), 1);
