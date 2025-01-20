@@ -86,6 +86,7 @@ skipSetLoopPoints:
         {
             std::allocator<uint8_t> alloc;
 
+            this->_music.openFromMemory(nullptr, 0);  // Reset to prevent segmentation fault on destroy
             if (this->_musicData != nullptr) {
                 alloc.deallocate(this->_musicData, this->_musicSize);
             }
