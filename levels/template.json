@@ -2,7 +2,7 @@
     "level": {
         "scenes": [
             {
-                "backgroundMusic": "assets/musics/starforx64_training_mode.mp3",
+                "backgroundMusic": "assets/musics/SSGokuDaimaEntranceAnimationBGM.ogg",
                 "background": [
                     "assets/images/space_background.json"
                 ],

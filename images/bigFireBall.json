@@ -2,8 +2,8 @@
     "image":{
         "texturePath":"assets/images/fireBall.png",
         "origin":{
-            "x": 40,
-            "y": 25
+            "x": 80,
+            "y": 55
         },
         "scale":{
             "x":3,
