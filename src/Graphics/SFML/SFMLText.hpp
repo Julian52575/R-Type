@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <string>
 
 #include "../AText.hpp"
 #include "../TextSpecs.hpp"
@@ -20,7 +21,7 @@ namespace Rengine {
         */
         class SFMLText : public AText {
             public:
-                SFMLText(const TextSpecs& specs);
+                explicit SFMLText(const TextSpecs& specs);
                 ~SFMLText() = default;
                 sf::Text& getSfText(void) noexcept;
                 void setText(const std::string& text);
@@ -32,6 +33,6 @@ namespace Rengine {
                 sf::Text _sfText;
                 sf::Font _font;
         };
-    }  // namespace Rengine
-}  // namespace Graphics
+    }  // namespace Graphics
+}  // namespace Rengine
 #endif  // SRC_GRAPHICS_SFML_SFMLTEXT_HPP_

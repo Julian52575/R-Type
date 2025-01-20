@@ -1,7 +1,8 @@
 //
-#ifndef _SRC_GRAPHICS_GRAPHICMANAGER_HPP_
-#define _SRC_GRAPHICS_GRAPHICMANAGER_HPP_
+#ifndef SRC_GRAPHICS_GRAPHICMANAGER_HPP_
+#define SRC_GRAPHICS_GRAPHICMANAGER_HPP_
 #include <memory>
+#include <string>
 
 // SFML Includes if define
 #ifdef __RENGINEGRAPHICS_USELIB_SFML
@@ -29,7 +30,7 @@ namespace Rengine {
 
         class GraphicManagerException : public std::exception {
             public:
-                GraphicManagerException(const std::string& msg) : _msg("Rengine::Graphics::GraphicManager: " + msg) {};
+                explicit GraphicManagerException(const std::string& msg) : _msg("Rengine::Graphics::GraphicManager: " + msg) {}
                 const char *what() const noexcept
                 {
                     return this->_msg.c_str();
@@ -110,7 +111,6 @@ namespace Rengine {
 
             private:
                 std::shared_ptr<AWindow> _window = nullptr;
-
         };  // class GraphicManager
 
         /**
@@ -135,6 +135,6 @@ namespace Rengine {
                 }
         };  // class GraphicManagerSingletone
 
-    }  // namespace Rengine
-}  // namespace Graphics
-#endif
+    }  // namespace Graphics
+}  // namespace Rengine
+#endif  // SRC_GRAPHICS_GRAPHICMANAGER_HPP_

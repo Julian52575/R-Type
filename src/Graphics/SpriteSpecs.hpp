@@ -128,5 +128,5 @@ namespace Rengine {
             std::optional<SpriteAnimationSpecs> animation;
         };  // struct SpriteSpecs
     }  // namespace Graphics
-}  //namespace Rengine
+}  // namespace Rengine
 #endif  // SRC_GRAPHICS_SPRITESPECS_HPP_

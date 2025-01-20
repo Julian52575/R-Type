@@ -52,5 +52,5 @@ namespace Rengine {
             os << ss.str();
             return os;
         }
-    }
-}
+    }  // namespace UUID
+}  // namespace Rengine
