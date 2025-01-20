@@ -177,7 +177,9 @@ namespace RType {
         gameState._ecs.runComponentFunction<RType::Components::HitboxViewer>();  // render hitbox
 
         //partie alert
-        gameState.alertPlayer();
+        try {
+            gameState.alertPlayer();
+        } catch (std::exception& e) {;}
 
         // Check espace input
         if (Rengine::Graphics::GraphicManagerSingletone::get().getWindow()->getInputManager()
