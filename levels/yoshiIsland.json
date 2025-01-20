@@ -2,7 +2,7 @@
     "level": {
         "scenes": [
             {
-                "backgroundMusic": "assets/musics/yoshi/flowerGarden.mp3",
+                "backgroundMusic": "assets/musics/yoshi/flowerGarden.ogg",
                 "background": [
                     "assets/images/yoshi/background/forest.json"
                 ],
@@ -151,7 +151,7 @@
                 "endConditionTime": 30.0
             },
             {
-                "backgroundMusic": "assets/musics/yoshi/aboveground.mp3",
+                "backgroundMusic": "assets/musics/yoshi/aboveground.ogg",
                 "background": [
                     "assets/images/yoshi/background/sky.json"
                 ],
@@ -252,7 +252,7 @@
                 "endCondition": "bossDefeat"
             },
             {
-                "backgroundMusic": "assets/musics/yoshi/bowser.mp3",
+                "backgroundMusic": "assets/musics/yoshi/bowser.ogg",
                 "background": [
                     "assets/images/yoshi/background/castle.json"
                 ],
